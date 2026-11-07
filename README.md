@@ -36,4 +36,4 @@ Intended to see how ai aids or hinders the design of a data-centric app which ha
 
 > Exercise is currently in process. Results should follow eventually.
 
-[Folder for the output of the experiment](hhttps://github.com/ZaidaZadkiel/ai\_experiments/tree/main/viewer)  
+[Folder for the output of the experiment](https://github.com/ZaidaZadkiel/ai\_experiments/tree/main/viewer)  
