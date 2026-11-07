@@ -34,6 +34,8 @@ Intended to see what kind of code the ai writes.
 Gist: `Design a complex app to explore the process of data management in a complex setting`  
 Intended to see how ai aids or hinders the design of a data-centric app which has significant complexity on the program design. 
 
-> Exercise is currently in process. Results should follow eventually.
+#### Exercise is currently in process. Results should follow eventually.
+
+[Human log of the experiment in progress](viewer/HUMANLOG.md)
 
 [Folder for the output of the experiment](https://github.com/ZaidaZadkiel/ai\_experiments/tree/main/viewer)  
