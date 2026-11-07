@@ -21,9 +21,19 @@ The experience doing the simple app led me to think that one of the hardest part
 
 Current experiments:
 
-- Simple test app. 
-  Uses node, sqlite and http to see what kind of code the ai writes.  
+## Simple test app. 
+Gist: `Write an app using node, sqlite and http to display and process and store values.`  
+Intended to see what kind of code the ai writes.  
 
-[https\://github.com/ZaidaZadkiel/ai\_experiments/tree/main/first\_test\_app/test](Very simple app  test)  
+[Human log of what the experiment shown](first_test_app/test/HUMANLOG.md)
 
-[first_test_app/test/HUMANLOG.md](Human log of what the experiment shown)
+[Folder for the output of the experiment](https\://github.com/ZaidaZadkiel/ai\_experiments/tree/main/first\_test\_app/test)  
+
+
+## Viewer complex app
+Gist: `Design a complex app to explore the process of data management in a complex setting`  
+Intended to see how ai aids or hinders the design of a data-centric app which has significant complexity on the program design. 
+
+> Exercise is currently in process. Results should follow eventually.
+
+[Folder for the output of the experiment](hhttps://github.com/ZaidaZadkiel/ai_experiments/tree/main/viewer)  
