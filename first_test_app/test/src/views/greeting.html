@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Greeter</title>
+    <style>
+      body {
+        font-family: system-ui, sans-serif;
+        max-width: 40rem;
+        margin: 2rem auto;
+        padding: 0 1rem;
+        line-height: 1.5;
+      }
+      .message:empty {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <p class="message">{{__MESSAGE__}}</p>
+    <h1>Hello, {{__NAME__}}!</h1>
+  </body>
+</html>

@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Greeter</title>
+    <style>
+      body {
+        font-family: system-ui, sans-serif;
+        max-width: 40rem;
+        margin: 2rem auto;
+        padding: 0 1rem;
+        line-height: 1.5;
+      }
+      .message:empty {
+        display: none;
+      }
+      table {
+        border-collapse: collapse;
+      }
+      th,
+      td {
+        padding: 0.25rem 1rem 0.25rem 0;
+        text-align: left;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Consideration</h1>
+    <p class="message">{{__MESSAGE__}}</p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Considered</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{__ROWS__}}
+      </tbody>
+    </table>
+  </body>
+</html>

@@ -1,0 +1,6 @@
+node_modules/
+data/tools/*/output/*
+data/tools/*/logs/*
+data/tools/*/result.json
+data/runner/logs/*
+app/tools/*/last_run.json

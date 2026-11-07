@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Greeter</title>
+    <style>
+      body {
+        font-family: system-ui, sans-serif;
+        max-width: 40rem;
+        margin: 2rem auto;
+        padding: 0 1rem;
+        line-height: 1.5;
+      }
+      .message:empty {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Consider someone</h1>
+    <p class="message">{{__MESSAGE__}}</p>
+    <form action="/consider" method="get">
+      <label>
+        Name
+        <input
+          type="text"
+          name="name"
+          value="{{__NAME__}}"
+          autocomplete="off"
+        />
+      </label>
+      <button type="submit">Consider</button>
+      <p class="message" data-name-rule-message aria-live="polite"></p>
+    </form>
+    {{__NAME_RULE__}}
+  </body>
+</html>

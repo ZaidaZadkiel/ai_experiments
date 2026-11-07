@@ -1,0 +1,47 @@
+{
+  "about": "Expected M1 result for test-source/, written by hand from mvp_docs/06_test_plan.md, with the IDs and enclosing functions inferred in mvp_docs/99_findings.md section 5. Declaration references are checked generically: one per symbol, at the symbol's location.",
+  "files": ["src/counter.ts", "src/main.ts", "src/math.ts"],
+  "symbols": [
+    { "file": "src/math.ts", "name": "PRECISION", "kind": "variable", "line": 1, "exported": true, "id": "src/math.ts#PRECISION@1:14" },
+    { "file": "src/math.ts", "name": "round", "kind": "function", "line": 3, "exported": true, "id": "src/math.ts#round@3:17" },
+    { "file": "src/math.ts", "name": "value", "kind": "parameter", "line": 3, "exported": false, "id": "src/math.ts#value@3:23" },
+    { "file": "src/math.ts", "name": "factor", "kind": "variable", "line": 4, "exported": false, "id": "src/math.ts#factor@4:9" },
+    { "file": "src/counter.ts", "name": "round", "kind": "import", "line": 1, "exported": false, "id": "src/counter.ts#round@1:10", "import": { "from": "./math", "name": "round" } },
+    { "file": "src/counter.ts", "name": "total", "kind": "variable", "line": 3, "exported": false, "id": "src/counter.ts#total@3:5" },
+    { "file": "src/counter.ts", "name": "add", "kind": "function", "line": 5, "exported": true, "id": "src/counter.ts#add@5:17" },
+    { "file": "src/counter.ts", "name": "amount", "kind": "parameter", "line": 5, "exported": false, "id": "src/counter.ts#amount@5:21" },
+    { "file": "src/main.ts", "name": "add", "kind": "import", "line": 1, "exported": false, "id": "src/main.ts#add@1:10", "import": { "from": "./counter", "name": "add" } },
+    { "file": "src/main.ts", "name": "PRECISION", "kind": "import", "line": 2, "exported": false, "id": "src/main.ts#PRECISION@2:10", "import": { "from": "./math", "name": "PRECISION" } },
+    { "file": "src/main.ts", "name": "run", "kind": "function", "line": 4, "exported": false, "id": "src/main.ts#run@4:10" },
+    { "file": "src/main.ts", "name": "first", "kind": "variable", "line": 5, "exported": false, "id": "src/main.ts#first@5:9" },
+    { "file": "src/main.ts", "name": "label", "kind": "variable", "line": 7, "exported": false, "id": "src/main.ts#label@7:11" }
+  ],
+  "functionRanges": [
+    { "id": "src/math.ts#round@3:17", "start": "3:1", "end": "6:2" },
+    { "id": "src/counter.ts#add@5:17", "start": "5:1", "end": "8:2" },
+    { "id": "src/main.ts#run@4:10", "start": "4:1", "end": "10:2" }
+  ],
+  "references": [
+    { "file": "src/math.ts", "line": 4, "name": "PRECISION", "kind": "read", "target": "src/math.ts#PRECISION@1:14", "enclosing": "src/math.ts#round@3:17" },
+    { "file": "src/math.ts", "line": 5, "name": "Math", "kind": "read", "target": null, "enclosing": "src/math.ts#round@3:17" },
+    { "file": "src/math.ts", "line": 5, "name": "value", "kind": "read", "target": "src/math.ts#value@3:23", "enclosing": "src/math.ts#round@3:17" },
+    { "file": "src/math.ts", "line": 5, "name": "factor", "kind": "read", "target": "src/math.ts#factor@4:9", "enclosing": "src/math.ts#round@3:17" },
+    { "file": "src/math.ts", "line": 5, "name": "factor", "kind": "read", "target": "src/math.ts#factor@4:9", "enclosing": "src/math.ts#round@3:17" },
+    { "file": "src/counter.ts", "line": 6, "name": "total", "kind": "write", "target": "src/counter.ts#total@3:5", "enclosing": "src/counter.ts#add@5:17" },
+    { "file": "src/counter.ts", "line": 6, "name": "total", "kind": "read", "target": "src/counter.ts#total@3:5", "enclosing": "src/counter.ts#add@5:17" },
+    { "file": "src/counter.ts", "line": 6, "name": "amount", "kind": "read", "target": "src/counter.ts#amount@5:21", "enclosing": "src/counter.ts#add@5:17" },
+    { "file": "src/counter.ts", "line": 7, "name": "round", "kind": "call", "target": "src/counter.ts#round@1:10", "enclosing": "src/counter.ts#add@5:17" },
+    { "file": "src/counter.ts", "line": 7, "name": "total", "kind": "read", "target": "src/counter.ts#total@3:5", "enclosing": "src/counter.ts#add@5:17" },
+    { "file": "src/main.ts", "line": 5, "name": "add", "kind": "call", "target": "src/main.ts#add@1:10", "enclosing": "src/main.ts#run@4:10" },
+    { "file": "src/main.ts", "line": 6, "name": "first", "kind": "read", "target": "src/main.ts#first@5:9", "enclosing": "src/main.ts#run@4:10" },
+    { "file": "src/main.ts", "line": 7, "name": "PRECISION", "kind": "read", "target": "src/main.ts#PRECISION@2:10", "enclosing": "src/main.ts#run@4:10" },
+    { "file": "src/main.ts", "line": 8, "name": "console", "kind": "read", "target": null, "enclosing": "src/main.ts#run@4:10" },
+    { "file": "src/main.ts", "line": 8, "name": "label", "kind": "read", "target": "src/main.ts#label@7:11", "enclosing": "src/main.ts#run@4:10" },
+    { "file": "src/main.ts", "line": 8, "name": "first", "kind": "read", "target": "src/main.ts#first@5:9", "enclosing": "src/main.ts#run@4:10" },
+    { "file": "src/main.ts", "line": 12, "name": "run", "kind": "call", "target": "src/main.ts#run@4:10", "enclosing": "src/main.ts" }
+  ],
+  "mustNotAppear": [
+    { "file": "src/math.ts", "line": 5, "name": "round", "why": "property name in Math.round" },
+    { "file": "src/main.ts", "line": 8, "name": "log", "why": "property name in console.log" }
+  ]
+}
