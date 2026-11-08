@@ -13,7 +13,7 @@ Related files: `toolset.md` (tools, parameters, shared data), `runner.md` (the R
 
 These were made in other files and shape every section below:
 - **[Decided]** Tools describe themselves with `--info`, stating their own parameters and outputs. There is no manifest (`DT-1`).
-- **[Decided]** Tools never read the database. A tool reads only its JSON parameters, its `last_run.json` and its internal state derived from the examined source (`toolset.md`, section 4.2).
+- **[Decided]** Tools never read the database. A tool reads only its JSON parameters, its `last_run.json` and its internal state derived from the examined source (`toolset.md`, section 4.2). Needing more is a design error in the tool; the Runner checks only a tool's input and output.
 - **[Decided]** Only tools whose `--info` says they read files read them, one file per invocation (`toolset.md`, section 4.2).
 - **[Decided]** The Runner reads and writes the database, reads every tool's output, decides per value whether it belongs in the database based on what it represents, and builds each tool's JSON (`runner.md`, sections 1.1 and 5).
 - **[Decided]** The Runner reads all files and updates the file list itself (`runner.md`, section 1.1).
@@ -42,7 +42,7 @@ So "a tool reads data X" now always means "the Runner hands the tool data X as p
 - **[Decided]** **No manifest.** Options B and C, which rely on a manifest file per tool, are not used.
 - **[Decided]** The Runner builds each tool's JSON parameters according to what the tool states with `--info`, from the database and from the tool outputs it has read (`toolset.md`, section 4.5; `runner.md`, section 5).
 - **[Makes sense]** What `--info` states must be enough for:
-  - the Runner: whether the tool reads files, and which kinds (for example `*.ts`), since only such tools read files, one per invocation; the parameters it needs, so the Runner can work out the order (section 8), build the JSON and check it with a dry run; and its outputs, with what each represents, so the Runner can decide what goes in the database (`RN-12`)
+  - the Runner: whether the tool reads files, and which kinds (for example `*.ts`); a tool that reads files declares `source_root`, and one that reads none says so ([Decided], `toolset.md`, section 4.2), since only such tools read files, one per invocation; the parameters it needs, so the Runner can work out the order (section 8), build the JSON and check it with a dry run; and its outputs, with what each represents, so the Runner can decide what goes in the database (`RN-12`)
   - the Viewer: which tool produced which data, and the tool's settings for the config manager
 - **[Makes sense]** For each parameter, `--info` says what it is in terms the Runner can look up: a data name, its **shape**, and whether it is required. The shape is what the tool's parameter check tests; a shape problem is an invocation error (`toolset.md`, section 4.4).
 - **[Makes sense]** Ideas from the other options can still be carried inside `--info` where they help, such as a containment hint (`containedIn`, section 7) or names from a shared list (`DT-2`). The dictionaries of options A and B are not ruled out by this decision, only the manifests.
@@ -184,7 +184,7 @@ For the Runner:
 - **[Makes sense]** One source of truth: the description lives in the tool, so it can't drift from what the tool does.
 - **[Makes sense]** No registration step: the Runner calls `--info` on every installed tool and connects each output to the tools whose parameters need it. That gives the run order and the incremental rebuilds.
 - **[Makes sense]** `--info` is one more common option, like help and dry run, with parsable output.
-- **[Makes sense]** The Runner's dry run can find, before anything runs, parameters no tool produces, data produced by two tools, and cycles.
+- **[Makes sense]** The Runner's dry run can find, before anything runs, parameters that neither a tool produces nor the Runner provides (`runner.md`, section 4: the Runner provides data no tool produces, from saved configuration or defaults), data produced by two tools, and cycles.
 - **[Makes sense]** Calling `--info` runs a ZaAnSouVi tool, never code from the examined source. The result is kept in the record of tools, filled by running the tool or at installation ([Decided], `runner.md`, section 1.0), and refreshed per tool version.
 - **[Makes sense]** Two kinds of input, now settled by decisions: **source files**, which a tool reads itself only if `--info` says so, one per invocation, with the kinds it reads (for example `*.ts`); and **other tools' data**, by name, which reaches the tool only as parameters built by the Runner (`toolset.md`, section 4.2).
 - **[Needs refinement]** Names must match exactly. The example has both `files.locations` and `file.extensions`. Without a shared list of names to check against, a one-letter difference silently disconnects two tools (`DT-2`).
@@ -254,7 +254,7 @@ Data flow and containment often point the same way, but not always:
 ## 8. Run order and stages (applies to every option)
 
 - **[Makes sense]** Stages give a coarse order that is easy to understand:
-  0. discovery: the file list, built by the Runner itself ([Decided], `runner.md`, section 1.1; whether a file inventory tool remains is `RN-13`)
+  0. discovery: the file list, built by the Runner itself ([Decided], `runner.md`, sections 1.1 and 4), then the file inventory tool, once per file, for each file's kind (code, SQL, configuration; [Decided], `toolset.md`, section 6.2)
   1. project facts: git, project configuration, known outputs, detectors, env vars
   2. code analysis: symbols
   3. relations: modules, infrastructure, database schema

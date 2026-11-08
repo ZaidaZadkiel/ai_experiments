@@ -1,0 +1,57 @@
+{
+  "about": "Proposed expected result (2026-11-07), generated: M1's data from its real output (file-symbols 0.5.0), M2 and M3 derived by TOOL-20, TOOL-30 and TOOL-31 under the assumptions in expected/README.md.",
+  "tool": "cross-file-links",
+  "toolVersion": "0.2.0",
+  "formatVersion": 1,
+  "dataNames": {"code.link":"links"},
+  "links": [
+    {
+      "id": "src/counter.ts#round@1:10->src/math.ts#round@3:17",
+      "from": "src/counter.ts#round@1:10",
+      "to": "src/math.ts#round@3:17",
+      "kind": "import",
+      "moduleSpecifier": "./math",
+      "location": {"file":"src/counter.ts","start":{"line":1,"column":10},"end":{"line":1,"column":15}}
+    },
+    {
+      "id": "src/counter.ts#ref@7:10->src/math.ts#round@3:17",
+      "from": "src/counter.ts#add@5:17",
+      "to": "src/math.ts#round@3:17",
+      "kind": "call",
+      "moduleSpecifier": "./math",
+      "location": {"file":"src/counter.ts","start":{"line":7,"column":10},"end":{"line":7,"column":15}}
+    },
+    {
+      "id": "src/main.ts#add@1:10->src/counter.ts#add@5:17",
+      "from": "src/main.ts#add@1:10",
+      "to": "src/counter.ts#add@5:17",
+      "kind": "import",
+      "moduleSpecifier": "./counter",
+      "location": {"file":"src/main.ts","start":{"line":1,"column":10},"end":{"line":1,"column":13}}
+    },
+    {
+      "id": "src/main.ts#PRECISION@2:10->src/math.ts#PRECISION@1:14",
+      "from": "src/main.ts#PRECISION@2:10",
+      "to": "src/math.ts#PRECISION@1:14",
+      "kind": "import",
+      "moduleSpecifier": "./math",
+      "location": {"file":"src/main.ts","start":{"line":2,"column":10},"end":{"line":2,"column":19}}
+    },
+    {
+      "id": "src/main.ts#ref@5:17->src/counter.ts#add@5:17",
+      "from": "src/main.ts#run@4:10",
+      "to": "src/counter.ts#add@5:17",
+      "kind": "call",
+      "moduleSpecifier": "./counter",
+      "location": {"file":"src/main.ts","start":{"line":5,"column":17},"end":{"line":5,"column":20}}
+    },
+    {
+      "id": "src/main.ts#ref@7:34->src/math.ts#PRECISION@1:14",
+      "from": "src/main.ts#run@4:10",
+      "to": "src/math.ts#PRECISION@1:14",
+      "kind": "read",
+      "moduleSpecifier": "./math",
+      "location": {"file":"src/main.ts","start":{"line":7,"column":34},"end":{"line":7,"column":43}}
+    }
+  ]
+}

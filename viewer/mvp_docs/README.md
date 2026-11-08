@@ -31,6 +31,7 @@ From `MVP_scope.md`, section 1.1:
 | `07_delivery.md` | Traceability level, deliverables, time box, the findings note |
 | `99_findings.md` | Review of this folder before building: gaps, conflicts with the working files, values inferred from the test source, what the test plan is missing |
 | `test_plan/` | The basic examined source as a runnable app (`test_plan/README.md`) |
+| `proposed_schema/` | The reference JSON schema, built alongside the MVP (`DATA-20`): every step's inputs and outputs, every key name with its one meaning (`DATA-19`), and the parameters and keys the programs know by name. The current file is the newest (2026-11-08, `011800`); the earlier one is kept, marked superseded. For reference only; nothing validates against it |
 
 ## Requirement IDs
 

@@ -1,0 +1,46 @@
+{
+  "tool": "file-symbols",
+  "toolVersion": "0.3.0",
+  "status": "succeeded",
+  "mode": "real",
+  "started": "2026-11-08T05:57:14.801Z",
+  "finished": "2026-11-08T05:57:14.836Z",
+  "durationMs": 35,
+  "parameterSource": "stdin",
+  "nonOutputParameterSources": {
+    "store_path": "input"
+  },
+  "effectiveParameters": {
+    "file_id": "src/math.ts",
+    "file_path": "/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source/src/math.ts",
+    "source_root": "/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source",
+    "store_path": "/home/zaida/viewer/mvp_docs/zaansouvi-mvp/data/tools/file-symbols"
+  },
+  "read": {
+    "file_id": "src/math.ts",
+    "sourcePath": "/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source/src/math.ts",
+    "sourceBytes": 158,
+    "sourceSha256": "655e180f13e3261229972b563332fcccef73d0fd24fecc0012db3d465c5b8e28"
+  },
+  "outputPaths": [
+    "/home/zaida/viewer/mvp_docs/zaansouvi-mvp/data/tools/file-symbols/output/src__math.ts.json"
+  ],
+  "outputChange": "unchanged",
+  "counts": {
+    "symbolCount": 4,
+    "symbolCountByKind": {
+      "variable": 2,
+      "function": 1,
+      "parameter": 1
+    },
+    "referenceCount": 9,
+    "referenceCountByKind": {
+      "declaration": 4,
+      "read": 5
+    },
+    "unresolvedReferenceCount": 1,
+    "diagnosticCount": 0,
+    "lineCount": 7
+  },
+  "logPath": "/home/zaida/viewer/mvp_docs/zaansouvi-mvp/data/tools/file-symbols/logs/2026-11-08T05-57-14.801Z_src__math.ts.log"
+}

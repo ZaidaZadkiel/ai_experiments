@@ -1,0 +1,4 @@
+#!/bin/sh
+# Launcher for the stand-in tool stub-crash (tests/fixtures/tools/stub.mjs).
+dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+STUB_NAME=stub-crash exec node "$dir/../stub.mjs" "$@"

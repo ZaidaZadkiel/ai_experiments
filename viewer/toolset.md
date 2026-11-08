@@ -72,29 +72,35 @@ Traceability to the source at every step, made as easy as is reasonable, is a pr
 
 ### 4.2 Running
 - **[Decided]** Each tool is **incremental**: it updates its outputs only when its inputs changed (section 5.3).
-- **[Decided]** Tools run **one at a time**. No locking or concurrent writes are needed.
+- **[Decided]** Tools run **one at a time**. No locking or concurrent writes are needed. The Runner takes a lock per run, so two runs never overlap; a tool run by hand is the user's action (`runner.md`, section 4).
 - **[Decided]** Each codebase's data lives in its **own store**, so several codebases never overwrite each other (section 5.4).
 - **[Decided]** **Each tool writes only to its own store.** Only the Runner writes to the database, based on the tools' outputs (5.2 and `runner.md`).
-- **[Decided]** **Tools never read the database.** A tool reads only its JSON input, its `last_run.json`, and its internal state derived from the examined source. Reading the database is the Runner's responsibility. (This replaces the earlier "reads from the database in the general case".)
+- **[Decided]** **The Runner checks a tool only through its input and its output**: the JSON it builds, the dry-run lines, the exit code, the result and the output's shape. It doesn't watch or limit what a tool reads or does.
+- **[Decided]** **Tools never read the database.** A tool reads only its JSON input, its `last_run.json`, its internal state derived from the examined source and, if its `--info` says it reads files, the one file it is given. Reading the database is the Runner's responsibility. **A tool that needs to read more than one file, or the database, is a design error in that tool**, not something the Runner catches. (This replaces the earlier "reads from the database in the general case".)
 - **[Decided]** **Only tools whose `--info` states that they read files or source read them.** Every other tool works from its JSON alone.
 - **[Decided]** A tool that reads files **can have an optional parameter giving the actual path of the file it reads**.
 - **[Decided]** **A tool reads only one file per invocation.** To cover many files, the Runner invokes the tool once per file.
+- **[Decided]** **`source_root` is a known parameter, and declaring it marks a tool that reads files** (decided by the user on 2026-11-08). Every file path such a tool uses depends on it: it is resolved against `source_root`, and a tool can't read a file without it in its input.
+- **[Decided]** **A tool that doesn't need file information**, one that never checks details of a real file, **makes that known in `--info`** (decided by the user on 2026-11-08), and doesn't take `source_root`.
+- **[Proposed]** In `--info`, a tool that reads files states `readsFiles` with the file patterns it reads, and declares `source_root` as required; a tool that reads none states `"readsFiles": false`. The Runner refuses to start a tool whose `--info` says neither, or contradicts itself, and sends `source_root` only to tools that read files.
+- **[Proposed]** A file path outside `source_root` is a run error for the tool that was given it.
 - **[Proposed]** So the Runner, which isn't a tool, is the only program that reads many files in one go, for example when it lists the files (`runner.md`, section 1.1). Whether one process per file is fast enough on large codebases is a feasibility question (`TS-31`).
 - **[Decided]** **Temporary files are used only for staging and for tool runs that need internal intermediate data to produce their outputs.** A JSON parameters file passed with `--json` may also sit in temp (4.5).
-- **[Proposed]** Intermediate data lives only for the run that needs it and is removed afterwards. Internal state kept between runs, such as caches, stays in the tool's own store (`data_topology.md`, section 4).
+- **[Proposed]** A tool's intermediate data lives only for the run that needs it and is removed afterwards. Internal state kept between runs, such as caches, stays in the tool's own store (`data_topology.md`, section 4). The Runner's cache of a run's input, result and intermediate data is separate and the Runner's alone (`runner.md`, section 10.2).
 - **[Decided]** **When run by the Runner, a tool receives its parameters as a JSON structure** with well-defined parameters: database values, file locations and all other relevant information (`runner.md`, section 1.1). How a tool gets its parameters is in 4.5.
 - **[Decided]** **Each tool is unaware of the other tools.** It doesn't know which other tools exist or the order they run in. Working out the order is the Runner's job alone (`runner.md`).
-- **[Decided]** **All tools use their JSON as their source of truth.** They assume the data in it is current and correct, make only a low effort to verify it where necessary, and **fail if they find incongruences**. (This replaces the earlier "assumes the data in the stores is current and valid".)
+- **[Decided]** **Each tool is responsible for producing correct output.** It checks its JSON and its own result as far as it needs to, and **fails if it finds incongruences** rather than output something wrong. (This replaces the earlier "All tools use their JSON as their source of truth. They assume the data in it is current and correct, make only a low effort to verify it where necessary".)
 - **[Decided]** **Every tool has an optional `--log` option**, to redirect the log to another program or file (4.5). Every tool always writes its own log and its result in its own store.
 - **[Proposed]** A tool knows the data it reads only by name (`data_topology.md`), never by the tool that produces it. Where this file says a tool "reads the symbol tool's output", the tool itself only knows it reads symbols.
 - **[Decided]** **Only malformed or missing parameters are invocation errors.** **Incongruences are run errors, even when they are found while the tool checks its parameters.** (This replaces the earlier proposal that incongruences found during the parameter check are invocation errors.)
-- **[Proposed]** The low-effort check covers what the tool needs in order not to produce wrong output: the **shape** of its parameters first, then their **values** (see "Data shape and data value" in 4.4). Whether data is older than the source is not the tool's concern; the Runner decides what is current before it starts a tool.
+- **[Proposed]** The low-effort check covers what the tool needs in order not to produce wrong output: the **shape** of its parameters first, then their **values** (see "Data shape and data value" in 4.4). The Runner decides what is current before it starts a tool (`runner.md`), and a tool may check it too, since it is responsible for its output.
 - **[Proposed]** The result a tool writes in its own store records at least: success or failure, the failure message, when it ran, the tool version and what it read. The Runner's log, its configuration listing and the Viewer read these results; the tool never reports to them directly.
 - **[Proposed]** A user running a tool by hand gets the same log and output the Runner reads (4.5).
 
 ### 4.3 Dry run
 - **[Decided]** Every tool has a **dry-run option**. A dry run does the tool's work but never changes the work data: no tool outputs, no codebase database, no Viewer cache. Results go to standard output.
 - **[Decided]** **A dry run never writes a record to the file system or the database.** It can print all its data, including its result, to standard output, where the Runner reads it.
+- **[Decided]** **These dry-run rules bind the tools only, not the Runner or the Viewer** (decided by the user on 2026-11-07). "No codebase database, no Viewer cache" above means a tool's dry run changes neither. The Runner and the Viewer may write whatever is useful during a dry run, including the database, their logs and their own data; the Runner may keep data of its own in the database and read it back to build a tool's JSON (`runner.md`, sections 5 and 9). What a dry run never changes is the work data, since no tool writes anything.
 - **[Decided]** A dry run uses no temporary files: temporary files are only for staging and for tools' intermediate data in real runs (4.2). (This replaces the earlier "or to temporary files when that's needed".)
 - **[Proposed]** When a dry run's log goes to standard output along with its data, the two are told apart the same way as in the Runner's log: data entries, and comment lines that start with a marker and carry a type or label (`runner.md`, section 7).
 - **[Decided]** A dry run has three roles:
@@ -161,6 +167,11 @@ Traceability to the source at every step, made as easy as is reasonable, is a pr
 - **[Decided]** **Everything read as JSON is the tool's invocation parameters, wherever it comes from.** The tool makes no distinction in how it receives its parameters (command line, `--json`, `--stdin` or `last_run.json`) and deals only with the actual parameters.
 - **[Proposed]** So data another tool produced, handed over with `--json <path>` into that tool's store, is parameters too. "Data" in the error rules (4.4, 4.6) then means only what the tool reads after its parameters: the examined source files and its internal state.
 - **[Decided]** **`last_run.json` is updated on every run that is not a dry run, including failed runs.** Running the tool again with no changed data then fails again in the same way.
+- **[Decided]** **The `last_run.json` rules above apply to every parameter that affects the output** (decided by the user on 2026-11-07).
+- **[Decided]** **`last_run.json` is only ever used as a complete input**, never to fill in a single missing parameter (decided by the user on 2026-11-07).
+- **[Decided]** **A parameter that doesn't affect the output may be optional in the input** (decided by the user on 2026-11-07). If it is missing, the tool uses its default, or works the value out from the input with its own capabilities, without affecting the Runner; if it can do neither, it fails early. **The same input always produces the same output.** (This replaces a decision earlier the same day that let a tool take a missing optional parameter from a matching `last_run.json`.)
+- **[Decided]** **Where a tool writes its store is such a parameter** (decided by the user on 2026-11-07): it doesn't affect the output. It comes from the command line or the JSON input, or from `last_run.json` when that is the whole input; if the input lacks it, the tool writes its store in its own program folder, next to its program and `last_run.json` (`project_organization.md`, section 5).
+- **[Proposed]** `--info` says, for each parameter, whether it affects the output, so a reader and the Runner know which parameters may be optional.
 - **[Decided]** **If both `--json` and `--stdin` are given, the tool throws an error** saying the caller made a malformed invocation.
 - **[Decided]** **An invocation that itself throws an error updates nothing.** `last_run.json` is updated only after the tool has validated that the run can begin: that it can work with its inputs and process the data. A failure after that point updates it.
 - **[Decided]** **A tool that is unable to begin work does not log.** This covers a malformed invocation, and being invoked with no parameters and no usable `last_run.json`.
@@ -268,12 +279,12 @@ Not tool errors: **outputs older than the source** are caught by the Runner and 
 #### The codebase database
 - **[Decided]** One SQLite database per codebase holds **global facts that rarely change** and don't depend on what any single tool needs:
   - environment variables: names, where each is defined and where it is read
-  - the file inventory: paths, kinds and content hashes, which drive change detection
+  - the file list: paths and content hashes, provided by the Runner, which drive change detection; and each file's kind, from the file inventory tool (6.2)
   - git facts, only when the git step found a repository
-  - which tool outputs exist, their schema versions and the file-inventory state they were built from
+  - which tool outputs exist, their schema versions and the state of the file list they were built from
 - **[Decided]** **Only the Runner reads the database.** Tools never read it; the facts they need reach them as parameters built by the Runner (4.2, 4.5). (This replaces the earlier "every tool may read it".)
 - **[Decided]** **Only the Runner writes to the database**, based on the outputs of the tools. Tools never write to it. (This replaces the earlier rule that each step wrote its own part.)
-- **[Proposed]** The facts still belong to the tool that produces them: the file inventory produces the file facts, the git step the git facts, and so on. The Runner loads each tool's output into that tool's part of the database after the tool succeeds (`runner.md`, section 5).
+- **[Proposed]** The facts still belong to the tool that produces them: the file inventory produces the file kinds, the git step the git facts, and so on. The file list itself is data no tool produces, provided by the Runner (`runner.md`, section 4). The Runner loads each tool's output into that tool's part of the database after the tool succeeds (`runner.md`, section 5).
 - **[Proposed]** The record of which tool outputs exist, their schema versions and what they were built from is written by the Runner too.
 - **[Decided]** The `--human` format configuration is not here: it is global configuration, in the configuration database (above).
 - **[Decided]** The codebase database holds **all analysis details** of its codebase, and none of them are shared with other analyses. How this fits the next rule is `TS-32`.
@@ -281,10 +292,10 @@ Not tool errors: **outputs older than the source** are caught by the Runner and 
 - **To define:** where the line falls between global and tool data, what the database holds and how its structure is versioned, which step fills which part, how it stays stable between runs and in sync with the source, and whether a text export is needed so the global facts can be read and compared.
 
 ### 5.3 Incremental runs
-- **[Decided]** The first run on a codebase, with nothing saved yet, produces every output. Later runs change only the files and database rows affected by changes in the source. When nothing changed, a run writes nothing.
+- **[Decided]** The first run on a codebase, with nothing saved yet, produces every output. Later runs change only the files and database rows affected by changes in the source. When nothing changed, a run writes nothing. This covers the work data: the Runner may still write the database whenever it's useful, for example its log and run record (decided by the user on 2026-11-07; `runner.md`, section 5).
 - **[Decided]** **Tools write only current data.** A run overwrites a tool's work data with the current result. Tools keep no earlier versions of their outputs.
 - **[Decided]** Each run treats the source as **one consistent snapshot**: all outputs from a run describe the same state of the code, never a mix of old and new.
-- **[Decided]** Change detection is based on file contents recorded in the file inventory, plus config changes. It works without git.
+- **[Decided]** Change detection is based on file contents recorded in the file list, plus config changes. It works without git. (The file list, with its content hashes, is now provided by the Runner, decided by the user on 2026-11-07; `runner.md`, section 4.)
 - **To define:** how a change spreads to the tools that read the affected outputs, how leftovers such as records for deleted files are cleaned up, and how a run stays one snapshot if it is interrupted part way.
 
 ### 5.4 Isolation between codebases
@@ -292,7 +303,7 @@ Not tool errors: **outputs older than the source** are caught by the Runner and 
 - **[Decided]** The toolset can examine many codebases without one overwriting another's data. Each codebase's internal files and codebase database live in their own folder, named from an **identity key**.
 - **[Decided]** The key identifies the **codebase, not a commit**. Each codebase has one store, updated incrementally to its latest state, and the current ref is recorded inside it when known.
 - **[Proposed]** The key comes from an explicit project ID in config, the project name, or a hash of identifying details such as root path and project name. A remote URL found by the git step can strengthen it.
-- **To define:** the exact key; where the stores live (inside the examined project, under an output root, or in a user cache folder) and how they relate to the final outputs; how stores of codebases no longer examined are listed and cleaned up; how forks, clones in different paths and monorepo sub-projects are told apart.
+- **To define:** the exact key; where the stores live (inside the examined project, under an output root, or in a user cache folder; how a tool learns its store is decided in 4.5) and how they relate to the final outputs; how stores of codebases no longer examined are listed and cleaned up; how forks, clones in different paths and monorepo sub-projects are told apart.
 
 ### 5.5 Shared library (not a tool)
 - **[Decided]** Tools may run on any stack (`runner.md`, section 1.0), so a code library can't be shared by every tool. What all tools must share is the **contract**: the parameter, `--info`, log, `last_run.json` and output formats, defined independently of any language.
@@ -311,11 +322,13 @@ Full detail in `runner.md`.
 - **[Decided]** Its run process: read the configuration, find the examined source, read all files and update the file list, decide the tools and their order, then for each tool send JSON parameters, read its output, possibly run it several times (including a dry run), and after the real run update the database before the next tool (`runner.md`, section 1.1).
 
 ### 6.2 File inventory
-- **[Decided]** Records every file in the examined project: path, kind and content hash. It writes them to its own store, and the Runner loads them into the codebase database (5.2). Change detection is based on this record.
-- **[Decided]** The Runner's run process reads all files and updates the file list itself (`runner.md`, section 1.1). Whether this step stays a separate tool or becomes part of the Runner is `RN-13`.
-- **[Decided]** Works without git. Ignore files and code-owner files are read as plain files, by this step or whichever step needs them.
-- **[Proposed]** Uses ignore files and include/exclude settings to decide which files belong to the project.
-- **[Proposed]** Runs first, because every other step depends on it.
+- **[Decided]** **The file list is the Runner's**: every file in the examined project, with its path and content hash, is data no tool produces, so the Runner provides it (`runner.md`, sections 1.1 and 4). Change detection is based on it (5.3). (This replaces the earlier "the file inventory records every file: path, kind and content hash"; `RN-13`.)
+- **[Decided]** **The file inventory stays a tool, and determines what kind of file each input is**, using the tool's own heuristics: for example whether a file in the examined code is code, SQL or configuration (decided by the user on 2026-11-07).
+- **[Decided]** **Its kinds improve the details the Runner and the Viewer have** (decided by the user on 2026-11-07). It writes them to its own store, and the Runner loads them into the codebase database (5.2).
+- **[Decided]** Works without git. Ignore files and code-owner files are read as plain files, by whichever program needs them.
+- **[Proposed]** Like every tool that reads files, it reads one file per invocation (4.2), so the Runner invokes it once per file in the list.
+- **[Proposed]** It runs right after the Runner has listed the files, before the tools that read files, since the kinds can help the Runner match files to the tools that read them, beyond the file patterns each tool states in `--info`, and help the Viewer show and group files by kind.
+- **[Proposed]** The Runner applies ignore files and include/exclude settings when it builds the file list, since deciding which files belong to the project is part of listing them.
 
 ### 6.3 Git step (optional)
 - **[Decided]** The only step that deals with git. No other tool touches git. It runs only when a repository is present, and missing git is never an error.
@@ -324,7 +337,7 @@ Full detail in `runner.md`.
   - **Link anchors:** the current commit, the remote and its host type for the link format, the repository root, and the examined project's sub-path, so links use repository-relative paths.
   - **Working-tree state:** which files have uncommitted changes or are untracked, which drives the pinned-link rule (section 3). Unusual states, such as a rebase or merge in progress, are reported as warnings.
   - **Submodules:** each one's path, remote and commit, for correct links. The module views may show them as boundaries.
-  - **Files that are part of the project:** which files git tracks, and which it marks as generated or vendored, to refine the file inventory.
+  - **Files that are part of the project:** which files git tracks, and which it marks as generated or vendored, to refine the file list and the file kinds.
   - **Capability flags:** for example whether git, a remote or uncommitted changes are present. Other tools check these flags and use git facts only when they're there.
 - **To define:** what is lost without git (mainly links pinned to a commit) and the fallbacks (a ref from config, local or editor links), and which wins when git facts and config disagree, for example on the ref or URL template.
 
@@ -356,7 +369,7 @@ The Viewer's level 1 and level 2 (`viewer.md`, section 4.9.1) need facts about t
   - **Project configuration:** the project's manifest and configuration files, versions, and run configurations such as scripts.
   - **Known outputs:** what the project produces, for example a command-line tool, a website or a library, and where that is declared.
   - **Optional details:** small detectors that report whether something is present, for example AI assistant configuration, a known editor configuration, or git configuration (from the git step's capability flags).
-- **[Proposed]** File count and the directory structure come from the file inventory. No new step is needed for them.
+- **[Proposed]** File count and the directory structure come from the Runner's file list, and the mix of file kinds from the file inventory (6.2). No new step is needed for them.
 - **[Proposed]** Every fact has the same shape: category, name, value, and where it was found. A new detector adds facts without any change to the Viewer, which is what makes the overview extensible.
 - **To define:** whether these facts live in the codebase database, since they are project-wide and rarely change, or in each step's own files.
 
@@ -382,7 +395,8 @@ The Viewer's level 1 and level 2 (`viewer.md`, section 4.9.1) need facts about t
 
 ```mermaid
 flowchart LR
-  FI["File inventory"] --> G["Git step<br/>(optional)"]
+  FL["File list<br/>(Runner, not a tool)"] --> FI["File inventory<br/>(file kinds)"]
+  FI --> G["Git step<br/>(optional)"]
   FI --> ENV["Environment<br/>variables"]
   FI --> SYM["Symbols"]
   ENV --> SYM
@@ -407,7 +421,8 @@ flowchart LR
 
 | Data | Owner | Kept in |
 |---|---|---|
-| File list, kinds, content hashes | File inventory | Its own store; loaded into the codebase database by the Runner |
+| File list and content hashes | Runner | Codebase database (`runner.md`, section 4) |
+| File kinds (code, SQL, configuration and the like) | File inventory | Its own store; loaded into the codebase database by the Runner |
 | Git facts and capability flags | Git step | Its own store; loaded into the codebase database by the Runner |
 | Environment variables (names and locations) | Environment variables step | Its own store; loaded into the codebase database by the Runner |
 | Which outputs exist, and their versions | Runner | Codebase database |
@@ -465,6 +480,7 @@ At the level of concepts, the analysis must address:
 - `TS-33` **The configuration database** *(partly answered: shared by the Runner and the Viewer's backend, which may edit it directly; 5.2)*: which settings does it hold: only the Runner's output preferences, or all personal global settings (4.1), replacing a settings file? Where does it sit in the precedence order (`TS-16`)?
 - `TS-34` **Changing global settings from the command line** *(pending; not in the MVP's scope)*: how is the process defined for changing ZaAnSouVi's global settings, in the configuration database, from the command line? For example a Runner parameter, a separate small program, or none (Viewer only). It must keep the Runner and the Viewer in sync, respect the structure version, and show what will change, like the Viewer's confirmation dialog.
 - `TS-35` **Shared library for tools on any stack:** tools may run on any stack, but 5.5 decided a common library used by every tool. Is the shared part only the language-neutral contract (formats for parameters, `--info`, logs, `last_run.json`, outputs), with an optional TypeScript library implementing it? How is a tool on another stack checked against the contract?
+- `TS-36` ~~**One file per invocation, if tools may read anything**~~: resolved. Tools don't read anything they like: a tool reads one file per invocation, and never the database. A tool that needs more is a design error in that tool. The Runner doesn't check it; it checks a tool only through its input and output (4.2).
 
 ## 11. Deferred to the final technology section
 

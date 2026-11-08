@@ -1,0 +1,5 @@
+#!/bin/sh
+# Launcher for cross-file-links (M2): the "tool_name.bin" of toolset.md 4.5.
+# Arguments are passed through unchanged, never rebuilt into a command string.
+dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+exec node --disable-warning=ExperimentalWarning "$dir/src/cross-file-links.ts" "$@"

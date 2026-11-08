@@ -29,24 +29,30 @@ sequenceDiagram
   R->>R: list files, hash them
   R->>DB: write project_files
   loop each tool in the ordering (M1 once per file)
-    R->>R: build JSON from the database and earlier outputs
-    R->>T: --dry-run --stdin (JSON)
-    T-->>R: go / no-go on standard output
-    alt no-go
-      R->>R: log, stop the run
-    else go
-      R->>T: --stdin (same JSON)
-      T->>T: write output, result, log, last_run.json
-      T-->>R: exit code
-      R->>R: read the tool's result, log and output
-      R->>DB: write project_outputs (and project_ facts)
+    R->>R: check the shape of the earlier tools' saved outputs
+    R->>R: build the tool's JSON from them, and its input fingerprint
+    R->>DB: read the fingerprint of the tool's last successful run
+    alt output up to date
+      R->>R: skip the tool (tool_skipped)
+    else refresh needed
+      R->>T: --dry-run --stdin (JSON)
+      T-->>R: go / no-go on standard output
+      alt no-go
+        R->>R: log, stop the run
+      else go
+        R->>T: --stdin (same JSON)
+        T->>T: write output, result, log, last_run.json
+        T-->>R: exit code
+        R->>R: read the tool's result, log and output
+        R->>DB: write project_outputs, project_tool_runs (with the fingerprint)
+      end
     end
   end
   R-->>U: Viewer-mode events on standard output
 ```
 
 - **ARCH-04** The order is M1 (once per file), then M2, then M3. It comes from the ordering in the database, derived from `--info` (`02_data_contracts.md`). M2 and M3 don't depend on each other; ties break by tool name.
-- **ARCH-05** Every run starts from scratch: no incremental runs (`MVP_scope.md`, section 6).
+- **ARCH-05** A run refreshes only the outputs that need it (`RUN-17` to `RUN-22`). With nothing saved, every tool runs and every output is produced; with nothing changed, no tool runs. This follows `toolset.md`, section 5.3 [Decided], and departs from `MVP_scope.md`, section 6, which leaves incremental runs out of the MVP (`FND-36`).
 
 ## Layout on disk
 
@@ -89,6 +95,7 @@ zaansouvi-mvp/
         logs/<timestamp>.log
     runner/
       logs/<timestamp>.log
+      cache.json                    the Runner's cache: what --read-cache prints (RUN-27)
   test-source/                      the basic examined source (06_test_plan.md)
   expected/                         the expected result, written by hand
 ```
@@ -101,7 +108,7 @@ zaansouvi-mvp/
 ## The single database
 
 - **ARCH-10** One SQLite file holds both configuration and codebase data (`MVP_scope.md`, section 4). Tables start with `config_` or `project_`. The tables are listed in `02_data_contracts.md`.
-- **ARCH-11** The Runner writes all tables. The Viewer backend reads them directly and writes nothing in the MVP (no config manager).
+- **ARCH-11** The Runner writes all tables. In the MVP the Viewer backend reads none of them: it reads only the Runner's cache, through `--read-cache` (`RUN-27`), and writes nothing (no config manager).
 
 ## Technology choices for the MVP
 
@@ -111,7 +118,7 @@ These satisfy "use a library or built-in when one does the job". Versions are pi
 |---|---|---|
 | Runtime for the Runner, the Viewer backend and the tools | Node.js, with TypeScript | Decided stack; one runtime for everything |
 | Parsing TypeScript in M1 | The TypeScript compiler's own parser (`typescript` package, `ts.createSourceFile`) | Exact syntax tree with positions, no type checking needed, one file at a time (`MVP-7`) |
-| Database | SQLite through Node's built-in `node:sqlite` if stable in the Node version used, otherwise the `better-sqlite3` package | Single file, no server |
+| Database | SQLite through Node's built-in `node:sqlite` (still experimental in Node 22; its warning hidden as in M1's launcher). `better-sqlite3` only if `node:sqlite` fails (accepted by the user for the MVP on 2026-11-07) | Single file, no server, nothing to install |
 | Starting tools | Node's `child_process.spawn` with an argument array | No shell, so no injection from file names |
 | HTTP server | Node's built-in `http` module | Least effort; a handful of endpoints |
 | Graph in the browser | Cytoscape.js | Supports compound nodes (nodes inside nodes) and has built-in layouts |

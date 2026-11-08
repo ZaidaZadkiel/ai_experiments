@@ -1,0 +1,46 @@
+Current work (2026-11-08)
+
+Last discussion: what M3 (symbol-scope) shows, open question MVP-4.
+
+The [Decided] M3 example says a variable is shown "as belonging to that function's
+scope, together with the symbols it is used with". The question was who shows the
+second half: M3 itself, the Viewer, or nobody yet.
+
+Options weighed:
+  A  lexical scope only, no uses
+  B  M3 also reads references and outputs scope-to-symbol uses
+  C  lexical scope in M3; the Viewer lifts existing reference and link edges up to scopes
+  D  nested and block scopes (needs M1 changes)
+
+Decided: C with C1. M3 reads symbols only and records the file scope plus one scope
+per top-level function; each scope names its owner (the function symbol, or the file).
+The Viewer lifts every edge to the nearest visible container, starting from the scope
+its source owns, so a scope shows the symbols it is used with. D is kept for after the
+MVP (MVP_scope.md, section 10.3).
+Recorded in: MVP_scope.md (MVP-4), mvp_docs/04_tools.md (TOOL-33),
+mvp_docs/05_viewer.md (VIEW-13), mvp_docs/99_findings.md (FND-55).
+
+Next to decide, before writing M3 (FND-55):
+  - where a file scope's location comes from (FND-11); this blocks M3, because the
+    Runner requires a location on every node. Suggested: line 1, column 1 to the end
+    of the file's last symbol.
+  - where a scope ID starts (FND-12). Suggested: the declaration start.
+  - whether M3's output keeps counts (M2's has none).
+  - the order of scopes and memberships, and M3's error cases.
+  - M3's tests.
+
+Waiting on the user's yes (changes to working files, not made yet):
+  - The principle "each tool depends on as little as possible from other tools'
+    outputs", stated by the user for M2. Today it is only in mvp_docs (FND-46,
+    DATA-13). Proposed: record it in toolset.md, with the two MVP decisions that
+    follow from it:
+      - the Runner sends a tool only the records of the data it asks for
+        (mvp_docs RUN-19);
+      - tools run once record nothing about their inputs; provenance is the
+        Runner's (mvp_docs DATA-22).
+    Neither is in runner.md or toolset.md yet.
+  - The fixed file order, sorted by file ID (mvp_docs RUN-28): add to runner.md,
+    section 2 (run order), for the product too.
+  - security.md, section 7, says a damaged last_run.json makes a tool fall back to
+    defaults; that contradicts the decided E3 rule in toolset.md, sections 4.5 and
+    4.6 (no fallback, invocation error). Fix the security.md line (FND-20).

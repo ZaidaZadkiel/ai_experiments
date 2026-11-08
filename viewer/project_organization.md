@@ -91,7 +91,7 @@ Related files: `toolset.md` (shared data, isolation between codebases), `runner.
 | `stores/<id>/viewer/` | Viewer | Viewer only |
 | the examined project | nobody | every tool, Viewer |
 
-- **[Decided]** Each tool writes only to its own store. Tools never read the database; they read only their JSON input, `last_run.json` and their internal state. Only the Runner reads and writes the database (`toolset.md`, sections 4.2 and 5.2).
+- **[Decided]** Each tool writes only to its own store. Tools never read the database; they read only their JSON input, `last_run.json` and their internal state. Only the Runner reads and writes the database (`toolset.md`, sections 4.2 and 5.2). These are design rules: the Runner checks a tool only through its input and output.
 - **[Proposed]** **Tools stay unaware of each other** (`toolset.md`, section 4.2). A tool reads its JSON parameters, which the Runner builds from the database, its `last_run.json` and its own work space. It doesn't read `config/` either (`TS-29`). It finds data **by name** through the catalog in `codebase.sqlite`, which the Runner keeps: for each data name, where it is, which tool produced it and its version.
 - **[Proposed]** Outputs sit in folders named after the data they hold, inside the producing tool's store, matching the decision that each tool's output is "named after what it produces" (`toolset.md`, section 4.1).
 - **[Proposed]** Every run, from the Viewer or the command line, leaves the same trace: tool results, the Runner's per-configuration facts and timestamped logs. This matches "all invocations are equal" (`runner.md`, section 1).
@@ -100,7 +100,8 @@ Related files: `toolset.md` (shared data, isolation between codebases), `runner.
 
 - **[Proposed]** By default, each program works out the root from its own location under `app/`, so a copied or portable root works as it is.
 - **[Proposed]** A common `--root` option overrides it. It would join the common command-line options (`toolset.md`, section 4.1), and appear in every logged command line.
-- **[Proposed]** A tool run by hand finds the store the same way, so it never depends on the Runner to locate it.
+- **[Decided]** **A tool finds its store from a parameter** (decided by the user on 2026-11-07; `toolset.md`, section 4.5): from the command line or the JSON input (or `last_run.json` when that is the whole input), else its own program folder. A tool run by hand therefore never depends on the Runner to locate its store. (This replaces the proposal that a tool run by hand works out its store from the root.)
+- **[Proposed]** The Runner always passes the store, so stores land in the layout above, and the program-folder default is only for runs by hand. That default is a second exception to "programs are kept apart from data" (section 2), besides `last_run.json`.
 
 ## 6. Paths and moving the root
 
@@ -116,7 +117,7 @@ Related files: `toolset.md` (shared data, isolation between codebases), `runner.
 
 ## 8. System temp and staging
 
-- **[Decided]** Temporary files are used only for **staging** and for **tool runs that need internal intermediate data** to produce their outputs (`toolset.md`, section 4.2). A dry run writes nothing to the file system.
+- **[Decided]** Temporary files are used only for **staging** and for **tool runs that need internal intermediate data** to produce their outputs (`toolset.md`, section 4.2). A tool's dry run writes nothing to the file system; the Runner and the Viewer may write during a dry run (`toolset.md`, section 4.3).
 - **[Decided]** A JSON parameters file passed with `--json` may sit in temp, or at a specific path such as another tool's store (`toolset.md`, section 4.5).
 - **[Proposed]** The Runner builds its JSON in memory ([Decided], `runner.md`, section 1.1) and passes it with `--stdin`, so it writes no parameter files to temp. Parameter files in temp are for other callers.
 - **[Proposed]** Temporary files go to system temp, outside every store, and are removed when the run ends, whether it succeeded or failed.

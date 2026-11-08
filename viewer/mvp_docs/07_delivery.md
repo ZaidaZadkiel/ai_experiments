@@ -11,9 +11,10 @@ Answers `MVP-15` for the MVP.
 
 - **DEL-03** The code: Runner, Viewer, shared library, tool helper, M1, M2, M3, in one repository, with a short readme on how to install and run it.
 - **DEL-04** The test source and the expected result (`06_test_plan.md`).
-- **DEL-05** The test script for TEST-01 and TEST-02, and a record of B1–B10 and C1–C2 with their actual results.
+- **DEL-05** The test script for TEST-01 to TEST-04, and a record of B1–B10 and C1–C2 with their actual results.
 - **DEL-06** The human review answers (`06_test_plan.md`).
 - **DEL-07** The findings note (below).
+- **DEL-10** The reference JSON schema, built alongside the code and current with it (`DATA-20`).
 
 ## Time box
 

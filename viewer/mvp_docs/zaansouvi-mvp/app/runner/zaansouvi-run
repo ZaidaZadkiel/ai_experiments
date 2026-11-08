@@ -1,0 +1,4 @@
+#!/bin/sh
+# Launcher for the ZaAnSouVi MVP Runner. Arguments are passed through unchanged.
+dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+exec node --disable-warning=ExperimentalWarning "$dir/src/runner.ts" "$@"

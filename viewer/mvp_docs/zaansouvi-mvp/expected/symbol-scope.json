@@ -1,0 +1,52 @@
+{
+  "about": "Proposed expected result (2026-11-07), generated: M1's data from its real output (file-symbols 0.5.0), M2 and M3 derived by TOOL-20, TOOL-30 and TOOL-31 under the assumptions in expected/README.md.",
+  "tool": "symbol-scope",
+  "toolVersion": "0.1.0",
+  "formatVersion": 1,
+  "dataNames": {"code.scope":"scopes","code.membership":"membership"},
+  "counts": {"scopeCount":6,"membershipCount":13},
+  "scopes": [
+    {"id":"src/counter.ts#scope@file","kind":"file","name":"src/counter.ts","owner":"src/counter.ts","parent":"src/counter.ts"},
+    {
+      "id": "src/counter.ts#scope@5:1",
+      "kind": "function",
+      "name": "add",
+      "owner": "src/counter.ts#add@5:17",
+      "location": {"file":"src/counter.ts","start":{"line":5,"column":1},"end":{"line":8,"column":2}},
+      "parent": "src/counter.ts"
+    },
+    {"id":"src/main.ts#scope@file","kind":"file","name":"src/main.ts","owner":"src/main.ts","parent":"src/main.ts"},
+    {
+      "id": "src/main.ts#scope@4:1",
+      "kind": "function",
+      "name": "run",
+      "owner": "src/main.ts#run@4:10",
+      "location": {"file":"src/main.ts","start":{"line":4,"column":1},"end":{"line":10,"column":2}},
+      "parent": "src/main.ts"
+    },
+    {"id":"src/math.ts#scope@file","kind":"file","name":"src/math.ts","owner":"src/math.ts","parent":"src/math.ts"},
+    {
+      "id": "src/math.ts#scope@3:1",
+      "kind": "function",
+      "name": "round",
+      "owner": "src/math.ts#round@3:17",
+      "location": {"file":"src/math.ts","start":{"line":3,"column":1},"end":{"line":6,"column":2}},
+      "parent": "src/math.ts"
+    }
+  ],
+  "membership": [
+    {"child":"src/counter.ts#round@1:10","parent":"src/counter.ts#scope@file"},
+    {"child":"src/counter.ts#total@3:5","parent":"src/counter.ts#scope@file"},
+    {"child":"src/counter.ts#add@5:17","parent":"src/counter.ts#scope@file"},
+    {"child":"src/counter.ts#amount@5:21","parent":"src/counter.ts#scope@5:1"},
+    {"child":"src/main.ts#add@1:10","parent":"src/main.ts#scope@file"},
+    {"child":"src/main.ts#PRECISION@2:10","parent":"src/main.ts#scope@file"},
+    {"child":"src/main.ts#run@4:10","parent":"src/main.ts#scope@file"},
+    {"child":"src/main.ts#first@5:9","parent":"src/main.ts#scope@4:1"},
+    {"child":"src/main.ts#label@7:11","parent":"src/main.ts#scope@4:1"},
+    {"child":"src/math.ts#PRECISION@1:14","parent":"src/math.ts#scope@file"},
+    {"child":"src/math.ts#round@3:17","parent":"src/math.ts#scope@file"},
+    {"child":"src/math.ts#value@3:23","parent":"src/math.ts#scope@3:1"},
+    {"child":"src/math.ts#factor@4:9","parent":"src/math.ts#scope@3:1"}
+  ]
+}

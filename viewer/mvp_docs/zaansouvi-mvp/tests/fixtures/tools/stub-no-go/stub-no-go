@@ -1,0 +1,4 @@
+#!/bin/sh
+# Launcher for the stand-in tool stub-no-go (tests/fixtures/tools/stub.mjs).
+dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+STUB_NAME=stub-no-go exec node "$dir/../stub.mjs" "$@"

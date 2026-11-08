@@ -9,9 +9,21 @@ M1, M2 and M3 as built for the MVP. Data shapes are in `02_data_contracts.md`.
 - **TOOL-03** Parameter check: only **shape** problems are invocation errors (exit 2, nothing written): a required parameter missing, a value of the wrong type, JSON that doesn't parse. **Value** problems are run errors (exit 1, logged).
 - **TOOL-04** Once the parameters pass the check, the tool writes `last_run.json`, then does its work, writing its log as it goes.
 - **TOOL-05** On success it writes its output and `result.json` with `succeeded`. On a run error it writes `result.json` with `failed` and the error, writes no output, and leaves the earlier output as it was. Output is written to a temporary name and renamed at the end, so it is never half-written.
-- **TOOL-06** A dry run does the same work, writes nothing, and prints its findings and a final `go` / `no-go` line to standard output (DATA-17).
+- **TOOL-06** A dry run does the same work and prints its findings and a final `go` / `no-go` line to standard output (DATA-17). It reads what a real run reads (`TOOL-40`), but writes nothing at all: no output, no result, no log, no `last_run.json`, no internal state and no temporary file (`toolset.md`, section 4.3).
 - **TOOL-07** `--log <path>` also copies the log to that file. The log in the tool's data folder is always written.
 - **TOOL-08** Extra values in the JSON are ignored.
+- **TOOL-45** **M1, M2 and M3 implement `TOOL-01` to `TOOL-08`, `TOOL-43` and `DATA-14` to `DATA-17` through the tool helper** in `app/tool-helper/` (accepted by the user for the MVP on 2026-11-08; `ARCH-02`). The helper knows nothing about any specific tool; each tool supplies only its `--info`, its parameter checks and its work. M1 moved onto it in version 0.4.0, at the user's request on 2026-11-08, with no change in behavior (this replaces "M1 stays self-contained").
+- **TOOL-09** **A dry run works only from the input it is given, and says no-go when there is none.** It reads its input exactly as a real run would: M1 reads the source file; M2 and M3 read the earlier outputs in their JSON, which the Runner takes from the saved stores (`RUN-16`). A required input that is present but empty, for example `symbols: []`, is a run error: no-go with `E12` ("lacks what the tool needs"), exit 1, and a message naming the missing data name, for example `code.symbol`. The tool never previews from nothing. A missing source file is `E6`, as in a real run. The same rule holds in a real run, which fails with the same error.
+- **TOOL-40** **What a tool reads:** its JSON, its `last_run.json`, its own store and internal state, and, for M1, the one file it is given. A tool that needs more than one file, or the database, is a design error in that tool (`toolset.md`, section 4.2). It writes only to its own store, and nothing in a dry run (`TOOL-06`). None of this is checked by the Runner (`RUN-24`).
+- **TOOL-41** **Each tool is responsible for producing correct output** (`toolset.md`, section 4.2). It checks its parameters, and its result where it needs to, and fails with a run error rather than write something wrong. The Runner's refresh check (`RUN-17` to `RUN-22`) decides whether to run a tool; it doesn't make the tool's output correct.
+- **TOOL-43** **Parameters that affect the output, and those that don't** (decided by the user on 2026-11-07; `toolset.md`, section 4.5).
+  - Each parameter in `--info` carries `affectsOutput`. Those with `true` follow `TOOL-02` exactly.
+  - Those with `false`, such as `store_path` (`DATA-21`), are optional. If one is missing, the tool uses its default, or works it out from the input by its own means, without affecting the Runner; if it can do neither, it fails early. For `store_path`, the default is the tool's own program folder.
+  - `last_run.json` is only ever a complete input (`TOOL-02`), never a source for one missing parameter.
+  - The tool records, for each one, whether the input gave it or its default applied (`nonOutputParameterSources`: `input` or `default`) in its log and `result.json`.
+  - The output never depends on these parameters.
+- ~~**TOOL-44** **Diagnostics** go under the common data name `diagnostic`.~~ Replaced on 2026-11-08 (option C, accepted by the user for the MVP on 2026-11-08): a tool returns its diagnostics with its work, and the tool helper writes them into `result.json` and onto the dry run's go line (`DATA-14`, `DATA-17`); they never go in an output file or `--info`. M1 does this from version 0.5.0.
+- **TOOL-42** **Agreed key names** (`DATA-19`). Every key a tool writes, in its output, `--info`, `result.json`, `last_run.json` and dry-run lines, has the one meaning agreed for that name, as listed in the reference schema (`DATA-20`). A tool that needs a new meaning uses a new name. It reads the records in its input by those agreed names; it doesn't read another tool's `--info` (`DATA-18`).
 
 ## Error codes
 
@@ -41,9 +53,16 @@ Reads one TypeScript file and lists its symbols and references.
 
 Links each import to the declaration it imports. Reads no files.
 
-- **TOOL-20** For every symbol of kind `import`, resolve `import.from` relative to the importing file: try `<from>.ts`, then `<from>/index.ts`. Find in that file's M1 output an exported symbol named `import.name`. If found, output a link; if not, list it as `unresolved` with the reason.
-- **TOOL-21** Module specifiers that don't start with `.` (packages) are listed as `unresolved` with reason `external`.
-- **TOOL-22** Incongruent parameters are a run error (`E12`): for example a reference whose `symbol` isn't among the file's symbols, or two M1 outputs for the same file.
+- **TOOL-20** M2 works from the symbol records alone (agreed by the user for the MVP on 2026-11-08; `DATA-13`). For every symbol of kind `import`, resolve `import.moduleSpecifier` relative to the importing file, the symbol's `parent`: try `<moduleSpecifier>.ts`, then `<moduleSpecifier>/index.ts`. Among the symbols whose `parent` is that file, find an exported one named `import.importedName`. `no such file` means no symbol of that file is in the input: M2 gets no file list, so a file that declares nothing looks missing, an acceptable failure. If found, output a link; if not, output a link with `to: null` and the `reason`: `no such file` or `not exported` (agreed by the user for the MVP on 2026-11-07, FND-42).
+- **TOOL-21** Module specifiers that don't start with `.` (packages) give a link with `to: null` and reason `external`.
+- **TOOL-24** **M2's remaining rules** (accepted by the user for the MVP on 2026-11-08):
+  - default and namespace imports (`importedName` `"default"` or `"*"`) give a link with `to: null` and reason `unsupported`;
+  - type-only imports (`typeOnly: true`) are linked like any other import;
+  - a specifier written with an extension (`"./math.js"`) resolves to `no such file`: an acceptable failure (`MVP-11`);
+  - invocation errors (`E13`, nothing written): `symbols` or `references` missing or not an array; a symbol record that isn't an object or lacks `id`, `kind`, `parent` or `location` (and `import` with `moduleSpecifier` and `importedName` on an import); a reference record that isn't an object or lacks `id`, `kind`, `from`, `to` (a string or `null`) or `location`;
+  - the dry run prints only its log lines and the final go / no-go line (`DATA-17`), no preview line.
+- **TOOL-23** **Use-site links** (option A, accepted by the user for the MVP on 2026-11-08; resolves `FND-03`, as `MVP_scope.md`, section 2 [Decided], describes). M2 also reads M1's references (`references`, data name `code.reference`; still only M1's records, never its files). For every reference that isn't a declaration and whose `to` is an import symbol M2 resolved, it outputs a link: `id` `<reference id>-><declaration>`, `from` the reference's `from` (the enclosing function, or the file at file level), `to` the declaration, `kind` the reference's kind (`call`, `read` or `write`), `location` the reference's, and the import's `moduleSpecifier`. A use of an unresolved import gives no extra link: the import's own link already says it is unresolved. Import links and use-site links are ordered together by position (file ID, line, column).
+- **TOOL-22** M2 checks only its own input (agreed by the user for the MVP on 2026-11-08). Run errors (`E12`): `symbols` empty (`TOOL-09`), or two symbol records with the same `id`. Whether M1's records are right is M1's responsibility (`TOOL-41`); M2 doesn't check M1's references; it reads them only to find uses of imported names (`TOOL-23`). (This replaces checking that each reference points to a known symbol, and two M1 outputs for the same file.)
 
 ## M3: symbol-scope
 
@@ -52,6 +71,7 @@ Groups each file's symbols into scopes. Reads no files.
 - **TOOL-30** For each file, create the file scope and one scope per **top-level** function (from symbols of kind `function` whose `range` is not inside another function's `range`). Functions inside functions don't get their own scope.
 - **TOOL-31** Assign every symbol to the function scope whose `range` contains the symbol's `location`; otherwise to the file scope. A function's own name belongs to the scope it is declared in, not its own.
 - **TOOL-32** A function symbol without a `range` is a run error (`E12`): the value lacks what M3 needs.
+- **TOOL-33** **Each scope names its `owner`** (decided by the user on 2026-11-08, `MVP-4`, option C with C1): the function symbol whose declaration it is, for a function scope; the file ID, for the file scope. These are the IDs M1's references use as `from` (`FND-02`), so the Viewer can start a use from its scope (`VIEW-13`). M3 still reads only symbols; it shows no uses itself.
 
 ## Supported constructs (`MVP-11`)
 

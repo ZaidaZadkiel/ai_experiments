@@ -1,0 +1,1446 @@
+{
+  "formatVersion": 1,
+  "run": {
+    "runId": "2026-11-08T05-57-11.377Z-103210",
+    "mode": "real",
+    "outcome": "succeeded",
+    "exitCode": 0,
+    "started": "2026-11-08T05:57:11.377Z",
+    "finished": "2026-11-08T05:57:14.883Z",
+    "sourceRoot": "/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source",
+    "logPath": "/home/zaida/viewer/mvp_docs/zaansouvi-mvp/data/runner/logs/2026-11-08T05-57-11.377Z.log"
+  },
+  "files": [
+    {
+      "id": "src/counter.ts",
+      "sourceBytes": 146,
+      "sourceSha256": "9e4bb3799e5b0aa0d5acee58945d5f1ae64f88bdd85cccdc936a735fc5d2ed93"
+    },
+    {
+      "id": "src/main.ts",
+      "sourceBytes": 229,
+      "sourceSha256": "3772c01070989943ac3658813da8f84734e5508e6add37a1558c2ffd87c212f8"
+    },
+    {
+      "id": "src/math.ts",
+      "sourceBytes": 158,
+      "sourceSha256": "655e180f13e3261229972b563332fcccef73d0fd24fecc0012db3d465c5b8e28"
+    }
+  ],
+  "tools": [
+    {
+      "tool": "file-symbols",
+      "position": 1,
+      "info": {
+        "tool": "file-symbols",
+        "toolVersion": "0.3.0",
+        "description": "Reads one TypeScript file and lists its symbols and the references to them.",
+        "readsFiles": {
+          "filePatterns": [
+            "*.ts"
+          ],
+          "parameter": "file_path",
+          "fallback": "source_root + file_id"
+        },
+        "invocation": "per-file",
+        "parameters": {
+          "file_id": {
+            "dataName": "files.file.id",
+            "affectsOutput": true,
+            "shape": "string",
+            "required": true,
+            "description": "Path of the file relative to the source root, with / separators, for example src/math.ts"
+          },
+          "file_path": {
+            "dataName": "files.file.path",
+            "affectsOutput": true,
+            "shape": "string",
+            "required": false,
+            "description": "Actual path of the file to read. If absent, source_root + file_id is read"
+          },
+          "source_root": {
+            "dataName": "project.source_root",
+            "affectsOutput": true,
+            "shape": "string",
+            "required": false,
+            "description": "Root of the examined source. Needed when file_path is absent; checked against file_path when both are given"
+          },
+          "store_path": {
+            "dataName": "zaansouvi.store_path",
+            "affectsOutput": false,
+            "shape": "string",
+            "required": false,
+            "description": "Folder that is this tool's store: output, result and logs are written here. Doesn't affect the output. Read like any parameter: command line, then --json or --stdin, then last_run.json as a complete input",
+            "whenAbsent": "<program folder>, the folder of this tool's launcher"
+          }
+        },
+        "requires": [
+          [
+            "file_path",
+            "source_root"
+          ]
+        ],
+        "requiresMeaning": "at least one parameter from each inner list must be present",
+        "outputs": [
+          {
+            "dataName": "code.symbol",
+            "formatVersion": 2,
+            "represents": "nodes",
+            "containedIn": "files.file",
+            "outputFilePattern": "output/<file-key>.json",
+            "jsonKey": "symbols",
+            "fields": {
+              "idField": "id",
+              "parentField": "parent",
+              "labelField": "name",
+              "kindField": "kind",
+              "locationField": "location"
+            }
+          },
+          {
+            "dataName": "code.reference",
+            "formatVersion": 2,
+            "represents": "relations",
+            "outputFilePattern": "output/<file-key>.json",
+            "jsonKey": "references",
+            "fields": {
+              "idField": "id",
+              "fromField": "from",
+              "toField": "to",
+              "kindField": "kind",
+              "locationField": "location"
+            }
+          },
+          {
+            "dataName": "diagnostic",
+            "formatVersion": 2,
+            "represents": "diagnostics",
+            "outputFilePattern": "output/<file-key>.json",
+            "jsonKey": "diagnostics",
+            "fields": {
+              "severityField": "severity",
+              "codeField": "code",
+              "messageField": "message",
+              "locationField": "location"
+            }
+          }
+        ],
+        "fileKey": "file_id with every / replaced by __, plus .json",
+        "storeLayout": {
+          "storePathPattern": "<store_path>, or <program folder> when store_path is absent",
+          "outputFilePattern": "output/<file-key>.json",
+          "resultFilePattern": "result.json",
+          "logFilePattern": "logs/<timestamp>_<file-key>.log",
+          "lastRunFilePattern": "<program folder>/last_run.json",
+          "relativeTo": "storePathPattern, except lastRunFilePattern"
+        },
+        "options": {
+          "--info": "print this description and exit",
+          "--help": "print usage and exit",
+          "--version": "print the version and exit",
+          "--dry-run": "do the work, write nothing, print JSON lines and a final go / no-go line",
+          "--json <path>": "read the parameters from a JSON file",
+          "--stdin": "read the parameters as JSON from standard input",
+          "--log <path>": "also copy the log to this file (the store log is always written)",
+          "--file-id <v>, --file-path <v>, --source-root <v>, --store-path <v>": "set one parameter; overrides the JSON input and last_run.json"
+        },
+        "exitCodes": {
+          "0": "success, or dry run: go",
+          "1": "run error, or dry run: no-go",
+          "2": "invocation error: nothing written"
+        },
+        "errorCodes": {
+          "E1": "invocation: malformed invocation (both --json and --stdin, unknown option, option without its value)",
+          "E2": "invocation: explicit JSON input unusable (file missing or unreadable, not valid JSON, not an object)",
+          "E3": "invocation: no parameters and no usable last_run.json",
+          "E13": "invocation: a parameter is missing or has the wrong shape",
+          "E6": "run: the file to read is missing or unreadable",
+          "E12": "run: a value is incorrect or incongruent, or the file has syntax errors",
+          "E8": "run: unexpected failure",
+          "I1": "note: construct skipped (outside the supported constructs)",
+          "I2": "note: construct outside the supported constructs, handled on a best-effort basis"
+        },
+        "supportedConstructs": [
+          "function declarations with parameters, including export function",
+          "const, let and var (simple names; destructured names are listed too)",
+          "named imports from relative paths (default and namespace imports are listed best-effort)",
+          "calls, reads and assignments to a simple name",
+          "nested blocks inside functions"
+        ]
+      }
+    }
+  ],
+  "invocations": [
+    {
+      "tool": "file-symbols",
+      "file_id": "src/counter.ts",
+      "refreshReason": "never-run",
+      "input": {
+        "file_id": "src/counter.ts",
+        "file_path": "/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source/src/counter.ts",
+        "source_root": "/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source",
+        "store_path": "/home/zaida/viewer/mvp_docs/zaansouvi-mvp/data/tools/file-symbols"
+      },
+      "dryRun": {
+        "dryRun": "go"
+      },
+      "result": {
+        "tool": "file-symbols",
+        "toolVersion": "0.3.0",
+        "status": "succeeded",
+        "mode": "real",
+        "started": "2026-11-08T05:57:12.771Z",
+        "finished": "2026-11-08T05:57:12.812Z",
+        "durationMs": 41,
+        "parameterSource": "stdin",
+        "nonOutputParameterSources": {
+          "store_path": "input"
+        },
+        "effectiveParameters": {
+          "file_id": "src/counter.ts",
+          "file_path": "/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source/src/counter.ts",
+          "source_root": "/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source",
+          "store_path": "/home/zaida/viewer/mvp_docs/zaansouvi-mvp/data/tools/file-symbols"
+        },
+        "read": {
+          "file_id": "src/counter.ts",
+          "sourcePath": "/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source/src/counter.ts",
+          "sourceBytes": 146,
+          "sourceSha256": "9e4bb3799e5b0aa0d5acee58945d5f1ae64f88bdd85cccdc936a735fc5d2ed93"
+        },
+        "outputPaths": [
+          "/home/zaida/viewer/mvp_docs/zaansouvi-mvp/data/tools/file-symbols/output/src__counter.ts.json"
+        ],
+        "outputChange": "unchanged",
+        "counts": {
+          "symbolCount": 4,
+          "symbolCountByKind": {
+            "import": 1,
+            "variable": 1,
+            "function": 1,
+            "parameter": 1
+          },
+          "referenceCount": 9,
+          "referenceCountByKind": {
+            "declaration": 4,
+            "write": 1,
+            "read": 3,
+            "call": 1
+          },
+          "unresolvedReferenceCount": 0,
+          "diagnosticCount": 0,
+          "lineCount": 9
+        },
+        "logPath": "/home/zaida/viewer/mvp_docs/zaansouvi-mvp/data/tools/file-symbols/logs/2026-11-08T05-57-12.771Z_src__counter.ts.log"
+      }
+    },
+    {
+      "tool": "file-symbols",
+      "file_id": "src/main.ts",
+      "refreshReason": "never-run",
+      "input": {
+        "file_id": "src/main.ts",
+        "file_path": "/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source/src/main.ts",
+        "source_root": "/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source",
+        "store_path": "/home/zaida/viewer/mvp_docs/zaansouvi-mvp/data/tools/file-symbols"
+      },
+      "dryRun": {
+        "dryRun": "go"
+      },
+      "result": {
+        "tool": "file-symbols",
+        "toolVersion": "0.3.0",
+        "status": "succeeded",
+        "mode": "real",
+        "started": "2026-11-08T05:57:13.764Z",
+        "finished": "2026-11-08T05:57:13.807Z",
+        "durationMs": 43,
+        "parameterSource": "stdin",
+        "nonOutputParameterSources": {
+          "store_path": "input"
+        },
+        "effectiveParameters": {
+          "file_id": "src/main.ts",
+          "file_path": "/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source/src/main.ts",
+          "source_root": "/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source",
+          "store_path": "/home/zaida/viewer/mvp_docs/zaansouvi-mvp/data/tools/file-symbols"
+        },
+        "read": {
+          "file_id": "src/main.ts",
+          "sourcePath": "/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source/src/main.ts",
+          "sourceBytes": 229,
+          "sourceSha256": "3772c01070989943ac3658813da8f84734e5508e6add37a1558c2ffd87c212f8"
+        },
+        "outputPaths": [
+          "/home/zaida/viewer/mvp_docs/zaansouvi-mvp/data/tools/file-symbols/output/src__main.ts.json"
+        ],
+        "outputChange": "unchanged",
+        "counts": {
+          "symbolCount": 5,
+          "symbolCountByKind": {
+            "import": 2,
+            "function": 1,
+            "variable": 2
+          },
+          "referenceCount": 12,
+          "referenceCountByKind": {
+            "declaration": 5,
+            "call": 2,
+            "read": 5
+          },
+          "unresolvedReferenceCount": 1,
+          "diagnosticCount": 0,
+          "lineCount": 13
+        },
+        "logPath": "/home/zaida/viewer/mvp_docs/zaansouvi-mvp/data/tools/file-symbols/logs/2026-11-08T05-57-13.764Z_src__main.ts.log"
+      }
+    },
+    {
+      "tool": "file-symbols",
+      "file_id": "src/math.ts",
+      "refreshReason": "never-run",
+      "input": {
+        "file_id": "src/math.ts",
+        "file_path": "/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source/src/math.ts",
+        "source_root": "/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source",
+        "store_path": "/home/zaida/viewer/mvp_docs/zaansouvi-mvp/data/tools/file-symbols"
+      },
+      "dryRun": {
+        "dryRun": "go"
+      },
+      "result": {
+        "tool": "file-symbols",
+        "toolVersion": "0.3.0",
+        "status": "succeeded",
+        "mode": "real",
+        "started": "2026-11-08T05:57:14.801Z",
+        "finished": "2026-11-08T05:57:14.836Z",
+        "durationMs": 35,
+        "parameterSource": "stdin",
+        "nonOutputParameterSources": {
+          "store_path": "input"
+        },
+        "effectiveParameters": {
+          "file_id": "src/math.ts",
+          "file_path": "/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source/src/math.ts",
+          "source_root": "/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source",
+          "store_path": "/home/zaida/viewer/mvp_docs/zaansouvi-mvp/data/tools/file-symbols"
+        },
+        "read": {
+          "file_id": "src/math.ts",
+          "sourcePath": "/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source/src/math.ts",
+          "sourceBytes": 158,
+          "sourceSha256": "655e180f13e3261229972b563332fcccef73d0fd24fecc0012db3d465c5b8e28"
+        },
+        "outputPaths": [
+          "/home/zaida/viewer/mvp_docs/zaansouvi-mvp/data/tools/file-symbols/output/src__math.ts.json"
+        ],
+        "outputChange": "unchanged",
+        "counts": {
+          "symbolCount": 4,
+          "symbolCountByKind": {
+            "variable": 2,
+            "function": 1,
+            "parameter": 1
+          },
+          "referenceCount": 9,
+          "referenceCountByKind": {
+            "declaration": 4,
+            "read": 5
+          },
+          "unresolvedReferenceCount": 1,
+          "diagnosticCount": 0,
+          "lineCount": 7
+        },
+        "logPath": "/home/zaida/viewer/mvp_docs/zaansouvi-mvp/data/tools/file-symbols/logs/2026-11-08T05-57-14.801Z_src__math.ts.log"
+      }
+    }
+  ],
+  "data": {
+    "code.symbol": {
+      "represents": "nodes",
+      "containedIn": "files.file",
+      "fields": {
+        "idField": "id",
+        "parentField": "parent",
+        "labelField": "name",
+        "kindField": "kind",
+        "locationField": "location"
+      },
+      "outputs": [
+        {
+          "tool": "file-symbols",
+          "dataRef": "file-symbols:src/counter.ts",
+          "file": "src/counter.ts",
+          "records": [
+            {
+              "id": "src/counter.ts#round@1:10",
+              "name": "round",
+              "kind": "import",
+              "exported": false,
+              "location": {
+                "file": "src/counter.ts",
+                "start": {
+                  "line": 1,
+                  "column": 10
+                },
+                "end": {
+                  "line": 1,
+                  "column": 15
+                }
+              },
+              "range": {
+                "file": "src/counter.ts",
+                "start": {
+                  "line": 1,
+                  "column": 10
+                },
+                "end": {
+                  "line": 1,
+                  "column": 15
+                }
+              },
+              "parent": "src/counter.ts",
+              "import": {
+                "moduleSpecifier": "./math",
+                "importedName": "round"
+              }
+            },
+            {
+              "id": "src/counter.ts#total@3:5",
+              "name": "total",
+              "kind": "variable",
+              "exported": false,
+              "location": {
+                "file": "src/counter.ts",
+                "start": {
+                  "line": 3,
+                  "column": 5
+                },
+                "end": {
+                  "line": 3,
+                  "column": 10
+                }
+              },
+              "range": {
+                "file": "src/counter.ts",
+                "start": {
+                  "line": 3,
+                  "column": 5
+                },
+                "end": {
+                  "line": 3,
+                  "column": 14
+                }
+              },
+              "parent": "src/counter.ts"
+            },
+            {
+              "id": "src/counter.ts#add@5:17",
+              "name": "add",
+              "kind": "function",
+              "exported": true,
+              "location": {
+                "file": "src/counter.ts",
+                "start": {
+                  "line": 5,
+                  "column": 17
+                },
+                "end": {
+                  "line": 5,
+                  "column": 20
+                }
+              },
+              "range": {
+                "file": "src/counter.ts",
+                "start": {
+                  "line": 5,
+                  "column": 1
+                },
+                "end": {
+                  "line": 8,
+                  "column": 2
+                }
+              },
+              "parent": "src/counter.ts"
+            },
+            {
+              "id": "src/counter.ts#amount@5:21",
+              "name": "amount",
+              "kind": "parameter",
+              "exported": false,
+              "location": {
+                "file": "src/counter.ts",
+                "start": {
+                  "line": 5,
+                  "column": 21
+                },
+                "end": {
+                  "line": 5,
+                  "column": 27
+                }
+              },
+              "range": {
+                "file": "src/counter.ts",
+                "start": {
+                  "line": 5,
+                  "column": 21
+                },
+                "end": {
+                  "line": 5,
+                  "column": 35
+                }
+              },
+              "parent": "src/counter.ts"
+            }
+          ]
+        },
+        {
+          "tool": "file-symbols",
+          "dataRef": "file-symbols:src/main.ts",
+          "file": "src/main.ts",
+          "records": [
+            {
+              "id": "src/main.ts#add@1:10",
+              "name": "add",
+              "kind": "import",
+              "exported": false,
+              "location": {
+                "file": "src/main.ts",
+                "start": {
+                  "line": 1,
+                  "column": 10
+                },
+                "end": {
+                  "line": 1,
+                  "column": 13
+                }
+              },
+              "range": {
+                "file": "src/main.ts",
+                "start": {
+                  "line": 1,
+                  "column": 10
+                },
+                "end": {
+                  "line": 1,
+                  "column": 13
+                }
+              },
+              "parent": "src/main.ts",
+              "import": {
+                "moduleSpecifier": "./counter",
+                "importedName": "add"
+              }
+            },
+            {
+              "id": "src/main.ts#PRECISION@2:10",
+              "name": "PRECISION",
+              "kind": "import",
+              "exported": false,
+              "location": {
+                "file": "src/main.ts",
+                "start": {
+                  "line": 2,
+                  "column": 10
+                },
+                "end": {
+                  "line": 2,
+                  "column": 19
+                }
+              },
+              "range": {
+                "file": "src/main.ts",
+                "start": {
+                  "line": 2,
+                  "column": 10
+                },
+                "end": {
+                  "line": 2,
+                  "column": 19
+                }
+              },
+              "parent": "src/main.ts",
+              "import": {
+                "moduleSpecifier": "./math",
+                "importedName": "PRECISION"
+              }
+            },
+            {
+              "id": "src/main.ts#run@4:10",
+              "name": "run",
+              "kind": "function",
+              "exported": false,
+              "location": {
+                "file": "src/main.ts",
+                "start": {
+                  "line": 4,
+                  "column": 10
+                },
+                "end": {
+                  "line": 4,
+                  "column": 13
+                }
+              },
+              "range": {
+                "file": "src/main.ts",
+                "start": {
+                  "line": 4,
+                  "column": 1
+                },
+                "end": {
+                  "line": 10,
+                  "column": 2
+                }
+              },
+              "parent": "src/main.ts"
+            },
+            {
+              "id": "src/main.ts#first@5:9",
+              "name": "first",
+              "kind": "variable",
+              "exported": false,
+              "location": {
+                "file": "src/main.ts",
+                "start": {
+                  "line": 5,
+                  "column": 9
+                },
+                "end": {
+                  "line": 5,
+                  "column": 14
+                }
+              },
+              "range": {
+                "file": "src/main.ts",
+                "start": {
+                  "line": 5,
+                  "column": 9
+                },
+                "end": {
+                  "line": 5,
+                  "column": 27
+                }
+              },
+              "parent": "src/main.ts"
+            },
+            {
+              "id": "src/main.ts#label@7:11",
+              "name": "label",
+              "kind": "variable",
+              "exported": false,
+              "location": {
+                "file": "src/main.ts",
+                "start": {
+                  "line": 7,
+                  "column": 11
+                },
+                "end": {
+                  "line": 7,
+                  "column": 16
+                }
+              },
+              "range": {
+                "file": "src/main.ts",
+                "start": {
+                  "line": 7,
+                  "column": 11
+                },
+                "end": {
+                  "line": 7,
+                  "column": 43
+                }
+              },
+              "parent": "src/main.ts"
+            }
+          ]
+        },
+        {
+          "tool": "file-symbols",
+          "dataRef": "file-symbols:src/math.ts",
+          "file": "src/math.ts",
+          "records": [
+            {
+              "id": "src/math.ts#PRECISION@1:14",
+              "name": "PRECISION",
+              "kind": "variable",
+              "exported": true,
+              "location": {
+                "file": "src/math.ts",
+                "start": {
+                  "line": 1,
+                  "column": 14
+                },
+                "end": {
+                  "line": 1,
+                  "column": 23
+                }
+              },
+              "range": {
+                "file": "src/math.ts",
+                "start": {
+                  "line": 1,
+                  "column": 14
+                },
+                "end": {
+                  "line": 1,
+                  "column": 27
+                }
+              },
+              "parent": "src/math.ts"
+            },
+            {
+              "id": "src/math.ts#round@3:17",
+              "name": "round",
+              "kind": "function",
+              "exported": true,
+              "location": {
+                "file": "src/math.ts",
+                "start": {
+                  "line": 3,
+                  "column": 17
+                },
+                "end": {
+                  "line": 3,
+                  "column": 22
+                }
+              },
+              "range": {
+                "file": "src/math.ts",
+                "start": {
+                  "line": 3,
+                  "column": 1
+                },
+                "end": {
+                  "line": 6,
+                  "column": 2
+                }
+              },
+              "parent": "src/math.ts"
+            },
+            {
+              "id": "src/math.ts#value@3:23",
+              "name": "value",
+              "kind": "parameter",
+              "exported": false,
+              "location": {
+                "file": "src/math.ts",
+                "start": {
+                  "line": 3,
+                  "column": 23
+                },
+                "end": {
+                  "line": 3,
+                  "column": 28
+                }
+              },
+              "range": {
+                "file": "src/math.ts",
+                "start": {
+                  "line": 3,
+                  "column": 23
+                },
+                "end": {
+                  "line": 3,
+                  "column": 36
+                }
+              },
+              "parent": "src/math.ts"
+            },
+            {
+              "id": "src/math.ts#factor@4:9",
+              "name": "factor",
+              "kind": "variable",
+              "exported": false,
+              "location": {
+                "file": "src/math.ts",
+                "start": {
+                  "line": 4,
+                  "column": 9
+                },
+                "end": {
+                  "line": 4,
+                  "column": 15
+                }
+              },
+              "range": {
+                "file": "src/math.ts",
+                "start": {
+                  "line": 4,
+                  "column": 9
+                },
+                "end": {
+                  "line": 4,
+                  "column": 33
+                }
+              },
+              "parent": "src/math.ts"
+            }
+          ]
+        }
+      ]
+    },
+    "code.reference": {
+      "represents": "relations",
+      "fields": {
+        "idField": "id",
+        "fromField": "from",
+        "toField": "to",
+        "kindField": "kind",
+        "locationField": "location"
+      },
+      "outputs": [
+        {
+          "tool": "file-symbols",
+          "dataRef": "file-symbols:src/counter.ts",
+          "file": "src/counter.ts",
+          "records": [
+            {
+              "id": "src/counter.ts#ref@1:10",
+              "name": "round",
+              "symbol": "src/counter.ts#round@1:10",
+              "kind": "declaration",
+              "location": {
+                "file": "src/counter.ts",
+                "start": {
+                  "line": 1,
+                  "column": 10
+                },
+                "end": {
+                  "line": 1,
+                  "column": 15
+                }
+              },
+              "enclosing": "src/counter.ts",
+              "from": "src/counter.ts",
+              "to": "src/counter.ts#round@1:10"
+            },
+            {
+              "id": "src/counter.ts#ref@3:5",
+              "name": "total",
+              "symbol": "src/counter.ts#total@3:5",
+              "kind": "declaration",
+              "location": {
+                "file": "src/counter.ts",
+                "start": {
+                  "line": 3,
+                  "column": 5
+                },
+                "end": {
+                  "line": 3,
+                  "column": 10
+                }
+              },
+              "enclosing": "src/counter.ts",
+              "from": "src/counter.ts",
+              "to": "src/counter.ts#total@3:5"
+            },
+            {
+              "id": "src/counter.ts#ref@5:17",
+              "name": "add",
+              "symbol": "src/counter.ts#add@5:17",
+              "kind": "declaration",
+              "location": {
+                "file": "src/counter.ts",
+                "start": {
+                  "line": 5,
+                  "column": 17
+                },
+                "end": {
+                  "line": 5,
+                  "column": 20
+                }
+              },
+              "enclosing": "src/counter.ts",
+              "from": "src/counter.ts",
+              "to": "src/counter.ts#add@5:17"
+            },
+            {
+              "id": "src/counter.ts#ref@5:21",
+              "name": "amount",
+              "symbol": "src/counter.ts#amount@5:21",
+              "kind": "declaration",
+              "location": {
+                "file": "src/counter.ts",
+                "start": {
+                  "line": 5,
+                  "column": 21
+                },
+                "end": {
+                  "line": 5,
+                  "column": 27
+                }
+              },
+              "enclosing": "src/counter.ts#add@5:17",
+              "from": "src/counter.ts#add@5:17",
+              "to": "src/counter.ts#amount@5:21"
+            },
+            {
+              "id": "src/counter.ts#ref@6:3",
+              "name": "total",
+              "symbol": "src/counter.ts#total@3:5",
+              "kind": "write",
+              "location": {
+                "file": "src/counter.ts",
+                "start": {
+                  "line": 6,
+                  "column": 3
+                },
+                "end": {
+                  "line": 6,
+                  "column": 8
+                }
+              },
+              "enclosing": "src/counter.ts#add@5:17",
+              "from": "src/counter.ts#add@5:17",
+              "to": "src/counter.ts#total@3:5"
+            },
+            {
+              "id": "src/counter.ts#ref@6:11",
+              "name": "total",
+              "symbol": "src/counter.ts#total@3:5",
+              "kind": "read",
+              "location": {
+                "file": "src/counter.ts",
+                "start": {
+                  "line": 6,
+                  "column": 11
+                },
+                "end": {
+                  "line": 6,
+                  "column": 16
+                }
+              },
+              "enclosing": "src/counter.ts#add@5:17",
+              "from": "src/counter.ts#add@5:17",
+              "to": "src/counter.ts#total@3:5"
+            },
+            {
+              "id": "src/counter.ts#ref@6:19",
+              "name": "amount",
+              "symbol": "src/counter.ts#amount@5:21",
+              "kind": "read",
+              "location": {
+                "file": "src/counter.ts",
+                "start": {
+                  "line": 6,
+                  "column": 19
+                },
+                "end": {
+                  "line": 6,
+                  "column": 25
+                }
+              },
+              "enclosing": "src/counter.ts#add@5:17",
+              "from": "src/counter.ts#add@5:17",
+              "to": "src/counter.ts#amount@5:21"
+            },
+            {
+              "id": "src/counter.ts#ref@7:10",
+              "name": "round",
+              "symbol": "src/counter.ts#round@1:10",
+              "kind": "call",
+              "location": {
+                "file": "src/counter.ts",
+                "start": {
+                  "line": 7,
+                  "column": 10
+                },
+                "end": {
+                  "line": 7,
+                  "column": 15
+                }
+              },
+              "enclosing": "src/counter.ts#add@5:17",
+              "from": "src/counter.ts#add@5:17",
+              "to": "src/counter.ts#round@1:10"
+            },
+            {
+              "id": "src/counter.ts#ref@7:16",
+              "name": "total",
+              "symbol": "src/counter.ts#total@3:5",
+              "kind": "read",
+              "location": {
+                "file": "src/counter.ts",
+                "start": {
+                  "line": 7,
+                  "column": 16
+                },
+                "end": {
+                  "line": 7,
+                  "column": 21
+                }
+              },
+              "enclosing": "src/counter.ts#add@5:17",
+              "from": "src/counter.ts#add@5:17",
+              "to": "src/counter.ts#total@3:5"
+            }
+          ]
+        },
+        {
+          "tool": "file-symbols",
+          "dataRef": "file-symbols:src/main.ts",
+          "file": "src/main.ts",
+          "records": [
+            {
+              "id": "src/main.ts#ref@1:10",
+              "name": "add",
+              "symbol": "src/main.ts#add@1:10",
+              "kind": "declaration",
+              "location": {
+                "file": "src/main.ts",
+                "start": {
+                  "line": 1,
+                  "column": 10
+                },
+                "end": {
+                  "line": 1,
+                  "column": 13
+                }
+              },
+              "enclosing": "src/main.ts",
+              "from": "src/main.ts",
+              "to": "src/main.ts#add@1:10"
+            },
+            {
+              "id": "src/main.ts#ref@2:10",
+              "name": "PRECISION",
+              "symbol": "src/main.ts#PRECISION@2:10",
+              "kind": "declaration",
+              "location": {
+                "file": "src/main.ts",
+                "start": {
+                  "line": 2,
+                  "column": 10
+                },
+                "end": {
+                  "line": 2,
+                  "column": 19
+                }
+              },
+              "enclosing": "src/main.ts",
+              "from": "src/main.ts",
+              "to": "src/main.ts#PRECISION@2:10"
+            },
+            {
+              "id": "src/main.ts#ref@4:10",
+              "name": "run",
+              "symbol": "src/main.ts#run@4:10",
+              "kind": "declaration",
+              "location": {
+                "file": "src/main.ts",
+                "start": {
+                  "line": 4,
+                  "column": 10
+                },
+                "end": {
+                  "line": 4,
+                  "column": 13
+                }
+              },
+              "enclosing": "src/main.ts",
+              "from": "src/main.ts",
+              "to": "src/main.ts#run@4:10"
+            },
+            {
+              "id": "src/main.ts#ref@5:9",
+              "name": "first",
+              "symbol": "src/main.ts#first@5:9",
+              "kind": "declaration",
+              "location": {
+                "file": "src/main.ts",
+                "start": {
+                  "line": 5,
+                  "column": 9
+                },
+                "end": {
+                  "line": 5,
+                  "column": 14
+                }
+              },
+              "enclosing": "src/main.ts#run@4:10",
+              "from": "src/main.ts#run@4:10",
+              "to": "src/main.ts#first@5:9"
+            },
+            {
+              "id": "src/main.ts#ref@5:17",
+              "name": "add",
+              "symbol": "src/main.ts#add@1:10",
+              "kind": "call",
+              "location": {
+                "file": "src/main.ts",
+                "start": {
+                  "line": 5,
+                  "column": 17
+                },
+                "end": {
+                  "line": 5,
+                  "column": 20
+                }
+              },
+              "enclosing": "src/main.ts#run@4:10",
+              "from": "src/main.ts#run@4:10",
+              "to": "src/main.ts#add@1:10"
+            },
+            {
+              "id": "src/main.ts#ref@6:7",
+              "name": "first",
+              "symbol": "src/main.ts#first@5:9",
+              "kind": "read",
+              "location": {
+                "file": "src/main.ts",
+                "start": {
+                  "line": 6,
+                  "column": 7
+                },
+                "end": {
+                  "line": 6,
+                  "column": 12
+                }
+              },
+              "enclosing": "src/main.ts#run@4:10",
+              "from": "src/main.ts#run@4:10",
+              "to": "src/main.ts#first@5:9"
+            },
+            {
+              "id": "src/main.ts#ref@7:11",
+              "name": "label",
+              "symbol": "src/main.ts#label@7:11",
+              "kind": "declaration",
+              "location": {
+                "file": "src/main.ts",
+                "start": {
+                  "line": 7,
+                  "column": 11
+                },
+                "end": {
+                  "line": 7,
+                  "column": 16
+                }
+              },
+              "enclosing": "src/main.ts#run@4:10",
+              "from": "src/main.ts#run@4:10",
+              "to": "src/main.ts#label@7:11"
+            },
+            {
+              "id": "src/main.ts#ref@7:34",
+              "name": "PRECISION",
+              "symbol": "src/main.ts#PRECISION@2:10",
+              "kind": "read",
+              "location": {
+                "file": "src/main.ts",
+                "start": {
+                  "line": 7,
+                  "column": 34
+                },
+                "end": {
+                  "line": 7,
+                  "column": 43
+                }
+              },
+              "enclosing": "src/main.ts#run@4:10",
+              "from": "src/main.ts#run@4:10",
+              "to": "src/main.ts#PRECISION@2:10"
+            },
+            {
+              "id": "src/main.ts#ref@8:5",
+              "name": "console",
+              "symbol": null,
+              "kind": "read",
+              "location": {
+                "file": "src/main.ts",
+                "start": {
+                  "line": 8,
+                  "column": 5
+                },
+                "end": {
+                  "line": 8,
+                  "column": 12
+                }
+              },
+              "enclosing": "src/main.ts#run@4:10",
+              "from": "src/main.ts#run@4:10",
+              "to": null
+            },
+            {
+              "id": "src/main.ts#ref@8:17",
+              "name": "label",
+              "symbol": "src/main.ts#label@7:11",
+              "kind": "read",
+              "location": {
+                "file": "src/main.ts",
+                "start": {
+                  "line": 8,
+                  "column": 17
+                },
+                "end": {
+                  "line": 8,
+                  "column": 22
+                }
+              },
+              "enclosing": "src/main.ts#run@4:10",
+              "from": "src/main.ts#run@4:10",
+              "to": "src/main.ts#label@7:11"
+            },
+            {
+              "id": "src/main.ts#ref@8:24",
+              "name": "first",
+              "symbol": "src/main.ts#first@5:9",
+              "kind": "read",
+              "location": {
+                "file": "src/main.ts",
+                "start": {
+                  "line": 8,
+                  "column": 24
+                },
+                "end": {
+                  "line": 8,
+                  "column": 29
+                }
+              },
+              "enclosing": "src/main.ts#run@4:10",
+              "from": "src/main.ts#run@4:10",
+              "to": "src/main.ts#first@5:9"
+            },
+            {
+              "id": "src/main.ts#ref@12:1",
+              "name": "run",
+              "symbol": "src/main.ts#run@4:10",
+              "kind": "call",
+              "location": {
+                "file": "src/main.ts",
+                "start": {
+                  "line": 12,
+                  "column": 1
+                },
+                "end": {
+                  "line": 12,
+                  "column": 4
+                }
+              },
+              "enclosing": "src/main.ts",
+              "from": "src/main.ts",
+              "to": "src/main.ts#run@4:10"
+            }
+          ]
+        },
+        {
+          "tool": "file-symbols",
+          "dataRef": "file-symbols:src/math.ts",
+          "file": "src/math.ts",
+          "records": [
+            {
+              "id": "src/math.ts#ref@1:14",
+              "name": "PRECISION",
+              "symbol": "src/math.ts#PRECISION@1:14",
+              "kind": "declaration",
+              "location": {
+                "file": "src/math.ts",
+                "start": {
+                  "line": 1,
+                  "column": 14
+                },
+                "end": {
+                  "line": 1,
+                  "column": 23
+                }
+              },
+              "enclosing": "src/math.ts",
+              "from": "src/math.ts",
+              "to": "src/math.ts#PRECISION@1:14"
+            },
+            {
+              "id": "src/math.ts#ref@3:17",
+              "name": "round",
+              "symbol": "src/math.ts#round@3:17",
+              "kind": "declaration",
+              "location": {
+                "file": "src/math.ts",
+                "start": {
+                  "line": 3,
+                  "column": 17
+                },
+                "end": {
+                  "line": 3,
+                  "column": 22
+                }
+              },
+              "enclosing": "src/math.ts",
+              "from": "src/math.ts",
+              "to": "src/math.ts#round@3:17"
+            },
+            {
+              "id": "src/math.ts#ref@3:23",
+              "name": "value",
+              "symbol": "src/math.ts#value@3:23",
+              "kind": "declaration",
+              "location": {
+                "file": "src/math.ts",
+                "start": {
+                  "line": 3,
+                  "column": 23
+                },
+                "end": {
+                  "line": 3,
+                  "column": 28
+                }
+              },
+              "enclosing": "src/math.ts#round@3:17",
+              "from": "src/math.ts#round@3:17",
+              "to": "src/math.ts#value@3:23"
+            },
+            {
+              "id": "src/math.ts#ref@4:9",
+              "name": "factor",
+              "symbol": "src/math.ts#factor@4:9",
+              "kind": "declaration",
+              "location": {
+                "file": "src/math.ts",
+                "start": {
+                  "line": 4,
+                  "column": 9
+                },
+                "end": {
+                  "line": 4,
+                  "column": 15
+                }
+              },
+              "enclosing": "src/math.ts#round@3:17",
+              "from": "src/math.ts#round@3:17",
+              "to": "src/math.ts#factor@4:9"
+            },
+            {
+              "id": "src/math.ts#ref@4:24",
+              "name": "PRECISION",
+              "symbol": "src/math.ts#PRECISION@1:14",
+              "kind": "read",
+              "location": {
+                "file": "src/math.ts",
+                "start": {
+                  "line": 4,
+                  "column": 24
+                },
+                "end": {
+                  "line": 4,
+                  "column": 33
+                }
+              },
+              "enclosing": "src/math.ts#round@3:17",
+              "from": "src/math.ts#round@3:17",
+              "to": "src/math.ts#PRECISION@1:14"
+            },
+            {
+              "id": "src/math.ts#ref@5:10",
+              "name": "Math",
+              "symbol": null,
+              "kind": "read",
+              "location": {
+                "file": "src/math.ts",
+                "start": {
+                  "line": 5,
+                  "column": 10
+                },
+                "end": {
+                  "line": 5,
+                  "column": 14
+                }
+              },
+              "enclosing": "src/math.ts#round@3:17",
+              "from": "src/math.ts#round@3:17",
+              "to": null
+            },
+            {
+              "id": "src/math.ts#ref@5:21",
+              "name": "value",
+              "symbol": "src/math.ts#value@3:23",
+              "kind": "read",
+              "location": {
+                "file": "src/math.ts",
+                "start": {
+                  "line": 5,
+                  "column": 21
+                },
+                "end": {
+                  "line": 5,
+                  "column": 26
+                }
+              },
+              "enclosing": "src/math.ts#round@3:17",
+              "from": "src/math.ts#round@3:17",
+              "to": "src/math.ts#value@3:23"
+            },
+            {
+              "id": "src/math.ts#ref@5:29",
+              "name": "factor",
+              "symbol": "src/math.ts#factor@4:9",
+              "kind": "read",
+              "location": {
+                "file": "src/math.ts",
+                "start": {
+                  "line": 5,
+                  "column": 29
+                },
+                "end": {
+                  "line": 5,
+                  "column": 35
+                }
+              },
+              "enclosing": "src/math.ts#round@3:17",
+              "from": "src/math.ts#round@3:17",
+              "to": "src/math.ts#factor@4:9"
+            },
+            {
+              "id": "src/math.ts#ref@5:39",
+              "name": "factor",
+              "symbol": "src/math.ts#factor@4:9",
+              "kind": "read",
+              "location": {
+                "file": "src/math.ts",
+                "start": {
+                  "line": 5,
+                  "column": 39
+                },
+                "end": {
+                  "line": 5,
+                  "column": 45
+                }
+              },
+              "enclosing": "src/math.ts#round@3:17",
+              "from": "src/math.ts#round@3:17",
+              "to": "src/math.ts#factor@4:9"
+            }
+          ]
+        }
+      ]
+    },
+    "diagnostic": {
+      "represents": "diagnostics",
+      "fields": {
+        "severityField": "severity",
+        "codeField": "code",
+        "messageField": "message",
+        "locationField": "location"
+      },
+      "outputs": [
+        {
+          "tool": "file-symbols",
+          "dataRef": "file-symbols:src/counter.ts",
+          "file": "src/counter.ts",
+          "records": []
+        },
+        {
+          "tool": "file-symbols",
+          "dataRef": "file-symbols:src/main.ts",
+          "file": "src/main.ts",
+          "records": []
+        },
+        {
+          "tool": "file-symbols",
+          "dataRef": "file-symbols:src/math.ts",
+          "file": "src/math.ts",
+          "records": []
+        }
+      ]
+    }
+  }
+}

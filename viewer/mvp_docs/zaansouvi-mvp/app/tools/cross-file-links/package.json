@@ -1,0 +1,16 @@
+{
+  "name": "zaansouvi-cross-file-links",
+  "version": "0.1.0",
+  "private": true,
+  "description": "ZaAnSouVi MVP tool M2: links imports, and uses of imported names, to the declarations they refer to.",
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsc -p .",
+    "info": "./cross-file-links --info"
+  },
+  "engines": { "node": ">=22.18" },
+  "devDependencies": {
+    "typescript": "5.6.3",
+    "@types/node": "22.10.2"
+  }
+}
