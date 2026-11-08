@@ -9,6 +9,8 @@ import path from "node:path";
 const root = path.resolve(import.meta.dirname, "..", "..");
 const launcher = path.join(root, "app/tools/file-symbols/file-symbols");
 const sourceRoot = path.join(root, "test-source");
+// The store the Runner will pass (ARCH layout); without it M1 would write into its own program folder.
+const storePath = path.join(root, "data/tools/file-symbols");
 const expected = JSON.parse(fs.readFileSync(path.join(root, "expected/file-symbols.json"), "utf8"));
 
 const problems = [];
@@ -17,7 +19,7 @@ const outputs = {};
 const timings = [];
 
 for (const file of expected.files) {
-  const input = JSON.stringify({ source_root: sourceRoot, file_id: file, file_path: path.join(sourceRoot, file) });
+  const input = JSON.stringify({ source_root: sourceRoot, file_id: file, file_path: path.join(sourceRoot, file), store_path: storePath });
 
   const dry = spawnSync(launcher, ["--dry-run", "--stdin"], { input, encoding: "utf8" });
   const lines = dry.stdout.trim().split("\n");
@@ -34,7 +36,7 @@ for (const file of expected.files) {
     continue;
   }
   const summary = JSON.parse(real.stdout.trim().split("\n").at(-1));
-  outputs[file] = JSON.parse(fs.readFileSync(summary.output, "utf8"));
+  outputs[file] = JSON.parse(fs.readFileSync(summary.outputPath, "utf8"));
   if (preview && JSON.stringify(preview.content) !== JSON.stringify(outputs[file])) {
     fail(`${file}: the dry-run preview differs from the real output`);
   }
@@ -45,7 +47,7 @@ const symbols = all("symbols");
 const references = all("references");
 
 // Symbols: exact set.
-const symKey = (s) => [s.id, s.name, s.kind, s.exported, s.import ? `${s.import.from}:${s.import.name}` : ""].join(" | ");
+const symKey = (s) => [s.id, s.name, s.kind, s.exported, s.import ? `${s.import.moduleSpecifier}:${s.import.importedName}` : ""].join(" | ");
 const gotSymbols = new Set(symbols.map(symKey));
 const wantSymbols = new Set(
   expected.symbols.map((e) => {
@@ -97,10 +99,10 @@ for (const m of expected.mustNotAppear) {
 
 // Repeatability (FND-29): a second run gives byte-identical output.
 for (const file of expected.files) {
-  const input = JSON.stringify({ source_root: sourceRoot, file_id: file });
+  const input = JSON.stringify({ source_root: sourceRoot, file_id: file, store_path: storePath });
   const again = spawnSync(launcher, ["--stdin"], { input, encoding: "utf8" });
   const summary = JSON.parse(again.stdout.trim().split("\n").at(-1));
-  if (summary.change !== "unchanged") fail(`${file}: second run changed the output (${summary.change})`);
+  if (summary.outputChange !== "unchanged") fail(`${file}: second run changed the output (${summary.outputChange})`);
 }
 
 console.log(`files: ${Object.keys(outputs).length}, symbols: ${symbols.length}, references: ${references.length}`);

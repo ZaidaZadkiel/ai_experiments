@@ -1,0 +1,13 @@
+{"event":"run_started","runId":"<runId>","mode":"real","sourceRoot":"<sourceRoot>","time":"<time>"}
+{"event":"files_listed","fileCount":3}
+{"event":"tool_dry_run","tool":"file-symbols","file_id":"src/counter.ts","refreshReason":"missing","dryRun":"go","staleInputs":[]}
+{"event":"tool_run","tool":"file-symbols","file_id":"src/counter.ts","status":"succeeded","logPath":"<toolLogPath>","outputChange":"create"}
+{"event":"tool_dry_run","tool":"file-symbols","file_id":"src/main.ts","refreshReason":"missing","dryRun":"go","staleInputs":[]}
+{"event":"tool_run","tool":"file-symbols","file_id":"src/main.ts","status":"succeeded","logPath":"<toolLogPath>","outputChange":"create"}
+{"event":"tool_dry_run","tool":"file-symbols","file_id":"src/math.ts","refreshReason":"missing","dryRun":"go","staleInputs":[]}
+{"event":"tool_run","tool":"file-symbols","file_id":"src/math.ts","status":"succeeded","logPath":"<toolLogPath>","outputChange":"create"}
+{"event":"tool_dry_run","tool":"cross-file-links","refreshReason":"missing","dryRun":"go","staleInputs":[]}
+{"event":"tool_run","tool":"cross-file-links","status":"succeeded","logPath":"<toolLogPath>","outputChange":"create"}
+{"event":"tool_dry_run","tool":"symbol-scope","refreshReason":"missing","dryRun":"go","staleInputs":[]}
+{"event":"tool_run","tool":"symbol-scope","status":"succeeded","logPath":"<toolLogPath>","outputChange":"create"}
+{"event":"run_finished","runId":"<runId>","outcome":"succeeded","exitCode":0,"time":"<time>","logPath":"<runnerLogPath>"}

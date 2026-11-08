@@ -45,13 +45,14 @@ flowchart LR
 - **[Decided]** **Reads the configuration database directly**, since it holds configuration that affects both the Viewer and the Runner (`toolset.md`, section 5.2). That includes the record of available tools and their ordering (`runner.md`, sections 1.0 and 2).
 - **[Decided]** **Gets codebase data through the Runner**, never by reading the codebase database itself. (This replaces the earlier "reads the toolset's outputs, including the database".)
 - **[Decided]** Reads the examined project, for example to show source around a location.
-- **[Decided]** **Calls the Runner with parameters useful for visualization**, such as dry-run only (status and correctness) and read cache (the data currently stored by the tools) (`runner.md`, section 10).
+- **[Decided]** **Calls the Runner with parameters useful for visualization**, such as dry-run only (status and correctness) and read cache (exactly what the Runner cached for a run configuration) (`runner.md`, sections 10 and 10.2).
 - **[Decided]** The Runner has an output mode for the Viewer, with easily parsable data for the backend; `--human` gives text for people instead (`runner.md`, section 10.1). The `--human` format and the preferred output are configurable and kept in the configuration database (`toolset.md`, section 5.2).
 - **[Decided]** **The Viewer's backend shares the configuration database with the Runner and may edit it directly.** The Runner and the Viewer must stay in sync on it as part of development (`toolset.md`, section 5.2).
 - **[Decided]** The config manager shows and changes these settings by editing the configuration database directly, as a manual save with the confirmation dialog (4.13). The Viewer still never writes the codebase database.
 - **[Decided]** Real runs stay unchanged whatever the Viewer passes, and **the same data can be recreated by the user calling the Runner by hand** (`runner.md`, section 10).
 - **[Decided]** **The Viewer may keep its own cache or database, through the backend, if it is required at all.** It lives in the Viewer's internal storage (section 2).
 - **[Proposed]** The same goes for tool outputs in the tool stores: the server gets them by calling the Runner (read cache), never by opening the stores, so the Runner stays the only reader of the codebase's data.
+- **[Decided]** **The Viewer examines the data, preferring to read the Runner's cache** (decided by the user on 2026-11-07; `runner.md`, section 10.2). The Runner's cache is separate from the Viewer's own cache (section 5).
 - **[Decided]** Runs the tool steps on request from the UI, through endpoints.
 - **[Decided]** Generates and serves data in a format only the Viewer needs (see section 5). This data lives in the Viewer's internal storage (section 2).
 - **[Decided]** Saves the Viewer's own settings and preferences in its internal storage.
@@ -64,26 +65,28 @@ flowchart LR
 - **[Decided]** **The Viewer doesn't create tool parameters of its own.** It delegates that to the Runner, which may have Viewer-specific parameters; no tool has any (`runner.md`, section 1).
 - **[Proposed]** So re-running a failed tool from the UI (4.14) goes through the Runner too, or invokes the tool with no parameters so it repeats its `last_run.json` exactly. A run started from the Viewer is logged and recorded exactly like a command-line run.
 - **[Proposed]** The server adds no analysis logic. It runs the same tools the command line uses, with the same options and precedence. Options chosen in the UI act like command-line overrides for that run. Everything the UI can trigger can also be done from the command line.
-- **[Proposed]** Runs are one at a time, keeping the toolset's no-concurrency rule. The server queues requests: one run per codebase at a time, and a second request waits or is rejected.
+- **[Proposed]** Runs are one at a time, keeping the toolset's no-concurrency rule. The server queues requests: one run per codebase at a time, and a second request waits or is rejected. The Runner's own lock enforces this for every way of starting a run, the command line included (`runner.md`, section 4, decided on 2026-11-07).
 - **[Proposed]** Progress, logs and diagnostics are sent to the UI while the run happens.
 - **[Proposed]** A run can be cancelled. A cancelled or failed run leaves the last good Viewer data untouched (see section 5).
 - **[Decided]** **A tool run overwrites the tools' work data**, and the tools write only current data (`toolset.md`, section 5.3). After each run, the Viewer **re-reads what is relevant according to the Runner's output** for that run, for example which tools ran, which changed their outputs and which failed.
 - **[Decided]** The Viewer can access all the data the tools have saved, through the Runner (3.1). A failing tool writes no partial data, so what the Viewer gets is always a tool's last complete output.
 - **[Proposed]** Since the tools keep only current data, the Viewer's cached last saved run is the only copy of an earlier state. When the user rejects a pending version, the Viewer keeps showing its cache and marks it as older than the data on disk.
+- **[Decided]** **The Viewer doesn't start runs automatically.** A run starts only when the user asks, for example through a function that reloads the Viewer's graph. Such a run is a manual run, like one started from the command line, and replaces the Runner's cache (`runner.md`, section 10.2; decided by the user on 2026-11-07).
 - **[Decided]** The Viewer never switches data on its own. The last saved run is treated as current until the user manually refreshes or re-runs tools. A run the user starts from the UI shows its result when it finishes. A run started elsewhere, for example from the command line, appears only after a manual refresh.
 - **[Decided]** A real run started from the Viewer fails early at the first error. The Viewer shows the diagnostic and keeps showing the last saved run.
 
 **Dry run from the Viewer**
-- **[Decided]** The user can start a **dry run** from the Viewer. It works as a **report** (changed files and similar information), a **preview** (what a real run would produce) and a **status check** (warnings about failures that can be prevented, such as a missing output from an earlier tool). It changes no work data. The Viewer cache, the last saved run and the current visualization stay as they are.
+- **[Decided]** The user can start a **dry run** from the Viewer. It works as a **report** (changed files and similar information), a **preview** (what a real run would produce) and a **status check** (warnings about failures that can be prevented, such as a missing output from an earlier tool). It changes no work data: no tool writes anything in a dry run. That rule binds the tools only; the Viewer and the Runner may write whatever is useful during a dry run, such as the Viewer cache or the database (decided by the user on 2026-11-07; `toolset.md`, section 4.3). The last saved run and the current visualization stay as they are.
+- **[Decided]** **A dry run never affects the graph visualization.** The Runner leaves alone the cache the Viewer uses; it may add diagnostic information, which the Viewer displays, for example in the drawer (decided by the user on 2026-11-07; `runner.md`, section 10.2).
 - **[Proposed]** The dry-run result is shown in the drawer:
   - files added, changed and removed since the last saved run
   - which tool outputs a real run would create, update or leave alone
   - the status check: preventable failures, each with its cause and, where possible, what to do, for example "run the symbol step first"
 
   From there the user can start the real run.
-- **[Proposed]** The preview can also be shown in the graph area, marked clearly as a preview. It is never saved and never replaces the last saved run.
+- ~~**[Proposed]** The preview can also be shown in the graph area, marked clearly as a preview.~~ Dropped: a dry run never affects the graph visualization (decision above).
 - **[Proposed]** The result's items are traceable like everything else: each changed file links to its source.
-- **[Proposed]** A dry-run result is temporary. It is not saved as Viewer data and disappears when the user closes it or starts a real run.
+- **[Decided]** A dry-run result is not saved as Viewer data. The Runner keeps its diagnostics in its cache until the next dry run or real run (agreed by the user on 2026-11-07) (`runner.md`, section 10.2), so the Viewer can show them again until then; a real run clears them.
 
 ### 3.3 Interface
 - **[Proposed]** The server's endpoints are a contract, defined as carefully as the file formats between tools. They cover:

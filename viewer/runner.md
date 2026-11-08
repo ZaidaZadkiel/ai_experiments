@@ -20,7 +20,7 @@ Related files: `toolset.md` (what every tool has in common, shared data, the oth
 - **[Proposed]** "All invocations are equal" and Viewer-specific parameters fit together like this: Viewer-specific parameters change only how the Runner reports back to the Viewer (for example progress updates or the form of its answers), never which tools run, with which parameters, or what is written. A command-line run and a Viewer run with the same configuration produce the same results and the same logs (`RN-17`).
 - **[Proposed]** Sane defaults belong to the Runner: a tool invoked with no parameters only repeats its last run or fails (`toolset.md`, section 4.5), so the one-command run works because the Runner builds every tool's parameters from its defaults.
 - **[Decided]** **It checks for sane defaults when it runs on its own.** It never assumes the Viewer or a saved configuration exists.
-- **[Proposed]** The Runner is a program, not an analysis tool. Apart from the file list (section 1.1), it writes no facts about the examined code. Whether it still follows the common tool conventions, such as the common options, a dry run and `--info`, is open (`RN-9`).
+- **[Proposed]** The Runner is a program, not an analysis tool. Apart from the file list (section 1.1), which is data no tool produces (section 4), it writes no facts about the examined code. Whether it still follows the common tool conventions, such as the common options, a dry run and `--info`, is open (`RN-9`).
 
 ### 1.0 Stack and the record of tools
 
@@ -59,6 +59,7 @@ Related files: `toolset.md` (what every tool has in common, shared data, the oth
 - **[Decided]** The JSON may contain any number of extra, unused values besides the required ones.
 - **[Proposed]** So the Runner may build one JSON with everything it knows and hand the same one to several tools, or build a smaller one per tool. Both are valid.
 - **[Proposed]** The JSON parameters are the tool's whole contract with the Runner. Tools never read the database (`toolset.md`, section 4.2).
+- **[Decided]** **The Runner checks a tool only through its input and its output**, never what the tool reads or does. A tool that reads more than its one file, or the database, is a design error in that tool (`toolset.md`, section 4.2).
 - **[Decided]** Each tool states its own parameters and outputs with `--info` (`data_topology.md`, `DT-1`).
 - **[Proposed]** The structure of the JSON parameters is the one the tool states with `--info`. The Runner checks the parameters against it before it starts the tool, and the tool checks them when it reads them. A missing or malformed parameter (a shape problem) is an invocation error; that is a Runner bug, caught by the dry run. A value problem, such as incongruent values, is a run error of the tool (`toolset.md`, section 4.4).
 - **[Proposed]** When the dry run reports a value problem, the Runner doesn't start the real run either. It records the tool's run error in its log, not as a Runner bug, since the values came from the data.
@@ -68,7 +69,8 @@ Related files: `toolset.md` (what every tool has in common, shared data, the oth
 - **[Proposed]** For such an error, the Runner's own log is the only record, so it records the error it got back from the tool.
 - **[Proposed]** The dry run before the real run is also the status check of `toolset.md`, section 4.3, done per tool: if it reports a failure that can be prevented, the Runner stops before the real run, and the work data stays untouched.
 - **[Proposed]** Since the database is updated after each tool, a later tool sees the facts loaded from earlier tools in the same run. How this fits the one-snapshot rule when a later tool fails is `RN-16` (related to `RN-3`).
-- **To define:** whether the file list is the file inventory tool's job or the Runner's (`RN-13`), and which repeated runs are allowed (`RN-15`).
+- **[Decided]** The file list is the Runner's; the file inventory tool determines each file's kind (`RN-13`, `toolset.md`, section 6.2).
+- **To define:** which repeated runs are allowed (`RN-15`).
 
 ## 2. Run order
 
@@ -112,6 +114,21 @@ Related files: `toolset.md` (what every tool has in common, shared data, the oth
 - **[Proposed]** After each tool, reads the tool's result record from the tool's own store: success or failure, the failure message, when it ran, its version and what it read. The tool never reports to the Runner directly.
 - **[Proposed]** Runs tools one at a time, keeping the toolset's no-concurrency rule (`toolset.md`, section 4.2).
 
+**One run at a time** (decided by the user on 2026-11-07)
+- **[Decided]** **When a run starts, the Runner takes a lock, so another run can't start** while it lasts.
+- **[Decided]** **Tools need no locking.** They are assumed to run only from the Runner (`toolset.md`, section 4.2).
+- **[Decided]** **A user may still start a tool by hand.** If its output changes, that is the user's action, not an error.
+- **[Decided]** **A problem from such a change shows up only when wrong input is read.** Whoever reads it, a tool or the Runner, then detects the failure and writes an error and a diagnostic.
+- **[Proposed]** A dry run of the Runner takes the lock too, since it may write (section 9); "read cache" doesn't, since it only reads and the cache is replaced in one step.
+- **[Proposed]** A lock left behind by a run that crashed must not block every later run: the lock records which process holds it, and a lock whose process is gone is taken over, with a note in the log.
+
+**Data the Runner provides** (decided by the user on 2026-11-07)
+- **[Decided]** **The Runner attempts to provide the data that tools require but no tool produces**, such as the file list, the order, and the values of the store paths.
+- **[Decided]** **It reads that data from the saved configuration; if it isn't there, it tries to create it from defaults. If the data isn't valid, the Runner fails.**
+- **[Decided]** The source root goes only to tools that read files: a tool declares `source_root` for that, and every file path it receives depends on it (`toolset.md`, section 4.2; decided by the user on 2026-11-08).
+- **[Decided]** **Some of this data depends on the user's configuration**, for example the path of the examined source. Such data is internal to the Runner and the Viewer; the tools don't need it as such. **If user-defined data is missing, the Runner outputs a diagnostic saying what is missing, and fails.**
+- **[Proposed]** A required parameter whose data name is neither produced by a tool nor provided by the Runner is a missing value too: the Runner fails before any tool starts, naming the tool and the parameter. An optional parameter that doesn't affect the output is simply not sent, and the tool uses its default (`toolset.md`, section 4.5).
+
 ## 5. Loading the database
 
 - **[Decided]** **Only the Runner writes to the codebase database**, based on the outputs of the tools. Tools write only to their own stores (`toolset.md`, sections 4.2 and 5.2).
@@ -122,7 +139,8 @@ Related files: `toolset.md` (what every tool has in common, shared data, the oth
 - **[Proposed]** The Runner knows what a value represents from the outputs the tool states with `--info` (`DT-1`). How exactly `--info` says it is `RN-12`.
 - **[Proposed]** After a tool succeeds, the Runner reads its output from the tool's store and loads the values that belong in the database into that tool's part of it. It also records which outputs exist, their schema versions and what they were built from.
 - **[Proposed]** When a tool fails, the Runner loads nothing from it, and that tool's part of the database stays as it was.
-- **[Proposed]** A dry run loads nothing; the Runner only reports what it would load.
+- **[Decided]** **The Runner may write the database whenever it's useful, in a dry run or a real run** (decided by the user on 2026-11-07). It may keep data of its own there (Runner-specific data, not tool work data, so `toolset.md`, section 5.2 still holds), and read it back to build the JSON for a tool invocation.
+- **[Proposed]** In a dry run, the Runner loads no tool output into the database, and writes nothing that claims a tool ran for real or that an output is current. Otherwise a later real run could skip work it still has to do.
 - **To define:** how the Runner knows what to load from each output and where, without built-in knowledge of each tool (`RN-12`), and the rule for which values go in the database (`RN-12`).
 
 ## 6. Configuration listing
@@ -162,8 +180,8 @@ Related files: `toolset.md` (what every tool has in common, shared data, the oth
 
 - **[Decided]** A dry run can be started from the Viewer, and never changes work data (`toolset.md`, section 4.3).
 - **[Decided]** A tool's dry run writes no record to the file system or the database. It prints all its data to standard output, and **the Runner reads it from there** (`toolset.md`, section 4.3).
-- **[Proposed]** A dry run of the Runner chains the steps through what each tool prints, so later steps work from the earlier steps' dry-run results instead of the saved work data. The whole process can be tried without touching anything. **To define:** how a later tool receives an earlier tool's dry-run data, since tools normally read only from the stores (`RN-11`).
-- **[Proposed]** By the same rule, the Runner's own dry run writes no log and no listing facts. It prints its plan and results to standard output. This would answer the dry-run part of `RN-2`.
+- **[Proposed]** A dry run of the Runner chains the steps through what each tool prints, so later steps work from the earlier steps' dry-run results instead of the saved work data. The whole process can be tried without changing any work data. Since the Runner may keep its own data in the database and read it into a tool's JSON (section 5), it could hold an earlier step's dry-run data there and pass it on. **To define:** how a later tool receives an earlier tool's dry-run data, since tools normally read only from the stores (`RN-11`).
+- **[Decided]** **The no-write rule of a dry run binds the tools only** (decided by the user on 2026-11-07; `toolset.md`, section 4.3). In a dry run, the Runner and the Viewer may write whenever it's useful: the Runner's log, listing facts, the database and its own data. The Runner still prints its plan and results to standard output. This answers the dry-run part of `RN-2`: a tool's dry run writes no log; the Runner's may.
 - **[Proposed]** It also runs the configuration checks in section 3, and reports which tools would run, which would be skipped, and why.
 
 ## 10. The Runner and the Viewer
@@ -173,8 +191,8 @@ Related files: `toolset.md` (what every tool has in common, shared data, the oth
 - **[Decided]** The Viewer lists every Runner configuration with its last known state, in its run configurations view (`viewer.md`, section 4.14).
 - **[Proposed]** The default one-command run ends by starting the Viewer.
 - **[Decided]** **The Viewer calls the Runner with parameters useful for visualization**, for example:
-  - **dry-run only**: run only the dry runs, to find out the status and whether everything would process correctly. Nothing is written (`toolset.md`, section 4.3).
-  - **read cache**, or similar: get the data currently stored by the tools, without running them.
+  - **dry-run only**: run only the dry runs, to find out the status and whether everything would process correctly. No tool writes anything (`toolset.md`, section 4.3); the Runner may still write its log and the database (section 9).
+  - **read cache**, or similar: get exactly what the Runner cached for a run configuration, without running anything (section 10.2). (This replaces "the data currently stored by the tools".)
 - **[Decided]** **The Runner and all the tools share data through the Runner.** What a tool gets, and what anyone else gets from a tool, depends on the Runner.
 - **[Decided]** **Real runs stay unchanged.** Viewer-oriented parameters only choose what the Runner does and reports; they never change how a real run behaves or what it writes, so "all invocations are equal" still holds.
 - **[Decided]** **The same data must be recreatable by the user calling the Runner by hand.** Everything the Viewer gets from the Runner, the user can get with the same Runner call on the command line, and gets the same result.
@@ -196,7 +214,22 @@ Related files: `toolset.md` (what every tool has in common, shared data, the oth
 - **Pending:** how these settings are changed from the command line is not defined yet (`TS-34`); not in the MVP's scope. The earlier proposal follows, kept until that is settled. The Runner could change these settings itself: through a Runner parameter, for a user working from the command line. The Viewer's config manager edits the configuration database directly.
 - **[Proposed]** What is configurable: at least the date format and the time zone. Possibly also durations, sizes and how paths are shown (`RN-18`).
 - **[Decided]** These settings are global, not per codebase.
-- **[Proposed]** A "read cache" call returns the stored tool outputs and database facts, in a form the Viewer server can parse, together with provenance (which tool, version, when). It reads only; it starts no tool.
+- **[Proposed]** A "read cache" call returns the Runner's cache for the run configuration (section 10.2), in a form the Viewer server can parse, together with provenance (which tool, version, when). It reads only; it starts no tool.
+
+### 10.2 The Runner's cache
+
+- **[Decided]** **The Runner keeps a cache for each run configuration, and "read cache" shows exactly what that cache holds** (decided by the user on 2026-11-07).
+- **[Decided]** **Each run replaces the Runner's cache** for its run configuration (decided by the user on 2026-11-07).
+- **[Decided]** **The cache is the Runner's alone.** It covers the input of the run, its result and its intermediate data (decided by the user on 2026-11-07). Tools never read it: they always work from their inputs, and manage their own cache if they need one (their internal state, `data_topology.md`, section 4).
+- **[Decided]** **The Viewer examines the data, preferring to read the Runner's cache** (decided by the user on 2026-11-07; `viewer.md`, section 3.1).
+- **[Decided]** **Manual runs are assumed to rewrite the cache in a way that is useful for the Runner and the Viewer** (decided by the user on 2026-11-07).
+- **[Decided]** **A manual run is a run of the Runner started from the command line, or by a Viewer function the user uses to reload the Viewer's graph** (decided by the user on 2026-11-07). The Viewer never starts a run on its own (`viewer.md`, section 3.2). Both kinds replace the cache in the same way, which fits "all invocations are equal" (section 1).
+- **[Proposed]** What the cache holds, per run: the run's identity and outcome; the file list; the record of tools and the order used; for each invocation, the JSON sent, the dry-run result, the tool's result, and whether it was skipped and why; and the data the tools produced, including outputs of tools skipped as up to date, so the cache always describes the whole current state. This is "the input, the result and the intermediate data".
+- **[Proposed]** A failed run replaces the cache too, with what it got, so its failure is visible. The Viewer keeps showing its last saved run from its own cache, as decided (`viewer.md`, sections 3.3 and 5).
+- **[Decided]** **A dry run updates only data useful for the Runner, and leaves alone the cache the Viewer uses** (decided by the user on 2026-11-07). It may add diagnostic information for the Viewer to display, but nothing that affects the graph visualization (`viewer.md`, section 3.2).
+- **[Decided]** The dry run's diagnostics sit in a separate part of the cache. The next dry run replaces that part; a real run, which replaces the whole cache, drops them, since they no longer describe the current state (agreed by the user on 2026-11-07).
+- **[Proposed]** Data of a tool no longer in the record, or of a file no longer in the file list, isn't in the next run's cache. This answers `RN-7` for what the Viewer sees.
+- **To define:** where and in what form the cache is kept (the Runner's work space or the database, `project_organization.md`), and how big it may grow when it copies data passed between tools (`RN-21`, related to `TS-31`).
 
 ## 11. Security
 
@@ -207,7 +240,7 @@ The Runner's security concerns are tracked in `security.md`, section 7: named co
 Questions moved here from other files keep a note of their old ID, which is struck through where it was.
 
 - `RN-1` **Listing contents** *(was `TS-17`)*: besides last run, failures and errors, and files processed, what else does the configuration listing include? For example duration, tool versions, which tools were skipped as unchanged, and whether the last run was a dry run. Is only the last run kept per configuration, or a short history?
-- `RN-2` **Run logs** *(was `TS-18`; dry-run part possibly answered: a dry run writes nothing, section 9)*: does a dry run write a log too, and if so where, given that a dry run never changes work data? How long are logs kept: all of them, the last few per configuration, or until the user clears them? Does the log record why each tool was skipped (unchanged inputs, not applicable, omitted)?
+- `RN-2` **Run logs** *(was `TS-18`; dry-run part answered: a tool's dry run writes no log, the Runner's dry run may, section 9)*: does a dry run write a log too, and if so where, given that a dry run never changes work data? How long are logs kept: all of them, the last few per configuration, or until the user clears them? Does the log record why each tool was skipped (unchanged inputs, not applicable, omitted)?
 - `RN-3` **Snapshot when a later tool fails** *(was `TS-19`; partly answered: staging exists and uses temporary files, section 8)*: a tool that fails writes nothing partial, but tools earlier in the same run may already have written their new current data. The outputs on disk would then mix new and old states, which goes against the one-snapshot rule. Options: tools write to a staging area and the Runner makes the whole run current in one step only when every tool succeeds (where the staging area would sit: `project_organization.md`, section 8); or the mix is allowed and recorded, so the Viewer and the status page can mark the outputs that are older than the rest.
 - `RN-4` ~~**Omitting a tool others depend on**~~: resolved. Disabling a tool also disables the tools that depend on its output, and enabling one enables the tools it needs; the Viewer keeps the configuration valid (`viewer.md`, section 4.11). A named configuration written by hand is still checked by the Runner before a run (section 3).
 - `RN-5` **Naming saved configurations** *(was `VW-34`)*: how are the named Runner configuration files named when saved from the Viewer? Can there be several, for example a quick one and a full one, and can the Viewer overwrite one that was written by hand?
@@ -216,14 +249,16 @@ Questions moved here from other files keep a note of their old ID, which is stru
 - `RN-8` **Configuration in the Runner's data:** other tools keep their config in config files with a precedence order (`toolset.md`, section 4.1), but the Runner's configuration is a named file in its data. Is the Runner the exception, does it also have an ordinary config file, and where does a named configuration sit in the precedence order? Related: `TS-16`, `ORG-3`.
 - `RN-9` **The Runner and the tool conventions** *(note: the Runner has at least one option of its own, `--human`, section 10.1)*: does the Runner follow the common tool conventions, such as the common options, a dry-run option, `--info` and `--log`, even though it is not an analysis tool?
 - `RN-10` **Cancelled runs:** the Viewer can cancel a run (`viewer.md`, section 3.3). What does a cancelled run leave in the stores, and how is it recorded in the log and the listing?
-- `RN-11` **Passing dry-run data between tools** *(partly answered: the Runner can hand data to a tool in its JSON parameters, on standard input with `--stdin`, `toolset.md`, section 4.5)*: in a dry run of the whole process, a later tool needs the data an earlier tool only printed. Does the Runner hand it over on the later tool's standard input, does each tool's dry run read only the saved stores (so the chain previews each step against the last real run), or something else?
+- `RN-11` **Passing dry-run data between tools** *(partly answered: the Runner can hand data to a tool in its JSON parameters, on standard input with `--stdin`, `toolset.md`, section 4.5; and it may keep data of its own in the database, even in a dry run, and read it into a tool's JSON, section 5)*: in a dry run of the whole process, a later tool needs the data an earlier tool only printed. Does the Runner hand it over on the later tool's standard input, does each tool's dry run read only the saved stores (so the chain previews each step against the last real run), or something else?
 - `RN-12` **What to load into the database** *(partly answered: the Runner decides per value, based on what it represents, `TS-28`; section 5)*: how does `--info` state what each output value represents, so the Runner can decide whether it goes in the database and into which part, without built-in knowledge of each tool? What happens to a tool's part of the database when the tool is omitted or no longer applies?
-- `RN-13` **File list: Runner or tool** *(leaning: a tool reads one file per invocation, so listing all files fits the Runner, which isn't a tool; `toolset.md`, section 4.2)*: the run process has the Runner read all files and update the file list itself. Does the file inventory tool (`toolset.md`, section 6.2) become part of the Runner, or is it a tool the Runner always runs first? If it becomes part of the Runner, the Runner writes facts about the examined code, and the run order no longer has a "discovery" stage of tools (`data_topology.md`, section 8).
+- `RN-13` ~~**File list: Runner or tool**~~ Resolved (decided by the user on 2026-11-07): the Runner provides the file list, as data no tool produces (section 4); the file inventory stays a tool that determines each file's kind with its own heuristics, such as code, SQL or configuration, to improve the details the Runner and the Viewer have (`toolset.md`, section 6.2). Original question *(earlier leaning: a tool reads one file per invocation, so listing all files fits the Runner, which isn't a tool; `toolset.md`, section 4.2)*: the run process has the Runner read all files and update the file list itself. Does the file inventory tool (`toolset.md`, section 6.2) become part of the Runner, or is it a tool the Runner always runs first? If it becomes part of the Runner, the Runner writes facts about the examined code, and the run order no longer has a "discovery" stage of tools (`data_topology.md`, section 8).
 - `RN-14` ~~**How the JSON parameters reach the tool**~~: resolved. With `--stdin` (JSON from the calling app) or `--json <path>` (a JSON file in temp or at a specific path), both in the same format. Command-line arguments are read first. Someone running a tool by hand uses the same options, or relies on `last_run.json` (`toolset.md`, section 4.5). Precedence against config files remains open as `TS-22`.
 - `RN-15` **Repeated runs of a tool** *(partly answered: the dry run before the real run checks that the JSON is correct, section 1.1)*: which kinds are allowed (describing the tool, preparatory runs to gather information or work out parameters, dry run, real run), in what order, and is there a limit? Doing a dry run before every real run roughly doubles the work on large codebases (`TS-13`): may the Runner skip it when nothing relevant changed? Do preparatory runs need a mode of their own, since they are neither dry nor real runs?
 - `RN-16` **Database updated per tool:** the database is updated after each tool, so if a later tool fails, the database already holds the new facts of earlier tools. Does staging (`RN-3`) also cover the database, so the whole run's database changes become current together, or are per-tool updates accepted and recorded?
 - `RN-17` **Viewer-specific parameters of the Runner** *(partly answered: dry-run only and read cache, or similar; section 10)*: what is the full list, and how are they kept from changing what a real run does, so all invocations stay equal?
 - `RN-18` **Human format settings** *(mostly answered: global configuration, in the configuration database, section 10.1)*: which defaults apply before anything is configured (for example `dd/mm/yyyy` and the system time zone)? Besides dates, does the format cover durations, sizes or paths? Does the Viewer UI use the same settings?
+- `RN-20` ~~**Dry runs and the cache:**~~ Resolved: a dry run updates only data useful for the Runner and leaves the Viewer's cache alone; it may add diagnostics for the Viewer, never anything that affects the graph (section 10.2). Original question: a dry run of the Runner is a run, and "each run replaces the cache". Does a dry run replace the cache of real runs, keep a dry-run cache of its own, or leave the cache alone? Proposed: it leaves the real-run cache alone (section 10.2).
+- `RN-21` **Where the cache lives:** in the Runner's work space, as files per run configuration, or in the database; and whether data passed between tools is copied into it or referenced (section 10.2, `project_organization.md`).
 - `RN-19` **Tool installation** *(deferred: the specifics are to be defined later; decided so far: the record of tools may be kept in the configuration database, only the Runner installs, and the Viewer may upload a file the Runner reads for installation; installation and removal are out of the MVP's scope; section 1.0)*: what does installing a tool involve, what is the uploaded file, where does it sit until the Runner reads it, and how does the Runner learn that a tool was added, removed or updated?
 
 ## 13. Deferred to the final technology section

@@ -4,3 +4,11 @@ data/tools/*/logs/*
 data/tools/*/result.json
 data/runner/logs/*
 app/tools/*/last_run.json
+# a tool run by hand with no store_path writes its store into its own program folder
+app/tools/*/output/
+app/tools/*/logs/
+app/tools/*/result.json
+# written by the Runner
+data/zaansouvi.sqlite
+data/runner/cache.json
+data/runner/run.lock

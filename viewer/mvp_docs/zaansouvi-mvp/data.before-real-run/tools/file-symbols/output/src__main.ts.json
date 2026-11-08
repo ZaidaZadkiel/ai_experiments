@@ -1,0 +1,427 @@
+{
+  "tool": "file-symbols",
+  "toolVersion": "0.3.0",
+  "formatVersion": 2,
+  "file": "src/main.ts",
+  "sourceSha256": "3772c01070989943ac3658813da8f84734e5508e6add37a1558c2ffd87c212f8",
+  "dataNames": {
+    "code.symbol": "symbols",
+    "code.reference": "references",
+    "diagnostic": "diagnostics"
+  },
+  "counts": {
+    "symbolCount": 5,
+    "symbolCountByKind": {
+      "import": 2,
+      "function": 1,
+      "variable": 2
+    },
+    "referenceCount": 12,
+    "referenceCountByKind": {
+      "declaration": 5,
+      "call": 2,
+      "read": 5
+    },
+    "unresolvedReferenceCount": 1,
+    "diagnosticCount": 0,
+    "lineCount": 13
+  },
+  "symbols": [
+    {
+      "id": "src/main.ts#add@1:10",
+      "name": "add",
+      "kind": "import",
+      "exported": false,
+      "location": {
+        "file": "src/main.ts",
+        "start": {
+          "line": 1,
+          "column": 10
+        },
+        "end": {
+          "line": 1,
+          "column": 13
+        }
+      },
+      "range": {
+        "file": "src/main.ts",
+        "start": {
+          "line": 1,
+          "column": 10
+        },
+        "end": {
+          "line": 1,
+          "column": 13
+        }
+      },
+      "parent": "src/main.ts",
+      "import": {
+        "moduleSpecifier": "./counter",
+        "importedName": "add"
+      }
+    },
+    {
+      "id": "src/main.ts#PRECISION@2:10",
+      "name": "PRECISION",
+      "kind": "import",
+      "exported": false,
+      "location": {
+        "file": "src/main.ts",
+        "start": {
+          "line": 2,
+          "column": 10
+        },
+        "end": {
+          "line": 2,
+          "column": 19
+        }
+      },
+      "range": {
+        "file": "src/main.ts",
+        "start": {
+          "line": 2,
+          "column": 10
+        },
+        "end": {
+          "line": 2,
+          "column": 19
+        }
+      },
+      "parent": "src/main.ts",
+      "import": {
+        "moduleSpecifier": "./math",
+        "importedName": "PRECISION"
+      }
+    },
+    {
+      "id": "src/main.ts#run@4:10",
+      "name": "run",
+      "kind": "function",
+      "exported": false,
+      "location": {
+        "file": "src/main.ts",
+        "start": {
+          "line": 4,
+          "column": 10
+        },
+        "end": {
+          "line": 4,
+          "column": 13
+        }
+      },
+      "range": {
+        "file": "src/main.ts",
+        "start": {
+          "line": 4,
+          "column": 1
+        },
+        "end": {
+          "line": 10,
+          "column": 2
+        }
+      },
+      "parent": "src/main.ts"
+    },
+    {
+      "id": "src/main.ts#first@5:9",
+      "name": "first",
+      "kind": "variable",
+      "exported": false,
+      "location": {
+        "file": "src/main.ts",
+        "start": {
+          "line": 5,
+          "column": 9
+        },
+        "end": {
+          "line": 5,
+          "column": 14
+        }
+      },
+      "range": {
+        "file": "src/main.ts",
+        "start": {
+          "line": 5,
+          "column": 9
+        },
+        "end": {
+          "line": 5,
+          "column": 27
+        }
+      },
+      "parent": "src/main.ts"
+    },
+    {
+      "id": "src/main.ts#label@7:11",
+      "name": "label",
+      "kind": "variable",
+      "exported": false,
+      "location": {
+        "file": "src/main.ts",
+        "start": {
+          "line": 7,
+          "column": 11
+        },
+        "end": {
+          "line": 7,
+          "column": 16
+        }
+      },
+      "range": {
+        "file": "src/main.ts",
+        "start": {
+          "line": 7,
+          "column": 11
+        },
+        "end": {
+          "line": 7,
+          "column": 43
+        }
+      },
+      "parent": "src/main.ts"
+    }
+  ],
+  "references": [
+    {
+      "id": "src/main.ts#ref@1:10",
+      "name": "add",
+      "symbol": "src/main.ts#add@1:10",
+      "kind": "declaration",
+      "location": {
+        "file": "src/main.ts",
+        "start": {
+          "line": 1,
+          "column": 10
+        },
+        "end": {
+          "line": 1,
+          "column": 13
+        }
+      },
+      "enclosing": "src/main.ts",
+      "from": "src/main.ts",
+      "to": "src/main.ts#add@1:10"
+    },
+    {
+      "id": "src/main.ts#ref@2:10",
+      "name": "PRECISION",
+      "symbol": "src/main.ts#PRECISION@2:10",
+      "kind": "declaration",
+      "location": {
+        "file": "src/main.ts",
+        "start": {
+          "line": 2,
+          "column": 10
+        },
+        "end": {
+          "line": 2,
+          "column": 19
+        }
+      },
+      "enclosing": "src/main.ts",
+      "from": "src/main.ts",
+      "to": "src/main.ts#PRECISION@2:10"
+    },
+    {
+      "id": "src/main.ts#ref@4:10",
+      "name": "run",
+      "symbol": "src/main.ts#run@4:10",
+      "kind": "declaration",
+      "location": {
+        "file": "src/main.ts",
+        "start": {
+          "line": 4,
+          "column": 10
+        },
+        "end": {
+          "line": 4,
+          "column": 13
+        }
+      },
+      "enclosing": "src/main.ts",
+      "from": "src/main.ts",
+      "to": "src/main.ts#run@4:10"
+    },
+    {
+      "id": "src/main.ts#ref@5:9",
+      "name": "first",
+      "symbol": "src/main.ts#first@5:9",
+      "kind": "declaration",
+      "location": {
+        "file": "src/main.ts",
+        "start": {
+          "line": 5,
+          "column": 9
+        },
+        "end": {
+          "line": 5,
+          "column": 14
+        }
+      },
+      "enclosing": "src/main.ts#run@4:10",
+      "from": "src/main.ts#run@4:10",
+      "to": "src/main.ts#first@5:9"
+    },
+    {
+      "id": "src/main.ts#ref@5:17",
+      "name": "add",
+      "symbol": "src/main.ts#add@1:10",
+      "kind": "call",
+      "location": {
+        "file": "src/main.ts",
+        "start": {
+          "line": 5,
+          "column": 17
+        },
+        "end": {
+          "line": 5,
+          "column": 20
+        }
+      },
+      "enclosing": "src/main.ts#run@4:10",
+      "from": "src/main.ts#run@4:10",
+      "to": "src/main.ts#add@1:10"
+    },
+    {
+      "id": "src/main.ts#ref@6:7",
+      "name": "first",
+      "symbol": "src/main.ts#first@5:9",
+      "kind": "read",
+      "location": {
+        "file": "src/main.ts",
+        "start": {
+          "line": 6,
+          "column": 7
+        },
+        "end": {
+          "line": 6,
+          "column": 12
+        }
+      },
+      "enclosing": "src/main.ts#run@4:10",
+      "from": "src/main.ts#run@4:10",
+      "to": "src/main.ts#first@5:9"
+    },
+    {
+      "id": "src/main.ts#ref@7:11",
+      "name": "label",
+      "symbol": "src/main.ts#label@7:11",
+      "kind": "declaration",
+      "location": {
+        "file": "src/main.ts",
+        "start": {
+          "line": 7,
+          "column": 11
+        },
+        "end": {
+          "line": 7,
+          "column": 16
+        }
+      },
+      "enclosing": "src/main.ts#run@4:10",
+      "from": "src/main.ts#run@4:10",
+      "to": "src/main.ts#label@7:11"
+    },
+    {
+      "id": "src/main.ts#ref@7:34",
+      "name": "PRECISION",
+      "symbol": "src/main.ts#PRECISION@2:10",
+      "kind": "read",
+      "location": {
+        "file": "src/main.ts",
+        "start": {
+          "line": 7,
+          "column": 34
+        },
+        "end": {
+          "line": 7,
+          "column": 43
+        }
+      },
+      "enclosing": "src/main.ts#run@4:10",
+      "from": "src/main.ts#run@4:10",
+      "to": "src/main.ts#PRECISION@2:10"
+    },
+    {
+      "id": "src/main.ts#ref@8:5",
+      "name": "console",
+      "symbol": null,
+      "kind": "read",
+      "location": {
+        "file": "src/main.ts",
+        "start": {
+          "line": 8,
+          "column": 5
+        },
+        "end": {
+          "line": 8,
+          "column": 12
+        }
+      },
+      "enclosing": "src/main.ts#run@4:10",
+      "from": "src/main.ts#run@4:10",
+      "to": null
+    },
+    {
+      "id": "src/main.ts#ref@8:17",
+      "name": "label",
+      "symbol": "src/main.ts#label@7:11",
+      "kind": "read",
+      "location": {
+        "file": "src/main.ts",
+        "start": {
+          "line": 8,
+          "column": 17
+        },
+        "end": {
+          "line": 8,
+          "column": 22
+        }
+      },
+      "enclosing": "src/main.ts#run@4:10",
+      "from": "src/main.ts#run@4:10",
+      "to": "src/main.ts#label@7:11"
+    },
+    {
+      "id": "src/main.ts#ref@8:24",
+      "name": "first",
+      "symbol": "src/main.ts#first@5:9",
+      "kind": "read",
+      "location": {
+        "file": "src/main.ts",
+        "start": {
+          "line": 8,
+          "column": 24
+        },
+        "end": {
+          "line": 8,
+          "column": 29
+        }
+      },
+      "enclosing": "src/main.ts#run@4:10",
+      "from": "src/main.ts#run@4:10",
+      "to": "src/main.ts#first@5:9"
+    },
+    {
+      "id": "src/main.ts#ref@12:1",
+      "name": "run",
+      "symbol": "src/main.ts#run@4:10",
+      "kind": "call",
+      "location": {
+        "file": "src/main.ts",
+        "start": {
+          "line": 12,
+          "column": 1
+        },
+        "end": {
+          "line": 12,
+          "column": 4
+        }
+      },
+      "enclosing": "src/main.ts",
+      "from": "src/main.ts",
+      "to": "src/main.ts#run@4:10"
+    }
+  ],
+  "diagnostics": []
+}

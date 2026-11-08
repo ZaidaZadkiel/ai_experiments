@@ -1,0 +1,8 @@
+{"event":"run_started","runId":"<runId>","mode":"real","sourceRoot":"<sourceRoot>","time":"<time>"}
+{"event":"files_listed","fileCount":3}
+{"event":"tool_skipped","tool":"file-symbols","file_id":"src/counter.ts","refreshReason":"up-to-date"}
+{"event":"tool_skipped","tool":"file-symbols","file_id":"src/main.ts","refreshReason":"up-to-date"}
+{"event":"tool_skipped","tool":"file-symbols","file_id":"src/math.ts","refreshReason":"up-to-date"}
+{"event":"tool_skipped","tool":"cross-file-links","refreshReason":"up-to-date"}
+{"event":"tool_skipped","tool":"symbol-scope","refreshReason":"up-to-date"}
+{"event":"run_finished","runId":"<runId>","outcome":"succeeded","exitCode":0,"time":"<time>","logPath":"<runnerLogPath>"}

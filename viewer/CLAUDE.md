@@ -46,6 +46,21 @@ When a decision is made or changed, update the file that owns the topic, and fix
 2. **Security next.** Security concerns are a separate later step, to be addressed once the concepts are settled and before libraries and specifics. Whenever a decision raises or changes a security concern, record it in `security.md`, but don't let security drive the concept work.
 3. **Technology last.** Specific libraries, commands, file formats down to the field, and other low-level details are not the current concern. They belong in a final section written last. Don't let a library choice shape a requirement. Each working file lists what it defers to that section.
 
+## Session logs (ailog)
+
+When asked to write the session log, write a verbatim log of the whole Claude Code session into `mvp_docs/zaansouvi-mvp/ailog/`.
+
+- **File name:** `yy-mm-dd HHMMSS <topic>.md`: the date and time of the session's first message, in UTC, then a topic under 120 characters naming what the session did. Example: `26-11-08 023638 M1 key names, Runner design and build, tool helper, M2 cross-file-links, expected results and reference schema.md`.
+- **Source:** the session's transcript, `~/.claude/projects/<project folder>/<session id>.jsonl`. The project folder is the working directory with `/` replaced by `-` (for `/home/zaida/viewer/mvp_docs`: `-home-zaida-viewer-mvp-docs`); the session ID is the last folder of the scratchpad path.
+- **Write it with** `python3 -I mvp_docs/zaansouvi-mvp/ailog/make_ailog.py <transcript.jsonl> "<out.md>"`. Don't write it by hand.
+- **Format:** `# AI conversation log`, then one paragraph naming the session ID, the model and the working directory, and saying that times are UTC and what is left out. Then, in order:
+  - `## <yyyy-mm-dd HH:MM:SS> — User`, `## … — Claude`, `## … — Context summary (conversation compacted)`: messages, as written;
+  - `### … — Tool call: <tool name>`: the input, in a `json` code block;
+  - `### … — Tool result` or `### … — Tool result (error)`: the output as recorded, in a code block.
+
+  Code fences are longer than any run of backticks inside them. Internal reasoning, system attachments and sidechains are left out; account and organization identifiers are redacted.
+- **Check before reporting:** every code fence closes, and the log holds no credentials or account details. The log ends at the request to write it; run the script again to include more.
+
 ## Expectations for the final document
 
 These apply to the deliverable as a whole: the short `feasibility_and_execution_plan.md` together with the working files it links to. Most of the detail below lives in the working files.

@@ -1,0 +1,7 @@
+{
+  "name": "zaansouvi-shared",
+  "version": "0.1.0",
+  "private": true,
+  "description": "ZaAnSouVi MVP shared library for the Runner and the Viewer backend: types, the log format, file helpers. Tools never import it (ARCH-02).",
+  "type": "module"
+}

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Broken-input tests for M1 run by hand (06_test_plan.md, B1 to B7), plus a few extras.
-# Uses a temporary output_root, so the real store in data/ is not touched. last_run.json next to
+# Uses a temporary store_path, so the real store in data/ is not touched. last_run.json next to
 # the launcher is backed up first and restored at the end.
 # Usage: bash tests/m1/broken.sh        Exit code 0 when every check passes.
 
@@ -11,7 +11,7 @@ LAST_RUN="$ROOT/app/tools/file-symbols/last_run.json"
 SRC="$ROOT/test-source"
 TMP=$(mktemp -d)
 OUT="$TMP/out"
-STORE="$OUT/file-symbols"
+STORE="$OUT/file-symbols"   # passed as store_path
 PASS=0
 FAIL=0
 
@@ -41,7 +41,7 @@ json_field() { node -e 'const fs=require("fs");const v=JSON.parse(fs.readFileSyn
 last_stdout_field() { tail -n 1 "$TMP/stdout" > "$TMP/last_line"; json_field "$TMP/last_line" "$1"; }
 
 cat >"$TMP/good.json" <<EOF
-{ "source_root": "$SRC", "file_id": "src/math.ts", "file_path": "$SRC/src/math.ts", "output_root": "$OUT" }
+{ "source_root": "$SRC", "file_id": "src/math.ts", "file_path": "$SRC/src/math.ts", "store_path": "$STORE" }
 EOF
 
 echo "Setup: one good run"
@@ -66,13 +66,13 @@ run --json "$TMP/bad.json"
 expect_code B2b 2; expect_stderr B2b E2; expect_unchanged B2b
 
 echo "B3: JSON missing file_id"
-echo "{ \"source_root\": \"$SRC\", \"output_root\": \"$OUT\" }" >"$TMP/no_file_id.json"
+echo "{ \"source_root\": \"$SRC\", \"store_path\": \"$STORE\" }" >"$TMP/no_file_id.json"
 BEFORE=$(snapshot)
 run --json "$TMP/no_file_id.json"
 expect_code B3 2; expect_stderr B3 E13; expect_unchanged B3
 
 echo "B3b: file_id of the wrong shape (a number)"
-echo "{ \"source_root\": \"$SRC\", \"file_id\": 42, \"output_root\": \"$OUT\" }" >"$TMP/bad_shape.json"
+echo "{ \"source_root\": \"$SRC\", \"file_id\": 42, \"store_path\": \"$STORE\" }" >"$TMP/bad_shape.json"
 BEFORE=$(snapshot)
 run --json "$TMP/bad_shape.json"
 expect_code B3b 2; expect_stderr B3b E13; expect_unchanged B3b
@@ -95,7 +95,7 @@ expect_code B5 0
 
 echo "B6: a file that doesn't exist (valid JSON)"
 cat >"$TMP/nofile.json" <<EOF
-{ "source_root": "$SRC", "file_id": "src/nope.ts", "output_root": "$OUT" }
+{ "source_root": "$SRC", "file_id": "src/nope.ts", "store_path": "$STORE" }
 EOF
 run --json "$TMP/nofile.json"
 expect_code B6 1; expect_stderr B6 E6
@@ -110,7 +110,7 @@ echo "B7: syntax error, dry run (as the Runner does it)"
 mkdir -p "$TMP/src7/src"
 printf 'export function broken(a: number {\n  return a;\n}\n' >"$TMP/src7/src/broken.ts"
 cat >"$TMP/broken.json" <<EOF
-{ "source_root": "$TMP/src7", "file_id": "src/broken.ts", "output_root": "$OUT" }
+{ "source_root": "$TMP/src7", "file_id": "src/broken.ts", "store_path": "$STORE" }
 EOF
 BEFORE=$(snapshot)
 run --dry-run --json "$TMP/broken.json"
@@ -142,12 +142,12 @@ echo "X3: dry run with an invocation error also prints no-go (FND-13)"
 BEFORE=$(snapshot)
 run --dry-run --json "$TMP/missing.json"
 expect_code X3 2
-[ "$(last_stdout_field kind)" = "invocation" ]; check X3 "no-go line marked as an invocation error" $?
+[ "$(last_stdout_field errorKind)" = "invocation" ]; check X3 "no-go line marked as an invocation error" $?
 expect_unchanged X3
 
 echo "X4: file_path and file_id disagree (value problem: run error)"
 cat >"$TMP/incongruent.json" <<EOF
-{ "source_root": "$SRC", "file_id": "src/main.ts", "file_path": "$SRC/src/math.ts", "output_root": "$OUT" }
+{ "source_root": "$SRC", "file_id": "src/main.ts", "file_path": "$SRC/src/math.ts", "store_path": "$STORE" }
 EOF
 run --json "$TMP/incongruent.json"
 expect_code X4 1; expect_stderr X4 E12
@@ -161,6 +161,57 @@ echo "X6: --log copies the log"
 run --json "$TMP/good.json" --log "$TMP/copy.log"
 expect_code X6 0
 grep -q "run_finished" "$TMP/copy.log"; check X6 "copy has the full log" $?
+
+echo "X7: store_path affects no output: from the input, else the default (program folder); last_run.json only as a whole input"
+PROG="$ROOT/app/tools/file-symbols"
+STORE2="$TMP/store2"
+out_sha() { sha256sum "$1/output/src__math.ts.json" 2>/dev/null | cut -d' ' -f1; }
+# command line beats the JSON
+run --json "$TMP/good.json" --store-path "$STORE2"
+expect_code X7 0
+[ -f "$STORE2/output/src__math.ts.json" ]; check X7 "--store-path beats store_path in the JSON" $?
+# no parameters: last_run.json is the whole input, store included
+rm -rf "$STORE2"
+run
+expect_code X7 0
+[ -f "$STORE2/output/src__math.ts.json" ]; check X7 "no parameters: last_run.json repeated whole, store included" $?
+[ "$(json_field "$STORE2/result.json" nonOutputParameterSources.store_path)" = "input" ]; check X7 "result.json: store_path came with the input" $?
+# JSON with the same output parameters but no store_path: last_run.json is NOT used for the missing key
+for f in output logs result.json; do [ -e "$PROG/$f" ] && PROG_HAD=1; done
+rm -rf "$STORE2"
+cat >"$TMP/good_no_store.json" <<EOF
+{ "source_root": "$SRC", "file_id": "src/math.ts", "file_path": "$SRC/src/math.ts" }
+EOF
+run --json "$TMP/good_no_store.json"
+expect_code X7 0
+[ ! -e "$STORE2" ]; check X7 "missing store_path is not taken from last_run.json" $?
+[ -f "$PROG/output/src__math.ts.json" ] && [ -f "$PROG/result.json" ]; check X7 "missing store_path: store is the program folder" $?
+[ "$(json_field "$PROG/result.json" nonOutputParameterSources.store_path)" = "default" ]; check X7 "result.json says store_path is the default" $?
+# the guarantee: the output is the same whatever store was chosen
+[ "$(out_sha "$PROG")" = "$GOOD_OUTPUT" ]; check X7 "same output in the default store" $?
+[ -z "${PROG_HAD:-}" ] && rm -rf "$PROG/output" "$PROG/logs" "$PROG/result.json"
+
+echo "X8: source_root is required for a tool that reads files (toolset.md 4.2)"
+BEFORE=$(snapshot)
+cat >"$TMP/no_root.json" <<EOF
+{ "file_id": "src/math.ts", "file_path": "$SRC/src/math.ts", "store_path": "$STORE" }
+EOF
+run --json "$TMP/no_root.json"
+expect_code X8 2; expect_stderr X8 E13; expect_unchanged X8
+
+echo "X9: a relative file_path is resolved against source_root"
+cat >"$TMP/rel_path.json" <<EOF
+{ "source_root": "$SRC", "file_id": "src/math.ts", "file_path": "src/math.ts", "store_path": "$STORE" }
+EOF
+run --json "$TMP/rel_path.json"
+expect_code X9 0
+
+echo "X10: a file_path outside source_root is a run error"
+cat >"$TMP/outside.json" <<EOF
+{ "source_root": "$SRC/src", "file_id": "math.ts", "file_path": "$ROOT/expected/README.md", "store_path": "$STORE" }
+EOF
+run --json "$TMP/outside.json"
+expect_code X10 1; expect_stderr X10 E12
 
 echo
 echo "passed: $PASS, failed: $FAIL"

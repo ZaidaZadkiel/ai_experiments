@@ -1,0 +1,7 @@
+{
+  "name": "zaansouvi-tool-helper",
+  "version": "0.1.0",
+  "private": true,
+  "description": "ZaAnSouVi MVP tool helper: the contract every tool shares (TOOL-45). Knows nothing about any specific tool.",
+  "type": "module"
+}

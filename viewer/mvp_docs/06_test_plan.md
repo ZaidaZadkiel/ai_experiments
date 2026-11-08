@@ -93,13 +93,16 @@ Kept in `expected/` as a readable table; the comparison with the tools' output i
 
 ### Links (M2)
 
-| From | To |
-|---|---|
-| counter.ts `round` (import, line 1) | math.ts `round` (line 3) |
-| main.ts `add` (import, line 1) | counter.ts `add` (line 5) |
-| main.ts `PRECISION` (import, line 2) | math.ts `PRECISION` (line 1) |
+| From | To | Kind | At |
+|---|---|---|---|
+| counter.ts `round` (import symbol) | math.ts `round` (line 3) | import | counter.ts 1:10 |
+| counter.ts `add` (function) | math.ts `round` (line 3) | call | counter.ts 7:10 |
+| main.ts `add` (import symbol) | counter.ts `add` (line 5) | import | main.ts 1:10 |
+| main.ts `PRECISION` (import symbol) | math.ts `PRECISION` (line 1) | import | main.ts 2:10 |
+| main.ts `run` (function) | counter.ts `add` (line 5) | call | main.ts 5:17 |
+| main.ts `run` (function) | math.ts `PRECISION` (line 1) | read | main.ts 7:34 |
 
-No unresolved imports.
+Six links, in this order: three imports and three uses (`TOOL-20`, `TOOL-23`, option A, accepted by the user for the MVP on 2026-11-08). No unresolved imports.
 
 ### Scopes (M3)
 
@@ -109,14 +112,26 @@ No unresolved imports.
 | counter.ts | file; `add` (lines 5–8) |
 | main.ts | file; `run` (lines 4–10); the `if` block belongs to `run` |
 
+Each function scope's `owner` is its function symbol (`src/main.ts#run@4:10` for `run`), and each file scope's is its file (`TOOL-33`).
+
+In the Viewer, at level 2 inside main.ts, the scope `run` is shown with the symbols it is used with (`VIEW-13`): edges to `add` and `PRECISION` (the imports, in the file scope), to `counter.ts` and `math.ts` through the use links, and one unresolved name, `console`. The file scope's own code, the call `run()` on line 12, gives an edge from the file scope to `run`.
+
 ### File edges (Viewer)
 
-counter.ts → math.ts; main.ts → counter.ts; main.ts → math.ts.
+counter.ts → math.ts (2); main.ts → counter.ts (2); main.ts → math.ts (2). Each counts an import and a use (2026-11-08, `FND-27`).
 
 ## Automatic checks
 
-- **TEST-01** A script runs `zaansouvi-run test-source`, then compares the outputs with `expected/`: symbols by file, name, kind and line; references by file, line, name, kind and target; links; scopes and membership. It prints every difference.
-- **TEST-02** `zaansouvi-run test-source --dry-run-only` reports `go` for every step and leaves the data folder and the database unchanged (compare file hashes before and after).
+All tests run on Node 22.23.1, and each test that needs a clean state starts by deleting `data/` (accepted by the user for the MVP on 2026-11-07).
+
+- **TEST-01** Starting from an empty data folder (delete `data/`), so every tool runs, a script runs `zaansouvi-run test-source`, then compares the outputs with `expected/`: symbols by file, name, kind and line; references by file, line, name, kind and target; links; scopes and membership. It prints every difference.
+- **TEST-02** Run after TEST-01, so the stores hold a real run's outputs (`RUN-16`). `zaansouvi-run test-source --dry-run-only` reports `go` for every step, each marked `up-to-date` and with no `staleInputs`, and leaves every tool's store (`data/tools/`) and each tool's `last_run.json` unchanged (compare file hashes before and after). In the database, `project_outputs` and the real-run rows of `project_tool_runs` are unchanged (compare rows). The Runner's log, `project_runs` and its other rows may change (`RUN-23`).
+- **TEST-03** On a fresh data folder (delete `data/tools/`), `zaansouvi-run test-source --dry-run-only` reports `go` for M1 on each of the three files, then `no-go` for cross-file-links with `E12` naming `code.symbol` (`TOOL-09`). The Runner stops: symbol-scope is never invoked, and no tool writes anything (`data/tools/` holds no output, result or log).
+- **TEST-04** Refresh check (`RUN-17` to `RUN-22`), each step after TEST-01, on a copy of `test-source`:
+  - **Nothing changed:** a second run prints `tool_skipped` for all five invocations, starts no tool, and leaves every output file untouched (same hash and modification time).
+  - **One file edited:** add an empty first line to `main.ts`, which moves every location in it. M1 runs for `main.ts` only (`counter.ts` and `math.ts` skipped); cross-file-links and symbol-scope run with reason `inputs-changed`.
+  - **Damaged output:** replace `links.json` with `{}`. cross-file-links runs with reason `missing`; M1 and symbol-scope are skipped, since their inputs didn't change.
+  - **Dry run after an edit:** remove that empty line again, then run `--dry-run-only`. Every invocation is dry-run and says go. M1 for `main.ts` has reason `inputs-changed`, M1 for the other two files is `up-to-date`; cross-file-links and symbol-scope are dry-run with reason `upstream-refresh` and `staleInputs: ["src/main.ts"]`; no tool output is written.
 
 ## Broken inputs
 
@@ -130,9 +145,9 @@ Each one is run and must give the stated result. "By hand" means invoking the to
 | B4 | M1 with no parameters, after deleting `last_run.json` | by hand | `E3`, exit 2, nothing written |
 | B5 | M1 with no parameters, `last_run.json` present | by hand | repeats the last run exactly, same output |
 | B6 | M1 on a file path that doesn't exist | by hand, valid JSON | run error `E6`, exit 1, `result.json` failed, `last_run.json` updated, earlier output kept |
-| B7 | a file with a syntax error added to the source | Runner | M1's dry run is no-go (`E12`) for that file, the Runner stops, the Viewer shows it in red |
-| B8 | M2 with an M1 output whose reference points to a missing symbol | by hand | run error `E12`, exit 1, logged |
-| B9 | an import from `"./missing"` added to the source | Runner | not an error: M2 lists it as unresolved, the run succeeds |
+| B7 | `src/broken.ts` added, holding `export function (` (a syntax error on line 1) | Runner | M1's dry run is no-go (`E12`) for that file, the Runner stops, the Viewer shows it in red |
+| B8 | M2 with two symbol records with the same `id` | by hand | run error `E12`, exit 1, logged (`TOOL-22`; `tests/m2/broken.sh`) |
+| B9 | `import { thing } from "./missing";` appended to `src/main.ts` as line 13 | Runner | not an error: M2 outputs a link with `to: null`, the run succeeds |
 | B10 | source root that doesn't exist | Runner | Runner exit 2, nothing written |
 
 ## Extra checks
@@ -140,11 +155,38 @@ Each one is run and must give the stated result. "By hand" means invoking the to
 - **C1. Without M3.** Move M3 out of `app/tools/`, restart, run. The Viewer shows files › symbols, two levels, with no change to M1, M2, the Runner or the Viewer (`MVP_scope.md`, section 5.1).
 - **C2. Rename.** Rename `round` to `roundTo` in math.ts and counter.ts, run again. All three tools use the new IDs, the link is still there, and nothing refers to the old ID.
 
+### Expected end states (`FND-25`)
+
+Each starts from the state TEST-01 leaves, on a copy of `test-source`. Files run in file ID order (`RUN-28`). "Cache" is what `--read-cache` prints (`RUN-27`). (accepted by the user for the MVP on 2026-11-07)
+
+- **B7.** `src/broken.ts` sorts first, so M1's first invocation is `src/broken.ts`, reason `never-run`, and its dry run is no-go (`E12`, line 1). Events: `run_started`, `files_listed` (4), `tool_dry_run` (`src/broken.ts`, `no-go`), `run_finished` (`failed`, exit code 1). Exit code 1. No tool output changes; the other files are never reached. The cache is replaced, marked failed, with the four-file list and that one invocation's no-go, and no tool data. `project_tool_runs` holds the no-go for `src/broken.ts`. The Viewer keeps showing its last good graph and shows the error in red.
+- **B9.** M1 runs for `src/main.ts` only (`inputs-changed`); `src/counter.ts` and `src/math.ts` are skipped. cross-file-links and symbol-scope run (`inputs-changed`). Exit code 0. `links.json` holds a seventh link, from `src/main.ts#thing@13:10`, with `to: null` and reason `no such file`; `thing` is never used, so it has no use-site link. The cache holds it under `code.link`; the six resolved links are unchanged. The Viewer doesn't draw it, and shows one unresolved import.
+- **C1.** After moving `app/tools/symbol-scope/` out: the record of tools has two tools. All four invocations are skipped as up to date: `tool_skipped` four times, no symbol-scope event. Exit code 0. The cache holds `code.symbol`, `code.reference` and `code.link`, and no `code.scope` or `code.membership`, so the Viewer shows two levels.
+- **C2.** After renaming `round` to `roundTo` in `src/math.ts` and `src/counter.ts`: M1 runs for those two files (`inputs-changed`), `src/main.ts` is skipped; cross-file-links and symbol-scope run. Exit code 0. The new IDs are `src/math.ts#roundTo@3:17` and `src/counter.ts#roundTo@1:10`; the links are `src/counter.ts#roundTo@1:10->src/math.ts#roundTo@3:17` and `src/counter.ts#ref@7:10->src/math.ts#roundTo@3:17`; nothing in the cache contains `#round@`.
+
+## Runner checks
+
+(accepted by the user for the MVP on 2026-11-07)
+
+- **TEST-05** After TEST-01, `zaansouvi-run --read-cache`: one `cache` event; `run.outcome` is `succeeded`; `files` lists the three file IDs in order; `tools` lists the three tools in order; `invocations` has five entries; the records under `data` match what TEST-01 compared with `expected/`. The whole cache matches `expected/runner-cache.json`, the events of TEST-01 match `expected/run-events.jsonl`, and TEST-04's "nothing changed" run matches `expected/run-events-second.jsonl`, under the rules in `expected/README.md` (proposed, 2026-11-07). On a fresh data folder, the event's `cache` is `null`, exit code 0.
+- **Stand-in tools.** Small programs under `tests/fixtures/tools/`, one per behavior, each answering `--info` like a real tool: `stub-go` (says go, writes a valid output), `stub-no-go`, `stub-crash` (exits without writing `result.json`) and `stub-garbage` (prints invalid JSON on its dry run). The Runner tests run on a temporary copy of `zaansouvi-mvp/` whose `app/tools/` holds the stand-ins they need, so they don't depend on M2 and M3.
+
+| # | Situation | Expected |
+|---|---|---|
+| R1 | database with an unknown `config_version` | stops before anything, exit 2, diagnostic |
+| R2 | a tool whose `--info` fails or isn't JSON | stops before the run, names the tool, exit 2 |
+| R3 | `stub-crash` | treated as a failed real run; exit code and standard error in the Runner log; exit 1 |
+| R4 | `stub-garbage` | treated as no-go with the tool's error; exit 1 |
+| R5 | a second run while one holds `data/runner/run.lock` | diagnostic naming the running run, exit 2, nothing written |
+| R6 | a stale lock (its process gone) | the run takes it over, notes it in the log, runs normally |
+| R7 | no source root on the command line and none saved | diagnostic saying the source root is missing and how to give it, exit 2 |
+| R8 | an empty folder in `app/tools/` | skipped with a log line; the run is unaffected |
+
 ## Human review of the Viewer (P3)
 
 The person deciding whether the Viewer passes goes through these and answers yes, no or partly, with a note:
 1. Can you start a run and a dry run from the page, and see each tool's go / no-go and result?
-2. Does level 1 show the three files and the three file edges, with sensible counts?
+2. Does level 1 show the three files and the three file edges, each counting 2?
 3. Can you go into `main.ts`, see the `run` scope, and go into it to see `first` and `label`?
 4. Do the links leaving a file lead you to the right symbol in the other file?
 5. Does selecting any node or edge show the right file:line and source line?
