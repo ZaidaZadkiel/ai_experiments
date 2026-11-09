@@ -82,3 +82,86 @@ It seems evident that the only way to continue with any degree of certainity, ev
 After that, started on the minimum viable program as a proof of concept.
 
 As of writing this doc, this is the part where im left.
+
+
+## second day of work
+The first day was spent mostly in thinking through the process of using ai, and updating the repository. It was really interesting to consider all the ways this thing can work, it went as far as having me dream about giving instructions to ai, which was really surprising
+
+In the end i started using ai as an overcomplicated text editor, telling what i wanted and having it edit all the relevant files. One thing that was evident, was that ai does not track anything by default, it can happily edit the same files and deleting everything it deems irrelevant, which is nice for a "final" document and quite annoying for a working document.
+
+One of the choices was allowing ai to make up codes, tell it to list everything, and keep references on update.
+
+From the documents it generated at the start, they had a format like `##_topic`, for ex `00_architecture.md`. So I created a new file `99_findings.md` and instructed ai to keep it updated, never removing a code and keeping references to other working files. I felt the need to make sure to say many times that the work was only for mvp, since it has a tendency to want to edit files on the root folder.
+
+Just in theorethical conversation, it was very quickly found that many of the original decisions were insuficent for its purpose, and the findings file quickly grew large. This seems good for me, as it keeps a more "user friendly" way to understand why things were done, which seems to be an important thing that is missing in the other project: ai just goes and does whatever and updates everything and keeps its "deliverable" tidy, but loses all the process information outside.
+
+For a human (me) reviewer, it becomes very easy to just go glass-eyed and say, "sure whatever". Thats not super comfortable on a dev project, since one of the hardest parts which no amount of code can solve, is figuring out why things were done one way or another.
+
+In tradev, the process of figuring out what works and what doesnt is kept in the developer's head, which often is also a problem since a newcomer will have to try figure it out from the code and experience. In the case of ai its even worse, since the entire code can change from one day to the next, and reading the specific detail is too cumbersome.
+
+So far, i find this approach acceptable. There is the issue that the lenght of the file is cumbersome, so perhaps asking ai to make some more human readable document can be useful for some kind of review, that is not a concern for now since the work is not in a "finished" state.
+
+### There are some things that i dont like about this process,
+- the process of editing becomes quite annoying, because too much material has been created and edited on each prompt, its pretty hard to know what it actually is doing. This is one of the purposes of this tool, trying to focus on the code part, trying to do *something* to visualize what the program is doing. 
+- the way ai just invents codes willynilly, FN-1324, AI-21, WHATEVER-235876 and references it all over the place without me knowing where it came from. In many cases the response announces when it creates new identifiers, but theres no way im going to remember what ID-3910 actually means in the files, or even where it is.  
+I have resorted to just opening the entire folder in vscode and use file search to figure out what it even is talking about. Asking ai to shorten what its talking about is annoying and im afraid that it can confuse ai over time, since thats adding more text to the conversation.
+- the nagging feeling that i dont know whatever its going on.  
+I can just answer on parts of what the last response said, and it likes to raise several points at once. Like i say, "add, x decission" and it will go and modify all things that it finds are affected for it, and from that it makes new questions, ending with "this changes x,y,z, it opens new questions a,b,c,d" and then i can go like, "for a, do this. for b, do that" and it will go do a lot of stuff and then say, "done, c and d are still open" and im like, whatever they were about? and trying to figure out by reading the codes mentioned and what it just wrote.  
+that is probably the most annoying part, since not only does it need more attention by me, it also makes it harder to reason about what is being done properly since i would need to review the material that is actually settled; that is natural since there Are changes being made. 
+
+## Progress
+
+In the end, i managed to decide on the way im going to document this exercise (the human log), and i learned a few ways that kind of work. I havent found yet ways that actually mess things up, besides straight up telling ai to do unhelpful things. Im going to leave that for a future experiment.
+
+The ai likes to just go do things and create files all over the place, so the work has already grown quite a bunch, nearing the limits of human review for a single change, so i opened a branch for containment. Ill be adding commits as i work until im satisfied with this part.
+
+One of the things that i liked was forcing myself to drop the work into files for reference, i think thats the most useful part. Perhaps for a future experiment, i may be able to extend the viewer to also try to figure out the aigen codes. I dont know if thats even possible.
+
+the work for the original purpose is proceeding nicely, much farther than what i could do by hand, which is frightning, i still do not have an answer about whether the viewer can actually do what i want in the manner im working. One of the difficult parts is that i dont have full visibility on the data processing, i did dump what ai came up to files for the purpose of examining but, like everything ai does, its too much stuff and really hard to mentally check, i would need to open several files and check piece by piece and that would take a while, and worse, it would be irrelevant on literally the next prompt.
+
+One thing i like, which i believe is the ai doing instructions on its own, is that it does check its work a bunch of times, and it can notice things that are not obvious to me, for example, one data entry is supposed to be `null` with a specific meaning of `not present`, which was implicit in what i was thinking. 
+
+then ai went and did a bunch of changes and on its own noticed that using `null` actually returned an unexpected data (empty) which then it went and reviewd the code and looped through the tests several times until it was satisfied that it could detect null correctly. That was nice.
+
+another case where the ai went and fixed itself was on the `ailog`, since i instructed it to dump a verbatim log of the conversation, it would include identity data like email addresses, so it decided on its own to redact them from the log and wrote its own tool to do that, ran it and found that there were still present. It checked it a few times and noted that the reason was that it was logging the commands it ran, including the parameters for redacting. It went ahead and did who-knows-what several times until it was satisfied that no personal identifiers were present on the log. 
+
+That was kinda cool, i wouldnt have thought of that.
+
+Of crouse, the entire reason I wanted a verbatim log was to try figure out whatever had happened, so i didn't *need* the redaction. Its better safe than sorry i guess.
+
+## mvp file tree
+```text
+(project root, some files not shown)
+├── mvp_docs
+│   ├── test_plan
+│   │   ├── test-source
+│   │   └── README.md
+│   ├── zaansouvi-mvp
+│   │   ├── ailog
+│   │   ├── app
+│   │   │   ├── runner
+│   │   │   ├── shared
+│   │   │   ├── tool-helper
+│   │   │   ├── tools
+│   │   │   └── viewer
+│   │   ├── data
+│   │   │   ├── runner
+│   │   │   └── tools
+│   │   ├── expected
+│   │   ├── tests
+│   │   ├── test-source
+│   │   └── README.md
+│   ├── 01_architecture.md
+│   ├── 02_data_contracts.md
+│   ├── 03_runner.md
+│   ├── 04_tools.md
+│   ├── 05_viewer.md
+│   ├── 06_test_plan.md
+│   ├── 07_delivery.md
+│   ├── 99_findings.md
+│   └── README.md
+```
+
+The work now is focusing on figuring out whether the tools can actually talk without knowing what each one does, and the main finding was that runner is going to need to be quite complex. I havent decided anything about how its going to figure out what the data actually means, and i think its best to let that unsettled until we start the actual viewer, which seems pretty hard.
+
+We'll see if theres any more surprises.
