@@ -1,0 +1,16 @@
+{
+  "name": "zaansouvi-symbol-scope",
+  "version": "0.1.0",
+  "private": true,
+  "description": "ZaAnSouVi MVP tool M3: groups each file's symbols into lexical scopes.",
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsc -p .",
+    "info": "./symbol-scope --info"
+  },
+  "engines": { "node": ">=22.18" },
+  "devDependencies": {
+    "typescript": "5.6.3",
+    "@types/node": "22.10.2"
+  }
+}

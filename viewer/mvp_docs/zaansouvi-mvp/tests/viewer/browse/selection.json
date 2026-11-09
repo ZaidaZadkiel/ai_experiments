@@ -1,0 +1,127 @@
+[
+ [
+  "go",
+  "<the Viewer's URL, filled in by browse.sh>"
+ ],
+ [
+  "wait",
+  "window.zaansouvi && window.zaansouvi.ready() && document.querySelector('#cy canvas')",
+  15
+ ],
+ [
+  "sleep",
+  1
+ ],
+ [
+  "js",
+  "window.zaansouvi.select(\"node\", \"src/main.ts\"); return 'one node selected'"
+ ],
+ [
+  "sleep",
+  0.3
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; const d=document.querySelector('#pane-details'); return 'selected: '+JSON.stringify(window.zaansouvi.state.selected)+' | highlighted edges: '+cy.edges('.touch').map(e=>e.data('real')).join(', ')+' | colors: '+cy.edges().map(e=>e.style('line-color')).join(' ')+' | groups: '+[...d.querySelectorAll('.grouphead')].map(h=>h.textContent).join(' / ')+' | drawer starts: '+d.textContent.slice(0,90)"
+ ],
+ [
+  "shot",
+  "sel-1-one-node.png"
+ ],
+ [
+  "js",
+  "window.zaansouvi.select(\"node\", \"src/math.ts\", true); return 'a second node added'"
+ ],
+ [
+  "sleep",
+  0.3
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; const d=document.querySelector('#pane-details'); return 'selected: '+JSON.stringify(window.zaansouvi.state.selected)+' | highlighted edges: '+cy.edges('.touch').map(e=>e.data('real')).join(', ')+' | colors: '+cy.edges().map(e=>e.style('line-color')).join(' ')+' | groups: '+[...d.querySelectorAll('.grouphead')].map(h=>h.textContent).join(' / ')+' | drawer starts: '+d.textContent.slice(0,90)"
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; const e=cy.edges()[0]; window.zaansouvi.select('edge', e.data('real'), true); return 'an edge added: '+e.data('real')"
+ ],
+ [
+  "sleep",
+  0.3
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; const d=document.querySelector('#pane-details'); return 'selected: '+JSON.stringify(window.zaansouvi.state.selected)+' | highlighted edges: '+cy.edges('.touch').map(e=>e.data('real')).join(', ')+' | colors: '+cy.edges().map(e=>e.style('line-color')).join(' ')+' | groups: '+[...d.querySelectorAll('.grouphead')].map(h=>h.textContent).join(' / ')+' | drawer starts: '+d.textContent.slice(0,90)"
+ ],
+ [
+  "shot",
+  "sel-2-several.png"
+ ],
+ [
+  "js",
+  "return [...document.querySelectorAll('#pane-details .selgroup')].map(g=>g.querySelector('.grouphead').textContent+': '+getComputedStyle(g).borderLeftColor).join(' / ')"
+ ],
+ [
+  "js",
+  "window.zaansouvi.select(undefined, ''); return 'cleared'"
+ ],
+ [
+  "sleep",
+  0.3
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; const d=document.querySelector('#pane-details'); return 'selected: '+JSON.stringify(window.zaansouvi.state.selected)+' | highlighted edges: '+cy.edges('.touch').map(e=>e.data('real')).join(', ')+' | colors: '+cy.edges().map(e=>e.style('line-color')).join(' ')+' | groups: '+[...d.querySelectorAll('.grouphead')].map(h=>h.textContent).join(' / ')+' | drawer starts: '+d.textContent.slice(0,90)"
+ ],
+ [
+  "js",
+  "window.zaansouvi.enter(\"src/main.ts#scope@4:1\"); return 1"
+ ],
+ [
+  "sleep",
+  0.8
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; const n=cy.nodes('.shown').filter(n=>n.connectedEdges().length>0)[0]; window.zaansouvi.select('node', n.id()); return 'in scope run, selected '+n.id()"
+ ],
+ [
+  "sleep",
+  0.3
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; const d=document.querySelector('#pane-details'); return 'selected: '+JSON.stringify(window.zaansouvi.state.selected)+' | highlighted edges: '+cy.edges('.touch').map(e=>e.data('real')).join(', ')+' | colors: '+cy.edges().map(e=>e.style('line-color')).join(' ')+' | groups: '+[...d.querySelectorAll('.grouphead')].map(h=>h.textContent).join(' / ')+' | drawer starts: '+d.textContent.slice(0,90)"
+ ],
+ [
+  "shot",
+  "sel-3-scope.png"
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; cy.$(':selected').unselect(); return 'unselected through Cytoscape, as a background click does'"
+ ],
+ [
+  "sleep",
+  0.3
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; const d=document.querySelector('#pane-details'); return 'selected: '+JSON.stringify(window.zaansouvi.state.selected)+' | highlighted edges: '+cy.edges('.touch').map(e=>e.data('real')).join(', ')+' | colors: '+cy.edges().map(e=>e.style('line-color')).join(' ')+' | groups: '+[...d.querySelectorAll('.grouphead')].map(h=>h.textContent).join(' / ')+' | drawer starts: '+d.textContent.slice(0,90)"
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; const ns=cy.nodes('.shown, .stub, .this'); window.zaansouvi.select('node', ns[0].id()); window.zaansouvi.select('node', ns[ns.length-1].id(), true); window.zaansouvi.select('node', ns[1].id(), true); return 'three nodes in the scope view'"
+ ],
+ [
+  "sleep",
+  0.3
+ ],
+ [
+  "js",
+  "return [...document.querySelectorAll('#pane-details .selgroup')].map(g=>g.querySelector('.grouphead').textContent+': '+getComputedStyle(g).borderLeftColor).join(' / ')"
+ ],
+ [
+  "shot",
+  "sel-4-bars.png"
+ ]
+]

@@ -1,0 +1,5 @@
+#!/bin/sh
+# Launcher for the ZaAnSouVi MVP Viewer backend (mvp_docs/55_viewer_backend.md, BE-11).
+# Arguments are passed through unchanged, never rebuilt into a command string.
+dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+exec node --disable-warning=ExperimentalWarning "$dir/server/src/server.ts" "$@"

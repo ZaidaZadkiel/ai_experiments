@@ -34,6 +34,7 @@ flowchart LR
   S -- "reads and writes" --> V[("Viewer internal storage<br/>preferences, views, cache")]
 ```
 
+- **[Decided]** **The Viewer stays a TypeScript and HTML app in the browser, with a local server** (confirmed by the user on 2026-11-08, after weighing a desktop window wrapping the same page and a native UI against the needs of starting it from a shell, the file manager or a desktop shortcut; `mvp_docs/99_findings.md`, `FND-62`). Whether to wrap the page in a desktop window later is `VW-38`, deferred until the MVP's findings.
 - **[Decided]** **The Viewer is independent of the tools.** It does not follow the tools' format: it has no `--info` or manifest, no place in the run order and no entry in the data topology (`data_topology.md`). It gets the stored facts as it needs them: the configuration database directly, and the tools' data and the codebase database through the Runner (3.1).
 - **[Decided]** **The Viewer writes tool configuration**, in the format each tool declares for its config. This is how the config manager saves changes (4.11, 4.13). It writes no tool outputs and nothing in the codebase database.
 - **[Decided]** **The Viewer has internal storage of any kind** for its own data: preferences, views, node positions, UI state and the cache. Its form is the Viewer's own choice, and no tool reads it.
@@ -52,6 +53,7 @@ flowchart LR
 - **[Decided]** Real runs stay unchanged whatever the Viewer passes, and **the same data can be recreated by the user calling the Runner by hand** (`runner.md`, section 10).
 - **[Decided]** **The Viewer may keep its own cache or database, through the backend, if it is required at all.** It lives in the Viewer's internal storage (section 2).
 - **[Proposed]** The same goes for tool outputs in the tool stores: the server gets them by calling the Runner (read cache), never by opening the stores, so the Runner stays the only reader of the codebase's data.
+- **[Decided]** **The Viewer uses only the Runner's output** (decided by the user on 2026-11-08). A user may replace the Runner with their own scripts to run the tools (`toolset.md`, section 2), but what such scripts produce is irrelevant to the Viewer. If the Viewer should later use anything else, such as the tool stores directly, that is a new decision.
 - **[Decided]** **The Viewer examines the data, preferring to read the Runner's cache** (decided by the user on 2026-11-07; `runner.md`, section 10.2). The Runner's cache is separate from the Viewer's own cache (section 5).
 - **[Decided]** Runs the tool steps on request from the UI, through endpoints.
 - **[Decided]** Generates and serves data in a format only the Viewer needs (see section 5). This data lives in the Viewer's internal storage (section 2).
@@ -99,6 +101,10 @@ flowchart LR
 - **[Proposed]** The default one-command run ends by starting the server and opening the UI in the browser.
 - **[Proposed]** The server can also be started on its own over existing outputs, without running any analysis.
 - **[Proposed]** Everything the UI needs is bundled with ZaAnSouVi, so it works fully offline.
+- **[Decided]** **The server can load an examined source from a different folder without a restart** (decided by the user on 2026-11-08). The user picks another source root while it runs; any number of switches, in any order.
+  - **[Decided]** So the Viewer **caches the data useful for reloading each examined source** it has shown, kept apart per source, so switching back shows that source again without a new run (section 5).
+  - **[Decided]** **A cached entry the Viewer can't use fails cleanly**: when an entry is incompatible with the running Viewer (for example written in an older format), the Viewer doesn't show it, says why, and offers a new run for that source. It never guesses.
+  - **[Decided]** **The Runner's and the tools' data can be cleared by hand** at any time, and the Viewer's own cache survives it: after clearing, the Viewer still shows each source's cached graph, and the next run rebuilds the Runner's and the tools' data.
 
 ## 4. Viewer UI
 
@@ -142,6 +148,7 @@ Sections 4.1 to 4.9 describe the **Viewer page**, the graph page. Sections 4.10 
 - **[Proposed]** The details for an edge show both ends and where the reference itself is. The details for a variable list every read and write site, each with its quote and link.
 
 ### 4.5 Arranging nodes
+- **[Decided]** **Layout design is central to the Viewer's readability**, not a detail of rendering (decided by the user on 2026-11-09). Where nodes are placed decides whether a view can be read at all: what belongs together, what is inside what, where "here" ends and what is elsewhere. Layout gets its own design work, weighed like the visual language (4.3), and is a main answer to the readability of large graphs (`toolset.md`, section 9). Evidence from the MVP: a force layout alone placed nodes differently on every entry and made a symbol look unrelated to the scope declaring it; a predictable start, a frame for the scope being viewed, and its contents and the stubs placed by rule were judged by the user to improve readability (`mvp_docs/99_findings.md`, `FND-72` and `FND-73`; `mvp_docs/50_viewer_ui.md`, `UI-32` and `UI-37`). How to lay out each view is open (`VW-39`).
 - **[Decided]** The graph viewer can **zoom** and **pan**.
 - **[Decided]** It can automatically **sort, align and distribute** nodes, and the user can **move each node by hand**.
 - **[Decided]** Node positions belong to each view. Moving a node in one view does not move it in another.
@@ -165,6 +172,11 @@ Sections 4.1 to 4.9 describe the **Viewer page**, the graph page. Sections 4.10 
   - **A status bar.**
 - **[Proposed]** The status bar shows the state of things at a glance: the codebase, whether what is shown is the last saved run, a pending version or a dry-run preview, whether a run is in progress, and the number of warnings. Selecting an item opens its details in the drawer.
 - **[Proposed]** The drawer's content depends on the view and the selection. With nothing selected, it shows a summary of the view and its legend. With a node or edge selected, it shows the traceability details: file:line, quote, link, and for references every site with its quote and link. It also shows the view's diagnostics: skipped or malformed items, and a pending version waiting for a decision.
+- **[Decided]** **Guideline: buttons that change how the content is shown sit in its bottom right corner** (decided by the user on 2026-11-09). Controls that change only the display (zoom, fit, filters, which levels or items are listed, expanding a panel) align to the bottom right of the content they act on, in one of two forms:
+  - **a column**, ~~with the functions that change least nearest the corner;~~ with the part that changes most (such as a count or a readout) kept in the corner, and the controls that affect the visualization above it (refined by the user on 2026-11-09). The intention: what needs the most attention stays in the same place visually in most cases, and so do the controls that change what is visible;
+  - **a row**, ordered with the items that change most first, so the one that changes least ends in the corner. Example: `{count} [action 1] [action 2] [change display]`.
+  - **The exception:** a layout meant to place its buttons in a way that suits its function better, such as the run configurations (4.14).
+  - In the MVP: the zoom controls in the graph area (a column: the zoom readout in the corner, Fit and Text above it), the This view / All toggle in Problems, and the activity line's count and toggles (`mvp_docs/50_viewer_ui.md`, `UI-46`, `UI-57`, `UI-73`).
 - **[Proposed]** The page always shows where the user is in the view hierarchy (see 4.9), for example as a breadcrumb: App › database.
 
 ### 4.9 Moving between views
@@ -269,7 +281,7 @@ Sections 4.1 to 4.9 describe the **Viewer page**, the graph page. Sections 4.10 
 
 - **[Decided]** The Viewer caches its own data, so a running tool never makes the UI show incomplete data or fail to load.
 - **[Proposed]** The cache, including a pending version, is part of the Viewer's internal storage (section 2). Accepting a pending version changes only that storage, never tool outputs.
-- **[Proposed]** The cache is kept per codebase and per view, and always holds the last complete, valid Viewer data.
+- ~~**[Proposed]**~~ **[Decided]** (per codebase: decided by the user on 2026-11-08, section 3.4; per view still proposed) The cache is kept per codebase and per view, and always holds the last complete, valid Viewer data.
 - **[Proposed]** Viewer data is rebuilt only after a tool run has finished, from the outputs of that run, re-reading only what the Runner's output says changed (3.2). The new data is built next to the current cache and replaces it in one step, only when the build succeeds and is complete.
 - **[Decided]** **Partly malformed output needs the user's approval.** When the rebuild finds partly malformed tool output, the new data does not replace the cache automatically. It becomes a **pending version**:
   - the Viewer shows the pending version with the malformed or skipped parts **marked visually in the graph area**, not only in a diagnostics list
@@ -291,6 +303,9 @@ Sections 4.1 to 4.9 describe the **Viewer page**, the graph page. Sections 4.10 
 ## 6. Malformed or missing data
 
 - **[Decided]** When tool outputs are malformed, the Viewer makes a fair effort and shows only what it can.
+- **[Decided]** **Checking the data is the Viewer's job, all of it** (decided by the user on 2026-11-08). The Viewer checks the output of every run before it uses or stores it: that it is valid as Viewer data, not only well-shaped. The Runner checks only shape (`runner.md`, section 10) and never checks content on the Viewer's behalf; each tool still answers for its own output (`toolset.md`, section 4.2).
+- **[Decided]** **The Viewer survives bad data** (decided by the user on 2026-11-08): bad data never stops the server or affects another examined source, and never replaces the Viewer's last good data for that source (section 5). After a restart or a reload, the same data gives the same result.
+- **[Decided]** **The UI says when a run's output has extra data or invalid data** (decided by the user on 2026-11-08): extra data is data the Viewer received but doesn't use or doesn't fully understand (shown generically or not at all); invalid data is data that failed the Viewer's checks (skipped). Each is listed with where it came from (data name, tool, record), not only counted.
 - **[Proposed]** Since real runs fail early instead of writing doubtful output (`toolset.md`, section 4.4), a normal run should not produce malformed output. Malformed data reaching the Viewer is expected to come from outputs edited by hand or damaged on disk, from a schema version the Viewer doesn't know, or from a defect in a tool. The rules below, and the pending version in section 5, cover those cases.
 - **[Proposed]** The tolerance is applied on the server, while Viewer data is built. The UI receives only data that has been checked.
 - **[Proposed]** How each problem is handled:
@@ -347,6 +362,10 @@ Sections 4.1 to 4.9 describe the **Viewer page**, the graph page. Sections 4.10 
 - `VW-35` **Where the run configurations view lives:** is it part of the config manager page, or a fourth page in the header (4.10)?
 - `VW-36` ~~**Direct reads or through the Runner**~~: resolved. The configuration database is read directly; the codebase database goes through the Runner (3.1). Tool stores are proposed to go through the Runner too. For the MVP this detail may be omitted (`MVP_scope.md`).
 - `VW-37` ~~**Enabling a tool with disabled inputs**~~: resolved. Enabling a tool also enables the tools that produce its inputs; the Viewer keeps the configuration always valid, and won't save one with no tool enabled (4.11).
+- `VW-38` **A desktop window around the page** *(deferred until the MVP's findings; decided by the user on 2026-11-08 to keep the browser for now)*: wrap the same HTML page in a desktop window (one that ships its own browser engine, or one that uses the system's), so closing the window stops the Viewer, there is no open local port or token, and only one instance runs. Against: a large dependency, packaging, and an app harder to inspect than a page. It would replace the [Decided] browser and local server in section 2, so it needs a new decision. To answer it: how much the browser's lifecycle (stopping, a second start) and its security handling (token, origin checks) cost in practice in the MVP. Starting it from GNOME Files or a shortcut needs the same care either way.
+- `VW-39` **Layout strategy** *(deferred until the MVP's findings; raised by the user on 2026-11-09, who sees layout management as a very interesting subject to explore after the MVP)*: how each view places its nodes (4.5). Directions found in the MVP (`mvp_docs/99_findings.md`, `FND-72`, `FND-73`), none decided: layouts by rule, where a node's place follows from what it is (the entered scope as a frame, its contents inside, other places around it); a layered layout following the direction of edges (tied to which way arrows point, `FND-71`); frames for containers such as scopes; positions the user moved, remembered per codebase and per view (4.5, [Proposed]); and stability across code changes, so a familiar view stays familiar from run to run (4.6). To answer it: which layouts read best for each level and view, how they scale to large graphs, and whether they can be predictable without being rigid.
+- `VW-40` **Arrow direction** *(deferred until after the MVP; raised by the user on 2026-11-09)*: should an edge's arrow point from a definition to where it is used, instead of from the using end to the definition, as the MVP draws it (`mvp_docs/50_viewer_ui.md`, `UI-39`)? The user would prefer the first; it may be improved after the MVP. Section 4.3 states no direction yet. Tied to a layered layout that follows the direction of edges (`VW-39`) (`mvp_docs/99_findings.md`, `FND-71`).
+- `VW-41` **Navigating between nodes and searching the project** *(deferred until after the MVP; raised by the user on 2026-11-09)*: navigation between nodes needs to be more explicit, and the user needs a way to search for what is within the project. The MVP moves only by double-clicking a node and by the breadcrumb; a dropdown in the breadcrumb listing the nodes that can be entered was offered and not built (`mvp_docs/99_findings.md`, `FND-71`). Related: search by name, path or ID (4.4, [Proposed]); moving between levels (4.9).
 
 ## 8. Later step: security
 

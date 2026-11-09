@@ -1,0 +1,128 @@
+[
+ [
+  "go",
+  "x"
+ ],
+ [
+  "wait",
+  "window.zaansouvi && window.zaansouvi.ready() && document.querySelector('#cy canvas')",
+  15
+ ],
+ [
+  "sleep",
+  1
+ ],
+ [
+  "js",
+  "window.zaansouvi.tab('problems'); const p=document.getElementById('pane-problems'); return window.zaansouvi.state.source.name+' | view \"'+window.zaansouvi.state.view+'\" | '+[...p.querySelectorAll('h3')].map(h=>h.textContent).join(' / ')+'\\n'+[...p.querySelectorAll(':scope > ul.rows > li')].slice(0,6).map(l=>l.textContent).join('\\n')+'\\n... items: '+p.querySelectorAll(':scope > ul.rows > li').length+' | toggle: '+[...p.querySelectorAll('.probscope button')].map(b=>b.textContent+'='+b.getAttribute('aria-pressed')).join(' ')"
+ ],
+ [
+  "js",
+  "return 'under the graph: '+document.getElementById('unres').textContent"
+ ],
+ [
+  "js",
+  "window.zaansouvi.enter('src/main.ts#scope@4:1'); return 1"
+ ],
+ [
+  "sleep",
+  0.5
+ ],
+ [
+  "js",
+  "window.zaansouvi.tab('problems'); const p=document.getElementById('pane-problems'); return window.zaansouvi.state.source.name+' | view \"'+window.zaansouvi.state.view+'\" | '+[...p.querySelectorAll('h3')].map(h=>h.textContent).join(' / ')+'\\n'+[...p.querySelectorAll(':scope > ul.rows > li')].slice(0,6).map(l=>l.textContent).join('\\n')+'\\n... items: '+p.querySelectorAll(':scope > ul.rows > li').length+' | toggle: '+[...p.querySelectorAll('.probscope button')].map(b=>b.textContent+'='+b.getAttribute('aria-pressed')).join(' ')"
+ ],
+ [
+  "js",
+  "return 'under the graph: '+document.getElementById('unres').textContent"
+ ],
+ [
+  "js",
+  "[...document.querySelectorAll('.probscope button')].find(b=>b.textContent==='All').click(); return 'All clicked'"
+ ],
+ [
+  "js",
+  "window.zaansouvi.tab('problems'); const p=document.getElementById('pane-problems'); return window.zaansouvi.state.source.name+' | view \"'+window.zaansouvi.state.view+'\" | '+[...p.querySelectorAll('h3')].map(h=>h.textContent).join(' / ')+'\\n'+[...p.querySelectorAll(':scope > ul.rows > li')].slice(0,6).map(l=>l.textContent).join('\\n')+'\\n... items: '+p.querySelectorAll(':scope > ul.rows > li').length+' | toggle: '+[...p.querySelectorAll('.probscope button')].map(b=>b.textContent+'='+b.getAttribute('aria-pressed')).join(' ')"
+ ],
+ [
+  "js",
+  "return 'under the graph: '+document.getElementById('unres').textContent"
+ ],
+ [
+  "js",
+  "window.zaansouvi.enter('src/math.ts'); return 1"
+ ],
+ [
+  "sleep",
+  0.5
+ ],
+ [
+  "js",
+  "window.zaansouvi.tab('problems'); const p=document.getElementById('pane-problems'); return window.zaansouvi.state.source.name+' | view \"'+window.zaansouvi.state.view+'\" | '+[...p.querySelectorAll('h3')].map(h=>h.textContent).join(' / ')+'\\n'+[...p.querySelectorAll(':scope > ul.rows > li')].slice(0,6).map(l=>l.textContent).join('\\n')+'\\n... items: '+p.querySelectorAll(':scope > ul.rows > li').length+' | toggle: '+[...p.querySelectorAll('.probscope button')].map(b=>b.textContent+'='+b.getAttribute('aria-pressed')).join(' ')"
+ ],
+ [
+  "js",
+  "return 'under the graph: '+document.getElementById('unres').textContent"
+ ],
+ [
+  "shot",
+  "prob-1-test-source.png"
+ ],
+ [
+  "js",
+  "return fetch('/api/sources/current',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({source:'f364b93f4d22b1ad'})}).then(r=>r.status)"
+ ],
+ [
+  "go",
+  "x"
+ ],
+ [
+  "wait",
+  "window.zaansouvi && window.zaansouvi.ready() && document.querySelector('#cy canvas')",
+  15
+ ],
+ [
+  "sleep",
+  1.5
+ ],
+ [
+  "js",
+  "[...document.querySelectorAll('.probscope button')].find(b=>b.textContent==='This view').click(); return 'This view clicked'"
+ ],
+ [
+  "js",
+  "window.zaansouvi.tab('problems'); const p=document.getElementById('pane-problems'); return window.zaansouvi.state.source.name+' | view \"'+window.zaansouvi.state.view+'\" | '+[...p.querySelectorAll('h3')].map(h=>h.textContent).join(' / ')+'\\n'+[...p.querySelectorAll(':scope > ul.rows > li')].slice(0,6).map(l=>l.textContent).join('\\n')+'\\n... items: '+p.querySelectorAll(':scope > ul.rows > li').length+' | toggle: '+[...p.querySelectorAll('.probscope button')].map(b=>b.textContent+'='+b.getAttribute('aria-pressed')).join(' ')"
+ ],
+ [
+  "js",
+  "return 'under the graph: '+document.getElementById('unres').textContent"
+ ],
+ [
+  "js",
+  "[...document.querySelectorAll('.probscope button')].find(b=>b.textContent==='All').click(); return 'All clicked'"
+ ],
+ [
+  "js",
+  "window.zaansouvi.tab('problems'); const p=document.getElementById('pane-problems'); return window.zaansouvi.state.source.name+' | view \"'+window.zaansouvi.state.view+'\" | '+[...p.querySelectorAll('h3')].map(h=>h.textContent).join(' / ')+'\\n'+[...p.querySelectorAll(':scope > ul.rows > li')].slice(0,6).map(l=>l.textContent).join('\\n')+'\\n... items: '+p.querySelectorAll(':scope > ul.rows > li').length+' | toggle: '+[...p.querySelectorAll('.probscope button')].map(b=>b.textContent+'='+b.getAttribute('aria-pressed')).join(' ')"
+ ],
+ [
+  "js",
+  "return 'under the graph: '+document.getElementById('unres').textContent"
+ ],
+ [
+  "js",
+  "const it=[...document.querySelectorAll('#pane-problems li.item')].find(l=>l.querySelector('.inote')); const r=x=>x.getBoundingClientRect(); const n=it.querySelector('.inote'), t=it.querySelector('.itype'), w=it.querySelector('.iwhat'); return 'note: '+n.textContent+' | title: '+n.title+' | cut: '+(n.scrollWidth>n.clientWidth)+' | type opacity '+getComputedStyle(t).opacity+' at right gap '+Math.round(r(it).right-r(t).right)+', bottom gap '+Math.round(r(it).bottom-r(t).bottom)+' | what right gap '+Math.round(r(it).right-r(w).right)+' | text-overflow '+getComputedStyle(n).textOverflow"
+ ],
+ [
+  "shot",
+  "prob-2-runner.png"
+ ],
+ [
+  "js",
+  "return [...document.querySelectorAll('#pane-problems > ul.rows > li')].filter(l=>l.textContent.includes('code.link')).map(l=>l.firstChild.textContent+' | '+l.textContent.slice(0,120)).join('\\n')"
+ ],
+ [
+  "js",
+  "return fetch('/api/sources/current',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({source:'4da6db42c6000612'})}).then(r=>r.status)"
+ ]
+]

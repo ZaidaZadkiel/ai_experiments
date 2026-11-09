@@ -2,8 +2,8 @@
 //
 // The contract every tool shares: options (TOOL-01), reading parameters in the decided order with last_run.json
 // only as a complete input (TOOL-02, TOOL-43), the shape check (TOOL-03), last_run.json (TOOL-04, DATA-15), the log
-// (DATA-16), result.json (DATA-14), the dry run's output (TOOL-06, DATA-17), the store from store_path or the
-// program folder (DATA-21), atomic writes (TOOL-05), error and exit codes.
+// (DATA-16), result.json (DATA-14), the dry run's output (TOOL-06, DATA-17), the store from store_path or
+// ./zaansouvi/tools/<tool>/ in the working folder (DATA-21, FND-59), last_run.json in the store, E14, atomic writes (TOOL-05), error and exit codes.
 //
 // It knows nothing about any specific tool. Everything tool-specific comes from the tool: its --info (which
 // also drives the parameter options and the shape check), its help text, its extra shape checks and its work.
@@ -26,6 +26,7 @@ export const COMMON_ERROR_CODES: Record<string, string> = {
   E2: "invocation: explicit JSON input unusable (file missing or unreadable, not valid JSON, not an object)",
   E3: "invocation: no parameters and no usable last_run.json",
   E13: "invocation: a parameter is missing or has the wrong shape",
+  E14: "invocation: run from inside the examined source; tools must never be run from the source path",
   E6: "run: the file to read is missing or unreadable",
   E12: "run: a value is incorrect or incongruent, or lacks what the tool needs",
   E8: "run: unexpected failure",
@@ -33,6 +34,13 @@ export const COMMON_ERROR_CODES: Record<string, string> = {
 
 /** The known parameter naming the tool's store (DATA-21). It doesn't affect the output. */
 export const STORE_PATH_PARAMETER = "store_path";
+
+/** The known parameter naming the examined source's root (DATA-09); only tools that read files take it. */
+export const SOURCE_ROOT_PARAMETER = "source_root";
+
+/** With no store given, a tool's store is <working folder>/zaansouvi/tools/<tool>/: the same layout as the Runner's data
+ *  folder, so a copied data folder can be used by hand (decided by the user on 2026-11-08; toolset.md 4.5). */
+export const DEFAULT_STORE_ROOT = path.join("zaansouvi", "tools");
 
 export type Position = { line: number; column: number };
 export type Location = { file: string; start: Position; end: Position };
@@ -83,7 +91,8 @@ export type WorkResult = {
 export type ToolSpec = {
   info: ToolInfo;
   help: string;
-  /** The folder of the tool's launcher: last_run.json sits here, and it is the store when store_path is absent. */
+  /** The folder of the tool's launcher, for the log only: nothing is written there (the store and last_run.json are
+   *  elsewhere, toolset.md 4.5). */
   programDir: string;
   /** Tool-specific shape checks, after the generic ones from --info. Throw invocationError("E13", ...). */
   checkShape?: (p: Params) => void;
@@ -264,6 +273,9 @@ function loadParams(cli: Cli, lastRunPath: string): { params: Params; source: Pa
       if (!hasCli) throw invocationError("E3", `No parameters were given, and ${last}. Nothing to repeat.`);
       source = "command line";
     } else {
+      // The store is where last_run.json was found, never a store recorded in it (toolset.md 4.5), so a copied
+      // store repeats into itself, not into the folder it was copied from.
+      delete last[STORE_PATH_PARAMETER];
       base = last;
       source = hasCli ? "command line + last_run" : "last_run";
     }
@@ -337,7 +349,31 @@ const toolLabel = (spec: ToolSpec) => spec.info.tool;
 
 function writeLastRun(r: Run, meta: Record<string, unknown>) {
   const _last_run = { tool: r.spec.info.tool, toolVersion: r.spec.info.toolVersion, ...meta };
-  writeAtomic(r.lastRunPath, JSON.stringify({ ...r.p, _last_run }, null, 2) + "\n");
+  // last_run.json sits in the store and doesn't record it: the store is wherever the file is (toolset.md 4.5).
+  const { [STORE_PATH_PARAMETER]: _store, ...params } = r.p;
+  writeAtomic(r.lastRunPath, JSON.stringify({ ...params, _last_run }, null, 2) + "\n");
+}
+
+/** E14: a tool that is given a source root never runs from inside it (decided by the user on 2026-11-08). Tools that
+ *  read no files have no source root, so they can't check this. */
+function checkNotInSource(p: Params) {
+  const root = p[SOURCE_ROOT_PARAMETER];
+  if (typeof root !== "string") return;
+  const real = (x: string) => {
+    try {
+      return fs.realpathSync(x);
+    } catch {
+      return path.resolve(x);
+    }
+  };
+  const cwd = real(process.cwd());
+  const src = real(root);
+  const rel = path.relative(src, cwd);
+  if (rel === "" || (rel !== ".." && !rel.startsWith(".." + path.sep) && !path.isAbsolute(rel))) {
+    throw invocationError("E14",
+      `The working folder ${cwd} is inside the examined source ${src}. Tools must never be run from the source path: ` +
+      "change to a folder outside the examined source and run again.", { workingFolder: cwd, sourceRoot: src });
+  }
 }
 
 function realRun(r: Run): number {
@@ -472,16 +508,22 @@ export function runTool(spec: ToolSpec, argv: string[]): number {
     process.stdout.write(JSON.stringify(spec.info, null, 2) + "\n");
     return EXIT_OK;
   }
-  const lastRunPath = path.join(spec.programDir, "last_run.json");
+  // The store: --store-path, else store_path in the JSON input, else <working folder>/zaansouvi/tools/<tool>/.
+  // With no JSON input, last_run.json is looked for in the store from the command line, else the default one.
+  const defaultStore = path.resolve(DEFAULT_STORE_ROOT, spec.info.tool);
+  const cliStore = cli.params[STORE_PATH_PARAMETER];
+  const lastRunStore = typeof cliStore === "string" ? path.resolve(cliStore) : defaultStore;
   let run: Run;
   try {
-    const loaded = loadParams(cli, lastRunPath);
+    const loaded = loadParams(cli, path.join(lastRunStore, "last_run.json"));
     checkGenericShape(spec.info, loaded.params);
+    checkNotInSource(loaded.params);
     spec.checkShape?.(loaded.params);
     const storeParam = loaded.params[STORE_PATH_PARAMETER];
+    const store = typeof storeParam === "string" ? path.resolve(storeParam) : defaultStore;
     run = {
       spec, p: loaded.params, source: loaded.source, sources: nonOutputSources(spec.info, loaded.params),
-      store: typeof storeParam === "string" ? path.resolve(storeParam) : spec.programDir, lastRunPath, logCopy: cli.log,
+      store, lastRunPath: path.join(store, "last_run.json"), logCopy: cli.log,
     };
   } catch (e) {
     return invocationFailure(spec, e, cli.dryRun);

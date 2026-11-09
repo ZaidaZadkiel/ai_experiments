@@ -48,7 +48,7 @@ const INFO = {
       required: false,
       affectsOutput: false,
       description: "Folder that is this tool's store: output, result and logs are written here. Doesn't affect the output",
-      whenAbsent: "<program folder>, the folder of this tool's launcher",
+      whenAbsent: "<working folder>/zaansouvi/tools/cross-file-links/",
     },
   },
   outputs: [
@@ -99,7 +99,8 @@ Usage:
   ${TOOL} --info | --help | --version
 
 Parameters (JSON keys): symbols (symbol records, required), references (reference records, required), store_path.
-With no store_path, the store is this tool's own program folder.
+With no store_path, the store is zaansouvi/tools/cross-file-links/ in the working folder; last_run.json is kept
+in the store. Never run a tool from inside the examined source (E14).
 
 Exit codes: 0 success / go, 1 run error / no-go, 2 invocation error.
 `;

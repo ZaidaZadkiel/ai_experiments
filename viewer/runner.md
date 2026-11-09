@@ -17,6 +17,7 @@ Related files: `toolset.md` (what every tool has in common, shared data, the oth
 - **[Decided]** **Reading the database is the Runner's responsibility.** Tools never read it; they get what they need as parameters the Runner builds (`toolset.md`, section 4.2).
 - **[Decided]** **The Viewer doesn't create tool parameters of its own.** It delegates that to the Runner.
 - **[Decided]** **The Runner may have Viewer-specific parameters; no tool may have any.**
+- **[Decided]** **For running the tools, the Runner can be replaced by a user's own scripts**, using only the tool contract (decided by the user on 2026-11-08; `toolset.md`, section 2). It holds no knowledge a tool's correct output depends on. **The Viewer uses only the Runner's output**, so a user's scripts don't feed the Viewer; changing that would be a new decision.
 - **[Proposed]** "All invocations are equal" and Viewer-specific parameters fit together like this: Viewer-specific parameters change only how the Runner reports back to the Viewer (for example progress updates or the form of its answers), never which tools run, with which parameters, or what is written. A command-line run and a Viewer run with the same configuration produce the same results and the same logs (`RN-17`).
 - **[Proposed]** Sane defaults belong to the Runner: a tool invoked with no parameters only repeats its last run or fails (`toolset.md`, section 4.5), so the one-command run works because the Runner builds every tool's parameters from its defaults.
 - **[Decided]** **It checks for sane defaults when it runs on its own.** It never assumes the Viewer or a saved configuration exists.
@@ -82,6 +83,7 @@ Related files: `toolset.md` (what every tool has in common, shared data, the oth
 - **[Decided]** The Viewer always lists every recorded tool and marks whether it runs, and lets the user enable or disable each one in the named configuration. The Viewer keeps the configuration always valid: disabling or enabling a tool does the same for every tool it requires or that requires it, and a configuration with no tool enabled can't be saved (`viewer.md`, section 4.11).
 - **[Proposed]** Because the ordering is stored, the Viewer can show it directly from the configuration database (`viewer.md`, section 3.1), and the order of a run can always be explained from it.
 - **[Decided]** Which tools are in the order can be changed: **tools can be added or omitted**.
+- **[Decided]** **Files are handled in one fixed order: sorted by file ID**, by plain string comparison (decided by the user for the MVP on 2026-11-07, `mvp_docs/03_runner.md`, `RUN-28`; adopted for the product on 2026-11-08). A tool run once per file is invoked in that order, and every list the Runner builds by file follows it: the file list, the data it sends to tools, and its cache. The order changes no tool's output; it makes the stop point after a failure, the run log, the decision whether a tool needs to run again, and the cache the same on every run, as the product's repeatability needs (`toolset.md`, section 2).
 - **[Proposed]** Adding or omitting tools chooses which tools run. The order between them always comes from the ordering in the configuration database, never written by hand.
 - **[Proposed]** Without a named configuration (section 3), the Runner uses every available tool that applies to the codebase, in the stored ordering. This keeps the decided one-command run with no configuration (`toolset.md`, section 4.1).
 - **[Proposed]** Since tools assume the stores are current and valid (`toolset.md`, section 4.2), deciding what is current is the Runner's job: it checks that a tool's inputs are not older than the source before starting it.
@@ -104,6 +106,7 @@ Related files: `toolset.md` (what every tool has in common, shared data, the oth
 ## 4. Invoking tools
 
 - **[Decided]** Sends each tool its parameters as a JSON structure with well-defined parameters (section 1.1).
+- **[Decided]** **For each parameter, the Runner sends only the records of the data name the tool asks for**, taken from the output of the tool that produces it, never the rest of that output file (decided by the user for the MVP on 2026-11-08, `mvp_docs/03_runner.md`, `RUN-19`; adopted for the toolset on 2026-11-08). This follows from the principle that each tool depends on as little as possible from other tools' outputs (`toolset.md`, section 2).
 - **[Decided]** Passes the JSON with `--stdin` or `--json <path>`, both in the same format. The path may be in temp or in another tool's store (`toolset.md`, section 4.5).
 - **[Decided]** After each tool run, **reads the tool's log and the output it produced**.
 - **[Decided]** **Calling a tool without the parameters it needs to begin work and read its inputs is a bug in the Runner.** An invocation error writes nothing and isn't logged by the tool (`toolset.md`, sections 4.5 and 4.6).
@@ -113,6 +116,7 @@ Related files: `toolset.md` (what every tool has in common, shared data, the oth
 - **[Proposed]** The Runner's run log refers to each tool's log for that run and copies the entries it needs, such as results, failures and diagnostics. The tool's log stays the full record of the tool's run.
 - **[Proposed]** After each tool, reads the tool's result record from the tool's own store: success or failure, the failure message, when it ran, its version and what it read. The tool never reports to the Runner directly.
 - **[Proposed]** Runs tools one at a time, keeping the toolset's no-concurrency rule (`toolset.md`, section 4.2).
+- **[Proposed]** **Starts every tool in its own data folder**, never in the folder the Runner itself was started from, so a Runner started from inside the examined source still never runs a tool there (E14, `toolset.md`, section 4.5). The Runner always passes each tool's store, so the tools' working-folder default never applies to its runs.
 
 **One run at a time** (decided by the user on 2026-11-07)
 - **[Decided]** **When a run starts, the Runner takes a lock, so another run can't start** while it lasts.
@@ -185,6 +189,8 @@ Related files: `toolset.md` (what every tool has in common, shared data, the oth
 - **[Proposed]** It also runs the configuration checks in section 3, and reports which tools would run, which would be skipped, and why.
 
 ## 10. The Runner and the Viewer
+
+- **[Decided]** **The Runner doesn't check content for the Viewer** (decided by the user on 2026-11-08). Its checks of tool outputs stay checks of shape; whether a run's output is valid and useful as Viewer data is the Viewer's to check (`viewer.md`, section 6).
 
 - **[Decided]** Runs started from the Viewer go through the Runner and are logged and recorded exactly like command-line runs (section 1).
 - **[Decided]** After each run, the Viewer re-reads what is relevant according to the Runner's output for that run (`viewer.md`, section 3.2).

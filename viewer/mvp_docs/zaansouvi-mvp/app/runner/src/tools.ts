@@ -241,8 +241,10 @@ export type DryRunOutcome = {
   lastLine?: unknown;
 };
 
-export function dryRun(tool: Tool, input: Record<string, unknown>): DryRunOutcome {
-  const r = spawnSync(tool.launcher, ["--dry-run", "--stdin"], { input: JSON.stringify(input), encoding: "utf8", maxBuffer: MAX_BUFFER });
+// cwd: the folder a tool is started in. The Runner passes its data folder, so a tool is never started from inside the
+// examined source, whatever folder the Runner was started from (toolset.md 4.5, E14).
+export function dryRun(tool: Tool, input: Record<string, unknown>, cwd: string): DryRunOutcome {
+  const r = spawnSync(tool.launcher, ["--dry-run", "--stdin"], { input: JSON.stringify(input), encoding: "utf8", maxBuffer: MAX_BUFFER, cwd });
   const exitCode = r.status;
   const stderr = (r.stderr ?? "").slice(0, 4000);
   if (r.error) {
@@ -271,7 +273,7 @@ export function dryRun(tool: Tool, input: Record<string, unknown>): DryRunOutcom
 
 export type RealRunOutcome = { exitCode: number | null; stderr: string; startError?: string };
 
-export function realRun(tool: Tool, input: Record<string, unknown>): RealRunOutcome {
-  const r = spawnSync(tool.launcher, ["--stdin"], { input: JSON.stringify(input), encoding: "utf8", maxBuffer: MAX_BUFFER });
+export function realRun(tool: Tool, input: Record<string, unknown>, cwd: string): RealRunOutcome {
+  const r = spawnSync(tool.launcher, ["--stdin"], { input: JSON.stringify(input), encoding: "utf8", maxBuffer: MAX_BUFFER, cwd });
   return { exitCode: r.status, stderr: (r.stderr ?? "").slice(0, 4000), startError: r.error?.message };
 }

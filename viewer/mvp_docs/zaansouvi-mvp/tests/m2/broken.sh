@@ -1,31 +1,26 @@
 #!/usr/bin/env bash
 # Broken inputs and unresolved imports for M2, run by hand (06_test_plan.md: B8, B9; TOOL-20 to TOOL-23).
-# Uses a temporary store_path, so data/ is not touched. last_run.json next to the launcher is backed up first and
-# restored at the end. Needs M1's outputs: run `node tests/m1/check.mjs` first.
+# Uses a temporary store_path, so data/ is not touched; last_run.json sits in that store (toolset.md 4.5), so
+# nothing outside the temporary folder is written. Needs M1's outputs: run `node tests/m1/check.mjs` first.
 # Usage: bash tests/m2/broken.sh        Exit code 0 when every check passes.
 
 set -u
 ROOT=$(cd -- "$(dirname -- "$0")/../.." && pwd)
 M2="$ROOT/app/tools/cross-file-links/cross-file-links"
-LAST_RUN="$ROOT/app/tools/cross-file-links/last_run.json"
 TMP=$(mktemp -d)
 STORE="$TMP/store"
 PASS=0
 FAIL=0
 
-[ -f "$LAST_RUN" ] && cp "$LAST_RUN" "$TMP/last_run.backup"
-restore() {
-  if [ -f "$TMP/last_run.backup" ]; then cp "$TMP/last_run.backup" "$LAST_RUN"; else rm -f "$LAST_RUN"; fi
-  rm -rf "$TMP"
-}
-trap restore EXIT
+LAST_RUN="$STORE/last_run.json"
+trap 'rm -rf "$TMP"' EXIT
 
 check() { if [ "$3" -eq 0 ]; then PASS=$((PASS + 1)); echo "  ok    $1: $2"; else FAIL=$((FAIL + 1)); echo "  FAIL  $1: $2"; fi; }
 run_in() { "$M2" "$@" >"$TMP/stdout" 2>"$TMP/stderr"; CODE=$?; }
 expect_code() { [ "$CODE" -eq "$2" ]; check "$1" "exit code $2 (got $CODE)" $?; }
 expect_stderr() { grep -q "$2" "$TMP/stderr"; check "$1" "standard error mentions $2" $?; }
-snapshot() { { find "$STORE" -type f -exec sha256sum {} + 2>/dev/null | sort; sha256sum "$LAST_RUN" 2>/dev/null || echo "no last_run"; } | sha256sum; }
-expect_unchanged() { [ "$(snapshot)" = "$BEFORE" ]; check "$1" "nothing written" $?; }
+store_hash() { { find "$STORE" -type f -exec sha256sum {} + 2>/dev/null | sort; sha256sum "$LAST_RUN" 2>/dev/null || echo "no last_run"; } | sha256sum; }
+expect_unchanged() { [ "$(store_hash)" = "$BEFORE" ]; check "$1" "nothing written" $?; }
 # Prints the link whose `from` is $2 in the output, as "kind|to|reason".
 link_of() { node -e 'const o=require(process.argv[1]);const l=o.links.find(l=>l.from===process.argv[2]);console.log(l?[l.kind,String(l.to),l.reason??""].join("|"):"none")' "$STORE/output/links.json" "$1"; }
 
@@ -69,13 +64,13 @@ echo "E1: no symbol records (TOOL-09)"
 fixture empty; run_in --json "$TMP/empty.json"; expect_code E1 1; expect_stderr E1 E12
 
 echo "E2: a malformed symbol record (E13, nothing written)"
-fixture bad-symbol; BEFORE=$(snapshot); run_in --json "$TMP/bad-symbol.json"; expect_code E2 2; expect_stderr E2 E13; expect_unchanged E2
+fixture bad-symbol; BEFORE=$(store_hash); run_in --json "$TMP/bad-symbol.json"; expect_code E2 2; expect_stderr E2 E13; expect_unchanged E2
 
 echo "E3: a malformed reference record (E13, nothing written)"
-fixture bad-reference; BEFORE=$(snapshot); run_in --json "$TMP/bad-reference.json"; expect_code E3 2; expect_stderr E3 E13; expect_unchanged E3
+fixture bad-reference; BEFORE=$(store_hash); run_in --json "$TMP/bad-reference.json"; expect_code E3 2; expect_stderr E3 E13; expect_unchanged E3
 
 echo "E4: references missing (E13, nothing written)"
-fixture no-references; BEFORE=$(snapshot); run_in --json "$TMP/no-references.json"; expect_code E4 2; expect_stderr E4 E13; expect_unchanged E4
+fixture no-references; BEFORE=$(store_hash); run_in --json "$TMP/no-references.json"; expect_code E4 2; expect_stderr E4 E13; expect_unchanged E4
 
 echo "E5: dry run with a malformed record prints a no-go line marked as an invocation error"
 run_in --dry-run --json "$TMP/bad-symbol.json"; expect_code E5 2
@@ -102,8 +97,8 @@ fixture type-only; run_in --json "$TMP/type-only.json"; [ "$(link_of 'src/main.t
 echo "U5: a specifier written with an extension is an acceptable failure (MVP-11)"
 fixture extension; run_in --json "$TMP/extension.json"; [ "$(link_of 'src/main.ts#round2@19:10')" = "import|null|no such file" ]; check U5 "reason no such file" $?
 
-echo "R1: no parameters repeats the last run exactly"
-fixture good; run_in --json "$TMP/good.json"; H1=$(sha256sum "$STORE/output/links.json"); run_in; expect_code R1 0
+echo "R1: --store-path alone repeats the last run saved in that store exactly"
+fixture good; run_in --json "$TMP/good.json"; H1=$(sha256sum "$STORE/output/links.json"); run_in --store-path "$STORE"; expect_code R1 0
 [ "$(sha256sum "$STORE/output/links.json")" = "$H1" ]; check R1 "same output" $?
 
 echo

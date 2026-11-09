@@ -1,0 +1,89 @@
+[
+ [
+  "go",
+  "x"
+ ],
+ [
+  "wait",
+  "window.zaansouvi && window.zaansouvi.ready() && document.querySelector('#cy canvas')",
+  15
+ ],
+ [
+  "sleep",
+  1
+ ],
+ [
+  "js",
+  "window.zaansouvi.tab('tools'); return [...document.querySelectorAll('#pane-tools h3, #pane-tools li.item')].map(e=>e.tagName==='H3'?'## '+e.textContent:'  ['+e.className+'] '+e.querySelector('.ihead').textContent+' | '+(e.querySelector('.inote')?.textContent??'')+[...e.querySelectorAll('ul.sub>li')].map(l=>' || '+l.textContent).join('')).join('\\n')"
+ ],
+ [
+  "js",
+  "document.getElementById('run').click(); return 'Run clicked (test-source)'"
+ ],
+ [
+  "wait",
+  "!window.zaansouvi.state.running && window.zaansouvi.state.liveEvents.some(e=>e.event==='run_finished')",
+  30
+ ],
+ [
+  "sleep",
+  1.5
+ ],
+ [
+  "js",
+  "return [...document.querySelectorAll('#pane-tools h3, #pane-tools li.item')].map(e=>e.tagName==='H3'?'## '+e.textContent:'  ['+e.className+'] '+e.querySelector('.ihead').textContent+' | '+(e.querySelector('.inote')?.textContent??'')+[...e.querySelectorAll('ul.sub>li')].map(l=>' || '+l.textContent).join('')).join('\\n')"
+ ],
+ [
+  "shot",
+  "tools-1-real.png"
+ ],
+ [
+  "js",
+  "document.getElementById('dry').click(); return 'Dry run clicked'"
+ ],
+ [
+  "wait",
+  "!window.zaansouvi.state.running && window.zaansouvi.state.liveEvents.some(e=>e.event==='run_finished')",
+  30
+ ],
+ [
+  "sleep",
+  1.5
+ ],
+ [
+  "js",
+  "return [...document.querySelectorAll('#pane-tools h3, #pane-tools li.item')].map(e=>e.tagName==='H3'?'## '+e.textContent:'  ['+e.className+'] '+e.querySelector('.ihead').textContent+' | '+(e.querySelector('.inote')?.textContent??'')+[...e.querySelectorAll('ul.sub>li')].map(l=>' || '+l.textContent).join('')).join('\\n')"
+ ],
+ [
+  "js",
+  "const z=window.zaansouvi; z.state.liveEvents=[]; z.tools({\"tools\": [{\"tool\": \"file-symbols\", \"position\": 1, \"toolVersion\": \"0.5.0\"}, {\"tool\": \"cross-file-links\", \"position\": 2, \"toolVersion\": \"0.2.0\"}, {\"tool\": \"symbol-scope\", \"position\": 3, \"toolVersion\": \"0.2.0\"}], \"run\": {\"runId\": \"r1\", \"outcome\": \"failed\", \"finished\": \"2026-11-09T10:00:00Z\"}, \"invocations\": [{\"tool\": \"file-symbols\", \"file_id\": \"src/counter.ts\", \"refreshReason\": \"up-to-date\", \"skipped\": true}, {\"tool\": \"file-symbols\", \"file_id\": \"src/main.ts\", \"refreshReason\": \"input-changed\", \"skipped\": false, \"dryRun\": \"go\", \"result\": {\"status\": \"failed\", \"logPath\": \"tools/file-symbols/logs/x.log\", \"error\": {\"code\": \"E3\", \"message\": \"Unexpected token\"}}}], \"dryRun\": {\"time\": \"2026-11-09T09:00:00Z\", \"invocations\": [{\"tool\": \"file-symbols\", \"file_id\": \"src/counter.ts\", \"refreshReason\": \"up-to-date\", \"dryRun\": \"go\"}, {\"tool\": \"file-symbols\", \"file_id\": \"src/main.ts\", \"refreshReason\": \"input-changed\", \"dryRun\": \"go\"}, {\"tool\": \"file-symbols\", \"file_id\": \"src/math.ts\", \"refreshReason\": \"up-to-date\", \"dryRun\": \"go\"}, {\"tool\": \"cross-file-links\", \"refreshReason\": \"input-changed\", \"dryRun\": \"no-go\", \"error\": {\"code\": \"E12\", \"message\": \"There are no symbol records in symbols\"}}]}}); return 'made-up failed run and dry run'"
+ ],
+ [
+  "js",
+  "return [...document.querySelectorAll('#pane-tools h3, #pane-tools li.item')].map(e=>e.tagName==='H3'?'## '+e.textContent:'  ['+e.className+'] '+e.querySelector('.ihead').textContent+' | '+(e.querySelector('.inote')?.textContent??'')+[...e.querySelectorAll('ul.sub>li')].map(l=>' || '+l.textContent).join('')).join('\\n')"
+ ],
+ [
+  "shot",
+  "tools-2-failed.png"
+ ],
+ [
+  "js",
+  "const z=window.zaansouvi; z.state.running=true; z.state.runKind='run'; z.state.liveEvents=[{\"event\": \"run_started\"}, {\"event\": \"files_listed\", \"fileCount\": 3}, {\"event\": \"tool_dry_run\", \"tool\": \"file-symbols\", \"file_id\": \"src/counter.ts\", \"dryRun\": \"go\"}, {\"event\": \"tool_run\", \"tool\": \"file-symbols\", \"file_id\": \"src/counter.ts\", \"status\": \"succeeded\", \"logPath\": \"a.log\"}, {\"event\": \"tool_skipped\", \"tool\": \"file-symbols\", \"file_id\": \"src/main.ts\"}]; z.tools(); return 'made-up run in progress'"
+ ],
+ [
+  "js",
+  "return [...document.querySelectorAll('#pane-tools h3, #pane-tools li.item')].map(e=>e.tagName==='H3'?'## '+e.textContent:'  ['+e.className+'] '+e.querySelector('.ihead').textContent+' | '+(e.querySelector('.inote')?.textContent??'')+[...e.querySelectorAll('ul.sub>li')].map(l=>' || '+l.textContent).join('')).join('\\n')"
+ ],
+ [
+  "shot",
+  "tools-3-live.png"
+ ],
+ [
+  "js",
+  "const z=window.zaansouvi; z.state.running=false; z.state.liveEvents.push({event:'tool_dry_run',tool:'file-symbols',file_id:'src/math.ts',dryRun:'go'},{event:'tool_run',tool:'file-symbols',file_id:'src/math.ts',status:'failed',logPath:'b.log',error:{code:'E3',message:'Unexpected token'}},{event:'run_finished',outcome:'failed'}); z.tools(); return 'made-up run ended, failed'"
+ ],
+ [
+  "js",
+  "return [...document.querySelectorAll('#pane-tools h3, #pane-tools li.item')].map(e=>e.tagName==='H3'?'## '+e.textContent:'  ['+e.className+'] '+e.querySelector('.ihead').textContent+' | '+(e.querySelector('.inote')?.textContent??'')+[...e.querySelectorAll('ul.sub>li')].map(l=>' || '+l.textContent).join('')).join('\\n')"
+ ]
+]

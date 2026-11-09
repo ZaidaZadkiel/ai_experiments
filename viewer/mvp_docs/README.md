@@ -27,15 +27,19 @@ From `MVP_scope.md`, section 1.1:
 | `03_runner.md` | Runner requirements |
 | `04_tools.md` | Requirements for M1 (file symbols), M2 (cross-file links) and M3 (symbol scope), supported constructs, error handling |
 | `05_viewer.md` | Viewer backend and UI requirements, levels, edge aggregation |
+| `40_tools_fileKind.md` | **A proposal, deferred until after the MVP** (its decisions, `KIND-90` to `KIND-103`, are listed in its section 8): the kind checkers, one tool per file type, that output `files.file.kind`; the file kinds database (a kind catalog and each file's kind); how the Runner selects each tool's files by pattern and kind, and stops early with a clear reason. Nothing in it is built or decided unless it cites a decision |
+| `55_viewer_backend.md` | The Viewer backend in detail: start and stop, its store, sources, calling the Runner, the graph model and its lifting, checks, endpoints, live stream, security, activity log, building the page's code, tests. Each item marked known, accepted or suggested |
+| `50_viewer_ui.md` | What the Viewer page looks like and holds: layout, header, levels for the test source, visual language, drawer, status bar, states, the static preview. Each item marked known or suggested |
 | `06_test_plan.md` | The basic examined source, its expected result, broken inputs, the human review of the Viewer, the extra checks |
 | `07_delivery.md` | Traceability level, deliverables, time box, the findings note |
+| `98_first_implementation.md` | What the first implementation built (2026-11-07 to 2026-11-08), part by part, with references to the requirements here; its checks and results; what changed while building; where it stands against the MVP's success criteria |
 | `99_findings.md` | Review of this folder before building: gaps, conflicts with the working files, values inferred from the test source, what the test plan is missing |
 | `test_plan/` | The basic examined source as a runnable app (`test_plan/README.md`) |
-| `proposed_schema/` | The reference JSON schema, built alongside the MVP (`DATA-20`): every step's inputs and outputs, every key name with its one meaning (`DATA-19`), and the parameters and keys the programs know by name. The current file is the newest (2026-11-08, `011800`); the earlier one is kept, marked superseded. For reference only; nothing validates against it |
+| `proposed_schema/` | The reference JSON schema, built alongside the MVP (`DATA-20`): every step's inputs and outputs, every key name with its one meaning (`DATA-19`), and the parameters and keys the programs know by name. The current file is the newest ~~(2026-11-08, `011800`)~~ (2026-11-09, `081006`, the MVP as built, the Viewer included); the earlier ~~one is~~ ones are kept, marked superseded. For reference only; nothing validates against it |
 
 ## Requirement IDs
 
-Requirements are numbered per file, for example `RUN-03` or `VIEW-07`, so tests and the findings note can refer to them. Prefixes: `ARCH`, `DATA`, `RUN`, `TOOL`, `VIEW`, `TEST`, `DEL`. Findings use `FND`.
+Requirements are numbered per file, for example `RUN-03` or `VIEW-07`, so tests and the findings note can refer to them. Prefixes: `ARCH`, `DATA`, `RUN`, `TOOL`, `VIEW`, `KIND` (`40_tools_fileKind.md`), `UI` (`50_viewer_ui.md`), `BE` (`55_viewer_backend.md`), `TEST`, `DEL`. Findings use `FND`.
 
 ## Build order
 

@@ -54,7 +54,7 @@
             "shape": "string",
             "required": false,
             "description": "Folder that is this tool's store: output, result and logs are written here. Doesn't affect the output. Read like any parameter: command line, then --json or --stdin, then last_run.json as a complete input",
-            "whenAbsent": "<program folder>, the folder of this tool's launcher"
+            "whenAbsent": "<working folder>/zaansouvi/tools/file-symbols/"
           }
         },
         "outputs": [
@@ -78,11 +78,11 @@
         ],
         "fileKey": "file_id with every / replaced by __, plus .json",
         "storeLayout": {
-          "storePathPattern": "<store_path>, or <program folder> when store_path is absent",
+          "storePathPattern": "<store_path>, or <working folder>/zaansouvi/tools/file-symbols when store_path is absent",
           "outputFilePattern": "output/<file-key>.json",
           "resultFilePattern": "result.json",
           "logFilePattern": "logs/<timestamp>_<file-key>.log",
-          "lastRunFilePattern": "<program folder>/last_run.json",
+          "lastRunFilePattern": "<store>/last_run.json",
           "relativeTo": "storePathPattern, except lastRunFilePattern"
         },
         "options": {
@@ -101,6 +101,7 @@
           "E2": "invocation: explicit JSON input unusable (file missing or unreadable, not valid JSON, not an object)",
           "E3": "invocation: no parameters and no usable last_run.json",
           "E13": "invocation: a parameter is missing or has the wrong shape",
+          "E14": "invocation: run from inside the examined source; tools must never be run from the source path",
           "E6": "run: the file to read is missing or unreadable",
           "E12": "run: a value is incorrect or incongruent, or the file has syntax errors",
           "E8": "run: unexpected failure",
@@ -146,7 +147,7 @@
       "position": 3,
       "info": {
         "tool": "symbol-scope",
-        "toolVersion": "0.1.0",
+        "toolVersion": "0.2.0",
         "invocation": "once",
         "readsFiles": false,
         "parameters": {
@@ -314,7 +315,7 @@
       "result": {
         "diagnostics": [],
         "tool": "symbol-scope",
-        "toolVersion": "0.1.0",
+        "toolVersion": "0.2.0",
         "status": "succeeded",
         "started": "<time>",
         "finished": "<time>",
@@ -870,7 +871,14 @@
           "tool": "symbol-scope",
           "dataRef": "symbol-scope",
           "records": [
-            {"id":"src/counter.ts#scope@file","kind":"file","name":"src/counter.ts","owner":"src/counter.ts","parent":"src/counter.ts"},
+            {
+              "id": "src/counter.ts#scope@file",
+              "kind": "file",
+              "name": "src/counter.ts",
+              "owner": "src/counter.ts",
+              "location": {"file":"src/counter.ts","start":{"line":1,"column":1},"end":{"line":8,"column":2}},
+              "parent": "src/counter.ts"
+            },
             {
               "id": "src/counter.ts#scope@5:1",
               "kind": "function",
@@ -879,7 +887,14 @@
               "location": {"file":"src/counter.ts","start":{"line":5,"column":1},"end":{"line":8,"column":2}},
               "parent": "src/counter.ts"
             },
-            {"id":"src/main.ts#scope@file","kind":"file","name":"src/main.ts","owner":"src/main.ts","parent":"src/main.ts"},
+            {
+              "id": "src/main.ts#scope@file",
+              "kind": "file",
+              "name": "src/main.ts",
+              "owner": "src/main.ts",
+              "location": {"file":"src/main.ts","start":{"line":1,"column":1},"end":{"line":10,"column":2}},
+              "parent": "src/main.ts"
+            },
             {
               "id": "src/main.ts#scope@4:1",
               "kind": "function",
@@ -888,7 +903,14 @@
               "location": {"file":"src/main.ts","start":{"line":4,"column":1},"end":{"line":10,"column":2}},
               "parent": "src/main.ts"
             },
-            {"id":"src/math.ts#scope@file","kind":"file","name":"src/math.ts","owner":"src/math.ts","parent":"src/math.ts"},
+            {
+              "id": "src/math.ts#scope@file",
+              "kind": "file",
+              "name": "src/math.ts",
+              "owner": "src/math.ts",
+              "location": {"file":"src/math.ts","start":{"line":1,"column":1},"end":{"line":6,"column":2}},
+              "parent": "src/math.ts"
+            },
             {
               "id": "src/math.ts#scope@3:1",
               "kind": "function",

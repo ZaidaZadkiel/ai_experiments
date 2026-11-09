@@ -1,0 +1,31 @@
+{
+  "formatVersion": 1,
+  "sources": [
+    {
+      "sourceKey": "4da6db42c6000612",
+      "sourceRoot": "/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source",
+      "name": "test-source",
+      "runId": "2026-11-09T16-04-08.322Z-187682",
+      "finished": "2026-11-09T16:04:10.218Z"
+    },
+    {
+      "sourceKey": "856ac0905c1961b4",
+      "sourceRoot": "/home/zaida/test",
+      "name": "test"
+    },
+    {
+      "sourceKey": "f364b93f4d22b1ad",
+      "sourceRoot": "/home/zaida/viewercopy/runner",
+      "name": "runner",
+      "runId": "2026-11-09T16-22-48.612Z-194436",
+      "finished": "2026-11-09T16:22:50.671Z"
+    },
+    {
+      "sourceKey": "c3412d8291c9ec60",
+      "sourceRoot": "/home/zaida/test-source",
+      "name": "test-source",
+      "runId": "2026-11-09T07-30-43.809Z-152788",
+      "finished": "2026-11-09T07:30:47.828Z"
+    }
+  ]
+}

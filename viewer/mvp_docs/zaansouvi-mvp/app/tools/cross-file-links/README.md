@@ -19,7 +19,7 @@ npm run typecheck
 |---|---|---|
 | `symbols` | yes | Every `code.symbol` record, as one flat array. Each carries its file in `parent` |
 | `references` | yes | Every `code.reference` record, as one flat array, to find uses of imported names |
-| `store_path` | no | The folder that is this tool's store; else this program folder. Doesn't affect the output |
+| `store_path` | no | The folder that is this tool's store; else `./zaansouvi/tools/cross-file-links/` in the working folder, which also holds `last_run.json`. Doesn't affect the output |
 
 ## Output: `output/links.json`
 

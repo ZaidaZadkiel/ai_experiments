@@ -1,0 +1,55 @@
+[
+ [
+  "go",
+  "<the Viewer's URL, filled in by browse.sh>"
+ ],
+ [
+  "wait",
+  "window.zaansouvi && window.zaansouvi.ready() && document.querySelector('#cy canvas')",
+  15
+ ],
+ [
+  "sleep",
+  1
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; return window.zaansouvi.state.view+' | enterable: '+cy.nodes('.enterable').map(n=>n.data('real').split('/').pop()).join(', ')+' | not: '+cy.nodes().not('.enterable').map(n=>n.id().split('/').pop()).join(', ')"
+ ],
+ [
+  "shot",
+  "enter-1-files.png"
+ ],
+ [
+  "js",
+  "window.zaansouvi.enter(\"src/main.ts\"); return 1"
+ ],
+ [
+  "sleep",
+  0.8
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; return window.zaansouvi.state.view+' | enterable: '+cy.nodes('.enterable').map(n=>n.data('real').split('/').pop()).join(', ')+' | not: '+cy.nodes().not('.enterable').map(n=>n.id().split('/').pop()).join(', ')"
+ ],
+ [
+  "shot",
+  "enter-2-file.png"
+ ],
+ [
+  "js",
+  "window.zaansouvi.enter(\"src/main.ts#scope@4:1\"); return 1"
+ ],
+ [
+  "sleep",
+  0.8
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; return window.zaansouvi.state.view+' | enterable: '+cy.nodes('.enterable').map(n=>n.data('real').split('/').pop()).join(', ')+' | not: '+cy.nodes().not('.enterable').map(n=>n.id().split('/').pop()).join(', ')"
+ ],
+ [
+  "shot",
+  "enter-3-scope.png"
+ ]
+]

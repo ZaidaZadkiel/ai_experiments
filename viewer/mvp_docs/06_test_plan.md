@@ -133,6 +133,54 @@ All tests run on Node 22.23.1, and each test that needs a clean state starts by 
   - **Damaged output:** replace `links.json` with `{}`. cross-file-links runs with reason `missing`; M1 and symbol-scope are skipped, since their inputs didn't change.
   - **Dry run after an edit:** remove that empty line again, then run `--dry-run-only`. Every invocation is dry-run and says go. M1 for `main.ts` has reason `inputs-changed`, M1 for the other two files is `up-to-date`; cross-file-links and symbol-scope are dry-run with reason `upstream-refresh` and `staleInputs: ["src/main.ts"]`; no tool output is written.
 
+### M3 checks (~~proposed on 2026-11-08, not yet accepted~~ accepted by the user for the MVP on 2026-11-08, built in `tests/m3/`)
+
+Run by hand, like M1's and M2's (`tests/m1/`, `tests/m2/`), with a temporary `store_path`, so `data/` is not touched; M3's `last_run.json` is backed up and restored. They need M1's outputs on the test source.
+
+- **TEST-06** `tests/m3/check.mjs`: builds M3's input from M1's outputs as the Runner does (`symbols` only, file ID order, `RUN-19`), runs the dry run then the real run, and compares `output/scopes.json` with `expected/symbol-scope.json` exactly, except `about`: header, `counts` (6 scopes, 13 memberships), scope IDs, `owner`, locations (the file scopes ending at 8:2, 10:2 and 6:2, `TOOL-34`), order (`TOOL-35`) and memberships. It also checks that the dry run says go and writes nothing, that `result.json` says succeeded with no diagnostics, and that a second run with the same input gives the same bytes (`DATA-22`).
+- **TEST-07** **Nested functions and a file with file-level symbols only.** Two extra source files in `tests/m3/source/`, run through M1 first, so M3 gets real records, then through M3 together (file ID order). Values from M1 0.5.0's real output:
+
+  `src/nested.ts`:
+  ```ts
+  export function outer(a: number): number {
+    function inner(b: number): number {
+      return b * 2;
+    }
+    return inner(a);
+  }
+
+  export function second(): number {
+    return outer(1);
+  }
+  ```
+  `src/only-vars.ts`:
+  ```ts
+  export const LIMIT = 10;
+  let count = 0;
+
+  // trailing comment
+  ```
+  Expected: 4 scopes and 7 memberships.
+
+  | Scope | Location | Members |
+  |---|---|---|
+  | `src/nested.ts#scope@file` | 1:1 to 10:2 | `outer@1:17`, `second@8:17` |
+  | `src/nested.ts#scope@1:1` (owner `outer`) | 1:1 to 6:2 | `a@1:23`, `inner@2:12`, `b@2:18` |
+  | `src/nested.ts#scope@8:1` (owner `second`) | 8:1 to 10:2 | none |
+  | `src/only-vars.ts#scope@file` | 1:1 to 2:14 | `LIMIT@1:14`, `count@2:5` |
+
+  It checks that `inner` gets no scope and that its parameter `b` belongs to `outer`'s scope (`TOOL-30`, one level only); that a function's own name belongs to the scope outside it (`TOOL-31`); that a function scope with no members is still output; and that the file scope of `only-vars.ts` ends at its last declaration (2:14), short of the trailing comment on line 4 (`TOOL-34`, accepted shortfall). A file with no symbols can't be tested through M3: its symbols never reach M3, so it simply has no scopes (`TOOL-34`).
+
+### Viewer checks (built on 2026-11-08, `FND-69`; `55_viewer_backend.md`, section 12)
+
+- **TEST-09** `tests/viewer/check-model.mjs`: the graph model built from `expected/runner-cache.json` matches `expected/graph-views.json` view by view (nodes, stubs, the "this" node, edges with their counts and kinds, unresolved counts); two builds give the same bytes; six damaged caches give the expected invalid or extra items (`BE-91`, `BE-92`).
+- **TEST-10** `tests/viewer/check-server.mjs`: the backend on a temporary copy of the MVP: the token, `Host` and `Origin` checks, the 64 KiB limit, sources, the graph and its storing, reads limited to listed files and to `data/` (a symbolic link out included), the activity log (deleted while running, unknown events, Clear), a run and a refused second run, and bad data across restarts (partly invalid, failed, an entry in another format, a damaged `sources.json`, cleared Runner data). 32 checks (`BE-92` to `BE-94`).
+- **The page** stays a human review (P3, `BE-95`), against the preview (`FND-67`).
+
+### Replacing the Runner (accepted by the user for the MVP on 2026-11-08, `FND-58`)
+
+- **TEST-08** `tests/hand-run/hand-run.sh`: runs the Runner on `test-source/`, then runs M1, M2 and M3 by hand in a temporary folder, using only the tool contract (JSON on standard input through `jq`, exit codes, output files), with the files in reverse file ID order on purpose and whole M1 output files passed to M3, extra keys and all. Every tool output must be byte-identical to the Runner's (`toolset.md`, section 2: the Runner can be replaced by a user's own scripts; unknown keys are ignored; a tool's output never depends on the order of its input records). `tests/m3/check.mjs` also checks the last rule for M3 alone, with its input reversed.
+
 ## Broken inputs
 
 Each one is run and must give the stated result. "By hand" means invoking the tool directly.
@@ -149,6 +197,11 @@ Each one is run and must give the stated result. "By hand" means invoking the to
 | B8 | M2 with two symbol records with the same `id` | by hand | run error `E12`, exit 1, logged (`TOOL-22`; `tests/m2/broken.sh`) |
 | B9 | `import { thing } from "./missing";` appended to `src/main.ts` as line 13 | Runner | not an error: M2 outputs a link with `to: null`, the run succeeds |
 | B10 | source root that doesn't exist | Runner | Runner exit 2, nothing written |
+| B11 | M3 with `symbols: []` | by hand | dry run no-go and real run fail with `E12` naming `code.symbol`, exit 1 (`TOOL-09`, `TOOL-36`; `tests/m3/broken.sh`) |
+| B12 | M3 with two symbol records with the same `id` | by hand | run error `E12`, exit 1, logged, earlier output kept (`TOOL-36`) |
+| B13 | M3 with a function symbol without `range` | by hand | run error `E12`, exit 1, logged, naming the symbol (`TOOL-32`) |
+| B14 | M3 with `symbols` missing, or not an array | by hand | invocation error `E13`, exit 2, nothing written, `last_run.json` unchanged (`TOOL-36`) |
+| B15 | M3 with a symbol record that isn't an object, or lacks `id`, `kind`, `parent` or `location`, or has a `range` that isn't a Location | by hand | `E13`, exit 2, nothing written (`TOOL-36`) |
 
 ## Extra checks
 

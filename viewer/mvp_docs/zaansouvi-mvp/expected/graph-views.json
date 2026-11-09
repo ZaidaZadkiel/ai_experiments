@@ -1,0 +1,67 @@
+{
+  "about": "Expected views of the Viewer's graph model for test-source, written by hand from mvp_docs/50_viewer_ui.md, section 4.1 (BE-55, BE-91). Each view lists its edges as from -> to with their count and kind, its stubs, and its unresolved count. Only the views of section 4.1 are listed; the model has more (one per enterable node).",
+  "views": {
+    "": {
+      "nodes": ["src/counter.ts", "src/main.ts", "src/math.ts"],
+      "stubs": [],
+      "thisNode": null,
+      "edges": [
+        { "from": "src/counter.ts", "to": "src/math.ts", "count": 2, "kind": "mixed" },
+        { "from": "src/main.ts", "to": "src/counter.ts", "count": 2, "kind": "mixed" },
+        { "from": "src/main.ts", "to": "src/math.ts", "count": 2, "kind": "mixed" }
+      ],
+      "unresolved": 2
+    },
+    "src/main.ts": {
+      "nodes": ["src/main.ts#scope@4:1", "src/main.ts#scope@file"],
+      "stubs": ["src/counter.ts", "src/math.ts"],
+      "thisNode": null,
+      "edges": [
+        { "from": "src/main.ts#scope@4:1", "to": "src/counter.ts", "count": 1, "kind": "call" },
+        { "from": "src/main.ts#scope@4:1", "to": "src/main.ts#scope@file", "count": 2, "kind": "mixed" },
+        { "from": "src/main.ts#scope@4:1", "to": "src/math.ts", "count": 1, "kind": "read" },
+        { "from": "src/main.ts#scope@file", "to": "src/counter.ts", "count": 1, "kind": "import" },
+        { "from": "src/main.ts#scope@file", "to": "src/main.ts#scope@4:1", "count": 1, "kind": "call" },
+        { "from": "src/main.ts#scope@file", "to": "src/math.ts", "count": 1, "kind": "import" }
+      ],
+      "unresolved": 1
+    },
+    "src/counter.ts": {
+      "nodes": ["src/counter.ts#scope@5:1", "src/counter.ts#scope@file"],
+      "stubs": ["src/main.ts", "src/math.ts"],
+      "thisNode": null,
+      "edges": [
+        { "from": "src/counter.ts#scope@5:1", "to": "src/counter.ts#scope@file", "count": 4, "kind": "mixed" },
+        { "from": "src/counter.ts#scope@5:1", "to": "src/math.ts", "count": 1, "kind": "call" },
+        { "from": "src/counter.ts#scope@file", "to": "src/math.ts", "count": 1, "kind": "import" },
+        { "from": "src/main.ts", "to": "src/counter.ts#scope@5:1", "count": 2, "kind": "mixed" }
+      ],
+      "unresolved": 0
+    },
+    "src/math.ts": {
+      "nodes": ["src/math.ts#scope@3:1", "src/math.ts#scope@file"],
+      "stubs": ["src/counter.ts", "src/main.ts"],
+      "thisNode": null,
+      "edges": [
+        { "from": "src/counter.ts", "to": "src/math.ts#scope@3:1", "count": 2, "kind": "mixed" },
+        { "from": "src/main.ts", "to": "src/math.ts#scope@file", "count": 2, "kind": "mixed" },
+        { "from": "src/math.ts#scope@3:1", "to": "src/math.ts#scope@file", "count": 1, "kind": "read" }
+      ],
+      "unresolved": 1
+    },
+    "src/main.ts#scope@4:1": {
+      "nodes": ["src/main.ts#first@5:9", "src/main.ts#label@7:11"],
+      "stubs": ["src/counter.ts", "src/main.ts#scope@file", "src/math.ts"],
+      "thisNode": "src/main.ts#scope@4:1",
+      "edges": [
+        { "from": "src/main.ts#scope@4:1", "to": "src/counter.ts", "count": 1, "kind": "call" },
+        { "from": "src/main.ts#scope@4:1", "to": "src/main.ts#first@5:9", "count": 2, "kind": "read" },
+        { "from": "src/main.ts#scope@4:1", "to": "src/main.ts#label@7:11", "count": 1, "kind": "read" },
+        { "from": "src/main.ts#scope@4:1", "to": "src/main.ts#scope@file", "count": 2, "kind": "mixed" },
+        { "from": "src/main.ts#scope@4:1", "to": "src/math.ts", "count": 1, "kind": "read" },
+        { "from": "src/main.ts#scope@file", "to": "src/main.ts#scope@4:1", "count": 1, "kind": "call" }
+      ],
+      "unresolved": 1
+    }
+  }
+}

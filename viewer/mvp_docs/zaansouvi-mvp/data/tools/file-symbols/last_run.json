@@ -1,0 +1,12 @@
+{
+  "source_root": "/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source",
+  "file_id": "src/math.ts",
+  "_last_run": {
+    "tool": "file-symbols",
+    "toolVersion": "0.5.0",
+    "outcome": "succeeded",
+    "started": "2026-11-09T14:06:55.595Z",
+    "finished": "2026-11-09T14:06:55.635Z",
+    "resultPath": "/home/zaida/viewer/mvp_docs/zaansouvi-mvp/data/tools/file-symbols/result.json"
+  }
+}

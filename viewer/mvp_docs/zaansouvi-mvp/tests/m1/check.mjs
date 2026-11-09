@@ -9,7 +9,7 @@ import path from "node:path";
 const root = path.resolve(import.meta.dirname, "..", "..");
 const launcher = path.join(root, "app/tools/file-symbols/file-symbols");
 const sourceRoot = path.join(root, "test-source");
-// The store the Runner will pass (ARCH layout); without it M1 would write into its own program folder.
+// The store the Runner will pass (ARCH layout); without it M1 would write into ./zaansouvi/tools/file-symbols/ of the working folder.
 const storePath = path.join(root, "data/tools/file-symbols");
 const expected = JSON.parse(fs.readFileSync(path.join(root, "expected/file-symbols.json"), "utf8"));
 

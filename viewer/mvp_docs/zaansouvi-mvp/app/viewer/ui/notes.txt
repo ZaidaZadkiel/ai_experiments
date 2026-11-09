@@ -1,0 +1,11 @@
+in the top-most view test-source,
+
+1. The import graph has an arrow pointing from main.ts -> math.ts, the symbol "round" is defined in math and referenced in main
+would prefer: the arrow pointing from math towards main, as the direction on the graph, showing where the actual function definition is located
+
+2. the edge connecting shows a number, which apparently stands for "call" and "import"
+would prefer: instead of the number show the symbol name (round)
+
+3. shift-click on multiple nodes and edges highlight them, but the Details view show only info for the last selected
+would prefer: shift-click to highlight multiple items in the graph shows the selection in Detail, grouping by node labeled as its displayed in the graph
+

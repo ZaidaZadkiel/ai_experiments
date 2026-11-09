@@ -1,0 +1,139 @@
+[
+ [
+  "go",
+  "<the Viewer's URL, filled in by browse.sh>"
+ ],
+ [
+  "wait",
+  "window.zaansouvi && window.zaansouvi.ready() && document.querySelector('#cy canvas')",
+  15
+ ],
+ [
+  "sleep",
+  1
+ ],
+ [
+  "js",
+  "window.zaansouvi.enter(\"src/main.ts\"); return 1"
+ ],
+ [
+  "sleep",
+  0.8
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; const f=cy.nodes('.frame'); const pos=cy.nodes().map(n=>Math.round(n.position('x'))+','+Math.round(n.position('y'))).join(' '); if(!f.length) return 'no frame | '+pos; const b=f.boundingBox(); const inF=cy.nodes('.stub').filter(s=>{const p=s.boundingBox(); return p.x1<b.x2&&p.x2>b.x1&&p.y1<b.y2&&p.y2>b.y1}).map(s=>s.id()); const st=cy.nodes('.stub').map(s=>s.boundingBox()); let ov=0; for(let i=0;i<st.length;i++)for(let j=i+1;j<st.length;j++){const p=st[i],q=st[j]; if(p.x1<q.x2&&p.x2>q.x1&&p.y1<q.y2&&p.y2>q.y1) ov++} return 'frame '+f.data('label')+', children '+f.children().length+', stubs overlapping frame: ['+inF+'], stub pairs overlapping: '+ov+' | '+pos"
+ ],
+ [
+  "shot",
+  "fr-main.png"
+ ],
+ [
+  "js",
+  "window.zaansouvi.enter(\"src/main.ts#scope@file\"); return 1"
+ ],
+ [
+  "sleep",
+  0.8
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; const f=cy.nodes('.frame'); const pos=cy.nodes().map(n=>Math.round(n.position('x'))+','+Math.round(n.position('y'))).join(' '); if(!f.length) return 'no frame | '+pos; const b=f.boundingBox(); const inF=cy.nodes('.stub').filter(s=>{const p=s.boundingBox(); return p.x1<b.x2&&p.x2>b.x1&&p.y1<b.y2&&p.y2>b.y1}).map(s=>s.id()); const st=cy.nodes('.stub').map(s=>s.boundingBox()); let ov=0; for(let i=0;i<st.length;i++)for(let j=i+1;j<st.length;j++){const p=st[i],q=st[j]; if(p.x1<q.x2&&p.x2>q.x1&&p.y1<q.y2&&p.y2>q.y1) ov++} return 'frame '+f.data('label')+', children '+f.children().length+', stubs overlapping frame: ['+inF+'], stub pairs overlapping: '+ov+' | '+pos"
+ ],
+ [
+  "shot",
+  "fr-mainfile.png"
+ ],
+ [
+  "js",
+  "window.zaansouvi.enter(\"src/main.ts#scope@4:1\"); return 1"
+ ],
+ [
+  "sleep",
+  0.8
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; const f=cy.nodes('.frame'); const pos=cy.nodes().map(n=>Math.round(n.position('x'))+','+Math.round(n.position('y'))).join(' '); if(!f.length) return 'no frame | '+pos; const b=f.boundingBox(); const inF=cy.nodes('.stub').filter(s=>{const p=s.boundingBox(); return p.x1<b.x2&&p.x2>b.x1&&p.y1<b.y2&&p.y2>b.y1}).map(s=>s.id()); const st=cy.nodes('.stub').map(s=>s.boundingBox()); let ov=0; for(let i=0;i<st.length;i++)for(let j=i+1;j<st.length;j++){const p=st[i],q=st[j]; if(p.x1<q.x2&&p.x2>q.x1&&p.y1<q.y2&&p.y2>q.y1) ov++} return 'frame '+f.data('label')+', children '+f.children().length+', stubs overlapping frame: ['+inF+'], stub pairs overlapping: '+ov+' | '+pos"
+ ],
+ [
+  "shot",
+  "fr-run.png"
+ ],
+ [
+  "js",
+  "window.zaansouvi.enter(\"src/counter.ts#scope@file\"); return 1"
+ ],
+ [
+  "sleep",
+  0.8
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; const f=cy.nodes('.frame'); const pos=cy.nodes().map(n=>Math.round(n.position('x'))+','+Math.round(n.position('y'))).join(' '); if(!f.length) return 'no frame | '+pos; const b=f.boundingBox(); const inF=cy.nodes('.stub').filter(s=>{const p=s.boundingBox(); return p.x1<b.x2&&p.x2>b.x1&&p.y1<b.y2&&p.y2>b.y1}).map(s=>s.id()); const st=cy.nodes('.stub').map(s=>s.boundingBox()); let ov=0; for(let i=0;i<st.length;i++)for(let j=i+1;j<st.length;j++){const p=st[i],q=st[j]; if(p.x1<q.x2&&p.x2>q.x1&&p.y1<q.y2&&p.y2>q.y1) ov++} return 'frame '+f.data('label')+', children '+f.children().length+', stubs overlapping frame: ['+inF+'], stub pairs overlapping: '+ov+' | '+pos"
+ ],
+ [
+  "shot",
+  "fr-counterfile.png"
+ ],
+ [
+  "js",
+  "window.zaansouvi.enter(\"src/counter.ts#scope@5:1\"); return 1"
+ ],
+ [
+  "sleep",
+  0.8
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; const f=cy.nodes('.frame'); const pos=cy.nodes().map(n=>Math.round(n.position('x'))+','+Math.round(n.position('y'))).join(' '); if(!f.length) return 'no frame | '+pos; const b=f.boundingBox(); const inF=cy.nodes('.stub').filter(s=>{const p=s.boundingBox(); return p.x1<b.x2&&p.x2>b.x1&&p.y1<b.y2&&p.y2>b.y1}).map(s=>s.id()); const st=cy.nodes('.stub').map(s=>s.boundingBox()); let ov=0; for(let i=0;i<st.length;i++)for(let j=i+1;j<st.length;j++){const p=st[i],q=st[j]; if(p.x1<q.x2&&p.x2>q.x1&&p.y1<q.y2&&p.y2>q.y1) ov++} return 'frame '+f.data('label')+', children '+f.children().length+', stubs overlapping frame: ['+inF+'], stub pairs overlapping: '+ov+' | '+pos"
+ ],
+ [
+  "shot",
+  "fr-add.png"
+ ],
+ [
+  "js",
+  "window.zaansouvi.enter(\"src/math.ts#scope@file\"); return 1"
+ ],
+ [
+  "sleep",
+  0.8
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; const f=cy.nodes('.frame'); const pos=cy.nodes().map(n=>Math.round(n.position('x'))+','+Math.round(n.position('y'))).join(' '); if(!f.length) return 'no frame | '+pos; const b=f.boundingBox(); const inF=cy.nodes('.stub').filter(s=>{const p=s.boundingBox(); return p.x1<b.x2&&p.x2>b.x1&&p.y1<b.y2&&p.y2>b.y1}).map(s=>s.id()); const st=cy.nodes('.stub').map(s=>s.boundingBox()); let ov=0; for(let i=0;i<st.length;i++)for(let j=i+1;j<st.length;j++){const p=st[i],q=st[j]; if(p.x1<q.x2&&p.x2>q.x1&&p.y1<q.y2&&p.y2>q.y1) ov++} return 'frame '+f.data('label')+', children '+f.children().length+', stubs overlapping frame: ['+inF+'], stub pairs overlapping: '+ov+' | '+pos"
+ ],
+ [
+  "shot",
+  "fr-mathfile.png"
+ ],
+ [
+  "js",
+  "window.zaansouvi.enter(\"src/math.ts#scope@3:1\"); return 1"
+ ],
+ [
+  "sleep",
+  0.8
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; const f=cy.nodes('.frame'); const pos=cy.nodes().map(n=>Math.round(n.position('x'))+','+Math.round(n.position('y'))).join(' '); if(!f.length) return 'no frame | '+pos; const b=f.boundingBox(); const inF=cy.nodes('.stub').filter(s=>{const p=s.boundingBox(); return p.x1<b.x2&&p.x2>b.x1&&p.y1<b.y2&&p.y2>b.y1}).map(s=>s.id()); const st=cy.nodes('.stub').map(s=>s.boundingBox()); let ov=0; for(let i=0;i<st.length;i++)for(let j=i+1;j<st.length;j++){const p=st[i],q=st[j]; if(p.x1<q.x2&&p.x2>q.x1&&p.y1<q.y2&&p.y2>q.y1) ov++} return 'frame '+f.data('label')+', children '+f.children().length+', stubs overlapping frame: ['+inF+'], stub pairs overlapping: '+ov+' | '+pos"
+ ],
+ [
+  "shot",
+  "fr-round.png"
+ ],
+ [
+  "js",
+  "window.zaansouvi.enter('src/main.ts#scope@file'); return 1"
+ ],
+ [
+  "sleep",
+  0.6
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; const f=cy.nodes('.frame'); const pos=cy.nodes().map(n=>Math.round(n.position('x'))+','+Math.round(n.position('y'))).join(' '); if(!f.length) return 'no frame | '+pos; const b=f.boundingBox(); const inF=cy.nodes('.stub').filter(s=>{const p=s.boundingBox(); return p.x1<b.x2&&p.x2>b.x1&&p.y1<b.y2&&p.y2>b.y1}).map(s=>s.id()); const st=cy.nodes('.stub').map(s=>s.boundingBox()); let ov=0; for(let i=0;i<st.length;i++)for(let j=i+1;j<st.length;j++){const p=st[i],q=st[j]; if(p.x1<q.x2&&p.x2>q.x1&&p.y1<q.y2&&p.y2>q.y1) ov++} return 'frame '+f.data('label')+', children '+f.children().length+', stubs overlapping frame: ['+inF+'], stub pairs overlapping: '+ov+' | '+pos"
+ ]
+]

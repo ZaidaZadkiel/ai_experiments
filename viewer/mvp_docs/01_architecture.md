@@ -5,7 +5,7 @@
 | Component | Language | Role in the MVP |
 |---|---|---|
 | **Runner** | TypeScript (Node) | Builds the file list, keeps the record of tools and the ordering, builds each tool's JSON, dry-runs then runs each tool, reads outputs and logs, updates the database, answers the Viewer |
-| **Viewer backend** | TypeScript (Node) | Local HTTP server. Calls the Runner, reads the database, reads source lines, serves the UI |
+| **Viewer backend** | TypeScript (Node) | Local HTTP server. Calls the Runner, ~~reads the database,~~ reads the Runner's cache through `--read-cache` (`ARCH-11`, `VIEW-03`; corrected on 2026-11-08), reads source lines, serves the UI |
 | **Viewer UI** | TypeScript in the browser | Shows the levels, the details of a selection, the tool list and go / no-go results. Only displays |
 | **Shared library** | TypeScript | Used by the Runner and the Viewer backend: database access, log reader, `--info` types, Runner output types (`runner.md`, section 1.0) |
 | **M1 file-symbols** | TypeScript (Node) | Reads one source file, outputs its symbols and references |
@@ -69,20 +69,18 @@ zaansouvi-mvp/
       ui/
     tools/
       file-symbols/
-        file-symbols                launcher (the "tool_name.bin")
-        last_run.json
+        file-symbols                launcher (the "tool_name.bin"); nothing is written here
       cross-file-links/
         cross-file-links
-        last_run.json
       symbol-scope/
         symbol-scope
-        last_run.json
   data/
     zaansouvi.sqlite                the single database (config_ and project_ tables)
     tools/
       file-symbols/
         output/<file-key>.json      one per examined file
         result.json
+        last_run.json               in the store since 2026-11-08 (ARCH-06, FND-59)
         logs/<timestamp>.log
         state/                      unused in the MVP
       cross-file-links/
@@ -96,19 +94,24 @@ zaansouvi-mvp/
     runner/
       logs/<timestamp>.log
       cache.json                    the Runner's cache: what --read-cache prints (RUN-27)
+    viewer/                         the Viewer's own store, JSON files, Viewer only (VIEW-06)
+      sources.json                  the sources cached, each with its source root and run (VIEW-08)
+      activity.log                  the activity log, appended, one backend only; may be cleared (VIEW-17)
+      sources/<source-key>/
+        last-good-graph.json        that source's graph from its last successful real run
   test-source/                      the basic examined source (06_test_plan.md)
   expected/                         the expected result, written by hand
 ```
 
-- **ARCH-06** `last_run.json` sits next to each tool's launcher, as decided (`toolset.md`, section 4.5). With one codebase, sharing it is harmless (`TS-25`).
+- **ARCH-06** ~~`last_run.json` sits next to each tool's launcher, as decided (`toolset.md`, section 4.5). With one codebase, sharing it is harmless (`TS-25`).~~ `last_run.json` sits in each tool's store, `data/tools/<tool>/last_run.json` for the Runner's runs; program folders are never written (decided by the user on 2026-11-08, `toolset.md`, section 4.5; `FND-59`).
 - **ARCH-07** `<file-key>` is the file ID with `/` replaced by `__`, so `src/math.ts` becomes `src__math.ts.json`.
 - **ARCH-08** The examined source is never written to. Nothing goes outside `zaansouvi-mvp/` except the system temp, which the MVP doesn't need.
-- **ARCH-09** The data folder can be deleted at any time; the next run rebuilds it, except the database's `config_` tables, which the Runner recreates on start (`03_runner.md`).
+- **ARCH-09** The data folder can be deleted at any time; the next run rebuilds it, except the database's `config_` tables, which the Runner recreates on start (`03_runner.md`). Since `last_run.json` moved into the stores (`ARCH-06`), the data folder holds all of the Runner's state: deleting it, or moving it aside, is a full reset. Tools run by hand with no store keep theirs in `./zaansouvi/tools/` of the folder they were started from. Clearing only the Runner's and the tools' data (the database, `runner/`, `tools/`) leaves the Viewer's cache in `data/viewer/` (`VIEW-09`).
 
 ## The single database
 
 - **ARCH-10** One SQLite file holds both configuration and codebase data (`MVP_scope.md`, section 4). Tables start with `config_` or `project_`. The tables are listed in `02_data_contracts.md`.
-- **ARCH-11** The Runner writes all tables. In the MVP the Viewer backend reads none of them: it reads only the Runner's cache, through `--read-cache` (`RUN-27`), and writes nothing (no config manager).
+- **ARCH-11** The Runner writes all tables. In the MVP the Viewer backend reads none of them: it reads only the Runner's cache, through `--read-cache` (`RUN-27`), and writes ~~nothing~~ only its own store, `data/viewer/` (no config manager; `VIEW-06`, accepted by the user for the MVP on 2026-11-08).
 
 ## Technology choices for the MVP
 
@@ -122,4 +125,5 @@ These satisfy "use a library or built-in when one does the job". Versions are pi
 | Starting tools | Node's `child_process.spawn` with an argument array | No shell, so no injection from file names |
 | HTTP server | Node's built-in `http` module | Least effort; a handful of endpoints |
 | Graph in the browser | Cytoscape.js | Supports compound nodes (nodes inside nodes) and has built-in layouts |
+| The page's code in the browser | TypeScript compiled by `tsc` into ES modules, no bundler; Cytoscape's prebuilt file served from the local install (accepted by the user for the MVP on 2026-11-08; `55_viewer_backend.md`, `BE-90`) | Browsers run only JavaScript; Node's type stripping covers the server, not the page. One build step, no extra tool |
 | Hashing files | Node's built-in `crypto` (SHA-256) | Built in |

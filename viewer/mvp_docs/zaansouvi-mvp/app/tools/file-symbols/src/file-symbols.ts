@@ -22,7 +22,7 @@ const TOOL = "file-symbols";
 const VERSION = "0.5.0";
 const OUTPUT_FORMAT_VERSION = 3;
 
-/** The tool's program folder: app/tools/file-symbols. last_run.json sits here (toolset.md 4.5). */
+/** The tool's program folder: app/tools/file-symbols. Only code lives here; nothing is written here (toolset.md 4.5). */
 const PROGRAM_DIR = path.resolve(import.meta.dirname, "..");
 
 const ERROR_CODES: Record<string, string> = {
@@ -104,7 +104,7 @@ const INFO = {
       shape: "string",
       required: false,
       description: "Folder that is this tool's store: output, result and logs are written here. Doesn't affect the output. Read like any parameter: command line, then --json or --stdin, then last_run.json as a complete input",
-      whenAbsent: "<program folder>, the folder of this tool's launcher",
+      whenAbsent: "<working folder>/zaansouvi/tools/file-symbols/",
     },
   },
   outputs: [
@@ -128,11 +128,11 @@ const INFO = {
   ],
   fileKey: "file_id with every / replaced by __, plus .json",
   storeLayout: {
-    storePathPattern: "<store_path>, or <program folder> when store_path is absent",
+    storePathPattern: "<store_path>, or <working folder>/zaansouvi/tools/file-symbols when store_path is absent",
     outputFilePattern: "output/<file-key>.json",
     resultFilePattern: "result.json",
     logFilePattern: "logs/<timestamp>_<file-key>.log",
-    lastRunFilePattern: "<program folder>/last_run.json",
+    lastRunFilePattern: "<store>/last_run.json",
     relativeTo: "storePathPattern, except lastRunFilePattern",
   },
   options: {
@@ -170,7 +170,8 @@ Usage:
   ${TOOL} --info | --help | --version
 
 Parameters (JSON keys): file_id (required), file_path, source_root, store_path.
-With no store_path, the store is this tool's own program folder.
+With no store_path, the store is zaansouvi/tools/file-symbols/ in the working folder; last_run.json is kept
+in the store. Never run a tool from inside the examined source (E14).
 source_root is required: every file path is resolved against it.
 
 Precedence: command-line parameter options, then --json or --stdin, then last_run.json.

@@ -24,9 +24,9 @@ Each stands until the open point is decided; then fix `generate.mjs` and regener
 
 | Open point | Assumed | What changes otherwise |
 |---|---|---|
-| `FND-11`: where a file scope ends | A file scope has no `location` (against `DATA-01`, which wants a Location on every scope) | One field per file scope |
-| `FND-12`: where a scope ID starts | At the declaration start: `src/math.ts#scope@3:1`, including `export` | Three scope IDs |
-| M3's counts, and M2's and M3's `result.json` | As in `DATA-22`, `DATA-14` and the schema | Only fields compared for shape |
+| ~~`FND-11`: where a file scope ends~~ | ~~A file scope has no `location` (against `DATA-01`, which wants a Location on every scope)~~ Decided on 2026-11-08 (`TOOL-34`): from 1:1 to the furthest end among the file's symbols (`8:2`, `10:2`, `6:2`) | ~~One field per file scope~~ |
+| ~~`FND-12`: where a scope ID starts~~ | ~~At the declaration start: `src/math.ts#scope@3:1`, including `export`~~ Decided on 2026-11-08 (`TOOL-34`), as assumed | ~~Three scope IDs~~ |
+| ~~M3's counts~~, and M2's and M3's `result.json` | As in `DATA-22`, `DATA-14` and the schema; M3 keeps `counts` (decided on 2026-11-08, `DATA-07`) | Only fields compared for shape |
 | M2's and M3's `--info` (in the cache) | As in `DATA-08` | The `tools` part of the cache |
 
 ## How to compare

@@ -27,22 +27,22 @@ Read in this order (`TOOL-02`): command-line parameter options, then `--json <pa
 | `file_id` | `--file-id` | yes | Path relative to the source root, `/` separators, for example `src/math.ts` |
 | `file_path` | `--file-path` | no | Path of the file to read, absolute or relative to `source_root`; it must lie inside `source_root`, at `file_id` (E12 otherwise). If absent, `source_root` + `file_id` is read |
 | `source_root` | `--source-root` | yes | Root of the examined source. Declaring it marks a tool that reads files; every file path is resolved against it (`DATA-09`, from version 0.4.0) |
-| `store_path` | `--store-path` | no | The folder that is this tool's store. Doesn't affect the output. If the input lacks it, the store is this program folder (`TOOL-43`) |
+| `store_path` | `--store-path` | no | The folder that is this tool's store. Doesn't affect the output. If the input lacks it, the store is `./zaansouvi/tools/file-symbols/` in the folder the tool was started from (`TOOL-43`, `FND-59`) |
 
 Any other key is an extra value and is ignored (`TOOL-08`).
 
-`--info` marks each parameter with `affectsOutput`. `file_id`, `file_path` and `source_root` affect the output and follow the order above exactly. `store_path` doesn't, so it is optional: when the input lacks it, the store is this program folder. `last_run.json` is used only as a complete input, never to fill in a missing `store_path`. `result.json` and the log say whether the input gave it or the default applied (`nonOutputParameterSources`). The output is the same in every case.
+`--info` marks each parameter with `affectsOutput`. `file_id`, `file_path` and `source_root` affect the output and follow the order above exactly. `store_path` doesn't, so it is optional: when the input lacks it, the store is `./zaansouvi/tools/file-symbols/` in the working folder. `last_run.json` is used only as a complete input, never to fill in a missing `store_path`. `result.json` and the log say whether the input gave it or the default applied (`nonOutputParameterSources`). The output is the same in every case.
 
 ## What it writes
 
-The store is `store_path`, or this program folder when there is none (see above). The Runner always passes `data/tools/file-symbols` (`RUN-26`).
+The store is `store_path`, or `./zaansouvi/tools/file-symbols/` in the working folder when there is none (see above). Never run the tool from inside the examined source: it stops with `E14`. The Runner always passes `data/tools/file-symbols` (`RUN-26`).
 
 | File | When | Content |
 |---|---|---|
 | `output/<file-key>.json` | real run succeeded | `tool`, `toolVersion`, `formatVersion`, `file`, `sourceSha256`, `dataNames`, `counts`, `symbols`, `references`. No times, so two runs over the same file give identical output |
 | `result.json` | every real run past the shape check | `status` (`succeeded` or `failed`), times, `parameterSource`, `effectiveParameters`, `read` (`sourcePath`, `sourceBytes`, `sourceSha256`), `outputPaths`, `outputChange`, `counts`, `error`, `logPath` |
 | `logs/<timestamp>_<file-key>.log` | every real run past the shape check | `<ISO time>\t<level>\t<event>\t<JSON>` lines and `# [type] text` comments (DATA-16) |
-| `last_run.json`, next to the launcher | every real run past the shape check | The flat parameters, plus `_last_run` (`toolVersion`, outcome, times, error, `resultPath`). It can be passed back as is with `--json` |
+| `last_run.json`, in the store (without `store_path`) | every real run past the shape check | The flat parameters, plus `_last_run` (`toolVersion`, outcome, times, error, `resultPath`). It can be passed back as is with `--json` |
 
 `<file-key>` is the file ID with `/` replaced by `__`, so `src/math.ts` gives `src__math.ts.json` (`ARCH-07`). Files are written to a temporary name and renamed, so they are never half-written. A failed run writes no output and keeps the earlier one.
 
@@ -59,7 +59,7 @@ Following `02_data_contracts.md`, with these additions:
 
 ## Key names
 
-Every key has one meaning across the Runner, the tools and the Viewer, and different meanings get different names (`DATA-19`). Version 0.2.0 renamed the keys that had two meanings (`FND-40`): for example `toolVersion` and `formatVersion` instead of `version`, `import.moduleSpecifier` and `import.importedName`, `effectiveParameters` and `outputPaths` in `result.json`, `errorKind` on the no-go line, `...Path` for every path, and `symbolCount` and the like in `counts`. The full list is in `mvp_docs/proposed_schema/26-11-08 011800 Proposed JSON schema for every step, current parameters of input and output.md`, section 12.
+Every key has one meaning across the Runner, the tools and the Viewer, and different meanings get different names (`DATA-19`). Version 0.2.0 renamed the keys that had two meanings (`FND-40`): for example `toolVersion` and `formatVersion` instead of `version`, `import.moduleSpecifier` and `import.importedName`, `effectiveParameters` and `outputPaths` in `result.json`, `errorKind` on the no-go line, `...Path` for every path, and `symbolCount` and the like in `counts`. The full list is in `mvp_docs/proposed_schema/26-11-09 081006 Proposed JSON schema for every step, the Runner and the Viewer, as built.md`, section 12.
 
 ## Dry run
 

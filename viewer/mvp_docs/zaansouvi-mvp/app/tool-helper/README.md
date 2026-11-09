@@ -11,7 +11,7 @@ It **knows nothing about any specific tool**. Everything tool-specific comes fro
 | Options: `--info`, `--help`, `--version`, `--dry-run`, `--json`, `--stdin`, `--log`, and one option per string parameter in `--info` (`some_key` gives `--some-key`) | `TOOL-01`, `FND-14` |
 | Parameters: command line, then `--json` or `--stdin`, then `last_run.json`, only ever as a complete input | `TOOL-02`, `TOOL-43` |
 | Shape check from `--info`: required parameters present, strings non-empty, arrays arrays; then the tool's own checks. Invocation errors write nothing | `TOOL-03` |
-| The store: `store_path`, else the tool's program folder; `nonOutputParameterSources` in the log and `result.json` | `DATA-21`, `TOOL-43` |
+| The store: `store_path`, else `./zaansouvi/tools/<tool>/` in the working folder; `last_run.json` in the store, without `store_path`; `E14` when started from inside `source_root`; `nonOutputParameterSources` in the log and `result.json` | `DATA-21`, `TOOL-43` |
 | `last_run.json` at the start of a real run and at its end | `TOOL-04`, `DATA-15` |
 | The log, in the shared format; `--log` copies it | `DATA-16`, `TOOL-07` |
 | Outputs written to a temporary name and renamed; `result.json`, with the tool's `diagnostics`; one summary line on standard output | `TOOL-05`, `DATA-14` |
@@ -27,7 +27,7 @@ import type { ToolSpec } from "../../../tool-helper/tool.ts";
 const SPEC: ToolSpec = {
   info: INFO,                 // the tool's --info
   help: HELP,
-  programDir: PROGRAM_DIR,    // the launcher's folder: last_run.json, and the default store
+  programDir: PROGRAM_DIR,    // the launcher's folder, for the log only: nothing is written there
   checkShape: (p) => { ... }, // optional: throw invocationError("E13", ...)
   work: ({ params, store, log, mode }) => ({ outputs: [{ path: "output/x.json", content }], summary: { counts }, diagnostics }),
   identity: (p) => ({ ... }), // optional: what the run is about, in its output lines

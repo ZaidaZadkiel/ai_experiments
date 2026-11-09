@@ -1,0 +1,63 @@
+[
+ [
+  "go",
+  "<the Viewer's URL, filled in by browse.sh>"
+ ],
+ [
+  "wait",
+  "window.zaansouvi && window.zaansouvi.ready() && document.querySelector('#cy canvas')",
+  15
+ ],
+ [
+  "sleep",
+  1
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; const b=id=>document.getElementById(id).getBoundingClientRect(); return 'zoom '+cy.zoom().toFixed(3)+' | readout '+document.getElementById('zoomread').textContent+' | tops: text '+Math.round(b('zoomtext').top)+', fit '+Math.round(b('fit').top)+', readout '+Math.round(b('zoomread').top)"
+ ],
+ [
+  "js",
+  "document.getElementById('zoomtext').click(); return 'Text clicked'"
+ ],
+ [
+  "sleep",
+  0.3
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; const b=id=>document.getElementById(id).getBoundingClientRect(); return 'zoom '+cy.zoom().toFixed(3)+' | readout '+document.getElementById('zoomread').textContent+' | tops: text '+Math.round(b('zoomtext').top)+', fit '+Math.round(b('fit').top)+', readout '+Math.round(b('zoomread').top)"
+ ],
+ [
+  "shot",
+  "zoom-1-text.png"
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; cy.zoom(0.45); return 'zoomed to 0.45 from code, as a wheel would'"
+ ],
+ [
+  "sleep",
+  0.3
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; const b=id=>document.getElementById(id).getBoundingClientRect(); return 'zoom '+cy.zoom().toFixed(3)+' | readout '+document.getElementById('zoomread').textContent+' | tops: text '+Math.round(b('zoomtext').top)+', fit '+Math.round(b('fit').top)+', readout '+Math.round(b('zoomread').top)"
+ ],
+ [
+  "js",
+  "document.getElementById('fit').click(); return 'Fit clicked'"
+ ],
+ [
+  "sleep",
+  0.3
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; const b=id=>document.getElementById(id).getBoundingClientRect(); return 'zoom '+cy.zoom().toFixed(3)+' | readout '+document.getElementById('zoomread').textContent+' | tops: text '+Math.round(b('zoomtext').top)+', fit '+Math.round(b('fit').top)+', readout '+Math.round(b('zoomread').top)"
+ ],
+ [
+  "shot",
+  "zoom-2-fit.png"
+ ]
+]

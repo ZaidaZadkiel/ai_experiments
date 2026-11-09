@@ -165,3 +165,39 @@ Of crouse, the entire reason I wanted a verbatim log was to try figure out whate
 The work now is focusing on figuring out whether the tools can actually talk without knowing what each one does, and the main finding was that runner is going to need to be quite complex. I havent decided anything about how its going to figure out what the data actually means, and i think its best to let that unsettled until we start the actual viewer, which seems pretty hard.
 
 We'll see if theres any more surprises.
+
+In the end i spent most of the time figuring out how to get viewer working, and completing the rest of the mvp. Eventually it got running, and at first it was quite unorthodox and rather "thrown together" as one might expect, it took some effort to figure out what the ai decided things were, in particular, the diagram shows arrows with a point towards one side, which I would had imagined meant "this is used here" but instead means "this uses what is there". I considered changing but the ai noted that it would change the meaning of the defined keys in the json, which i agree doesnt make sense to modify.
+
+Some time was spent on wrangling the layout and figuring out how it was supposed to look, making up things and improving on the suggestions the ai made, it was helpful that ai can make text diagrams with little effort.
+
+The first version worked correctly to navigate the graph and shown something that looks like what i wanted, which was really nice. Honestly, i had expected it would be harder to make ai understand what i wanted, but it hallucinated good and it came up with something pretty close.
+
+Since this is a mvp, more than half of the actual app simply doesnt exist, and the focus is in figuring out how the data actually will work and how it is going to show.
+
+The viewer was improved the next day, mostly layout issues, i noticed that it didnt make much effort to make reusable components, prefiring to duplicate many things.
+
+One thing i noticed while working on the data generation, in some step it decided it wanted a list of files for something that didn't really need files, so i asked why was it sending that, and it immediatly agreed it was not needed. The change to remove that unnecessary part was easy, but left the name of the JSON with the "files" key, so i had to ask it to rename it correctly. Doing that, it went and checked other docs with wrong names like that and fixed those. 
+
+The fact that ai can be very proactive gives me anxiety. I feel like a gambler pulling the lever on a slot machine, hoping to recieve a good prize.
+
+After a while, and several instructions to change and noticing different things in the layout, it ended with something i kind of like, its neat how it can just go and build whatever.
+
+![main screen when opening a project](image.png)
+
+![Drawer pane showing a run](image-1.png)
+
+![Drawer pane showing problems logged in the graph](image-2.png)
+
+## next part of work
+
+After getting the viewer to look somewhat reasonable, still looking pretty sloppy, i noticed that loading the mvp source gave a whole lot of problems on its own diagnostics.
+
+One of the goals of this tool is to show accurate structure of the real code, so a "incomplete" implementation of the graph data extraction seems pretty bad.
+
+Looking at the details with the ai, it seems that my original intention was very short-sighted: A compiler cannot actually process all the data it needs with just a single file.
+
+Currently, the tool is doing part of typescript manually, which for the first part worked well enough. Trying to get more accuracy would mean extending the tool to do even more work, which would be a crappy version of typescript anyway, which soudns like really bad.
+
+So now im trying to figure out if I can actually run typescript for real inside the tool run.
+
+The next step is making a backup of the source until this "working" state. Since i didnt add git to the VM where im running claude, im copying the files manually with the hopes of preventing claude from doing too much, since it "doesnt know" about this copy. And as such, im updating my own git.

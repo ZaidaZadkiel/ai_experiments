@@ -1,0 +1,59 @@
+[
+ [
+  "go",
+  "x"
+ ],
+ [
+  "wait",
+  "window.zaansouvi && window.zaansouvi.ready() && document.querySelector('#cy canvas')",
+  15
+ ],
+ [
+  "sleep",
+  1
+ ],
+ [
+  "js",
+  "window.zaansouvi.select('node','src/main.ts'); return 'file main.ts'"
+ ],
+ [
+  "sleep",
+  0.4
+ ],
+ [
+  "js",
+  "const d=document.getElementById('pane-details'); return [...d.querySelectorAll('h3,h4')].map(h=>h.textContent).join(' / ')+'\\n'+[...d.querySelectorAll('ul.rows > li')].map(l=>l.textContent).join('\\n')"
+ ],
+ [
+  "shot",
+  "contains-1-file.png"
+ ],
+ [
+  "js",
+  "window.zaansouvi.enter('src/main.ts'); window.zaansouvi.select('node','src/main.ts#scope@file'); return 'file scope'"
+ ],
+ [
+  "sleep",
+  0.6
+ ],
+ [
+  "js",
+  "const d=document.getElementById('pane-details'); return [...d.querySelectorAll('h3,h4')].map(h=>h.textContent).join(' / ')+'\\n'+[...d.querySelectorAll('ul.rows > li')].map(l=>l.textContent).join('\\n')"
+ ],
+ [
+  "shot",
+  "contains-2-scope.png"
+ ],
+ [
+  "js",
+  "window.zaansouvi.select('node','src/main.ts#scope@4:1', true); return 'and scope run, together'"
+ ],
+ [
+  "sleep",
+  0.4
+ ],
+ [
+  "js",
+  "const d=document.getElementById('pane-details'); return [...d.querySelectorAll('h3,h4')].map(h=>h.textContent).join(' / ')+'\\n'+[...d.querySelectorAll('ul.rows > li')].map(l=>l.textContent).join('\\n')"
+ ]
+]

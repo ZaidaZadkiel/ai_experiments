@@ -1,0 +1,240 @@
+# 50. Viewer UI
+
+What the MVP Viewer page looks like and holds: every UI detail known so far, and the suggested answers to what is still open. Written on 2026-11-08 at the user's request, as the basis for a static preview of the page and then for building it.
+
+Each item is marked:
+- **[Decided]** decided by the user for the MVP, with the date.
+- **[Accepted]** a suggestion the user accepted, with the date.
+- **[Known]** follows from a decision or an accepted MVP requirement, with its source.
+- **[Suggested]** not yet accepted; a starting answer so the preview and the build don't have to invent one.
+
+The backend, the data rules and the checks stay in `05_viewer.md`; this file covers only what the user sees and does. Where the two differ, `05_viewer.md` and the working files win, and this file is corrected.
+
+## 1. Starting the page
+
+- **UI-01** **[Known]** the backend is started by hand from a shell, `zaansouvi-view [--port <n>]`, and prints the URL to open, with its token, on standard output; it doesn't open the browser itself, and runs until stopped by hand (`VIEW-07`).
+- **UI-02** **[Suggested]** the printed message, one line per fact, plain text:
+
+  ```
+  ZaAnSouVi Viewer 0.1.0
+  Open in your browser: http://127.0.0.1:4310/?token=<token>
+  Stop with Ctrl + C.
+  ```
+
+  A port already in use prints `Port 4310 is in use. Start with --port <n> to use another.` and exits (`VIEW-07`).
+- **UI-03** **[Suggested]** opening the page without the token, or with a wrong one, shows only a short text: "This page needs the link printed by zaansouvi-view." Nothing else is served (`FND-60`, item 3, still open).
+
+## 2. Page layout
+
+- **UI-10** **[Known]** the page has a **header** linking to the pages, a **graph area**, a **details drawer** and a **status bar**, and shows where the user is in the levels, for example as a breadcrumb (`viewer.md`, sections 4.8 and 4.10).
+- **UI-11** **[Suggested]** The arrangement, for a desktop browser window:
+
+  ```
+  +----------------------------------------------------------------------------------+
+  | ZaAnSouVi  [Viewer]  Config  Status  Runs  | Source: [test-source v] [Run] [Dry run] |
+  +----------------------------------------------------------------------------------+
+  | test-source > main.ts > run                                 | Details|Tools|Problems|Legend |
+  | +----------------------------------------------------------+ |                     |
+  | |                                                          | |  (drawer, about     |
+  | |                       graph area                         | |   360 px wide)      |
+  | |                                                          | |                     |
+  | +----------------------------------------------------------+ |                     |
+  +----------------------------------------------------------------------------------+
+  | 14:02:31  Dry run finished: 5 of 5 go, 0 errors                          [^ 12]  |
+  +----------------------------------------------------------------------------------+
+  | /home/.../test-source | run 2026-11-09 01:36, latest | 0 invalid | 2 unresolved   |
+  +----------------------------------------------------------------------------------+
+  ```
+
+  The line above the status bar is the activity line (`UI-65`), collapsed to the latest entry; ~~`[^ 12]` expands it and says how many entries the session holds.~~ `[^]` expands it; the count "shown / logged" stands at the start of its controls (`UI-73`).
+
+- **UI-12** **[Suggested]** the drawer sits on the right and can be collapsed to a narrow strip; the graph area takes the rest. The breadcrumb sits above the graph, inside the graph column.
+- **UI-13** **[Suggested]** one page only. The header shows **Viewer** as the current page; Config, Status and Runs are shown greyed out with the note "not in the MVP" on hover, so the header already has the shape `viewer.md`, section 4.10, describes. The MVP has no config manager (`ARCH-11`).
+- **UI-15** **[Decided]** **Display controls in the bottom right corner** (a guideline, decided by the user on 2026-11-09; recorded in `viewer.md`, section 4.8): buttons that change how the content is shown align to the bottom right of what they act on, as a column ~~with the functions that change least nearest the corner~~ with the part that changes most (a count, a readout) kept in the corner and the controls that affect the visualization above it, so that what needs the most attention, and the controls that change what is visible, each stay in the same place in most cases (refined by the user the same day), or as a row ordered with the items that change most first (`{count} [action 1] [action 2] [change display]`). Exception: a layout whose buttons are better placed otherwise for their function, such as run configurations. Followed by the zoom controls (`UI-46`), the This view / All toggle in Problems (`UI-57`) and the activity line (`UI-73`).
+- **UI-14** **[Suggested]** a light and a dark theme following the system setting; nothing to configure.
+
+## 3. Header
+
+- **UI-20** **[Known]** the user picks the examined source: the page lists the sources the Viewer has cached and takes a new source root; picking one shows its cached graph at once, marked with its run's time (`VIEW-08`).
+- **UI-21** **[Suggested]** a drop-down **Source** with each cached source by its folder name, the full path on hover, and its last run's time; its last item, **Add a source...**, opens a small form with one text field (the absolute path of the source root) and **Add**. A new source has no graph until it is run; the graph area then says so and points to **Run**.
+- **UI-22** **[Known]** two buttons, **Run** and **Dry run** (`VIEW-32`). Run starts a real run on the source shown; it is the user's way to reload the graph (`VIEW-33`).
+- **UI-23** **[Known]** one run at a time; a second request is refused, with the Runner's message (`VIEW-05`). **[Suggested]** both buttons are disabled while a run is in progress, with "A run is in progress" on hover; switching sources is disabled too.
+
+## 4. Graph area and levels
+
+- **UI-30** **[Known]** three levels with M3, two without (`VIEW-21`). *(As built: a scope's members are listed in its label rather than drawn nested inside it, `BE-104`.)*
+
+| Level | Shows | Edges |
+|---|---|---|
+| 1. Files | every examined file | edges between files, one per pair and direction, labeled with the count |
+| 2. Inside a file | the file's scopes (with M3) or its symbols (without M3) | edges between them; edges leaving the file go to stubs for the other files |
+| 3. Inside a scope | the scope's symbols | references and links |
+
+- **UI-31** **[Known]** double-click a node to go one level down into it; the breadcrumb goes back up; the mouse wheel only zooms the current level; nodes can be dragged; positions are not saved (`VIEW-20`, `VIEW-22`). Ctrl + wheel is out of the MVP (`FND-17`). *(As built: the wheel zooms around the pointer, between 0.2× and 3×; its sensitivity is 0.7, raised from 0.3 by the user on 2026-11-09, `wheelSensitivity` in `ui/src/main.ts`.)*
+- **UI-32** **[Known]** an automatic layout per level (`VIEW-22`). **[Suggested]** a **Fit** button in a corner of the graph area brings every node back into view. *(As built, refined on 2026-11-09 at the user's request, `FND-72`: **the layout is predictable**: the same view of the same data comes out the same every time it is entered, and after a reload. Before the force layout (`cose`) runs, each node gets its own starting place: the view's own nodes on an inner circle, stubs on an outer one, each in the model's order. Before, every node started on the same spot, and Cytoscape pushes such nodes apart in random directions. A change to the code can still rearrange a whole view; positions are not saved, `UI-31`.)*
+- **UI-46** **[Decided]** **Zoom controls for readable text** (decided by the user for the MVP on 2026-11-09, `FND-76`): a column in the bottom right corner of the graph area, from the bottom up: **the current zoom** as a percentage, **Fit** (`UI-32`), and **Text**, which zooms to 100%, where text is drawn at its own font size (13px for a node's label), keeping the centre of the graph area in place. The readout follows every change of zoom: the wheel, Fit, Text, entering a view. Each view still starts fitted to the graph (`UI-32`), so its text size still depends on the graph's size; starting at a readable zoom was offered and not chosen (`FND-76`). *(As built on 2026-11-09: `.zoombox` in `ui/static/index.html` and `ui/static/style.css`; `zoomReadout` and the `zoomtext` button in `ui/src/main.ts`. Checked in headless Firefox, `tests/viewer/browse/zoom-controls.json`.)*
+- **UI-33** **[Known]** edges are lifted to the nearest visible container, drawn once with a count; selecting one lists the edges it stands for, each with its file:line; an edge that starts at a node owning a scope starts from that scope (`VIEW-13`).
+- **UI-34** ~~Suggested~~ **[Accepted]** (accepted by the user for the MVP on 2026-11-08, `FND-68`) rules for what is drawn (`FND-60`, item 4); the preview still labels them as assumptions; the backend applies them as `55_viewer_backend.md`, `BE-53`, words them:
+  - references of kind `declaration` are not drawn as edges: containment already shows where a symbol is declared;
+  - an edge whose two ends lift to the same visible node is not drawn at that level; it shows one level down;
+  - an end outside the entered node lifts to its file, drawn as a small **stub** node at the edge of the graph area;
+  - **new:** an edge that *ends* at a node owning a scope ends at that scope, the mirror of the start rule in `VIEW-13`. Without it, the call `run()` on line 12 of `main.ts` joins the file scope to itself and isn't drawn, while `06_test_plan.md`, "Scopes", expects "an edge from the file scope to `run`". To confirm, with `VIEW-13`.
+- **UI-35** **[Known]** unresolved relations (`to: null`) are not drawn; the page shows how many there are, with their reasons (`VIEW-12`). *(As built, refined on 2026-11-09, `FND-77`: the line under the graph groups them by name, the most mentioned first, with a count where a name repeats, and names at most eight, then "and N more names. See Problems.")*
+- **UI-36** ~~Suggested~~ **[Accepted]** (accepted by the user for the MVP on 2026-11-08, `FND-68`): the entered node of level 2 or 3 is not drawn as a node; its name is in the breadcrumb, and edges from it to its own members (level 3) start from a small node ~~labeled with the scope's name, marked "this scope".~~ labeled "this scope", drawn inside the scope's frame, which carries the scope's name (changed on 2026-11-09 with `UI-37`).
+- **UI-37** **[Decided]** **A frame shows the scope being viewed** (decided by the user for the MVP on 2026-11-09, `FND-73`): when the entered node is a scope (a node with an `owner`, `BE-109`), the view draws a box labeled with the scope's name ("main.ts · file scope", "ƒ run"), and **everything the view lists as its own nodes is drawn inside it**, together with the "this scope" node (`UI-36`). Stubs, which stand for things elsewhere, stay outside, so the frame's edge shows where "here" ends. Entering a file (level 2) or the top level shows no frame. Before, a symbol that owns a scope, such as `run()` in "main.ts · file scope", stood apart with no edges (its edges go to its scope, `VIEW-13`) and looked unrelated to the view; now it is visibly inside the scope that declares it. Page only: the model, its JSON and the tools' outputs are unchanged. **Judged by the user, after trying it, to improve readability** (2026-11-09).
+  - **Layout inside a frame** (refines `UI-32`): the frame's contents go on a compact grid, "this scope" first, then the model's order; the stubs go on an ellipse just outside the frame, each on the side of the nodes inside it is connected to, kept apart by a minimum angle. The same data gives the same picture. The force layout was tried first: it scattered the frame's contents, which have few edges between them, and let stubs drift into the frame.
+  - *(As built on 2026-11-09: `elementsFor`, `placeStubs` and `drawGraph` in `ui/src/main.ts`; the style `node.frame`. Clicking the frame selects the scope and shows its details. Known: an edge's count label can sit on the frame's title. Not built: a dotted "owns" line from a symbol such as `run()` to its scope's stub, offered as an option and not chosen.)*
+
+- **UI-38** **[Decided]** **The edges of a selected node are highlighted** (decided by the user for the MVP on 2026-11-09, `FND-71`): selecting a node draws every edge connected to it in ~~the selection color~~ a pale selection color, and unselecting it returns them to their own color. An edge that is itself selected keeps the full selection color, so the two are told apart (changed by the user on 2026-11-09). With several nodes selected, the edges of each are highlighted. Page only. *(As built on 2026-11-09: `syncSelection` and the style `edge.touch` in `ui/src/main.ts`; the pale color is `--sel-soft` in `ui/static/style.css`, a light amber in the light scheme and a dim amber in the dark one.)*
+- **UI-39** **[Decided]** **Arrows keep their direction for the MVP**, `from → to`, the using end first (decided by the user on 2026-11-09, `FND-71`). Whether arrows should point from the definition to where it is used may be improved after the MVP (`VW-40`).
+
+### 4.1 What each level shows for the test source
+
+**[Suggested]** Under the rules in `UI-33` and `UI-34`, to be cross-checked with `06_test_plan.md` when they are accepted. Counts are the number of edges an aggregated edge stands for.
+
+**Level 1, files:**
+
+| Edge | Count | Stands for |
+|---|---|---|
+| `main.ts` → `counter.ts` | 2 | import `add` (1:10); call `add` (5:17) |
+| `main.ts` → `math.ts` | 2 | import `PRECISION` (2:10); read `PRECISION` (7:34) |
+| `counter.ts` → `math.ts` | 2 | import `round` (1:10); call `round` (7:10) |
+
+**Level 2, inside `main.ts`:** nodes: the file scope (holding `add`, `PRECISION`, `run`), the scope `run` (holding `first`, `label`); stubs `counter.ts` and `math.ts`.
+
+| Edge | Count | Stands for |
+|---|---|---|
+| file scope → scope `run` | 1 | call `run()` (12:1), by the mirror rule in `UI-34` |
+| scope `run` → file scope | 2 | call `add` (5:17); read `PRECISION` (7:34) |
+| file scope → stub `counter.ts` | 1 | import `add` |
+| scope `run` → stub `counter.ts` | 1 | call `add` (use link) |
+| file scope → stub `math.ts` | 1 | import `PRECISION` |
+| scope `run` → stub `math.ts` | 1 | read `PRECISION` (use link) |
+| unresolved | 1 | `console` (8:5) |
+
+**Level 2, inside `counter.ts`:** the file scope (`round` import, `total`, `add`), the scope `add` (`amount`); stubs `main.ts`, `math.ts`. Scope `add` → file scope (4: write `total`, read `total` twice, call `round`); file scope → stub `math.ts` (1, import `round`); scope `add` → stub `math.ts` (1, call `round`); stub `main.ts` → scope `add` (2, import and call `add`, by the mirror rule).
+
+**Level 2, inside `math.ts`:** the file scope (`PRECISION`, `round`), the scope `round` (`value`, `factor`); stubs `counter.ts`, `main.ts`. Scope `round` → file scope (1, read `PRECISION`); stub `counter.ts` → scope `round` (2, import and call `round`); stub `main.ts` → file scope (2, import and read `PRECISION`); unresolved 1 (`Math`).
+
+**Level 3, inside the scope `run`:** nodes `first`, `label`, and "run (this scope)" (`UI-36`). "run" → `first` (2 reads), "run" → `label` (1 read); edges leaving the scope go to stubs (the file scope of `main.ts`, `counter.ts`, `math.ts`); ~~unresolved 1 (`console`).~~ and one edge arrives: stub "main.ts, file scope" → "run" (1, the call `run()` at 12:1, by the mirror rule; missing from this table until the backend's check found it on 2026-11-08, `FND-69`); unresolved 1 (`console`).
+
+**A limit this shows:** level 3 has no edges *between* member symbols, only from the scope itself, because every reference starts at its enclosing function (`FND-02`). `const label = "precision " + PRECISION` reads `PRECISION` from `run`, not from `label`. It is a fact of M1's data, not of the UI, and worth noting in the findings after the human review.
+
+## 5. Visual language
+
+- **UI-40** **[Known]** the same kind looks the same everywhere; a reference to an object looks different from the object; color is never the only signal; each view has a legend (`viewer.md`, section 4.3). The MVP keeps it minimal: one shape per node kind; declarations solid, references dashed; links in a separate color (`VIEW-23`).
+- **UI-41** ~~Suggested~~ **[Accepted]** (accepted by the user for the MVP on 2026-11-08, `FND-68`): the visual key is the data name plus the kind (`FND-60`, item 4), so a scope of kind `function` and a symbol of kind `function` look different:
+
+| Node | Shape | Label |
+|---|---|---|
+| file (`files.file`) | rectangle with a folded corner | file name; the folder in the drawer |
+| file scope (`code.scope`, `file`) | large rounded rectangle, thin dashed border | "file scope" |
+| function scope (`code.scope`, `function`) | large rounded rectangle, solid border | "ƒ " + name |
+| function (`code.symbol`, `function`) | ellipse | name + "()" |
+| variable (`code.symbol`, `variable`) | rectangle | name |
+| parameter (`code.symbol`, `parameter`) | small rectangle, italic label | name |
+| import (`code.symbol`, `import`) | rectangle with a dashed border, an arrow mark, and the color of the file it imports from | name, "from ./math" in small type |
+| stub (another file, `UI-34`) | small file shape at the side, faded | file name |
+| unknown kind (`VIEW-15`, extra data) | grey circle | name, and the kind in the drawer |
+
+| Edge | Line | Notes |
+|---|---|---|
+| call | solid, arrow | |
+| read | dotted, arrow | |
+| write | solid, heavy, arrow | |
+| import (link) | dashed, link color, arrow | `VIEW-23`: links in a separate color |
+| use of an import (link) | dotted or solid by kind, in the link color | |
+| aggregated | as its members if all one kind, else solid grey; width grows with the count; the count in a small badge | `UI-33` |
+
+- **UI-42** **[Suggested]** each file gets an identity color from its ID, the same in every level and every run (`viewer.md`, section 4.3, [Proposed]); its scopes, symbols and stubs carry it as a border or a side stripe, so the file a node belongs to is visible at a glance.
+- **UI-43** **[Known]** every name, path and source line is shown as text, never as HTML (`VIEW-40`).
+- **UI-44** **[Decided]** **A color key in the graph's top-left corner, under the breadcrumb** (decided by the user for the MVP on 2026-11-09): a small, non-clickable label listing what the identity colors (`UI-42`) stand for, one row per file: a swatch of the color on the left, the file's name next to it, in a small font. Colors mean files only; a symbol has no color of its own and is drawn in its file's color.
+  - **Which files:** **every** file whose color is drawn in the current view, never cut short, in the cache's file order: the files of the nodes and stubs drawn in their file's color, and for an import drawn as a node, the file it imports from. Scopes are drawn in ink, not in their file's color, so a view showing only its own file's scopes (level 2) lists only the stubs' files.
+  - **Layout:** the rows fill a column top to bottom and **wrap into further columns** when they reach about half the graph's height. The key takes no clicks (`pointer-events: none`), so it never gets in the way of selecting or dragging nodes, even when it covers them; its background is slightly see-through.
+  - **The number of colors stays eight, cycled through** by a hash of the file ID (decided by the user on 2026-11-09): two files can share a color; the key then shows both with the same swatch.
+  - *(As built on 2026-11-09: `drawKey` and `fitKey` in `ui/src/main.ts`, `.key` in `ui/static/style.css`. The "Running…" chip moved to the top right to make room.)*
+
+- **UI-45** **[Decided]** **A mark on every node that can be entered** (decided by the user for the MVP on 2026-11-09): a small triangle pointing down, in the ink color, in the node's bottom right corner, on every node a double-click goes into: a node with a view of its own (`UI-31`) that isn't the one being viewed. Files (stubs included) and scopes get it; symbols, the "this scope" node and the frame (`UI-37`) don't. Color is not the only signal (`UI-40`): the mark is a shape. *(As built on 2026-11-09: the class `enterable` and the style `node.enterable` in `ui/src/main.ts`, an SVG image drawn unclipped so it shows on every shape. Checked in headless Firefox at levels 1 to 3, `tests/viewer/browse/enter-marks.json`.)*
+
+## 6. Drawer
+
+- **UI-50** **[Known]** the drawer's content depends on the selection; with nothing selected, a summary of the view and its legend; with a selection, its details (`viewer.md`, section 4.8, [Proposed]; `VIEW-30`).
+- **UI-51** **[Suggested]** four tabs: **Details**, **Tools**, **Problems**, **Legend**. A run in progress switches to **Tools**; a partly invalid run puts a count on **Problems**.
+- **UI-52** **[Known]** **Details** of a node or edge: its kind, name, file:line, and the source line with the lines around it (`VIEW-30`). **[Suggested]** also its ID (copyable), its data name and the tool that produced it; for a scope, its owner; for an aggregated edge, the list of the edges it stands for, each with kind, file:line and its source line; with nothing selected, the level's counts (nodes, edges, unresolved) and the legend. **[Decided]** a node's **Contains** is a list in the form of Problems' items (`UI-57`), decided by the user on 2026-11-09, ~~instead of the names joined by commas~~: headed "Contains · N"; one item per name and data name, "name · data name · kind" (the name as the graph draws it), its places listed under it ("path/file line:column", start only), with "N declarations" when a name is declared more than once; items sorted by name, ignoring case; placed after the node's source lines. *(As built: `containsList` in `ui/src/main.ts`, using the item list it shares with Problems, `groupedItems` (`UI-57`); checked in headless Firefox, `tests/viewer/browse/contains.json`.)*
+- **UI-56** **[Decided]** **Several selected items all show in Details** (decided by the user for the MVP on 2026-11-09, `FND-71`): a click selects one item, shift- or ctrl-click adds one, a click on the background clears the selection. With more than one selected, Details lists them **grouped by node**, each group headed by the node's label as drawn, holding the node's own details if it is selected and the details of each selected edge that points to it (its `to` end); groups keep the order they were selected in. Each group has a bar on its left in the identity color of the file its node is located in (`UI-42`), or of the node itself when it is a file, and in the selection color when neither applies (changed by the user on 2026-11-09; first built in the selection color for every group). One item selected shows as before (`UI-52`). The activity log records one `node_selected` entry per item selected, with no new key. *(As built on 2026-11-09: `syncSelection`, `details`, `nodeDetails` and `edgeDetails` in `ui/src/main.ts`; `.selgroup` in `ui/static/style.css`; the bar's color from `groupColor`. A redraw of the same view, after a run or a change of color scheme, keeps what is still there selected.)*
+- **UI-53** **[Known]** **Tools** lists the three tools in the stored order, read-only, ~~each marked enabled,~~ (each box drawn as `UI-58` says) with its latest result and a link to its log; after a dry run, each invocation's go / no-go and error; each tool's diagnostics, never in the graph (`VIEW-31`). While a run is in progress, each `tool_skipped`, `tool_dry_run` and `tool_run` event appears as it arrives: skipped in grey, marked up to date; a no-go or failure in red, with the message and the location if there is one (`VIEW-32`).
+- **UI-58** **[Decided]** **Tools lists each tool as an item box, like Problems** (decided by the user for the MVP on 2026-11-09, `FND-78`; refines `UI-53`, whose content is kept). One box per tool, in the run order, in three lists: the live events of the run in progress or just ended, the last real run of this source, and the last dry run.
+  - **First line:** the tool's name, its version faint beside it; on the right, a count where there is one ("2 of 3 files", "3 of 3"), the **log** link, and the pill last, rightmost.
+  - **Second line**, wrapped: the order and the counts ("#1 in order · 3 invocations: 1 ran, 2 up to date"); where the run stopped, "the run stopped here", and for a per-file tool "later files not run" (during a run, only when files were left; afterwards "later files, if any, not run", since the file count isn't known then).
+  - **Under it:** only failed and no-go invocations, "file · code: message" ("(whole run)" for a tool run once), with the log link when the box has several.
+  - **No corner:** tools have no data name in the backend's answer; the corner stays empty.
+  - **Pills:** `succeeded`, `up to date` (every invocation up to date), `failed` (error colors), `not run` (faded box), `waiting` and `running` (during a run), `go` and `no-go` (dry run).
+  - **Not run:** a tool with no invocation in a run that failed was not reached; its box says where the run stopped ("not reached: the run stopped at file-symbols"). The Runner sends no event for such a tool (`tool_skipped` means up to date only), so the page works this out from the tool list, generically. A dry run stops at its first no-go the same way (`invoke` in `app/runner/src/runner.ts`, both modes). During a run, `waiting` becomes `not run` when the run ends failed.
+  - The **enabled** pill is gone: every tool is enabled in the MVP.
+  - *(As built on 2026-11-09: `toolsPane` and `itemBox` in `ui/src/main.ts`, `itemBox` extended with a version, a link, a pill, places holding links and an optional corner; the run's kind from `run_state`. Checked in headless Firefox with a real run and a dry run of `test-source`, and with made-up answers for a failed run, a run in progress and a no-go dry run, `tests/viewer/browse/tools-pane.json`.)*
+- **UI-54** **[Known]** **Problems** lists the run's invalid data and extra data, each with where it came from (data name, tool, record), not only counted (`viewer.md`, section 6; `VIEW-15`, `VIEW-16`). **[Suggested]** also the unresolved relations, grouped by data name, with their reasons where there is one (`UI-35`); each row selectable, showing the record in **Details**. **[Decided]** every row starts with the item's name, then its type (the data name), then the rest (decided by the user on 2026-11-09): an invalid record as "record ID · data name · tool", then the problem; extra data as "what is extra · data name · tool · detail"; an unresolved relation as "name · data name · file line:column · reason", for example "console · code.reference · src/main.ts 8:5 · no reason recorded" ~~(was "code.reference · console · …")~~. *(As built on 2026-11-09: `problemsPane` in `ui/src/main.ts`.)*
+- **UI-57** **[Decided]** **Problems groups what repeats, and lists unresolved relations for this view or all** (decided by the user for the MVP on 2026-11-09, `FND-77`):
+  - **Unresolved relations:** one item per name and data name, "name · data name · N mentions", with the mentions listed under it as "path/file line:column" (start only), sorted by file, then line. A reason shared by every mention is shown once on the item, otherwise on each mention. Items are sorted by name, ignoring case. Mentions are not clickable. A relation with no name of its own is named by its source node's label (an unresolved import by its import symbol), else by its ID; generic, on the page (`relName`).
+  - **The item's layout** (decided by the user on 2026-11-09; shared with Details' Contains, `UI-52`) ~~"name · data name · N mentions · reason" on one line~~: the name on the left of the first line, as before; what the list says of it ("1 mention", "function") on the right of the same line; a note shared by every place ("no reason recorded") on the second line, on one line only, cut short with "(...)" when it is wider than the item and shown in full as a tooltip on hover; the places under it; the data name (`code.reference`) faint, in the bottom right corner of the box. "(...)" is Firefox's; browsers that don't support a custom cut-off mark show "…".
+  - **Invalid and extra data in the same box** (decided by the user on 2026-11-09), not grouped by name, since nothing repeats there: **extra data** as what is extra (`keys`) on the left, the tool on the right, the detail on the second line, the data name in the corner; **an invalid record** as its ID on the left, the tool on the right, "problem. Skipped." on the second line, the data name in the corner, in the error colors; **a problem met by several records** as one box: the problem on the left, "N records" on the right, each "record ID · tool" under it, the data names in the corner. For both, the second line **wraps** instead of being cut short, since it is the item's content, not a side note. A box with nothing under it keeps a line free for the data name. ~~(Were: one line each, "record ID · data name · tool" then the problem; "what · data name · tool · detail".)~~
+  - **This view / All:** a toggle in a column at the bottom right of the pane, like the zoom controls (`UI-46`), staying in view as the pane scrolls. **This view**, the default, lists the unresolved relations of the view being shown (the same ones as the line under the graph, `UI-35`); **All** lists those of the whole run. The choice holds in every view until changed. Invalid and extra data are the run's, whatever the toggle.
+  - **Invalid data:** a problem met by several records is one item, "problem · N records", the records listed under it ("record ID · data name · tool"); a problem met once stays one row (`UI-54`). Extra data is unchanged.
+  - *(As built on 2026-11-09: `problemsPane` and `state.probScope` in `ui/src/main.ts`; the items built by `groupedItems`, shared with Details' Contains (`UI-52`), which groups, sorts and lays out both lists, each caller giving only the text after the data name and an optional note per place; every box, in every list of Problems and in Contains, drawn by `itemBox`; `.probscope` and `ul.sub` in `ui/static/style.css`. Checked in headless Firefox on `test-source` and on a copy of the Runner's code, 137 unresolved relations in 60 items, `tests/viewer/browse/problems.json`.)*
+- **UI-55** **[Suggested]** a log link opens the log as plain text in a new browser tab (`/api/log`).
+
+## 7. Status bar
+
+- **UI-60** **[Known]** it shows the state at a glance: the codebase, whether what is shown is the last saved run or something else, whether a run is in progress, the number of warnings; selecting an item opens its details in the drawer (`viewer.md`, section 4.8, [Proposed]).
+- **UI-61** **[Suggested]** The items, left to right: the source root; the run shown, with its time and "latest" or why not ("last run failed", "partly invalid run shown", "only a dry run since"); a run in progress, with how many invocations are done; the counts of invalid records, extra data and unresolved relations. Each count opens the **Problems** tab.
+
+### 7.1 Activity line
+
+- **UI-65** **[Decided]** **An activity line at the bottom of the page lists every command and action the user or the app has carried out in the session** (decided by the user for the MVP on 2026-11-08; `FND-66`). **MVP only, for debugging and tracking** what happened during a session; it is not part of the product's page (`viewer.md`, section 4.8, unchanged). Collapsed, it is one line showing only the latest entry; expanded, it floats over the page and scrolls through everything done since the session began. Examples given by the user: *user opened folder "x" for examination*; *dry run resulted in 0 errors*; *user executed manual run*.
+- **UI-66** **[Suggested]** Placement and behavior:
+  - one full-width line directly above the status bar (`UI-11`), always visible, with the entry's time (local, `HH:MM:SS`) and its text; a button at its right end, labeled with the number of entries, expands it;
+  - expanded, it opens upward as a floating panel over the graph and the drawer, without moving them, about a third of the window high, newest entry at the bottom, scrolled to the end; it scrolls back to the session's first entry. Clicking the button again, pressing Escape, or clicking outside collapses it;
+  - a new entry while it is collapsed replaces the line; while expanded, it is appended, and the panel stays where the user scrolled unless it was at the end;
+  - entries are plain text, never HTML (`VIEW-40`), and can be selected and copied.
+- ~~**UI-67** **[Suggested]** **what is an entry.** Each says who acted, so the user's actions and the app's are told apart at a glance (a small "you" or "app" mark before the text, not only a color, `UI-40`):   - **the user:** opened or added a source (with its path); switched to another source; started a run or a dry run; switched between the latest run and the last good graph (`UI-70`); opened a log;   - **the app:** the backend started (its version); a cached graph loaded for a source (with its run's time); a run or dry run started on its own source root, and finished (outcome, how many invocations ran, were skipped, said no-go or failed, and the number of errors); the checks of a run's output (`VIEW-15`: nothing invalid, or how many records were invalid and how much extra data); a cached entry that couldn't be used, and why (`VIEW-08`); a run request refused because one is in progress (`VIEW-05`).   - **Not entries:** moving between levels, selecting, zooming and dragging. They change only the view and would bury the rest. They could be added later if the user wants them.~~ Replaced on 2026-11-08 by `UI-62` (entries by level, including navigation and selection at the verbose level).
+- **UI-68** **[Suggested]** an entry with more detail behind it (a run's result, the problems found) can be clicked to open that detail in the drawer (**Tools** or **Problems**). The activity line is a summary for people; the full record of a run stays in the Runner's and the tools' logs.
+- **UI-62** **[Decided]** **Every entry has a level: `minimal`, `normal` or `verbose`** (decided by the user for the MVP on 2026-11-08; `VIEW-17`). The backend tags each entry when it logs it. Suggested assignment, each entry still marked "you" or "app" (not only by color, `UI-40`):
+  - **`minimal`**, what a session must show: the Viewer started (its version); a run or dry run finished, with its outcome and its number of errors; a run's output partly invalid, or unusable (`VIEW-16`); a cached entry that couldn't be used (`VIEW-08`); a request refused because a run is in progress (`VIEW-05`); any error of the backend itself.
+  - **`normal`**, the ordinary course of a session: you opened, added or switched a source (with its path); you started a run or a dry run; a run or dry run started, on its source root; the checks of a run's output (nothing invalid, or the counts of invalid records and extra data, `VIEW-15`); a cached graph loaded for a source (with its run's time); you switched between the latest run and the last good graph (`UI-70`); you opened a log.
+  - **`verbose`**, for debugging: you entered or left a level, and which node; you selected a node or edge; each Runner event as it arrives (`tool_skipped`, `tool_dry_run`, `tool_run`, with tool, file and reason); each request the page made to the backend and its answer (endpoint, status, time taken); each invalid record and each piece of extra data, one entry per item; the graph built (node and edge counts per level).
+  - **Not logged at all:** zooming and dragging, which happen continuously.
+  - Each level includes only its own entries; showing several levels interleaves them in time order.
+- **UI-63** **[Decided]** **The activity line has a toggle to show or hide each level** (decided by the user for the MVP on 2026-11-08). **[Suggested]** three small toggle buttons at the line's right end, **Minimal**, **Normal** and **Verbose**, each on or off, next to the expand button; by default Minimal and Normal are on and Verbose is off. The collapsed line shows the latest entry among the levels shown; the expand button counts the entries shown. Each entry shows its level as a short tag (`min`, `norm`, `verb`) before its text. The toggles change only what is shown, never what is logged; the choice is remembered by the page for that browser (a convenience, not Viewer data).
+- ~~**UI-64** **[Suggested]** the backend also writes the session's entries, every level, to a log file in its store, `data/viewer/logs/<timestamp>.log`, one per backend session, as JSON lines (time, level, who, text, details). A session's trail then survives the backend stopping, which helps debugging; it changes `UI-69`, where nothing was saved. Deleting `data/viewer/logs/` loses nothing else.~~ Replaced on 2026-11-08 by `UI-71` (one file, appended).
+- **UI-73** **[Decided]** **The activity line counts its entries as "shown / logged"** (decided by the user for the MVP on 2026-11-09), ~~instead of the number shown on the expand button~~: the entries shown at the levels selected (`UI-63`), over all the entries the session holds (`UI-69`), at the start of the controls: `2 / 5 [Minimal] [Normal] [Verbose] [Clear] [^]`. It follows every new entry, every level toggled and Clear. *(As built on 2026-11-09: `actCount` in `ui/src/main.ts`, `#actcount` in `ui/static/index.html`; the CSS counter on the expand button removed. Checked in headless Firefox, `tests/viewer/browse/activity-count.json`.)*
+- **UI-71** **[Decided]** **The backend writes the activity log to a single file, appending to it if it exists** (decided by the user for the MVP on 2026-11-08; `VIEW-17`): `data/viewer/activity.log`. Every entry, every level, goes in; the level toggles (`UI-63`) never change what is written. ~~Suggested: JSON lines (time, level, who, text, details), so the file can be read by people and by scripts;~~ **The format is the shared log format** (accepted by the user for the MVP on 2026-11-08; `DATA-16`; replaces the line above, whose `level` would have clashed with the severity `level`, `DATA-19`): one entry per line, `<ISO time> TAB <level> TAB <event> TAB <JSON details>`, where `level` is the severity (`info`, `warn`, `error`) and the details always hold `verbosity` (`minimal`, `normal`, `verbose`), `actor` (`user`, `app`) and `text` (the sentence the activity line shows), plus the facts as their own keys (`runId`, `sourceRoot`, `nodeId`, `counts`, or a Runner event nested whole under `runnerEvent`). Comment lines start with `#`; dropping them loses no fact. The keys are registered in the reference schema, sections 12 and 15. Each backend start writes a `minimal` `viewer_started` entry, which marks where a session begins, after a `# [session]` comment for people. The Viewer's event names differ from the Runner's (`run_result`, not `run_finished`), so the two programs' events are never confused.
+  - **Only one backend uses it** (decided by the user for the MVP on 2026-11-08): no locking and no sharing between backends are needed, and the file may be deleted and recreated at any time without breaking anything. **[Suggested]** the backend opens the file, appends one entry and closes it again for every entry, so a file deleted while it runs is simply created again by the next entry.
+- **UI-72** **[Decided]** **The activity line has a function to clear the log** (decided by the user for the MVP on 2026-11-08). **[Suggested]** a **Clear** button next to the level toggles, asking first ("Clear the activity log? This can't be undone."). Clearing deletes `data/viewer/activity.log` and empties the entries the backend holds for the session, so the activity line is empty too; the next entry, "you cleared the log" (`normal`), starts the file again. It touches nothing else: not the Runner's or the tools' logs, not the cached graphs (`VIEW-09`).
+- **UI-69** **[Suggested]** **the session** is the backend's: from `zaansouvi-view` starting until it stops. (Since `UI-71`, the file keeps every session until it is cleared; the activity line still shows the current session, from memory.) The backend keeps the entries in memory and sends them to the page, so reloading the page, or opening a second tab, shows the whole session. They are not saved: a new backend starts an empty session, beginning with "Viewer started". (Saving them in the Viewer's store, `VIEW-06`, could come later.) Runs started outside the Viewer, from the command line, don't appear, since the Viewer doesn't see them happen; a later load of their result does.
+
+## 8. States of the page
+
+**[Known]** The states follow `VIEW-06`, `VIEW-08` and `VIEW-16`. **[Suggested]** Their wording.
+
+| State | Graph area | Status bar and drawer |
+|---|---|---|
+| First use: no source cached | empty, with "Add a source to begin" and the **Add a source** form | source empty |
+| A source with no run yet | empty, with "No run yet for this source. Run it to see its graph." | |
+| The latest run, valid | the graph | "run <time>, latest" |
+| A run in progress | the graph shown so far, unchanged until the run ends (`VIEW-33`) | "running, 3 of 5"; **Tools** shows the events |
+| After a dry run | the graph unchanged (`VIEW-31`) | **Tools** shows go / no-go per invocation |
+| The last run failed | the last good graph, with a banner "Not the latest: the last run failed" | the failure in **Tools**, in red |
+| A partly invalid run | the new run's graph without the invalid records, with a banner "Partly invalid: N records skipped. Show the last good graph instead" | **Problems** lists them |
+| The last good graph shown instead | that graph, with a banner "Last good graph, from run <time>. Show the latest run instead" | |
+| No good data for this source | empty, with the reason | |
+| A cached entry the Viewer can't use | empty, with the reason and "Run this source to rebuild it" (`VIEW-08`) | |
+
+- **UI-70** **[Known]** a view never mixes data from two runs (`viewer.md`, section 6); the banners switch the whole view between the two.
+
+## 9. The static preview
+
+- **UI-80** **[Suggested]** a single HTML file with no script: the graph is hand-placed SVG built from the tables in section 4.1; levels, selection examples and the states in section 8 are switched with radio buttons and CSS only. Every element of sections 2 to 8 appears at least once. Assumptions (`UI-34`, `UI-41`) are labeled on the page.
+- **UI-81** ~~Open: where it goes:~~ **[Decided]** by the user on 2026-11-08: **a local file only**, `zaansouvi-mvp/app/viewer/ui/preview.html`, opened in a browser from disk; not published (`FND-67`). Was open: where it goes: a local file (for example `zaansouvi-mvp/app/viewer/ui/preview.html`, opened in Firefox), and whether it is also published as a private page.
+
+## 10. Out of the MVP
+
+From `05_viewer.md` and the working files: saved node positions (`VIEW-22`); the config manager, status and run configuration pages (`ARCH-11`); Ctrl + wheel (`FND-17`); accepting a partly invalid run (`VIEW-16`); cancelling a run (`FND-34`); starting from the file manager or a desktop shortcut, and opening the browser automatically (`FND-62`); identity colors at a grouping level for large graphs (`viewer.md`, section 4.3).

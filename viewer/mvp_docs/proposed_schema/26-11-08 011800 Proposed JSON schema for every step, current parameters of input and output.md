@@ -1,6 +1,8 @@
 # Proposed JSON schema for every step: current parameters of input and output
 
-**Status:** the reference schema of the MVP (`DATA-20`), current on 2026-11-08. It describes what the code produces today: M1 `file-symbols` 0.5.0, M2 `cross-file-links` 0.2.0, the tool helper and the Runner. M3 `symbol-scope` is not built; its parts follow `02_data_contracts.md` and are marked *(proposed, not built)*. It replaces `26-11-08 004014 Proposed generic JSON schema for every step, derived from M1 output.md`, kept for history, and keeps its section numbers, so references such as "the schema, section 13" still hold. Section 14 is new: the parameters and keys the programs know by name.
+> **Superseded on 2026-11-09** by `26-11-09 081006 Proposed JSON schema for every step, the Runner and the Viewer, as built.md`, which describes the MVP as built, the Viewer included, with the struck decisions applied, and keeps these section numbers. Kept for history.
+
+**Status:** the reference schema of the MVP (`DATA-20`), current on 2026-11-08. It describes what the code produces today: M1 `file-symbols` 0.5.0, M2 `cross-file-links` 0.2.0, ~~the tool helper and the Runner. M3 `symbol-scope` is not built; its parts follow `02_data_contracts.md` and are marked *(proposed, not built)*.~~ M3 `symbol-scope` ~~0.1.0~~ 0.2.0 (built later on 2026-11-08, matching section 4.3; 0.2.0 orders memberships independently of the input, `TOOL-35`), the tool helper and the Runner. It replaces `26-11-08 004014 Proposed generic JSON schema for every step, derived from M1 output.md`, kept for history, and keeps its section numbers, so references such as "the schema, section 13" still hold. Section 14 is new: the parameters and keys the programs know by name.
 
 It is for people and log readers; nothing validates against it at run time (the Runner's own check is `RUN-18`). Every key name has one meaning wherever it appears (`DATA-19`, section 12).
 
@@ -31,6 +33,7 @@ It is for people and log readers; nothing validates against it at run time (the 
 12. Key names (`DATA-19`)
 13. The Runner's cache (`RUN-27`)
 14. Parameters and keys the programs know by name
+15. The Viewer's activity log
 
 ## 1. Building blocks
 
@@ -51,7 +54,7 @@ It is for people and log readers; nothing validates against it at run time (the 
 // <LinkID>       import:      "<SymbolID>-><SymbolID>"        "src/main.ts#add@1:10->src/counter.ts#add@5:17"
 //                unresolved:  "<SymbolID>->"                  "src/main.ts#thing@13:10->"
 //                use:         "<ReferenceID>-><SymbolID>"     "src/main.ts#ref@5:17->src/counter.ts#add@5:17"
-// <ScopeID>      "<FileID>#scope@<line>:<column>" | "<FileID>#scope@file"     (proposed, not built: M3)
+// <ScopeID>      "<FileID>#scope@<line>:<column>" | "<FileID>#scope@file"     (M3)
 // <NodeID>       a SymbolID, ScopeID or FileID. A relation's "from" may be a FileID (code at file level)
 
 // <Diagnostic>
@@ -173,18 +176,19 @@ Only the header and the links (`DATA-06`). `dataNames`: `{ "code.link": "links" 
 }
 ```
 
-### 4.3 M3 `symbol-scope`: `output/scopes.json` *(proposed, not built)*
+### 4.3 M3 `symbol-scope`: `output/scopes.json` ~~*(proposed, not built)*~~ *(built on 2026-11-08, now 0.2.0)*
 
-`dataNames`: `{ "code.scope": "scopes", "code.membership": "membership" }`. Open: whether it also outputs `counts` (M2 doesn't), where a file scope's location comes from (`FND-11`), and where a scope ID starts (`FND-12`). Decided: lexical scope only, each scope naming its `owner` (`MVP-4`, option C with C1, `TOOL-33`). As `expected/symbol-scope.json` has it today:
+`dataNames`: `{ "code.scope": "scopes", "code.membership": "membership" }`. ~~Open: whether it also outputs `counts` (M2 doesn't), where a file scope's location comes from (`FND-11`), and where a scope ID starts (`FND-12`).~~ Decided on 2026-11-08: it keeps `counts` (`DATA-07`); a scope ID and location start at the declaration start, and the file scope runs from 1:1 to the furthest end among the file's symbols (`TOOL-34`); order and errors in `TOOL-35` and `TOOL-36`. Also decided: lexical scope only, each scope naming its `owner` (`MVP-4`, option C with C1, `TOOL-33`). As `expected/symbol-scope.json` has it, and M3 0.1.0 produces it:
 
 ```jsonc
 {
-  "tool": "symbol-scope", "toolVersion": "0.1.0", "formatVersion": 1,
+  "tool": "symbol-scope", "toolVersion": "0.2.0", "formatVersion": 1,
   "dataNames": { "code.scope": "scopes", "code.membership": "membership" },
   "counts": { "scopeCount": 6, "membershipCount": 13 },
   "scopes": [
     { "id": "src/main.ts#scope@file", "kind": "file", "name": "src/main.ts", "owner": "src/main.ts",
-      "parent": "src/main.ts" },                                 // no location yet: FND-11
+      "location": { "file": "src/main.ts", "start": { "line": 1, "column": 1 }, "end": { "line": 10, "column": 2 } },
+      "parent": "src/main.ts" },                                 // location: TOOL-34 (was missing: FND-11)
     { "id": "src/main.ts#scope@4:1", "kind": "function", "name": "run", "owner": "src/main.ts#run@4:10",   // TOOL-33
       "location": <the function's range>, "parent": "src/main.ts" }
   ],
@@ -220,7 +224,7 @@ Printed with `--info`, one JSON object, exit 0 (`DATA-08`). The Runner reads the
       "required": true,                                       // (read)
       "affectsOutput": true,                                  // false: optional, default when absent (TOOL-43)
       "description?": "...",
-      "whenAbsent?": "<program folder>"
+      "whenAbsent?": "<working folder>/zaansouvi/tools/<tool>/"   // was "<program folder>" before 2026-11-08 (FND-59)
     }
   },
   "outputs": [                                                // (read)
@@ -274,13 +278,13 @@ A flat object; extra keys are ignored (`TOOL-08`). Read in order: command-line o
 { "symbols": [ <Symbol>, ... ], "references": [ <Reference>, ... ], "store_path": "<Path>" }
 ```
 
-### 6.2 `last_run.json`, next to the launcher
+### 6.2 `last_run.json`, ~~next to the launcher~~ in the tool's store (since 2026-11-08, `FND-59`)
 
 The flat parameters of the last real run that passed the shape check, so it can be passed back with `--json`, plus `_last_run`, which a tool removes when reading it (`DATA-15`).
 
 ```jsonc
 {
-  "source_root": "<Path>", "file_id": "src/math.ts", "store_path": "<Path>",   // the step's own parameters
+  "source_root": "<Path>", "file_id": "src/math.ts",   // the step's own parameters; never store_path: the store is where this file is (FND-59)
   "_last_run": {
     "tool": "file-symbols", "toolVersion": "0.5.0",
     "outcome": "started" | "succeeded" | "failed",    // "started" is overwritten when the run ends
@@ -406,32 +410,15 @@ Comment types: `run`, `step`, `runner-bug`.
 { "pid": 102921, "runId": "<id>", "started": <Time> }
 ```
 
-## 10. Viewer graph model *(not yet produced)*
+## 10. Viewer graph model *(built on 2026-11-08)*
 
-Unchanged from the earlier file. What the Viewer backend sends the page (`VIEW-04`), built only from the Runner's cache (`VIEW-03`).
+The graph model the Viewer backend builds, sends the page and stores as each source's cache entry: **`55_viewer_backend.md`, section 6** (`BE-50`), format 1. It replaces the earlier draft below, kept struck for history.
 
-```jsonc
-{
-  "builtFrom": { "runId?": "<id>", "tools": [ "file-symbols", "cross-file-links", "symbol-scope" ] },
-  "nodes": [
-    { "id": <NodeID>, "parent": <NodeID> | null, "label": "add", "kind": "function",
-      "location?": <Location>, "source": { "tool": "file-symbols", "dataName": "code.symbol" } }
-  ],
-  "edges": [
-    { "id": "...", "from": <NodeID>, "to": <NodeID>, "kind": "call" | "read" | "write" | "import" | "aggregate",
-      "location?": <Location>,
-      "count?": 2,                           // aggregate edges only
-      "members?": [ "<edge id>", ... ],      // aggregate edges: what they stand for, each with a location
-      "source": { "tool": "...", "dataName": "..." } }
-  ],
-  "unresolved": { "count": 2, "names": [ "Math", "console" ] },   // VW-4: relations with to null, hidden and counted
-  "diagnostics": [ <Diagnostic>, ... ]
-}
-```
+~~Unchanged from the earlier file. What the Viewer backend sends the page (`VIEW-04`), built only from the Runner's cache (`VIEW-03`).  ```jsonc {   "builtFrom": { "runId?": "<id>", "tools": [ "file-symbols", "cross-file-links", "symbol-scope" ] },   "nodes": [     { "id": <NodeID>, "parent": <NodeID> | null, "label": "add", "kind": "function",       "location?": <Location>, "source": { "tool": "file-symbols", "dataName": "code.symbol" } }   ],   "edges": [     { "id": "...", "from": <NodeID>, "to": <NodeID>, "kind": "call" | "read" | "write" | "import" | "aggregate",       "location?": <Location>,       "count?": 2,                           // aggregate edges only       "members?": [ "<edge id>", ... ],      // aggregate edges: what they stand for, each with a location       "source": { "tool": "...", "dataName": "..." } }   ],   "unresolved": { "count": 2, "names": [ "Math", "console" ] },   // VW-4: relations with to null, hidden and counted   "diagnostics": [ <Diagnostic>, ... ] } ```~~
 
 ## 11. Review notes and open points
 
-- **M3 is not built.** Its parts follow `02_data_contracts.md` and `expected/`. Open before writing it: `MVP-4` (what "scope" shows), `FND-11` (a file scope's location, which the Runner's shape check requires), `FND-12` (where a scope ID starts), and whether its output keeps `counts` and `diagnostics`.
+- ~~**M3 is not built.**~~ M3 built on 2026-11-08 (0.1.0, now 0.2.0); it matches `expected/symbol-scope.json`. Its parts follow `02_data_contracts.md` and `expected/`. ~~Open before writing it: `MVP-4` (what "scope" shows), `FND-11` (a file scope's location, which the Runner's shape check requires), `FND-12` (where a scope ID starts), and whether its output keeps `counts` and `diagnostics`.~~ All decided on 2026-11-08: `MVP-4` (`TOOL-33`), `FND-11` and `FND-12` (`TOOL-34`), `counts` kept (`DATA-07`), diagnostics in `result.json` (`DATA-14`).
 - **The summary line** of a real run carries `outputPaths` as well as `outputPath`, from the tool helper; `DATA-17` doesn't list either.
 - **M1's dry run prints a preview line**; M2's doesn't (`TOOL-24`). The Runner uses neither (`RUN-16`).
 - **`tool_invoked` logs the full JSON sent**, which for M2 holds every symbol and reference record.
@@ -480,6 +467,23 @@ Each key name has one meaning, with one shape, wherever it appears.
 | `<role>Field` | in `--info` `fields`: which record field plays that role | the record fields themselves |
 | `dataRef` | in the Runner's cache: which output a group's records came from, `<tool>:<FileID>` or `<tool>` | |
 | `runId`, `exitCode`, `fileCount`, `staleInputs` | in Runner events and the cache | |
+| `level` | the severity of a log entry: `info`, `warn` or `error` (`DATA-16`) | `verbosity` |
+| `verbosity` | in the Viewer's activity log: how much detail an entry belongs to, `minimal`, `normal` or `verbose` (`VIEW-17`, `UI-62`; added on 2026-11-08) | `level`, the severity |
+| `actor` | in the Viewer's activity log: who did what the entry records, `user` or `app` (`UI-62`; added on 2026-11-08) | `tool` |
+| `text` | free text for people: a comment's text (section 8.2), or the sentence an activity log entry shows (section 15) | `message`, a Diagnostic's message |
+| `runnerEvent` | in the Viewer's activity log: a Runner event (section 9.1), nested whole, so its own keys keep their meaning (added on 2026-11-08) | `event`, the entry's own event name |
+| `nodeId` | in the Viewer's activity log: the NodeID of the node or edge the user acted on (added on 2026-11-08) | `id`, the record's own ID |
+| `port` | the TCP port the Viewer backend listens on (added on 2026-11-08) | |
+| `container` | in the Viewer's graph model: the node a node is shown inside, after containment (`BE-50`, `VIEW-11`; added on 2026-11-08) | `parent`, the record's own container |
+| `thisNode` | in a view of the graph model: the entered node itself, when edges reach it (`BE-53`, `UI-36`) | |
+| `members` | on an edge of a view: the IDs of the relations it stands for (`BE-53`) | |
+| `recordId` | in the model's checks: the ID of the record found invalid, or `#<index>` without one (`BE-60`) | `id` |
+| `what` | in the model's checks: what kind of extra data was found, `represents` or `keys` (`BE-60`) | `kind` |
+| `item` | in the Viewer's activity log: the invalid record or extra data an entry is about (`BE-105`) | |
+| `sourceKey`, `source` | the Viewer's key for an examined source: 16 hex digits of the SHA-256 of its real path (`BE-31`); `source` holds one in the Viewer's API | `sourceRoot`, the folder itself |
+| `which` | the Viewer's API: `auto` or `last-good`, the graph asked for (`BE-57`) | |
+| `firstLine`, `lines` | the Viewer's `/api/source` answer: the first line's number, and the lines (`BE-72`) | |
+| `lastGood` | the Viewer's `/api/graph` answer: the stored graph's run, `runId` and `finished` (`BE-57`) | |
 | `diagnostics` | a run's notes: in `result.json`, on a dry run's go line, and in the Runner's cache (`DATA-14`). Not a data name (`FND-53`) | `error`, one Diagnostic for a failed run |
 
 ## 13. The Runner's cache (`RUN-27`)
@@ -536,7 +540,7 @@ Any data name starting with `files.file.`, `project.` or `zaansouvi.` counts as 
 | Name | Known by | Rule |
 |---|---|---|
 | `source_root` (data name `project.source_root`) | the Runner (`app/shared/types.ts`) | declared, required, exactly when `readsFiles` is an object (`DATA-09`, `tool-info-inconsistent`) |
-| `store_path` | the tool helper (`app/tool-helper/tool.ts`) | the store, else the program folder (`DATA-21`). The Runner fills it by data name `zaansouvi.store_path`; the two must agree |
+| `store_path` | the tool helper (`app/tool-helper/tool.ts`) | the store, else ~~the program folder~~ `./zaansouvi/tools/<tool>/` in the working folder (`DATA-21`). The Runner fills it by data name `zaansouvi.store_path`; the two must agree |
 
 ### 14.3 Keys the Runner reads from steps' files
 
@@ -550,3 +554,31 @@ Any data name starting with `files.file.`, `project.` or `zaansouvi.` counts as 
 ### 14.4 Keys the tool helper reads from `--info`
 
 `tool`, `toolVersion`, and for each parameter `shape` (string or array), `required` and `affectsOutput`: they drive the options, the generic shape check and `nonOutputParameterSources`.
+
+## 15. The Viewer's activity log
+
+*(Added on 2026-11-08; accepted by the user for the MVP on 2026-11-08; `VIEW-17`, `UI-62` to `UI-72`. Not yet produced: the Viewer isn't built.)*
+
+`data/viewer/activity.log`, one file, appended; only one backend uses it, so it may be deleted and recreated at any time, and the activity line can clear it (`UI-71`, `UI-72`). The format is the shared log format of section 8.1 (`DATA-16`); the details of every entry hold `verbosity`, `actor` and `text`, and the facts as their own keys. Counts go in `counts`, as everywhere (section 12).
+
+```
+# [session] zaansouvi-view 0.1.0, port 4310             (a comment for people; dropping it loses no fact)
+<Time>\tinfo\tviewer_started\t{"verbosity":"minimal","actor":"app","text":"Viewer 0.1.0 started on port 4310","port":4310}
+<Time>\tinfo\tsource_opened\t{"verbosity":"normal","actor":"user","text":"You opened folder \"<Path>\" for examination","sourceRoot":"<Path>"}
+<Time>\tinfo\tcached_graph_loaded\t{"verbosity":"normal","actor":"app","text":"Loaded the cached graph from the run of <time>","runId":"<id>"}
+<Time>\tinfo\tdry_run_requested\t{"verbosity":"normal","actor":"user","text":"You started a dry run"}
+<Time>\tinfo\trunner_event\t{"verbosity":"verbose","actor":"app","text":"file-symbols, src/counter.ts: go (up to date)","runnerEvent":{ <a Runner event, section 9.1> }}
+<Time>\tinfo\tdry_run_result\t{"verbosity":"minimal","actor":"app","text":"Dry run resulted in 0 errors: 5 of 5 go","counts":{"goCount":5,"noGoCount":0,"errorCount":0}}
+<Time>\tinfo\trun_requested\t{"verbosity":"normal","actor":"user","text":"You executed a manual run"}
+<Time>\tinfo\trun_result\t{"verbosity":"minimal","actor":"app","text":"Run succeeded: 2 ran, 3 skipped, 0 errors","runId":"<id>","outcome":"succeeded","counts":{"ranCount":2,"skippedCount":3,"errorCount":0}}
+<Time>\tinfo\toutput_checked\t{"verbosity":"normal","actor":"app","text":"Checked the run's output: nothing invalid, no extra data","counts":{"invalidCount":0,"extraCount":0}}
+<Time>\tinfo\tlevel_entered\t{"verbosity":"verbose","actor":"user","text":"You entered main.ts","nodeId":"src/main.ts"}
+<Time>\tinfo\tnode_selected\t{"verbosity":"verbose","actor":"user","text":"You selected scope run","nodeId":"src/main.ts#scope@4:1"}
+<Time>\twarn\trun_refused\t{"verbosity":"minimal","actor":"app","text":"Run refused: a run is already in progress"}
+<Time>\tinfo\tlog_cleared\t{"verbosity":"normal","actor":"user","text":"You cleared the log"}      (the first entry of a cleared file)
+```
+
+- **Event names** are the Viewer's own and never reuse a Runner event name: `run_result` and `dry_run_result`, not `run_finished`. A Runner event appears only nested, under `runnerEvent`.
+- **`level`** is the severity, as in every log; **`verbosity`** is the activity line's filter. A refused run is `warn` whatever its verbosity, so the line can show it in red.
+- **The suggested event names and which entry gets which verbosity** are in `UI-62`; only the keys above are agreed.
+

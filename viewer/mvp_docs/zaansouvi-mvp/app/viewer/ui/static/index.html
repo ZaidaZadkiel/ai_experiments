@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ZaAnSouVi Viewer</title>
+<link rel="stylesheet" href="/ui/style.css">
+<script src="/lib/cytoscape.js"></script>
+<script type="module" src="/ui/main.js"></script>
+</head>
+<body>
+<div class="page">
+  <header class="top">
+    <span class="brand">ZaAnSouVi</span>
+    <nav class="pages" aria-label="Pages">
+      <span class="current">Viewer</span>
+      <span class="off" title="Not in the MVP">Config</span>
+      <span class="off" title="Not in the MVP">Status</span>
+      <span class="off" title="Not in the MVP">Runs</span>
+    </nav>
+    <span class="spacer"></span>
+    <div class="source">
+      <label for="src" class="muted">Source</label>
+      <select id="src"></select>
+      <details class="add" id="add"><summary>Add a source…</summary>
+        <div class="addform">
+          <label for="newsrc">Absolute path of the source root</label>
+          <div class="row"><input id="newsrc" type="text" placeholder="/home/you/projects/app" autocomplete="off"><button type="button" id="addsrc">Add</button></div>
+          <p class="err" id="adderr"></p>
+        </div>
+      </details>
+    </div>
+    <button type="button" class="primary" id="run" title="Run the Runner on this source">Run</button>
+    <button type="button" id="dry" title="Dry-run every step; the graph doesn't change">Dry run</button>
+  </header>
+
+  <main class="body">
+    <div class="graphcol">
+      <div class="crumbs" id="crumbs"></div>
+      <div class="banner" id="banner" hidden></div>
+      <div class="graph" id="graphbox">
+        <div id="cy"></div>
+        <div class="key" id="key" hidden></div>
+        <span class="running-chip" id="runchip" hidden>Running…</span>
+        <div class="zoombox">
+          <button type="button" id="zoomtext" title="Zoom to 100%: text at its own font size, around the centre of the graph area">Text</button>
+          <button type="button" class="fit" id="fit" title="Bring every node back into view">Fit</button>
+          <span class="zoomread" id="zoomread" title="The current zoom; 100% draws text at its own font size"></span>
+        </div>
+        <p class="unres" id="unres"></p>
+      </div>
+      <div class="empty" id="empty" hidden>
+        <div>
+          <h2 id="empty-title"></h2>
+          <p id="empty-text"></p>
+          <div class="addform" id="empty-add" hidden>
+            <label for="firstsrc" class="muted">Absolute path of the source root</label>
+            <div class="row"><input id="firstsrc" type="text" placeholder="/home/you/projects/app" autocomplete="off"><button type="button" class="primary" id="firstadd">Add</button></div>
+            <p class="err" id="firsterr"></p>
+          </div>
+          <p><button type="button" class="primary" id="empty-run" hidden>Run</button></p>
+        </div>
+      </div>
+    </div>
+
+    <aside class="drawer" id="drawer">
+      <div class="tabs" role="tablist">
+        <button type="button" class="tab" data-tab="details">Details</button>
+        <button type="button" class="tab" data-tab="tools">Tools</button>
+        <button type="button" class="tab" data-tab="problems">Problems<span class="count" id="probcount" hidden></span></button>
+        <button type="button" class="tab" data-tab="legend">Legend</button>
+        <button type="button" class="collapse" id="collapse" title="Collapse or open the drawer">⇆</button>
+      </div>
+      <div class="pane" id="pane-details"></div>
+      <div class="pane" id="pane-tools"></div>
+      <div class="pane" id="pane-problems"></div>
+      <div class="pane" id="pane-legend">
+        <h3>Nodes</h3>
+        <div class="legend-row"><span class="lg lg-file"></span>file, in its own color</div>
+        <div class="legend-row"><span class="lg lg-filescope"></span>file scope</div>
+        <div class="legend-row"><span class="lg lg-scope"></span>function scope (ƒ name)</div>
+        <div class="legend-row"><span class="lg lg-fn"></span>function</div>
+        <div class="legend-row"><span class="lg lg-var"></span>variable; <i>parameter</i> in italics</div>
+        <div class="legend-row"><span class="lg lg-imp"></span>import, in the color of the file it comes from</div>
+        <div class="legend-row"><span class="lg lg-stub"></span>stub: something outside the node you are in</div>
+        <div class="legend-row"><span class="lg lg-this"></span>the scope you are in</div>
+        <div class="legend-row"><span class="lg lg-unknown"></span>a kind with no style of its own</div>
+        <h3>Edges</h3>
+        <div class="legend-row"><span class="le le-call"></span>call</div>
+        <div class="legend-row"><span class="le le-read"></span>read</div>
+        <div class="legend-row"><span class="le le-write"></span>write</div>
+        <div class="legend-row"><span class="le le-import"></span>import (link)</div>
+        <div class="legend-row"><span class="le le-mixed"></span>several kinds together; the number counts them</div>
+        <p class="muted">Declaration references aren't drawn; unresolved relations aren't drawn and are counted. Double-click a node to go into it; the breadcrumb goes back up.</p>
+      </div>
+    </aside>
+  </main>
+
+  <div class="activity" id="activity">
+    <ol id="actlist" aria-label="Activity, newest last"></ol>
+    <div class="actctl">
+      <span class="actcount" id="actcount" title="Entries shown at the levels selected / entries logged"></span>
+      <label class="chip" title="Show minimal entries"><input class="vh" type="checkbox" id="act-min" checked>Minimal</label>
+      <label class="chip" title="Show normal entries"><input class="vh" type="checkbox" id="act-norm" checked>Normal</label>
+      <label class="chip" title="Show verbose entries"><input class="vh" type="checkbox" id="act-verb">Verbose</label>
+      <details class="clear" id="clear"><summary>Clear</summary>
+        <div class="confirm">Clear the activity log? This can't be undone.
+          <div class="row"><button type="button" id="clear-no">Cancel</button><button type="button" class="primary" id="clear-yes">Clear</button></div>
+        </div>
+      </details>
+      <label class="expand" title="Expand or collapse the activity line"><input class="vh" type="checkbox" id="act-open">▴</label>
+    </div>
+  </div>
+
+  <footer class="status">
+    <span id="st-src">No source</span>
+    <span id="st-run"></span>
+    <button type="button" class="linkish" id="st-counts"></button>
+  </footer>
+</div>
+</body>
+</html>

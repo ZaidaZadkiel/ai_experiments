@@ -8,11 +8,12 @@ The ZaAnSouVi MVP, laid out as in `mvp_docs/01_architecture.md`. This is test co
 |---|---|---|
 | M1 file-symbols | `app/tools/file-symbols/` | **Done**, on the tool helper since 0.4.0. Passes `tests/m1/check.mjs` and `tests/m1/broken.sh`. See its README |
 | M2 cross-file-links | `app/tools/cross-file-links/` | **Done.** Passes `tests/m2/check.mjs` (matches `expected/cross-file-links.json`) and `tests/m2/broken.sh`. See its README |
-| M3 symbol-scope | `app/tools/symbol-scope/` | Not started |
-| Runner | `app/runner/` | **Built, smoke-tested by hand** with M1 and stand-in tools; not yet compared with `expected/`, automatic tests not written. See its README |
-| Viewer | `app/viewer/server/`, `app/viewer/ui/` | Not started |
+| M3 symbol-scope | `app/tools/symbol-scope/` | **Done** (2026-11-08). Passes `tests/m3/check.mjs` (matches `expected/symbol-scope.json`, and the TEST-07 table on `tests/m3/source/`) and `tests/m3/broken.sh`. See its README |
+| Runner | `app/runner/` | **Built.** ~~Smoke-tested by hand with M1 and stand-in tools; not yet compared with `expected/`~~ A full run with M1, M2 and M3 from an empty data folder, and a second run, match `expected/` (compared with `tests/runner/compare-expected.mjs`, 2026-11-08); M3 was picked up from its `--info` with no Runner change. Automatic tests not written. See its README |
+| Hand run | `tests/hand-run/` | **Passes** `TEST-08`: the tools run by a plain script, using only the tool contract, give byte-identical outputs to the Runner's (`FND-58`) |
+| Viewer | `app/viewer/` | **Built** (2026-11-08): `app/viewer/zaansouvi-view` and the page. Passes `tests/viewer/check-model.mjs` and `tests/viewer/check-server.mjs` (32 of 32); the page reviewed in headless Firefox. See its README. The static preview stays at `app/viewer/ui/preview.html` (`FND-67`) |
 | Shared library | `app/shared/` | Started with the Runner: types for `--info`, events and the cache; the log format; file helpers |
-| Tool helper | `app/tool-helper/` | **Done.** The contract every tool shares, with no tool-specific code; used by M1 and M2 (`TOOL-45`). See its README |
+| Tool helper | `app/tool-helper/` | **Done.** The contract every tool shares, with no tool-specific code; used by M1, M2 and M3 (`TOOL-45`). See its README |
 
 ## Layout
 
@@ -43,7 +44,7 @@ M1 takes these answers to the findings in `mvp_docs/99_findings.md`. They are st
 | FND-01 data name to JSON key | `dataNames` in the output; `jsonKey` and `fields` in `--info` |
 | FND-02 uniform relations | References carry `enclosing`, plus `from`/`to` |
 | FND-04 dry-run chaining | The dry run prints the would-be output on a `preview` line |
-| FND-07 where tools write | Resolved: optional `store_path`; if the input lacks it, the program folder (`TOOL-43`) |
+| FND-07 where tools write | Resolved: optional `store_path`; if the input lacks it, ~~the program folder~~ `./zaansouvi/tools/<tool>/` in the working folder (`TOOL-43`, `FND-59`) |
 | FND-09 `range` | The whole declaration, from `export` or `function` |
 | FND-10 call or read | Only a bare-name callee is a call |
 | FND-13 no-go on invocation errors | Printed on standard output too, with exit code 2 |

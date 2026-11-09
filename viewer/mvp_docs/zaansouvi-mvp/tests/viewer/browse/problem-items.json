@@ -1,0 +1,31 @@
+[
+ [
+  "go",
+  "x"
+ ],
+ [
+  "wait",
+  "window.zaansouvi && window.zaansouvi.ready() && document.querySelector('#cy canvas')",
+  15
+ ],
+ [
+  "sleep",
+  1
+ ],
+ [
+  "js",
+  "const m=window.zaansouvi.state.answer.model; m.checks.invalid=[{dataName:'code.symbol',tool:'file-symbols',recordId:'src/a.ts#x@1:1',problem:'its source isn\\'t a known node'},{dataName:'code.symbol',tool:'file-symbols',recordId:'src/b.ts#y@2:3',problem:'its source isn\\'t a known node'},{dataName:'code.link',tool:'cross-file-links',recordId:'src/c.ts#z@4:1->',problem:'its location (\"location\") is malformed'}]; window.zaansouvi.tab('problems'); document.querySelector('.probscope button').click(); return 'three invalid records added on the page only'"
+ ],
+ [
+  "sleep",
+  0.3
+ ],
+ [
+  "js",
+  "return [...document.querySelectorAll('#pane-problems > ul.rows > li')].slice(0,6).map(l=>l.className+' | '+[...l.children].map(c=>c.className+'='+c.textContent).join(' / ')).join('\\n')"
+ ],
+ [
+  "shot",
+  "items-invalid-extra.png"
+ ]
+]

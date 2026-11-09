@@ -44,16 +44,20 @@ for (const f of FILES) for (const r of m1[f].json.references) {
 const pos = (l) => [FILES.indexOf(l.location.file), l.location.start.line, l.location.start.column];
 links.sort((a, b) => { const x = pos(a), y = pos(b); return x[0] - y[0] || x[1] - y[1] || x[2] - y[2]; });
 
-// ---------- M3: TOOL-30, TOOL-31, TOOL-33 (lexical scope only, each scope naming its owner: MVP-4 decided; assumptions: file scope has no location, FND-11;
-// scope ID at the declaration start, FND-12)
+// ---------- M3: TOOL-30, TOOL-31, TOOL-33 to TOOL-35 (lexical scope only, each scope naming its owner: MVP-4 decided; scope ID and location at the
+// declaration start, the file scope from 1:1 to the furthest symbol end: TOOL-34, decided 2026-11-08, resolving FND-11 and FND-12)
 const before = (a, b) => a.line < b.line || (a.line === b.line && a.column <= b.column);
 const inside = (loc, range) => before(range.start, loc.start) && before(loc.end, range.end);
 const scopes = [], membership = [];
 for (const f of FILES) {
   const syms = m1[f].json.symbols;
-  const fileScope = { id: `${f}#scope@file`, kind: "file", name: f, owner: f, parent: f };   // owner: TOOL-33
+  if (!syms.length) continue;                                                                 // no symbols, no scopes: TOOL-34
+  const end = syms.map((s) => (s.range ?? s.location).end).reduce((a, b) => (before(a, b) ? b : a));
+  const fileScope = { id: `${f}#scope@file`, kind: "file", name: f, owner: f,                 // owner: TOOL-33
+    location: { file: f, start: { line: 1, column: 1 }, end }, parent: f };                   // location: TOOL-34
   scopes.push(fileScope);
-  const fns = syms.filter((s) => s.kind === "function").filter((s) => !syms.some((o) => o !== s && o.kind === "function" && inside(s.range, o.range)));
+  const fns = syms.filter((s) => s.kind === "function").filter((s) => !syms.some((o) => o !== s && o.kind === "function" && inside(s.range, o.range)))
+    .sort((a, b) => a.range.start.line - b.range.start.line || a.range.start.column - b.range.start.column);   // TOOL-35
   const fnScopes = fns.map((s) => ({ fn: s, scope: { id: `${f}#scope@${s.range.start.line}:${s.range.start.column}`, kind: "function", name: s.name, owner: s.id, location: s.range, parent: f } }));
   for (const x of fnScopes) scopes.push(x.scope);
   for (const s of syms) {
@@ -61,6 +65,10 @@ for (const f of FILES) {
     membership.push({ child: s.id, parent: home ? home.scope.id : fileScope.id });
   }
 }
+
+// TOOL-35 (FND-58): memberships by file ID, then the symbol's position, whatever the input order.
+const symPos = new Map(FILES.flatMap((f) => m1[f].json.symbols.map((s) => [s.id, [f, s.location.start.line, s.location.start.column]])));
+membership.sort((a, b) => { const x = symPos.get(a.child), y = symPos.get(b.child); return (x[0] < y[0] ? -1 : x[0] > y[0] ? 1 : 0) || x[1] - y[1] || x[2] - y[2] || (a.child < b.child ? -1 : a.child > b.child ? 1 : 0); });
 
 // ---------- cross-checks against the hand-written tables in mvp_docs/06_test_plan.md
 const unresolved = links.filter((l) => l.to === null);
@@ -81,7 +89,7 @@ want(membership.length === 13, "13 symbols, 13 memberships");
 // M2 writes only its header and the links (DATA-06), in import-position order (files in order, symbols by position)
 const m2Out = { tool: "cross-file-links", toolVersion: "0.2.0", formatVersion: 1, dataNames: { "code.link": "links" }, links };
 // tools run once record nothing about their inputs (DATA-22)
-const m3Out = { tool: "symbol-scope", toolVersion: "0.1.0", formatVersion: 1, dataNames: { "code.scope": "scopes", "code.membership": "membership" },
+const m3Out = { tool: "symbol-scope", toolVersion: "0.2.0", formatVersion: 1, dataNames: { "code.scope": "scopes", "code.membership": "membership" },
   counts: { scopeCount: scopes.length, membershipCount: membership.length }, scopes, membership };
 
 // --info of M2 and M3, as in mvp_docs/02_data_contracts.md, DATA-08
@@ -93,7 +101,7 @@ const relFields = { idField: "id", fromField: "from", toField: "to", kindField: 
 const nodeFields = { idField: "id", parentField: "parent", labelField: "name", kindField: "kind", locationField: "location" };
 const m2Info = { tool: "cross-file-links", toolVersion: "0.2.0", invocation: "once", readsFiles: false, parameters: prm(true, true),
   outputs: [{ dataName: "code.link", formatVersion: 1, represents: "relations", outputFilePattern: "output/links.json", jsonKey: "links", fields: relFields }] };
-const m3Info = { tool: "symbol-scope", toolVersion: "0.1.0", invocation: "once", readsFiles: false, parameters: prm(true),
+const m3Info = { tool: "symbol-scope", toolVersion: "0.2.0", invocation: "once", readsFiles: false, parameters: prm(true),
   outputs: [
     { dataName: "code.scope", formatVersion: 1, represents: "nodes", containedIn: "files.file", outputFilePattern: "output/scopes.json", jsonKey: "scopes", fields: { ...nodeFields, ownerField: "owner" } },
     { dataName: "code.membership", formatVersion: 1, represents: "containment", contains: "code.symbol", outputFilePattern: "output/scopes.json", jsonKey: "membership", fields: { childField: "child", parentField: "parent" } }] };

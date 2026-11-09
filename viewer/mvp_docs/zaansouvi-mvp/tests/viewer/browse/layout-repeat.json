@@ -1,0 +1,80 @@
+[
+ [
+  "go",
+  "<the Viewer's URL, filled in by browse.sh>"
+ ],
+ [
+  "wait",
+  "window.zaansouvi && window.zaansouvi.ready() && document.querySelector('#cy canvas')",
+  15
+ ],
+ [
+  "sleep",
+  1
+ ],
+ [
+  "js",
+  "window.zaansouvi.enter(\"src/main.ts#scope@4:1\"); return 1"
+ ],
+ [
+  "sleep",
+  0.6
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; return window.zaansouvi.state.view+' | '+cy.nodes().map(n=>n.id().split('/').pop()+'@'+Math.round(n.position('x'))+','+Math.round(n.position('y'))).join(' ')"
+ ],
+ [
+  "js",
+  "window.zaansouvi.enter(\"src/main.ts\"); return 1"
+ ],
+ [
+  "sleep",
+  0.6
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; return window.zaansouvi.state.view+' | '+cy.nodes().map(n=>n.id().split('/').pop()+'@'+Math.round(n.position('x'))+','+Math.round(n.position('y'))).join(' ')"
+ ],
+ [
+  "js",
+  "window.zaansouvi.enter(\"src/main.ts#scope@4:1\"); return 1"
+ ],
+ [
+  "sleep",
+  0.6
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; return window.zaansouvi.state.view+' | '+cy.nodes().map(n=>n.id().split('/').pop()+'@'+Math.round(n.position('x'))+','+Math.round(n.position('y'))).join(' ')"
+ ],
+ [
+  "go",
+  "<the Viewer's URL, filled in by browse.sh>"
+ ],
+ [
+  "wait",
+  "window.zaansouvi && window.zaansouvi.ready() && document.querySelector('#cy canvas')",
+  15
+ ],
+ [
+  "sleep",
+  1
+ ],
+ [
+  "js",
+  "window.zaansouvi.enter('src/main.ts#scope@4:1'); return 1"
+ ],
+ [
+  "sleep",
+  0.6
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; return window.zaansouvi.state.view+' | '+cy.nodes().map(n=>n.id().split('/').pop()+'@'+Math.round(n.position('x'))+','+Math.round(n.position('y'))).join(' ')"
+ ],
+ [
+  "shot",
+  "layout-l3.png"
+ ]
+]

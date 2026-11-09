@@ -1,0 +1,663 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ZaAnSouVi Viewer preview</title>
+<!--
+  Static preview of the MVP Viewer page (mvp_docs/50_viewer_ui.md, UI-80). No script: levels, states, selection,
+  drawer tabs and the activity line's controls switch with HTML inputs and CSS only. Content is the test source's
+  (50_viewer_ui.md, section 4.1). Items still only suggested are labeled "assumption" on the page.
+-->
+<style>
+  :root {
+    --bg: #f6f7f9; --panel: #ffffff; --ink: #1f2937; --muted: #6b7280; --line: #d9dde3; --soft: #eef1f5;
+    --grey: #6b7280; --link: #7c3aed; --warn: #b45309; --warn-bg: #fff7e6; --err: #b91c1c; --err-bg: #fdecec;
+    --ok: #15803d; --accent: #2563eb; --sel: #f59e0b;
+    --c-main: #15803d; --c-counter: #2563eb; --c-math: #c2410c;
+    --t-main: #e8f5ec; --t-counter: #e8effd; --t-math: #fbede6;
+    --mono: ui-monospace, "SFMono-Regular", "DejaVu Sans Mono", monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #14171c; --panel: #1c2027; --ink: #e5e7eb; --muted: #9ca3af; --line: #343a44; --soft: #242a33;
+      --grey: #9ca3af; --link: #a78bfa; --warn: #fbbf24; --warn-bg: #2d2412; --err: #f87171; --err-bg: #2f1717;
+      --ok: #4ade80; --accent: #60a5fa; --sel: #fbbf24;
+      --c-main: #4ade80; --c-counter: #60a5fa; --c-math: #fb923c;
+      --t-main: #17291e; --t-counter: #172235; --t-math: #2e1c13;
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body { background: var(--bg); color: var(--ink); font: 14px/1.45 system-ui, sans-serif; padding: 12px; }
+  code, .mono { font-family: var(--mono); font-size: 12.5px; }
+  .vh { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+  /* ---------- preview controls (not part of the page) ---------- */
+  .controls { border: 1px dashed var(--muted); border-radius: 8px; padding: 10px 12px; margin-bottom: 12px; background: var(--soft); }
+  .controls h1 { font-size: 13px; margin: 0 0 6px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .04em; }
+  .controls fieldset { border: 0; margin: 0 0 6px; padding: 0; display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: center; }
+  .controls legend { float: left; font-weight: 600; margin-right: 8px; min-width: 70px; }
+  .controls label { white-space: nowrap; cursor: pointer; }
+  .controls p { margin: 4px 0 0; color: var(--muted); font-size: 12.5px; }
+
+  /* ---------- the page ---------- */
+  .page { position: relative; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; overflow: visible;
+          display: grid; grid-template-rows: auto 1fr auto auto; height: 760px; }
+  header.top { display: flex; align-items: center; gap: 14px; padding: 8px 12px; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+  .brand { font-weight: 700; letter-spacing: .02em; }
+  nav.pages { display: flex; gap: 4px; }
+  nav.pages span { padding: 3px 9px; border-radius: 6px; color: var(--muted); }
+  nav.pages span.current { background: var(--soft); color: var(--ink); font-weight: 600; }
+  nav.pages span.off { opacity: .55; cursor: not-allowed; }
+  .spacer { flex: 1; }
+  .source { display: flex; align-items: center; gap: 6px; }
+  select, input[type=text] { font: inherit; color: var(--ink); background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 4px 6px; }
+  button { font: inherit; color: var(--ink); background: var(--soft); border: 1px solid var(--line); border-radius: 6px; padding: 4px 10px; cursor: pointer; }
+  button.primary { background: var(--accent); color: #fff; border-color: transparent; }
+  details.add { position: relative; }
+  details.add > summary { list-style: none; cursor: pointer; color: var(--accent); }
+  details.add > summary::-webkit-details-marker { display: none; }
+  details.add .addform { position: absolute; z-index: 5; top: 130%; left: 0; background: var(--panel); border: 1px solid var(--line);
+                         border-radius: 8px; padding: 10px; width: 360px; box-shadow: 0 6px 20px rgb(0 0 0 / .15); }
+  .addform label { display: block; font-size: 12.5px; color: var(--muted); margin-bottom: 4px; }
+  .addform .row { display: flex; gap: 6px; } .addform input { flex: 1; }
+
+  main.body { display: grid; grid-template-columns: 1fr 360px; min-height: 0; }
+  body:has(#drawer-closed:checked) main.body { grid-template-columns: 1fr 34px; }
+  .graphcol { display: flex; flex-direction: column; min-width: 0; min-height: 0; position: relative; }
+  .crumbs { padding: 6px 12px; color: var(--muted); display: flex; gap: 6px; align-items: center; }
+  .crumbs label { cursor: pointer; color: var(--accent); }
+  .crumbs .here { color: var(--ink); font-weight: 600; }
+  .banner { margin: 0 12px 6px; padding: 6px 10px; border-radius: 6px; font-size: 13.5px; }
+  .banner.warn { background: var(--warn-bg); color: var(--warn); }
+  .banner.err { background: var(--err-bg); color: var(--err); }
+  .banner a { color: inherit; font-weight: 600; }
+  .graph { flex: 1; position: relative; min-height: 0; margin: 0 12px 10px; border: 1px solid var(--line); border-radius: 8px; background:
+           radial-gradient(circle, var(--line) 1px, transparent 1px) 0 0 / 22px 22px; }
+  .graph svg.lv { width: 100%; height: 100%; display: none; }
+  .fit { position: absolute; right: 8px; bottom: 8px; font-size: 12px; padding: 2px 8px; }
+  .running-chip { position: absolute; left: 8px; top: 8px; font-size: 12px; background: var(--warn-bg); color: var(--warn); padding: 2px 8px; border-radius: 10px; }
+  .empty { flex: 1; margin: 0 12px 10px; border: 1px dashed var(--line); border-radius: 8px; display: none; align-items: center; justify-content: center; text-align: center; padding: 24px; }
+  .empty h2 { font-size: 16px; margin: 0 0 6px; } .empty p { margin: 4px 0; color: var(--muted); }
+  .empty .addform { display: inline-block; text-align: left; border: 1px solid var(--line); border-radius: 8px; padding: 10px; width: 380px; margin-top: 8px; }
+
+  /* SVG */
+  svg text { fill: var(--ink); font: 13px system-ui, sans-serif; }
+  svg .small { font-size: 11.5px; fill: var(--muted); }
+  svg .mono { font-family: var(--mono); font-size: 12px; }
+  .n-file { stroke-width: 2; }
+  .n-file.main { stroke: var(--c-main); fill: var(--t-main); } .n-file.counter { stroke: var(--c-counter); fill: var(--t-counter); } .n-file.math { stroke: var(--c-math); fill: var(--t-math); }
+  .stub { opacity: .7; }
+  .scope { fill: var(--panel); stroke: var(--ink); stroke-width: 1.4; }
+  .scope.filescope { stroke-dasharray: 6 4; stroke: var(--muted); }
+  .stripe.main { fill: var(--c-main); } .stripe.counter { fill: var(--c-counter); } .stripe.math { fill: var(--c-math); }
+  .sym { fill: var(--soft); stroke: var(--muted); stroke-width: 1.2; }
+  .sym.imp { stroke-dasharray: 5 3; stroke-width: 1.6; }
+  .sym.imp.counter { stroke: var(--c-counter); } .sym.imp.math { stroke: var(--c-math); } .sym.imp.main { stroke: var(--c-main); }
+  .param { font-style: italic; }
+  .e { fill: none; stroke-width: 1.6; }
+  .e-call { stroke: var(--ink); } .e-read { stroke: var(--ink); stroke-dasharray: 2 4; } .e-write { stroke: var(--ink); stroke-width: 3; }
+  .e-link { stroke: var(--link); } .e-import { stroke: var(--link); stroke-dasharray: 7 5; } .e-linkread { stroke: var(--link); stroke-dasharray: 2 4; }
+  .e-agg { stroke: var(--grey); }
+  .badge circle { fill: var(--panel); stroke: var(--grey); stroke-width: 1.5; }
+  .badge text { font-size: 12px; font-weight: 700; text-anchor: middle; dominant-baseline: central; }
+  .m-ink { fill: var(--ink); } .m-grey { fill: var(--grey); } .m-link { fill: var(--link); }
+  .unres { font-size: 12px; fill: var(--muted); }
+  .thisscope { fill: var(--soft); stroke: var(--ink); stroke-dasharray: 3 3; }
+  .selmark { fill: none; stroke: var(--sel); stroke-width: 3; display: none; }
+
+  /* drawer */
+  aside.drawer { border-left: 1px solid var(--line); display: flex; flex-direction: column; min-height: 0; }
+  .tabs { display: flex; border-bottom: 1px solid var(--line); align-items: stretch; }
+  .tab { padding: 7px 10px; cursor: pointer; color: var(--muted); border-bottom: 2px solid transparent; white-space: nowrap; }
+  .tab:has(input:checked) { color: var(--ink); border-bottom-color: var(--accent); font-weight: 600; }
+  .tab .count { display: inline-block; min-width: 18px; padding: 0 5px; margin-left: 4px; border-radius: 9px; background: var(--warn-bg); color: var(--warn); font-size: 11.5px; text-align: center; }
+  .collapse { margin-left: auto; padding: 7px 10px; cursor: pointer; color: var(--muted); }
+  body:has(#drawer-closed:checked) .tabs .tab, body:has(#drawer-closed:checked) .drawer .pane { display: none !important; }
+  .pane { padding: 10px 12px; overflow: auto; display: none; min-height: 0; flex: 1; }
+  .pane h3 { font-size: 13px; margin: 12px 0 6px; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+  .pane h3:first-child { margin-top: 0; }
+  dl.kv { display: grid; grid-template-columns: 92px 1fr; gap: 3px 8px; margin: 0; }
+  dl.kv dt { color: var(--muted); } dl.kv dd { margin: 0; overflow-wrap: anywhere; }
+  pre.src { background: var(--soft); border-radius: 6px; padding: 6px 0; margin: 6px 0 10px; overflow: auto; font: 12.5px/1.5 var(--mono); }
+  pre.src span { display: block; padding: 0 8px; white-space: pre; }
+  pre.src span.hl { background: rgb(245 158 11 / .22); }
+  pre.src i { color: var(--muted); font-style: normal; display: inline-block; width: 2.2em; }
+  ul.rows { list-style: none; margin: 0; padding: 0; }
+  ul.rows li { border: 1px solid var(--line); border-radius: 6px; padding: 6px 8px; margin-bottom: 6px; }
+  ul.rows li.skip { color: var(--muted); }
+  ul.rows li.bad { border-color: var(--err); background: var(--err-bg); }
+  .pill { display: inline-block; font-size: 11.5px; padding: 0 6px; border-radius: 8px; background: var(--soft); color: var(--muted); }
+  .pill.ok { color: var(--ok); } .pill.err { color: var(--err); } .pill.warn { color: var(--warn); }
+  .tool { display: flex; justify-content: space-between; gap: 8px; }
+  .tool a, .pane a { color: var(--accent); }
+  .muted { color: var(--muted); }
+  .legend-row { display: flex; align-items: center; gap: 8px; margin: 4px 0; }
+  .legend-row svg { flex: none; }
+
+  /* activity line */
+  .activity { position: relative; border-top: 1px solid var(--line); display: flex; align-items: flex-start; gap: 8px; padding: 4px 10px; counter-reset: shown; }
+  .activity ol { list-style: none; margin: 0; padding: 0; flex: 1; min-width: 0; display: flex; flex-direction: column-reverse; height: 1.6em; overflow: hidden; }
+  .entry { counter-increment: shown; display: flex; gap: 8px; white-space: nowrap; line-height: 1.6em; font-size: 13px; }
+  .entry time { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+  .entry .lvl { font-family: var(--mono); font-size: 11.5px; width: 3.4em; color: var(--muted); }
+  .entry .who { font-size: 11.5px; padding: 0 5px; border-radius: 6px; background: var(--soft); align-self: center; line-height: 1.5; }
+  .entry .who.you { outline: 1px solid var(--accent); }
+  .entry .txt { overflow: hidden; text-overflow: ellipsis; user-select: text; }
+  .entry.warn .txt { color: var(--warn); } .entry.err .txt { color: var(--err); }
+  body:not(:has(#act-min:checked)) .entry.min,
+  body:not(:has(#act-norm:checked)) .entry.norm,
+  body:not(:has(#act-verb:checked)) .entry.verb { display: none; }
+  body:has(#act-open:checked) .activity ol { position: absolute; z-index: 8; left: 0; right: 0; bottom: 100%; height: auto; max-height: 34vh; overflow: auto;
+      background: var(--panel); border: 1px solid var(--line); border-bottom: 0; border-radius: 8px 8px 0 0; padding: 6px 10px; box-shadow: 0 -8px 24px rgb(0 0 0 / .14); }
+  body:has(#act-open:checked) .entry { white-space: normal; }
+  .actctl { display: flex; gap: 4px; align-items: center; flex: none; margin-left: auto; }
+  .chip { font-size: 12px; padding: 1px 8px; border-radius: 10px; border: 1px solid var(--line); cursor: pointer; color: var(--muted); }
+  .chip:has(input:checked) { background: var(--soft); color: var(--ink); border-color: var(--muted); }
+  .expand { font-size: 12px; padding: 1px 8px; border-radius: 6px; border: 1px solid var(--line); cursor: pointer; }
+  .expand::after { content: " " counter(shown); }
+  body:has(#act-open:checked) .expand { background: var(--soft); }
+  details.clear { position: relative; }
+  details.clear > summary { list-style: none; font-size: 12px; padding: 1px 8px; border-radius: 6px; border: 1px solid var(--line); cursor: pointer; }
+  details.clear > summary::-webkit-details-marker { display: none; }
+  details.clear .confirm { position: absolute; right: 0; bottom: 130%; z-index: 9; width: 280px; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 10px; box-shadow: 0 6px 20px rgb(0 0 0 / .18); font-size: 13px; }
+  .confirm .row { display: flex; justify-content: flex-end; gap: 6px; margin-top: 8px; }
+
+  /* status bar */
+  footer.status { border-top: 1px solid var(--line); display: flex; gap: 0; font-size: 12.5px; color: var(--muted); }
+  footer.status > * { padding: 4px 10px; border-right: 1px solid var(--line); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  footer.status label { cursor: pointer; }
+  footer.status .latest { color: var(--ok); } footer.status .notlatest { color: var(--warn); } footer.status .bad { color: var(--err); }
+
+  /* assumption notes */
+  .assume { display: inline-block; font-size: 11px; padding: 0 6px; border-radius: 8px; border: 1px dashed var(--warn); color: var(--warn); vertical-align: middle; }
+  svg .assume-t { font-size: 11px; fill: var(--warn); }
+  body:not(:has(#notes:checked)) .assume, body:not(:has(#notes:checked)) .assume-t { display: none; }
+
+  /* ---------- switching: levels, states, selection, tabs ---------- */
+  /* Elements keep their own layout; they are only hidden when their level or state isn't the one selected. */
+  body:has(#lv1:checked) svg.lv1, body:has(#lv2m:checked) svg.lv2m, body:has(#lv2c:checked) svg.lv2c,
+  body:has(#lv2a:checked) svg.lv2a, body:has(#lv3:checked) svg.lv3 { display: block; }
+  body:has(#lv1:checked) :is(.c2m,.c2c,.c2a,.c3):not(.c1),
+  body:has(#lv2m:checked) :is(.c1,.c2c,.c2a,.c3):not(.c2m),
+  body:has(#lv2c:checked) :is(.c1,.c2m,.c2a,.c3):not(.c2c),
+  body:has(#lv2a:checked) :is(.c1,.c2m,.c2c,.c3):not(.c2a),
+  body:has(#lv3:checked) :is(.c1,.c2m,.c2c,.c2a):not(.c3) { display: none; }
+
+  body:has(#st-valid:checked) .s:not(.s-valid), body:has(#st-running:checked) .s:not(.s-running),
+  body:has(#st-dry:checked) .s:not(.s-dry), body:has(#st-failed:checked) .s:not(.s-failed),
+  body:has(#st-partly:checked) .s:not(.s-partly), body:has(#st-lastgood:checked) .s:not(.s-lastgood),
+  body:has(#st-nogood:checked) .s:not(.s-nogood), body:has(#st-norun:checked) .s:not(.s-norun),
+  body:has(#st-first:checked) .s:not(.s-first), body:has(#st-badentry:checked) .s:not(.s-badentry) { display: none; }
+  /* graph shown or empty */
+  body:has(#st-nogood:checked) .graph, body:has(#st-norun:checked) .graph, body:has(#st-first:checked) .graph, body:has(#st-badentry:checked) .graph,
+  body:has(#st-nogood:checked) .crumbs, body:has(#st-norun:checked) .crumbs, body:has(#st-first:checked) .crumbs, body:has(#st-badentry:checked) .crumbs { display: none; }
+  body:has(#st-nogood:checked) .empty.s-nogood, body:has(#st-norun:checked) .empty.s-norun,
+  body:has(#st-first:checked) .empty.s-first, body:has(#st-badentry:checked) .empty.s-badentry { display: flex; }
+  body:has(#st-running:checked) .runbtn { opacity: .45; cursor: not-allowed; }
+
+  body:has(#tab-details:checked) .pane-details, body:has(#tab-tools:checked) .pane-tools,
+  body:has(#tab-problems:checked) .pane-problems, body:has(#tab-legend:checked) .pane-legend { display: block; }
+  .d-none, .d-run, .d-edge { display: none; }
+  body:has(#sel-none:checked) .d-none, body:has(#sel-run:checked) .d-run, body:has(#sel-edge:checked) .d-edge { display: block; }
+  body:has(#sel-run:checked) .selmark.k-run, body:has(#sel-edge:checked) .selmark.k-edge { display: inline; }
+
+  /* outside the page */
+  .outside { margin-top: 16px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .outside section { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; }
+  .outside h2 { font-size: 13px; margin: 0 0 6px; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+  pre.term { background: #0f1115; color: #d1d5db; border-radius: 6px; padding: 8px 10px; margin: 0; font: 12.5px/1.5 var(--mono); white-space: pre-wrap; }
+  @media (max-width: 900px) { .outside { grid-template-columns: 1fr; } main.body { grid-template-columns: 1fr; } aside.drawer { border-left: 0; border-top: 1px solid var(--line); } .page { height: auto; } .graph { min-height: 420px; } }
+</style>
+</head>
+<body>
+
+<!-- arrow markers, shared by every graph -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <marker id="a-ink" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="m-ink" d="M0 0 L10 5 L0 10 z"/></marker>
+    <marker id="a-grey" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path class="m-grey" d="M0 0 L10 5 L0 10 z"/></marker>
+    <marker id="a-link" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="m-link" d="M0 0 L10 5 L0 10 z"/></marker>
+  </defs>
+</svg>
+
+<!-- ================= PREVIEW CONTROLS (not part of the page) ================= -->
+<div class="controls">
+  <h1>Preview controls, not part of the page</h1>
+  <fieldset><legend>Level</legend>
+    <label><input type="radio" name="lv" id="lv1" checked> 1 · Files</label>
+    <label><input type="radio" name="lv" id="lv2m"> 2 · main.ts</label>
+    <label><input type="radio" name="lv" id="lv2c"> 2 · counter.ts</label>
+    <label><input type="radio" name="lv" id="lv2a"> 2 · math.ts</label>
+    <label><input type="radio" name="lv" id="lv3"> 3 · scope run</label>
+  </fieldset>
+  <fieldset><legend>State</legend>
+    <label><input type="radio" name="st" id="st-valid" checked> Latest run, valid</label>
+    <label><input type="radio" name="st" id="st-running"> Run in progress</label>
+    <label><input type="radio" name="st" id="st-dry"> After a dry run</label>
+    <label><input type="radio" name="st" id="st-failed"> Last run failed</label>
+    <label><input type="radio" name="st" id="st-partly"> Partly invalid run</label>
+    <label><input type="radio" name="st" id="st-lastgood"> Last good graph shown</label>
+    <label><input type="radio" name="st" id="st-nogood"> No good data</label>
+    <label><input type="radio" name="st" id="st-norun"> Source with no run</label>
+    <label><input type="radio" name="st" id="st-first"> First use</label>
+    <label><input type="radio" name="st" id="st-badentry"> Unusable cache entry</label>
+  </fieldset>
+  <fieldset><legend>Selected</legend>
+    <label><input type="radio" name="sel" id="sel-none" checked> Nothing</label>
+    <label><input type="radio" name="sel" id="sel-run"> Scope run (levels 2 main.ts, 3)</label>
+    <label><input type="radio" name="sel" id="sel-edge"> Edge main.ts → math.ts (level 1)</label>
+    <label style="margin-left:14px"><input type="checkbox" id="notes" checked> Show assumption notes</label>
+  </fieldset>
+  <p>In the real page, a double-click goes one level down and a click selects; here those are the radio buttons above. The breadcrumb, the drawer tabs, the activity line's toggles, expand and Clear, and the status bar's counts work as in the page. Everything is from the test source; items still only suggested in <code>50_viewer_ui.md</code> are marked <span class="assume">assumption</span>.</p>
+</div>
+
+<!-- ================= THE PAGE ================= -->
+<div class="page">
+
+  <!-- header (UI-13, UI-20 to UI-23) -->
+  <header class="top">
+    <span class="brand">ZaAnSouVi</span>
+    <nav class="pages" aria-label="Pages">
+      <span class="current">Viewer</span>
+      <span class="off" title="Not in the MVP">Config</span>
+      <span class="off" title="Not in the MVP">Status</span>
+      <span class="off" title="Not in the MVP">Runs</span>
+    </nav>
+    <span class="assume" title="UI-13">pages greyed: assumption</span>
+    <span class="spacer"></span>
+    <div class="source">
+      <label for="srcsel" class="muted">Source</label>
+      <select id="srcsel" class="s s-valid s-running s-dry s-failed s-partly s-lastgood s-nogood" title="/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source">
+        <option>test-source · last run 14:03</option>
+        <option>other-app · last run yesterday (example)</option>
+      </select>
+      <select class="s s-norun s-badentry" title="/home/zaida/projects/other-app"><option>other-app · no usable graph</option><option>test-source · last run 14:03</option></select>
+      <select class="s s-first" title="No source cached yet"><option>No source yet</option></select>
+      <details class="add"><summary>Add a source…</summary>
+        <div class="addform">
+          <label for="newsrc">Absolute path of the source root</label>
+          <div class="row"><input id="newsrc" type="text" placeholder="/home/you/projects/app"><button type="button">Add</button></div>
+        </div>
+      </details>
+    </div>
+    <button type="button" class="runbtn primary" title="Run the Runner on this source (VIEW-32)">Run</button>
+    <button type="button" class="runbtn" title="Dry-run every step; the graph doesn't change (VIEW-31)">Dry run</button>
+  </header>
+
+  <main class="body">
+    <!-- graph column -->
+    <div class="graphcol">
+      <div class="crumbs">
+        <label for="lv1" class="c1 here">test-source</label>
+        <span class="c2m c2c c2a c3"><label for="lv1">test-source</label> ›</span>
+        <span class="c2m here">main.ts</span><span class="c2c here">counter.ts</span><span class="c2a here">math.ts</span>
+        <span class="c3"><label for="lv2m">main.ts</label> › <span class="here">ƒ run</span></span>
+      </div>
+
+      <div class="banner err s s-failed">Not the latest: the last run failed (file-symbols said no-go on src/broken.ts). Showing the last good graph, from the run of 14:03. <a href="#">See Tools</a></div>
+      <div class="banner warn s s-partly">Partly invalid: 1 record skipped. Showing the latest run without it. <a href="#">Show the last good graph instead</a></div>
+      <div class="banner warn s s-lastgood">Last good graph, from the run of 2026-11-09 01:36. <a href="#">Show the latest run instead</a></div>
+
+      <div class="graph">
+        <span class="running-chip s s-running">Running, 3 of 5</span>
+
+        <!-- ===== Level 1: files ===== -->
+        <svg class="lv lv1" viewBox="0 0 900 520" role="img" aria-label="Level 1: files">
+          <g>
+            <path class="e e-agg" d="M262 242 L598 140" stroke-width="3" marker-end="url(#a-grey)"><title>main.ts → counter.ts: 2 (import add, call add)</title></path>
+            <path class="selmark k-edge" d="M262 284 L598 380"/>
+            <path class="e e-agg" d="M262 284 L598 380" stroke-width="3" marker-end="url(#a-grey)"><title>main.ts → math.ts: 2 (import PRECISION, read PRECISION)</title></path>
+            <path class="e e-agg" d="M675 172 L675 346" stroke-width="3" marker-end="url(#a-grey)"><title>counter.ts → math.ts: 2 (import round, call round)</title></path>
+            <g class="badge"><circle cx="430" cy="191" r="11"/><text x="430" y="191">2</text></g>
+            <g class="badge"><circle cx="430" cy="332" r="11"/><text x="430" y="332">2</text></g>
+            <g class="badge"><circle cx="675" cy="259" r="11"/><text x="675" y="259">2</text></g>
+          </g>
+          <g><path class="n-file main" d="M110 215 h132 l18 18 v72 h-150 z"/><path class="n-file main" d="M242 215 v18 h18" fill="none"/>
+             <text x="185" y="256" text-anchor="middle" font-weight="700">main.ts</text><text class="small" x="185" y="276" text-anchor="middle">5 symbols · 2 scopes</text></g>
+          <g><path class="n-file counter" d="M600 80 h132 l18 18 v72 h-150 z"/><path class="n-file counter" d="M732 80 v18 h18" fill="none"/>
+             <text x="675" y="121" text-anchor="middle" font-weight="700">counter.ts</text><text class="small" x="675" y="141" text-anchor="middle">4 symbols · 2 scopes</text></g>
+          <g><path class="n-file math" d="M600 350 h132 l18 18 v72 h-150 z"/><path class="n-file math" d="M732 350 v18 h18" fill="none"/>
+             <text x="675" y="391" text-anchor="middle" font-weight="700">math.ts</text><text class="small" x="675" y="411" text-anchor="middle">4 symbols · 2 scopes</text></g>
+          <text class="unres" x="16" y="500">2 unresolved: console (main.ts 8:5), Math (math.ts 5:10). See Problems.</text>
+        </svg>
+
+        <!-- ===== Level 2: inside main.ts ===== -->
+        <svg class="lv lv2m" viewBox="0 0 900 520" role="img" aria-label="Level 2: inside main.ts">
+          <!-- file scope -->
+          <rect class="scope filescope" x="40" y="60" width="330" height="300" rx="14"/><rect class="stripe main" x="40" y="74" width="5" height="272" rx="2"/>
+          <text x="58" y="84" class="small">file scope · main.ts</text>
+          <rect class="sym imp counter" x="70" y="104" width="180" height="30" rx="4"/><text x="82" y="124">↘ add</text><text class="small" x="140" y="124">from ./counter</text>
+          <rect class="sym imp math" x="70" y="150" width="200" height="30" rx="4"/><text x="82" y="170">↘ PRECISION</text><text class="small" x="186" y="170">from ./math</text>
+          <ellipse class="sym" cx="125" cy="230" rx="55" ry="18"/><text x="125" y="235" text-anchor="middle">run()</text>
+          <!-- scope run -->
+          <rect class="selmark k-run" x="436" y="116" width="238" height="198" rx="16"/>
+          <rect class="scope" x="440" y="120" width="230" height="190" rx="14"/><rect class="stripe main" x="440" y="134" width="5" height="162" rx="2"/>
+          <text x="458" y="145" font-weight="700">ƒ run</text><text class="small" x="510" y="145">src/main.ts 4–10</text>
+          <rect class="sym" x="470" y="170" width="90" height="28" rx="3"/><text x="515" y="189" text-anchor="middle">first</text>
+          <rect class="sym" x="470" y="214" width="90" height="28" rx="3"/><text x="515" y="233" text-anchor="middle">label</text>
+          <!-- stubs -->
+          <g class="stub"><path class="n-file counter" d="M760 80 h92 l14 14 v32 h-106 z"/><text x="813" y="108" text-anchor="middle">counter.ts</text></g>
+          <g class="stub"><path class="n-file math" d="M760 330 h92 l14 14 v32 h-106 z"/><text x="813" y="358" text-anchor="middle">math.ts</text></g>
+          <!-- edges -->
+          <path class="e e-call" d="M370 160 C 400 132, 412 132, 438 158" marker-end="url(#a-ink)"><title>file scope → scope run: call run() (12:1)</title></path>
+          <text class="assume-t" x="356" y="122">mirror rule (UI-34)</text>
+          <path class="e e-agg" d="M440 262 C 410 292, 402 292, 372 262" stroke-width="3" marker-end="url(#a-grey)"><title>scope run → file scope: 2 (call add 5:17, read PRECISION 7:34)</title></path>
+          <g class="badge"><circle cx="406" cy="285" r="11"/><text x="406" y="285">2</text></g>
+          <path class="e e-import" d="M370 92 C 540 40, 690 52, 758 98" marker-end="url(#a-link)"><title>file scope → counter.ts: import add</title></path>
+          <path class="e e-link" d="M670 150 L 758 118" marker-end="url(#a-link)"><title>scope run → counter.ts: call add (use link)</title></path>
+          <path class="e e-import" d="M370 336 C 540 420, 690 410, 758 358" marker-end="url(#a-link)"><title>file scope → math.ts: import PRECISION</title></path>
+          <path class="e e-linkread" d="M670 282 L 758 342" marker-end="url(#a-link)"><title>scope run → math.ts: read PRECISION (use link)</title></path>
+          <text class="unres" x="16" y="500">1 unresolved: console (8:5). Declaration references aren't drawn. <tspan class="assume-t">assumption (UI-34)</tspan></text>
+        </svg>
+
+        <!-- ===== Level 2: inside counter.ts ===== -->
+        <svg class="lv lv2c" viewBox="0 0 900 520" role="img" aria-label="Level 2: inside counter.ts">
+          <rect class="scope filescope" x="200" y="60" width="280" height="300" rx="14"/><rect class="stripe counter" x="200" y="74" width="5" height="272" rx="2"/>
+          <text x="218" y="84" class="small">file scope · counter.ts</text>
+          <rect class="sym imp math" x="230" y="104" width="170" height="30" rx="4"/><text x="242" y="124">↘ round</text><text class="small" x="300" y="124">from ./math</text>
+          <rect class="sym" x="230" y="150" width="90" height="28" rx="3"/><text x="275" y="169" text-anchor="middle">total</text>
+          <ellipse class="sym" cx="285" cy="226" rx="55" ry="18"/><text x="285" y="231" text-anchor="middle">add()</text>
+          <rect class="scope" x="580" y="170" width="190" height="150" rx="14"/><rect class="stripe counter" x="580" y="184" width="5" height="122" rx="2"/>
+          <text x="598" y="195" font-weight="700">ƒ add</text><text class="small" x="645" y="195">5–8</text>
+          <rect class="sym" x="610" y="220" width="100" height="28" rx="3"/><text x="660" y="239" text-anchor="middle" class="param">amount</text>
+          <g class="stub"><path class="n-file main" d="M30 210 h92 l14 14 v32 h-106 z"/><text x="83" y="238" text-anchor="middle">main.ts</text></g>
+          <g class="stub"><path class="n-file math" d="M780 60 h92 l14 14 v32 h-106 z"/><text x="833" y="88" text-anchor="middle">math.ts</text></g>
+          <path class="e e-agg" d="M580 250 L 482 250" stroke-width="4.5" marker-end="url(#a-grey)"><title>scope add → file scope: 4 (write total, read total ×2, call round)</title></path>
+          <g class="badge"><circle cx="531" cy="232" r="11"/><text x="531" y="232">4</text></g>
+          <path class="e e-import" d="M480 90 C 600 40, 700 44, 778 84" marker-end="url(#a-link)"><title>file scope → math.ts: import round</title></path>
+          <path class="e e-link" d="M700 170 L 800 108" marker-end="url(#a-link)"><title>scope add → math.ts: call round (use link)</title></path>
+          <path class="e e-agg" d="M120 258 C 300 450, 560 440, 650 322" stroke-width="3" marker-end="url(#a-grey)"><title>main.ts → scope add: 2 (import add, call add)</title></path>
+          <g class="badge"><circle cx="380" cy="410" r="11"/><text x="380" y="410">2</text></g>
+          <text class="assume-t" x="404" y="436">mirror rule (UI-34)</text>
+          <text class="unres" x="16" y="500">No unresolved relations in this file.</text>
+        </svg>
+
+        <!-- ===== Level 2: inside math.ts ===== -->
+        <svg class="lv lv2a" viewBox="0 0 900 520" role="img" aria-label="Level 2: inside math.ts">
+          <rect class="scope filescope" x="330" y="60" width="270" height="280" rx="14"/><rect class="stripe math" x="330" y="74" width="5" height="252" rx="2"/>
+          <text x="348" y="84" class="small">file scope · math.ts</text>
+          <rect class="sym" x="360" y="110" width="120" height="28" rx="3"/><text x="420" y="129" text-anchor="middle">PRECISION</text>
+          <ellipse class="sym" cx="420" cy="200" rx="55" ry="18"/><text x="420" y="205" text-anchor="middle">round()</text>
+          <rect class="scope" x="650" y="120" width="200" height="170" rx="14"/><rect class="stripe math" x="650" y="134" width="5" height="142" rx="2"/>
+          <text x="668" y="145" font-weight="700">ƒ round</text><text class="small" x="730" y="145">3–6</text>
+          <rect class="sym" x="680" y="170" width="90" height="28" rx="3"/><text x="725" y="189" text-anchor="middle" class="param">value</text>
+          <rect class="sym" x="680" y="214" width="90" height="28" rx="3"/><text x="725" y="233" text-anchor="middle">factor</text>
+          <g class="stub"><path class="n-file counter" d="M40 90 h92 l14 14 v32 h-106 z"/><text x="93" y="118" text-anchor="middle">counter.ts</text></g>
+          <g class="stub"><path class="n-file main" d="M40 330 h92 l14 14 v32 h-106 z"/><text x="93" y="358" text-anchor="middle">main.ts</text></g>
+          <path class="e e-read" d="M650 205 L 602 205" marker-end="url(#a-ink)"><title>scope round → file scope: read PRECISION (4:24)</title></path>
+          <path class="e e-agg" d="M148 108 C 350 18, 650 18, 742 118" stroke-width="3" marker-end="url(#a-grey)"><title>counter.ts → scope round: 2 (import round, call round)</title></path>
+          <g class="badge"><circle cx="440" cy="40" r="11"/><text x="440" y="40">2</text></g>
+          <text class="assume-t" x="470" y="58">mirror rule (UI-34)</text>
+          <path class="e e-agg" d="M148 350 L 328 300" stroke-width="3" marker-end="url(#a-grey)"><title>main.ts → file scope: 2 (import PRECISION, read PRECISION)</title></path>
+          <g class="badge"><circle cx="238" cy="325" r="11"/><text x="238" y="325">2</text></g>
+          <text class="unres" x="16" y="500">1 unresolved: Math (5:10).</text>
+        </svg>
+
+        <!-- ===== Level 3: inside scope run ===== -->
+        <svg class="lv lv3" viewBox="0 0 900 520" role="img" aria-label="Level 3: inside the scope run">
+          <rect class="selmark k-run" x="56" y="214" width="178" height="62" rx="12"/>
+          <rect class="thisscope" x="60" y="218" width="170" height="54" rx="10"/><text x="145" y="242" text-anchor="middle" font-weight="700">ƒ run</text><text class="small" x="145" y="260" text-anchor="middle">this scope</text>
+          <text class="assume-t" x="60" y="300">"this scope" node (UI-36)</text>
+          <rect class="sym" x="420" y="140" width="130" height="40" rx="4"/><text x="485" y="165" text-anchor="middle">first</text>
+          <rect class="sym" x="420" y="312" width="130" height="40" rx="4"/><text x="485" y="337" text-anchor="middle">label</text>
+          <g class="stub"><path class="n-file main" d="M760 60 h112 l14 14 v32 h-126 z"/><text x="823" y="88" text-anchor="middle">main.ts · file scope</text></g>
+          <g class="stub"><path class="n-file counter" d="M760 230 h112 l14 14 v32 h-126 z"/><text x="823" y="258" text-anchor="middle">counter.ts</text></g>
+          <g class="stub"><path class="n-file math" d="M760 400 h112 l14 14 v32 h-126 z"/><text x="823" y="428" text-anchor="middle">math.ts</text></g>
+          <path class="e e-read" d="M232 236 L 418 166" stroke-width="3" marker-end="url(#a-ink)"><title>run → first: 2 reads (6:7, 8:24)</title></path>
+          <g class="badge"><circle cx="325" cy="200" r="11"/><text x="325" y="200">2</text></g>
+          <path class="e e-read" d="M232 256 L 418 330" marker-end="url(#a-ink)"><title>run → label: read (8:17)</title></path>
+          <path class="e e-agg" d="M232 226 C 400 60, 600 62, 758 82" stroke-width="3" marker-end="url(#a-grey)"><title>run → main.ts file scope: 2 (call add, read PRECISION)</title></path>
+          <g class="badge"><circle cx="520" cy="78" r="11"/><text x="520" y="78">2</text></g>
+          <path class="e e-call" d="M790 112 C 700 200, 330 300, 232 270" marker-end="url(#a-ink)"><title>main.ts file scope → run: call run() (12:1), mirror rule</title></path>
+          <path class="e e-link" d="M232 246 C 450 250, 600 250, 758 252" marker-end="url(#a-link)"><title>run → counter.ts: call add (use link)</title></path>
+          <path class="e e-linkread" d="M232 266 C 400 452, 600 452, 758 424" marker-end="url(#a-link)"><title>run → math.ts: read PRECISION (use link)</title></path>
+          <text class="unres" x="16" y="500">1 unresolved: console (8:5). No edges between first and label: every reference starts at its enclosing function (FND-65).</text>
+        </svg>
+
+        <button type="button" class="fit" title="Bring every node back into view (UI-32)">Fit</button>
+      </div>
+
+      <!-- empty states (section 8) -->
+      <div class="empty s s-first"><div>
+        <h2>Add a source to begin</h2>
+        <p>The Viewer has no examined source yet.</p>
+        <div class="addform"><label for="firstsrc" class="muted">Absolute path of the source root</label>
+          <div class="row" style="display:flex;gap:6px"><input id="firstsrc" type="text" style="flex:1" placeholder="/home/you/projects/app"><button type="button" class="primary">Add</button></div></div>
+      </div></div>
+      <div class="empty s s-norun"><div>
+        <h2>No run yet for this source</h2>
+        <p><code>/home/zaida/projects/other-app</code></p>
+        <p>Run it to see its graph.</p><p><button type="button" class="primary">Run</button></p>
+      </div></div>
+      <div class="empty s s-nogood"><div>
+        <h2>No good data for this source</h2>
+        <p>The last run failed before any graph could be built, and there is no earlier good graph.</p>
+        <p class="muted">Reason: file-symbols said no-go on src/broken.ts (E12). See Tools.</p>
+      </div></div>
+      <div class="empty s s-badentry"><div>
+        <h2>The cached graph for this source can't be used</h2>
+        <p>It was written in graph format 0; this Viewer reads format 1.</p>
+        <p>Run this source to rebuild it.</p><p><button type="button" class="primary">Run</button></p>
+      </div></div>
+    </div>
+
+    <!-- drawer (UI-50 to UI-55) -->
+    <aside class="drawer">
+      <div class="tabs">
+        <label class="tab"><input class="vh" type="radio" name="tab" id="tab-details" checked>Details</label>
+        <label class="tab"><input class="vh" type="radio" name="tab" id="tab-tools">Tools</label>
+        <label class="tab"><input class="vh" type="radio" name="tab" id="tab-problems">Problems<span class="count s s-partly">2</span></label>
+        <label class="tab"><input class="vh" type="radio" name="tab" id="tab-legend">Legend</label>
+        <label class="collapse" title="Collapse or open the drawer"><input class="vh" type="checkbox" id="drawer-closed">⇆</label>
+      </div>
+
+      <!-- Details -->
+      <div class="pane pane-details">
+        <div class="d-none">
+          <h3>This view</h3>
+          <dl class="kv c1"><dt>Level</dt><dd>1 · Files</dd><dt>Nodes</dt><dd>3 files</dd><dt>Edges</dt><dd>3, standing for 6 relations</dd><dt>Unresolved</dt><dd>2</dd></dl>
+          <dl class="kv c2m"><dt>Level</dt><dd>2 · inside main.ts</dd><dt>Nodes</dt><dd>2 scopes, 2 stubs</dd><dt>Edges</dt><dd>6, standing for 7 relations</dd><dt>Unresolved</dt><dd>1</dd></dl>
+          <dl class="kv c2c"><dt>Level</dt><dd>2 · inside counter.ts</dd><dt>Nodes</dt><dd>2 scopes, 2 stubs</dd><dt>Edges</dt><dd>4, standing for 8 relations</dd><dt>Unresolved</dt><dd>0</dd></dl>
+          <dl class="kv c2a"><dt>Level</dt><dd>2 · inside math.ts</dd><dt>Nodes</dt><dd>2 scopes, 2 stubs</dd><dt>Edges</dt><dd>3, standing for 5 relations</dd><dt>Unresolved</dt><dd>1</dd></dl>
+          <dl class="kv c3"><dt>Level</dt><dd>3 · inside the scope run</dd><dt>Nodes</dt><dd>2 symbols, this scope, 3 stubs</dd><dt>Edges</dt><dd>6, standing for 8 relations</dd><dt>Unresolved</dt><dd>1</dd></dl>
+          <p class="muted">Select a node or an edge to see its details and its source. Double-click a node to go into it.</p>
+        </div>
+        <div class="d-run">
+          <h3>Scope</h3>
+          <dl class="kv">
+            <dt>Kind</dt><dd>function scope</dd><dt>Name</dt><dd>run</dd>
+            <dt>ID</dt><dd><code>src/main.ts#scope@4:1</code></dd>
+            <dt>Owner</dt><dd><code>src/main.ts#run@4:10</code> (function run)</dd>
+            <dt>Location</dt><dd>src/main.ts 4:1 – 10:2</dd>
+            <dt>Data</dt><dd><code>code.scope</code> from symbol-scope 0.2.0</dd>
+            <dt>Members</dt><dd>first, label</dd>
+          </dl>
+          <pre class="src"><span class="hl"><i>4</i>function run(): void {</span><span><i>5</i>  const first = add(1.234);</span><span><i>6</i>  if (first &gt; 0) {</span></pre>
+          <h3>Used with</h3>
+          <ul class="rows">
+            <li>call <code>add</code> · import in the file scope · 5:17</li>
+            <li>read <code>PRECISION</code> · import in the file scope · 7:34</li>
+            <li>call <code>counter.ts add</code> · use link · 5:17</li>
+            <li>read <code>math.ts PRECISION</code> · use link · 7:34</li>
+            <li class="skip">read <code>console</code> · unresolved · 8:5</li>
+          </ul>
+        </div>
+        <div class="d-edge">
+          <h3>Edge · 2 relations</h3>
+          <dl class="kv"><dt>From</dt><dd>main.ts</dd><dt>To</dt><dd>math.ts</dd><dt>Kinds</dt><dd>import, read</dd></dl>
+          <h3>Stands for</h3>
+          <ul class="rows">
+            <li><b>import</b> <code>PRECISION</code> · src/main.ts 2:10 · <code>code.link</code> from cross-file-links
+              <pre class="src"><span class="hl"><i>2</i>import { PRECISION } from "./math";</span></pre></li>
+            <li><b>read</b> <code>PRECISION</code> · src/main.ts 7:34 · use link
+              <pre class="src"><span><i>6</i>  if (first &gt; 0) {</span><span class="hl"><i>7</i>    const label = "precision " + PRECISION;</span><span><i>8</i>    console.log(label, first);</span></pre></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Tools -->
+      <div class="pane pane-tools">
+        <h3>Tools, in order <span class="assume">read-only</span></h3>
+        <p class="muted s s-norun s-first s-badentry">No run of this source yet in this session. The tools are listed in their stored order; all are enabled.</p>
+        <ul class="rows s s-valid s-partly s-lastgood s-norun s-first s-badentry">
+          <li><div class="tool"><b>1 · file-symbols</b><span class="pill ok">enabled</span></div>0.5.0<span class="s s-valid s-partly s-lastgood"> · 3 files: 1 ran, 2 up to date · <span class="pill ok">succeeded</span> · <a href="#">log</a></span></li>
+          <li><div class="tool"><b>2 · cross-file-links</b><span class="pill ok">enabled</span></div>0.2.0<span class="s s-valid s-partly s-lastgood"> · <span class="pill ok">succeeded</span> · 6 links · <a href="#">log</a></span></li>
+          <li><div class="tool"><b>3 · symbol-scope</b><span class="pill ok">enabled</span></div>0.2.0<span class="s s-valid s-partly s-lastgood"> · <span class="pill ok">succeeded</span> · 6 scopes · <a href="#">log</a></span></li>
+        </ul>
+        <div class="s s-running">
+          <p class="muted">Run in progress: events as they arrive.</p>
+          <ul class="rows">
+            <li><b>file-symbols</b> · src/counter.ts · ran · <span class="pill ok">updated</span></li>
+            <li class="skip"><b>file-symbols</b> · src/main.ts · skipped, up to date</li>
+            <li class="skip"><b>file-symbols</b> · src/math.ts · skipped, up to date</li>
+            <li><b>cross-file-links</b> · running… <span class="pill warn">inputs changed</span></li>
+            <li class="skip"><b>symbol-scope</b> · waiting</li>
+          </ul>
+        </div>
+        <div class="s s-dry">
+          <p class="muted">Dry run: every step dry-run; the graph didn't change.</p>
+          <ul class="rows">
+            <li><b>file-symbols</b> · src/counter.ts · <span class="pill ok">go</span> up to date</li>
+            <li><b>file-symbols</b> · src/main.ts · <span class="pill ok">go</span> up to date</li>
+            <li><b>file-symbols</b> · src/math.ts · <span class="pill ok">go</span> up to date</li>
+            <li><b>cross-file-links</b> · <span class="pill ok">go</span> up to date</li>
+            <li><b>symbol-scope</b> · <span class="pill ok">go</span> up to date</li>
+          </ul>
+        </div>
+        <div class="s s-failed s-nogood">
+          <ul class="rows">
+            <li class="bad"><b>file-symbols</b> · src/broken.ts · <span class="pill err">no-go E12</span><br>Syntax error TS1003: Identifier expected. · src/broken.ts 1:17 · <a href="#">log</a></li>
+            <li class="skip">The run stopped; the other files and tools were not reached.</li>
+          </ul>
+        </div>
+        <h3>Diagnostics</h3>
+        <p class="muted">None.</p>
+      </div>
+
+      <!-- Problems -->
+      <div class="pane pane-problems">
+        <h3>Invalid data</h3>
+        <p class="muted s s-valid s-running s-dry s-failed s-lastgood">None: every record passed the checks.</p>
+        <p class="muted s s-nogood s-norun s-first s-badentry">No graph is shown, so there is nothing to check.</p>
+        <ul class="rows s s-partly">
+          <li class="bad"><code>code.membership</code> · symbol-scope · child <code>src/main.ts#ghost@3:1</code><br>The child isn't a known node. Skipped. <span class="assume">example</span></li>
+        </ul>
+        <h3>Extra data</h3>
+        <p class="muted s s-valid s-running s-dry s-failed s-lastgood">None.</p>
+        <ul class="rows s s-partly">
+          <li><code>code.metric</code> · a data name with <code>represents: "metrics"</code>, which the Viewer doesn't know. Not shown. <span class="assume">example</span></li>
+        </ul>
+        <h3 class="s s-valid s-running s-dry s-failed s-partly s-lastgood">Unresolved relations</h3>
+        <ul class="rows s s-valid s-running s-dry s-failed s-partly s-lastgood">
+          <li><code>code.reference</code> · <code>console</code> · src/main.ts 8:5 · no reason recorded</li>
+          <li><code>code.reference</code> · <code>Math</code> · src/math.ts 5:10 · no reason recorded</li>
+          <li class="skip"><code>code.link</code> · none</li>
+        </ul>
+      </div>
+
+      <!-- Legend -->
+      <div class="pane pane-legend">
+        <h3>Nodes <span class="assume">assumption (UI-41)</span></h3>
+        <div class="legend-row"><svg width="46" height="28"><path class="n-file main" d="M3 3 h30 l10 10 v12 h-40 z"/></svg>file, in its own color</div>
+        <div class="legend-row"><svg width="46" height="28"><rect class="scope filescope" x="3" y="3" width="40" height="22" rx="6"/></svg>file scope</div>
+        <div class="legend-row"><svg width="46" height="28"><rect class="scope" x="3" y="3" width="40" height="22" rx="6"/></svg>function scope (ƒ name)</div>
+        <div class="legend-row"><svg width="46" height="28"><ellipse class="sym" cx="23" cy="14" rx="20" ry="10"/></svg>function</div>
+        <div class="legend-row"><svg width="46" height="28"><rect class="sym" x="5" y="5" width="36" height="18" rx="2"/></svg>variable; <i>parameter</i> in italics</div>
+        <div class="legend-row"><svg width="46" height="28"><rect class="sym imp math" x="5" y="5" width="36" height="18" rx="2"/></svg>import ↘, in the color of the file it comes from</div>
+        <div class="legend-row"><svg width="46" height="28"><path class="n-file counter stub" d="M3 6 h26 l8 8 v10 h-34 z"/></svg>stub: another file</div>
+        <div class="legend-row"><svg width="46" height="28"><rect class="thisscope" x="3" y="4" width="40" height="20" rx="6"/></svg>the scope you are in</div>
+        <h3>Edges</h3>
+        <div class="legend-row"><svg width="46" height="16"><path class="e e-call" d="M2 8 H40" marker-end="url(#a-ink)"/></svg>call</div>
+        <div class="legend-row"><svg width="46" height="16"><path class="e e-read" d="M2 8 H40" marker-end="url(#a-ink)"/></svg>read</div>
+        <div class="legend-row"><svg width="46" height="16"><path class="e e-write" d="M2 8 H40" marker-end="url(#a-ink)"/></svg>write</div>
+        <div class="legend-row"><svg width="46" height="16"><path class="e e-import" d="M2 8 H40" marker-end="url(#a-link)"/></svg>import (link)</div>
+        <div class="legend-row"><svg width="46" height="16"><path class="e e-link" d="M2 8 H40" marker-end="url(#a-link)"/></svg>use of an import (link)</div>
+        <div class="legend-row"><svg width="46" height="22"><path class="e e-agg" d="M2 11 H40" stroke-width="3" marker-end="url(#a-grey)"/></svg>several kinds together; the badge counts them</div>
+        <p class="muted">Declaration references aren't drawn; unresolved relations aren't drawn and are counted. <span class="assume">assumption (UI-34)</span></p>
+      </div>
+    </aside>
+  </main>
+
+  <!-- activity line (UI-62 to UI-72) -->
+  <div class="activity">
+    <ol aria-label="Activity, newest last">
+      <!-- newest first in the source; shown newest last (column-reverse) -->
+      <!-- state tails -->
+      <li class="entry verb s s-valid"><time>14:03:21</time><span class="lvl">verb</span><span class="who you">you</span><span class="txt">You selected scope run</span></li>
+      <li class="entry verb s s-valid"><time>14:03:15</time><span class="lvl">verb</span><span class="who you">you</span><span class="txt">You entered main.ts</span></li>
+      <li class="entry norm s s-valid s-lastgood"><time>14:03:07</time><span class="lvl">norm</span><span class="who">app</span><span class="txt">Checked the run's output: nothing invalid, no extra data</span></li>
+      <li class="entry norm s s-lastgood"><time>14:04:02</time><span class="lvl">norm</span><span class="who you">you</span><span class="txt">You switched to the last good graph (run of 2026-11-09 01:36)</span></li>
+      <li class="entry min warn s s-partly"><time>14:03:08</time><span class="lvl">min</span><span class="who">app</span><span class="txt">The run's output is partly invalid: 1 record skipped; the last good graph is kept</span></li>
+      <li class="entry norm s s-partly"><time>14:03:07</time><span class="lvl">norm</span><span class="who">app</span><span class="txt">Checked the run's output: 1 record invalid, 1 extra</span></li>
+      <li class="entry min s s-valid s-partly s-lastgood"><time>14:03:07</time><span class="lvl">min</span><span class="who">app</span><span class="txt">Run succeeded: 2 ran, 3 skipped, 0 errors</span></li>
+      <li class="entry verb s s-running"><time>14:03:05</time><span class="lvl">verb</span><span class="who">app</span><span class="txt">cross-file-links: running (inputs changed)</span></li>
+      <li class="entry verb s s-running"><time>14:03:04</time><span class="lvl">verb</span><span class="who">app</span><span class="txt">file-symbols, src/main.ts: skipped, up to date</span></li>
+      <li class="entry verb s s-running"><time>14:03:03</time><span class="lvl">verb</span><span class="who">app</span><span class="txt">file-symbols, src/counter.ts: ran, output updated</span></li>
+      <li class="entry norm s s-running"><time>14:03:02</time><span class="lvl">norm</span><span class="who">app</span><span class="txt">Run started on /home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source</span></li>
+      <li class="entry min err s s-failed s-nogood"><time>14:03:04</time><span class="lvl">min</span><span class="who">app</span><span class="txt">Run failed: file-symbols said no-go on src/broken.ts (E12), 1 error</span></li>
+      <li class="entry min warn s s-badentry"><time>14:03:10</time><span class="lvl">min</span><span class="who">app</span><span class="txt">The cached graph for other-app can't be used: written in format 0, this Viewer reads format 1</span></li>
+      <li class="entry norm s s-badentry s-norun"><time>14:03:09</time><span class="lvl">norm</span><span class="who you">you</span><span class="txt">You switched to source "/home/zaida/projects/other-app"</span></li>
+      <li class="entry min s s-dry"><time>14:04:11</time><span class="lvl">min</span><span class="who">app</span><span class="txt">Dry run resulted in 0 errors: 5 of 5 go</span></li>
+      <li class="entry norm s s-dry"><time>14:04:09</time><span class="lvl">norm</span><span class="who you">you</span><span class="txt">You started a dry run</span></li>
+      <!-- the shared start of the session -->
+      <li class="entry norm s s-valid s-running s-failed s-partly s-lastgood s-nogood s-dry"><time>14:03:02</time><span class="lvl">norm</span><span class="who you">you</span><span class="txt">You executed a manual run</span></li>
+      <li class="entry min s s-valid s-running s-dry s-failed s-partly s-lastgood s-nogood s-norun s-badentry"><time>14:02:29</time><span class="lvl">min</span><span class="who">app</span><span class="txt">Dry run resulted in 0 errors: 5 of 5 go</span></li>
+      <li class="entry verb s s-valid s-running s-dry s-failed s-partly s-lastgood s-nogood s-norun s-badentry"><time>14:02:26</time><span class="lvl">verb</span><span class="who">app</span><span class="txt">file-symbols, src/counter.ts: go (up to date)</span></li>
+      <li class="entry norm s s-valid s-running s-dry s-failed s-partly s-lastgood s-nogood s-norun s-badentry"><time>14:02:25</time><span class="lvl">norm</span><span class="who you">you</span><span class="txt">You started a dry run</span></li>
+      <li class="entry norm s s-valid s-running s-dry s-failed s-partly s-lastgood s-norun s-badentry"><time>14:02:18</time><span class="lvl">norm</span><span class="who">app</span><span class="txt">Loaded the cached graph from the run of 2026-11-09 01:36</span></li>
+      <li class="entry norm s s-valid s-running s-dry s-failed s-partly s-lastgood s-nogood s-norun s-badentry"><time>14:02:18</time><span class="lvl">norm</span><span class="who you">you</span><span class="txt">You opened folder "/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source" for examination</span></li>
+      <li class="entry min"><time>14:02:10</time><span class="lvl">min</span><span class="who">app</span><span class="txt">Viewer 0.1.0 started on port 4310</span></li>
+    </ol>
+    <div class="actctl">
+      <label class="chip" title="Show minimal entries"><input class="vh" type="checkbox" id="act-min" checked>Minimal</label>
+      <label class="chip" title="Show normal entries"><input class="vh" type="checkbox" id="act-norm" checked>Normal</label>
+      <label class="chip" title="Show verbose entries"><input class="vh" type="checkbox" id="act-verb">Verbose</label>
+      <details class="clear"><summary>Clear</summary>
+        <div class="confirm">Clear the activity log? This can't be undone.<div class="row"><button type="button">Cancel</button><button type="button" class="primary">Clear</button></div>
+          <p class="muted" style="margin:6px 0 0;font-size:12px">Preview: no effect. Close by clicking Clear again.</p></div>
+      </details>
+      <label class="expand" title="Expand or collapse the activity line"><input class="vh" type="checkbox" id="act-open">▴</label>
+    </div>
+  </div>
+
+  <!-- status bar (UI-60, UI-61) -->
+  <footer class="status">
+    <span title="/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source" class="s s-valid s-running s-dry s-failed s-partly s-lastgood s-nogood">…/zaansouvi-mvp/test-source</span>
+    <span class="s s-norun s-badentry">…/projects/other-app</span>
+    <span class="s s-first">No source</span>
+    <span class="latest s s-valid s-dry">Run 2026-11-09 14:03 · latest</span>
+    <span class="notlatest s s-running">Run 14:03 · a run is in progress, 3 of 5</span>
+    <span class="notlatest s s-failed">Run 01:36 · not the latest: last run failed</span>
+    <span class="notlatest s s-partly">Run 14:03 · partly invalid run shown</span>
+    <span class="notlatest s s-lastgood">Run 01:36 · last good graph shown</span>
+    <span class="bad s s-nogood">No good data</span>
+    <span class="s s-norun">No run yet</span>
+    <span class="bad s s-badentry">Cached graph unusable</span>
+    <label for="tab-problems" class="s s-valid s-running s-dry s-failed s-lastgood">0 invalid · 0 extra · 2 unresolved</label>
+    <label for="tab-problems" class="bad s s-partly">1 invalid · 1 extra · 2 unresolved</label>
+  </footer>
+</div>
+
+<!-- ================= OUTSIDE THE PAGE ================= -->
+<div class="outside">
+  <section>
+    <h2>The shell that started the backend (UI-01, UI-02)</h2>
+    <pre class="term">$ zaansouvi-mvp/app/viewer/zaansouvi-view
+ZaAnSouVi Viewer 0.1.0
+Open in your browser: http://127.0.0.1:4310/?token=6f2c9a…e41b
+Stop with Ctrl + C.
+
+$ zaansouvi-mvp/app/viewer/zaansouvi-view          (a second start, port taken)
+Port 4310 is in use. Start with --port &lt;n&gt; to use another.</pre>
+  </section>
+  <section>
+    <h2>The page opened without its token (UI-03) <span class="assume">assumption</span></h2>
+    <p>This page needs the link printed by zaansouvi-view.</p>
+    <p class="muted">Nothing else is served without the token (FND-60, item 3, still open).</p>
+  </section>
+</div>
+
+</body>
+</html>

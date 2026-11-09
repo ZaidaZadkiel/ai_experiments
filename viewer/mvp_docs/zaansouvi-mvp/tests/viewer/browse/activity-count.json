@@ -1,0 +1,71 @@
+[
+ [
+  "go",
+  "x"
+ ],
+ [
+  "wait",
+  "window.zaansouvi && window.zaansouvi.ready() && document.querySelector('#cy canvas')",
+  15
+ ],
+ [
+  "sleep",
+  1
+ ],
+ [
+  "js",
+  "window.zaansouvi.select('node','src/main.ts'); window.zaansouvi.select('node','src/math.ts'); window.zaansouvi.enter('src/main.ts'); return 'two selections and a level entered: verbose entries'"
+ ],
+ [
+  "sleep",
+  1
+ ],
+ [
+  "js",
+  "const c=document.getElementById('actcount'); const all=document.querySelectorAll('#actlist .entry').length; const first=document.querySelector('.actctl').firstElementChild.id; const exp=getComputedStyle(document.querySelector('.expand'),'::after').content; return c.textContent+' | entries in list '+all+' | first control: '+first+' | expand after: '+exp"
+ ],
+ [
+  "js",
+  "const c=document.getElementById('actcount'); const all=document.querySelectorAll('#actlist .entry').length; const first=document.querySelector('.actctl').firstElementChild.id; const exp=getComputedStyle(document.querySelector('.expand'),'::after').content; return c.textContent+' | entries in list '+all+' | first control: '+first+' | expand after: '+exp"
+ ],
+ [
+  "js",
+  "document.getElementById('act-verb').click(); return 'Verbose on'"
+ ],
+ [
+  "sleep",
+  0.2
+ ],
+ [
+  "js",
+  "const c=document.getElementById('actcount'); const all=document.querySelectorAll('#actlist .entry').length; const first=document.querySelector('.actctl').firstElementChild.id; const exp=getComputedStyle(document.querySelector('.expand'),'::after').content; return c.textContent+' | entries in list '+all+' | first control: '+first+' | expand after: '+exp"
+ ],
+ [
+  "js",
+  "document.getElementById('act-min').click(); document.getElementById('act-norm').click(); return 'Minimal and Normal off'"
+ ],
+ [
+  "sleep",
+  0.2
+ ],
+ [
+  "js",
+  "const c=document.getElementById('actcount'); const all=document.querySelectorAll('#actlist .entry').length; const first=document.querySelector('.actctl').firstElementChild.id; const exp=getComputedStyle(document.querySelector('.expand'),'::after').content; return c.textContent+' | entries in list '+all+' | first control: '+first+' | expand after: '+exp"
+ ],
+ [
+  "js",
+  "document.getElementById('act-min').click(); document.getElementById('act-norm').click(); document.getElementById('act-verb').click(); return 'back to the defaults'"
+ ],
+ [
+  "sleep",
+  0.2
+ ],
+ [
+  "js",
+  "const c=document.getElementById('actcount'); const all=document.querySelectorAll('#actlist .entry').length; const first=document.querySelector('.actctl').firstElementChild.id; const exp=getComputedStyle(document.querySelector('.expand'),'::after').content; return c.textContent+' | entries in list '+all+' | first control: '+first+' | expand after: '+exp"
+ ],
+ [
+  "shot",
+  "actcount.png"
+ ]
+]

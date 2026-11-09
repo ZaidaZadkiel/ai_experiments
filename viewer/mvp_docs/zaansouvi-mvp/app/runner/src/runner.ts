@@ -306,7 +306,7 @@ function invoke(ctx: RunContext, tool: Tool, prod: Map<string, Tool>, file?: Fil
   // RUN-08: the dry run, with --stdin and the JSON (RUN-15: command line and JSON in the log).
   log.comment("step", `${label}: dry run (${reason})`);
   log.entry("info", "tool_invoked", { tool: tool.name, ...ids, mode: "dry-run", argv: [tool.launcher, "--dry-run", "--stdin"], json: input });
-  const dry = dryRun(tool, input);
+  const dry = dryRun(tool, input, DATA);
   log.entry(dry.dryRun === "go" ? "info" : "error", "tool_dry_run_result",
     { tool: tool.name, ...ids, dryRun: dry.dryRun, exitCode: dry.exitCode, lastLine: dry.lastLine, stderr: dry.stderr || undefined });
   // A tool's diagnostics come on its go line, and in result.json after a real run (DATA-14, DATA-17).
@@ -341,7 +341,7 @@ function invoke(ctx: RunContext, tool: Tool, prod: Map<string, Tool>, file?: Fil
   log.entry("info", "tool_invoked", { tool: tool.name, ...ids, mode: "real", argv: [tool.launcher, "--stdin"], json: input });
   const resultFile = path.join(ctx.stores.get(tool.name)!, "result.json");
   const t0 = Date.now();
-  const real = realRun(tool, input);
+  const real = realRun(tool, input, DATA);
   let status: "succeeded" | "failed" = "failed";
   let error: Diagnostic | undefined;
   let result: Record<string, unknown> | undefined;
