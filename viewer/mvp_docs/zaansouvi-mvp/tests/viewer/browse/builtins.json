@@ -1,0 +1,40 @@
+[
+ [
+  "go",
+  "x"
+ ],
+ [
+  "wait",
+  "window.zaansouvi && window.zaansouvi.ready()",
+  20
+ ],
+ [
+  "sleep",
+  1
+ ],
+ [
+  "js",
+  "return fetch('/api/sources',{credentials:'same-origin'}).then(r=>r.json()).then(j=>{const s=j.sources.find(x=>x.sourceRoot.endsWith('/test-source-mvp2')); return fetch('/api/sources/current',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({source:s.sourceKey})}).then(r=>r.status)})"
+ ],
+ [
+  "go",
+  "x"
+ ],
+ [
+  "wait",
+  "window.zaansouvi && window.zaansouvi.ready() && document.querySelector('#cy canvas')",
+  20
+ ],
+ [
+  "sleep",
+  1
+ ],
+ [
+  "js",
+  "window.zaansouvi.tab('problems'); [...document.querySelectorAll('.probscope button')].find(b=>b.textContent==='All').click(); const h=[...document.querySelectorAll('#pane-problems h3')].find(x=>x.textContent.startsWith('Built-ins')); return [...h.nextElementSibling.querySelectorAll(':scope > li')].map(li=>li.querySelector('.ihead').textContent+' :: '+[...li.querySelectorAll('ul.sub li')].map(x=>x.textContent).join(' | ')).join('\\n')"
+ ],
+ [
+  "shot",
+  "builtins.png"
+ ]
+]

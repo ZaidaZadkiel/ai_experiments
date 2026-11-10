@@ -107,7 +107,9 @@ ul.rows li.item { position: relative; }
 ul.rows li.item.faded { opacity: .6; }
 .inote { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-overflow: "(...)"; color: var(--muted); margin-top: 1px; }
 .itype { position: absolute; right: 8px; bottom: 5px; font-size: 11px; opacity: .45; max-width: 45%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-ul.rows li.item:has(> .itype) ul.sub { padding-right: 9.5em; }
+/* The lines under a box use its full width; a box with a type in its corner keeps a strip below them for it, so a long
+   last line never runs under the type (FND-101). */
+ul.rows li.item:has(> .itype):not(.noplaces) { padding-bottom: 20px; }
 .inote.wrap { white-space: normal; overflow: visible; overflow-wrap: anywhere; color: inherit; }
 /* With no places under it, the item keeps a line free for the data name in its corner. */
 ul.rows li.item.noplaces { padding-bottom: 20px; }
@@ -125,10 +127,12 @@ a { color: var(--accent); }
 .legend-row { display: flex; align-items: center; gap: 8px; margin: 5px 0; }
 .lg { display: inline-block; width: 40px; height: 20px; border: 1.5px solid var(--muted); background: var(--soft); flex: none; }
 .lg-file { border-color: var(--id2); border-width: 2px; clip-path: polygon(0 0, 78% 0, 100% 30%, 100% 100%, 0 100%); }
+.lg-folder { border: none; background: var(--muted); clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 50%, calc(100% - 10px) 100%, 0 100%); position: relative; }
+.lg-folder::after { content: ""; position: absolute; inset: 1.5px; background: var(--panel); clip-path: polygon(0 0, calc(100% - 9.4px) 0, 100% 50%, calc(100% - 9.4px) 100%, 0 100%); }
 .lg-filescope { border-style: dashed; border-radius: 6px; background: var(--panel); }
 .lg-scope { border-color: var(--ink); border-radius: 6px; background: var(--panel); }
 .lg-fn { border-radius: 50%; } .lg-imp { border-style: dashed; border-color: var(--id3); }
-.lg-stub { opacity: .55; border-color: var(--id1); } .lg-this { border-style: dotted; border-color: var(--ink); border-radius: 6px; }
+.lg-stub { opacity: .55; border-color: var(--id1); } .lg-this { border: none; border-bottom: 2px solid var(--ink); background: none; height: 14px; }
 .lg-unknown { border-radius: 50%; width: 20px; background: var(--grey); }
 .le { display: inline-block; width: 40px; height: 0; border-top: 2px solid var(--ink); flex: none; }
 .le-read { border-top-style: dotted; } .le-write { border-top-width: 4px; } .le-import { border-top: 2px dashed var(--link); }
@@ -176,3 +180,10 @@ footer.status .latest { color: var(--ok); } footer.status .notlatest { color: va
 .sw { width: 10px; height: 10px; border-radius: 2px; flex: none; }
 .sw.id1 { background: var(--id1); } .sw.id2 { background: var(--id2); } .sw.id3 { background: var(--id3); } .sw.id4 { background: var(--id4); }
 .sw.id5 { background: var(--id5); } .sw.id6 { background: var(--id6); } .sw.id7 { background: var(--id7); } .sw.id8 { background: var(--id8); }
+
+/* The range's text in Details' source box (FND-108): one column per range;
+   lines wrapped, a wrapped line continuing after the line number (a hanging indent). */
+.rangecols { display: grid; gap: 6px; }
+.rangecols pre.src { margin: 6px 0 10px; max-height: 360px; }
+pre.src.wrap span { white-space: pre-wrap; overflow-wrap: anywhere; padding-left: calc(8px + 2.6em); text-indent: -2.6em; }
+pre.src.wrap i { text-indent: 0; } /* the number box would inherit the negative indent and lose its text */

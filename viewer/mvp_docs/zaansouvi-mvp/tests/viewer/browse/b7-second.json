@@ -1,0 +1,44 @@
+[
+ [
+  "go",
+  "x"
+ ],
+ [
+  "wait",
+  "window.zaansouvi",
+  15
+ ],
+ [
+  "sleep",
+  1
+ ],
+ [
+  "js",
+  "return (async()=>{ const a=await fetch('/api/sources',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({sourceRoot:\"__SRC__\"})}); const s=await a.json(); const k=s.sourceKey;\n for(let t=0;t<40;t++){ const rr=await fetch('/api/run',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({source:k})}); if(rr.status===202) break; await new Promise(r=>setTimeout(r,500)); }\n for(let t=0;t<40;t++){ await new Promise(r=>setTimeout(r,500)); const st=await (await fetch('/api/sources',{credentials:'same-origin'})).json(); const g=await (await fetch('/api/graph?source='+k+'&which=auto',{credentials:'same-origin'})).json(); if(g.status==='last-good') { await fetch('/api/sources/current',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({source:k})}); return 'status '+g.status+' | reason '+(g.reason||'-')+' | nodes '+(g.model?g.model.nodes.length:0); } }\n return 'timeout'; })()"
+ ],
+ [
+  "go",
+  "x"
+ ],
+ [
+  "wait",
+  "window.zaansouvi && window.zaansouvi.ready() && document.querySelector('#cy canvas')",
+  20
+ ],
+ [
+  "sleep",
+  1.5
+ ],
+ [
+  "js",
+  "return 'banner: '+(document.getElementById('banner').hidden?'(hidden)':document.getElementById('banner').textContent)+' | status bar: '+document.getElementById('st-run').textContent+' | graph shown: '+window.zaansouvi.state.answer.model.nodes.length+' nodes'"
+ ],
+ [
+  "shot",
+  "b7-last-good.png"
+ ],
+ [
+  "js",
+  "window.zaansouvi.tab('tools'); return [...document.querySelectorAll('#pane-tools li.item')].map(l=>l.textContent).join(' || ').slice(0,500)"
+ ]
+]

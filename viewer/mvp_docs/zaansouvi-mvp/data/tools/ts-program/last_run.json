@@ -1,0 +1,19 @@
+{
+  "source_root": "/tmp/zaansouvi-sources/b7-source",
+  "files": [
+    "src/app.ts",
+    "src/report/charts/bars.ts",
+    "src/report/format.ts",
+    "src/report/summary.ts",
+    "src/shapes.ts",
+    "src/util/numbers.ts"
+  ],
+  "_last_run": {
+    "tool": "ts-program",
+    "toolVersion": "0.2.0",
+    "outcome": "succeeded",
+    "started": "2026-11-10T17:37:49.156Z",
+    "finished": "2026-11-10T17:37:49.573Z",
+    "resultPath": "/home/zaida/viewer/mvp_docs/zaansouvi-mvp/data/tools/ts-program/result.json"
+  }
+}

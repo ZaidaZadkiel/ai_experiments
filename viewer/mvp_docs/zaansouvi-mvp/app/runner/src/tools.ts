@@ -37,6 +37,34 @@ function isExecutableFile(p: string): boolean {
   }
 }
 
+/**
+ * RUN-33: the tools the Runner runs, by name. A deliberate exception to "no code
+ * for any tool" (RUN-25): the product adds and omits tools through named configurations instead (runner.md, section 2).
+ */
+export const RUN_LIST = ["ts-program"];
+
+/** The listed tools, checked against the folders (RUN-33): a listed tool with no folder or launcher stops the run before
+ *  any tool starts; a tool folder not listed is not run, and reported. Only listed tools' --info is read. */
+export function findListedTools(toolsDir: string, runList: string[]): { tools: Tool[]; notListed: string[] } {
+  let entries: fs.Dirent[] = [];
+  try {
+    entries = fs.readdirSync(toolsDir, { withFileTypes: true });
+  } catch {
+    throw new StartupError("tools-folder-missing", `The tools folder ${toolsDir} can't be read.`);
+  }
+  const folders = entries.filter((d) => d.isDirectory()).map((d) => d.name).sort();
+  const tools: Tool[] = [];
+  for (const name of [...runList].sort()) {
+    const launcher = path.join(toolsDir, name, name);
+    if (!folders.includes(name) || !isExecutableFile(launcher)) {
+      throw new StartupError("tool-not-found", `Tool "${name}" is in the Runner's run list but ${toolsDir}/${name}/${name} is missing or not executable.`, { tool: name });
+    }
+    tools.push({ name, launcher, info: readInfo(name, launcher) });
+  }
+  const notListed = folders.filter((f) => !runList.includes(f) && isExecutableFile(path.join(toolsDir, f, f)));
+  return { tools, notListed };
+}
+
 /** A tool is a folder holding an executable launcher with the folder's name; other folders are skipped. */
 export function findTools(toolsDir: string, onSkip: (folder: string, reason: string) => void): Tool[] {
   let entries: fs.Dirent[] = [];
@@ -179,12 +207,16 @@ export function outputPath(store: string, output: OutputInfo, fileId?: string): 
   return path.join(store, rel);
 }
 
-/** The distinct output files of one invocation, with the outputs each holds. */
-export function outputFiles(tool: Tool, store: string, fileId?: string): Map<string, OutputInfo[]> {
+/** The distinct output files of one invocation, with the outputs each holds. A once tool whose outputs are `perFile`
+ *  (MVP 2) writes one file per file it was given: `perFileIds`. */
+export function outputFiles(tool: Tool, store: string, fileId?: string, perFileIds: string[] = []): Map<string, OutputInfo[]> {
   const files = new Map<string, OutputInfo[]>();
   for (const o of tool.info.outputs) {
-    const p = outputPath(store, o, fileId);
-    files.set(p, [...(files.get(p) ?? []), o]);
+    const ids = o.perFile && tool.info.invocation === "once" ? perFileIds : [fileId];
+    for (const id of ids) {
+      const p = outputPath(store, o, id);
+      files.set(p, [...(files.get(p) ?? []), o]);
+    }
   }
   return files;
 }

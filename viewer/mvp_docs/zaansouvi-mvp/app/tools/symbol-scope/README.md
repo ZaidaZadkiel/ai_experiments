@@ -1,5 +1,7 @@
 # symbol-scope (M3)
 
+> **Stale and frozen (2026-11-10).** Kept as built in MVP 1, **not run in MVP 2 and not maintained** (`TPG-01`, `RUN-33`). Kept for future tests, for example as a ready source of wrong data and wrong input (`mvp_docs/97_second_implementation.md`, `M2Q-14`). Don't change it; when a test needs it changed, copy it. What it does is described below as it stood at the end of MVP 1 (`mvp_docs/summary/00_definitions_mvp1.md`).
+
 Groups each file's symbols into lexical scopes: the file scope and one scope per top-level function, each naming the node that owns it (`mvp_docs/04_tools.md`, `TOOL-30` to `TOOL-36`; `MVP-4`, option C with C1). It **reads no files** (`readsFiles: false`, so no `source_root`): it works only from the symbol records the Runner sends (`DATA-13`), and depends on nothing else from M1. It shows no uses: the Viewer lifts references and links up to the scope their source owns (`VIEW-13`). The tool contract comes from the tool helper (`app/tool-helper/`, `TOOL-45`).
 
 ## Install and run

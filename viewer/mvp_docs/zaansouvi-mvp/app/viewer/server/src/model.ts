@@ -6,7 +6,7 @@
 
 import type { CacheDataGroup, Location, RunnerCache } from "../../../shared/types.ts";
 
-export const MODEL_FORMAT_VERSION = 1;
+export const MODEL_FORMAT_VERSION = 2; // 2 (MVP 2): entries as nodes with attributes, builtins apart, every other key kept (schema MVP 2, section 10)
 
 export type ModelNode = {
   id: string;
@@ -17,6 +17,8 @@ export type ModelNode = {
   tool?: string;
   owner?: string; // scopes: the node the scope belongs to (TOOL-33)
   location?: Location;
+  /** MVP 2: a listed entry's status and type (RUN-35, UI-47b, UI-48); a record's other keys (VIEW-15, shown in Details). */
+  attrs?: Record<string, unknown>;
 };
 
 export type ModelRelation = {
@@ -29,6 +31,8 @@ export type ModelRelation = {
   location?: Location;
   reason?: string;
   label?: string;
+  /** The record's other keys, shown in Details (VIEW-15). */
+  attrs?: Record<string, unknown>;
 };
 
 export type ModelEdge = { id: string; from: string; to: string; kind: string; count: number; members: string[] };
@@ -39,6 +43,7 @@ export type ModelView = {
   thisNode: string | null; // the entered node itself, when edges start or end at it (UI-36)
   edges: ModelEdge[];
   unresolved: string[]; // relation IDs whose `to` is null and whose `from` lands on a shown node
+  builtins: string[]; // MVP 2: the same, for uses of built-ins (reason "built-in"), kept apart (TPG-D5)
 };
 
 export type Invalid = { dataName: string; tool: string; recordId: string; problem: string };
@@ -67,8 +72,20 @@ const isLocation = (v: unknown): v is Location => isObject(v) && typeof v.file =
 const cmp = (a: string, b: string) => (a < b ? -1 : a > b ? 1 : 0);
 const role = (g: CacheDataGroup, name: string, fallback: string) => g.fields?.[`${name}Field`] ?? fallback;
 
-/** Keys the Viewer reads from a record besides the roles in `fields` (BE-52). Anything else is extra (VIEW-15). */
+/** Keys the Viewer reads from a record besides the roles in `fields` (BE-52). Every other key is kept as `attrs` and shown
+ *  in Details, so it is used, not extra data (VIEW-15). */
 const ALSO_READ = ["reason", "name"];
+const otherKeys = (g: CacheDataGroup, rec: Record<string, unknown>): Record<string, unknown> | undefined => {
+  const used = new Set([...Object.values(g.fields ?? {}), ...ALSO_READ]);
+  const out = Object.fromEntries(Object.entries(rec).filter(([k]) => !used.has(k)).sort(([a], [b]) => cmp(a, b)));
+  return Object.keys(out).length ? out : undefined;
+};
+/** A listed file's type: its extension, labeled as one (UI-47b); "unknown" without one. */
+const typeOf = (id: string) => {
+  const name = id.split("/").pop() ?? id;
+  const dot = name.lastIndexOf(".");
+  return dot > 0 ? name.slice(dot) : "unknown";
+};
 
 // ---------------------------------------------------------------------------
 // Building the model
@@ -78,23 +95,25 @@ export function buildModel(cache: RunnerCache, sourceKey: string, viewerVersion:
   if (!cache.run) throw new Error("The Runner's cache has no real run.");
   const invalid: Invalid[] = [];
   const extra: Extra[] = [];
-  const files = (cache.files ?? []).map((f) => f.id);
+  // Every listed entry is a node at the top level (UI-47, UI-48): files, and in MVP 2 folders, links and others, each with
+  // its status and, for a file, its type. `files` stays the list of files, whose lines may be shown.
+  const entries = cache.files ?? [];
+  const files = entries.filter((f) => (f.kind ?? "file") === "file").map((f) => f.id);
   const groups = Object.entries(cache.data ?? {}).sort(([a], [b]) => cmp(a, b));
 
   const nodes = new Map<string, ModelNode>();
-  for (const f of files) nodes.set(f, { id: f, kind: "file", dataName: "files.file", label: f.split("/").pop() ?? f, container: null });
+  for (const f of entries) {
+    const kind = f.kind ?? "file";
+    const { id: _id, kind: _kind, sourceSha256: _sha, ...status } = f;
+    const attrs: Record<string, unknown> = { ...status };
+    if (kind === "file") attrs.type = typeOf(f.id);
+    nodes.set(f.id, {
+      id: f.id, kind, dataName: kind === "file" ? "files.file" : `files.${kind}`, label: f.id.split("/").pop() ?? f.id, container: null,
+      ...(Object.keys(attrs).length ? { attrs } : {}),
+    });
+  }
 
-  // Extra: groups of a kind the Viewer doesn't know, and keys it doesn't read (VIEW-15).
-  const unusedKeys = new Map<string, { tool: string; keys: Set<string> }>();
-  const noteKeys = (dataName: string, tool: string, g: CacheDataGroup, rec: Record<string, unknown>) => {
-    const used = new Set([...Object.values(g.fields ?? {}), ...ALSO_READ]);
-    for (const k of Object.keys(rec)) {
-      if (used.has(k)) continue;
-      const u = unusedKeys.get(dataName) ?? { tool, keys: new Set<string>() };
-      u.keys.add(k);
-      unusedKeys.set(dataName, u);
-    }
-  };
+  // Extra: groups of a kind the Viewer doesn't know (VIEW-15). A record's other keys are kept and shown, not extra.
   const bad = (dataName: string, tool: string, recordId: string, problem: string) => invalid.push({ dataName, tool, recordId, problem });
   const recId = (rec: unknown, i: number, idKey: string) => (isObject(rec) && typeof rec[idKey] === "string" ? (rec[idKey] as string) : `#${i}`);
 
@@ -111,7 +130,6 @@ export function buildModel(cache: RunnerCache, sourceKey: string, viewerVersion:
       o.records.forEach((rec, i) => {
         const rid = recId(rec, i, idK);
         if (!isObject(rec)) return bad(dataName, o.tool, rid, "the record isn't an object");
-        noteKeys(dataName, o.tool, g, rec);
         if (typeof rec[idK] !== "string" || rec[idK] === "") return bad(dataName, o.tool, rid, `it lacks its ID ("${idK}")`);
         if (typeof rec[parentK] !== "string") return bad(dataName, o.tool, rid, `it lacks its container ("${parentK}")`);
         if (rec[locK] !== undefined && !isLocation(rec[locK])) return bad(dataName, o.tool, rid, `its location ("${locK}") is malformed`);
@@ -123,6 +141,8 @@ export function buildModel(cache: RunnerCache, sourceKey: string, viewerVersion:
           label: typeof rec[labelK] === "string" ? (rec[labelK] as string) : id, container: rec[parentK] as string,
         };
         if (isLocation(rec[locK])) n.location = rec[locK] as Location;
+        const nAttrs = otherKeys(g, rec);
+        if (nAttrs) n.attrs = nAttrs;
         if (ownerK) {
           n.owner = rec[ownerK] as string;
           ownerOf.set(id, n.owner);
@@ -140,7 +160,6 @@ export function buildModel(cache: RunnerCache, sourceKey: string, viewerVersion:
       o.records.forEach((rec, i) => {
         const rid = recId(rec, i, childK);
         if (!isObject(rec)) return bad(dataName, o.tool, rid, "the record isn't an object");
-        noteKeys(dataName, o.tool, g, rec);
         const child = rec[childK], parent = rec[parentK];
         if (typeof child !== "string" || !nodes.has(child)) return bad(dataName, o.tool, rid, "the child isn't a known node");
         if (typeof parent !== "string" || !nodes.has(parent)) return bad(dataName, o.tool, rid, "the container isn't a known node");
@@ -192,7 +211,6 @@ export function buildModel(cache: RunnerCache, sourceKey: string, viewerVersion:
       o.records.forEach((rec, i) => {
         const rid = recId(rec, i, idK);
         if (!isObject(rec)) return bad(dataName, o.tool, rid, "the record isn't an object");
-        noteKeys(dataName, o.tool, g, rec);
         if (typeof rec[idK] !== "string" || rec[idK] === "") return bad(dataName, o.tool, rid, `it lacks its ID ("${idK}")`);
         if (relIds.has(rid) || nodes.has(rid)) return bad(dataName, o.tool, rid, "another record has the same ID");
         if (typeof rec[fromK] !== "string" || !nodes.has(rec[fromK] as string)) return bad(dataName, o.tool, rid, "its source isn't a known node");
@@ -206,12 +224,11 @@ export function buildModel(cache: RunnerCache, sourceKey: string, viewerVersion:
         if (isLocation(rec[locK])) r.location = rec[locK] as Location;
         if (typeof rec.reason === "string") r.reason = rec.reason;
         if (typeof rec.name === "string") r.label = rec.name;
+        const rAttrs = otherKeys(g, rec);
+        if (rAttrs) r.attrs = rAttrs;
         relations.push(r);
       });
     }
-  }
-  for (const [dataName, u] of [...unusedKeys.entries()].sort(([a], [b]) => cmp(a, b))) {
-    extra.push({ dataName, tool: u.tool, what: "keys", detail: `not read by the Viewer: ${[...u.keys].sort().join(", ")}` });
   }
 
   // 6. Views (BE-53, BE-54)
@@ -243,10 +260,11 @@ export function buildModel(cache: RunnerCache, sourceKey: string, viewerVersion:
     const stubs = new Set<string>();
     let thisUsed = false;
     const unresolved: string[] = [];
+    const builtins: string[] = [];
     for (const r of relations) {
       const a = place(lift(r.from));
       if (r.to === null) {
-        if (!a.stub) unresolved.push(r.id);
+        if (!a.stub) (r.reason === "built-in" ? builtins : unresolved).push(r.id);
         continue;
       }
       const b = place(lift(r.to));
@@ -268,10 +286,11 @@ export function buildModel(cache: RunnerCache, sourceKey: string, viewerVersion:
       thisNode: C !== null && thisUsed ? C : null,
       edges: [...edges.values()].sort((x, y) => cmp(x.id, y.id)).map(({ kinds, ...e }) => ({ ...e, kind: kinds.size === 1 ? e.kind : "mixed", members: e.members.sort(cmp) })),
       unresolved: unresolved.sort(cmp),
+      builtins: builtins.sort(cmp),
     };
   }
 
-  const fileOrder = new Map(files.map((f, i) => [f, i]));
+  const fileOrder = new Map(entries.map((f, i) => [f.id, i]));
   const orderedNodes = [...nodes.values()].sort((x, y) =>
     (fileOrder.get(x.id) ?? Infinity) - (fileOrder.get(y.id) ?? Infinity) || cmp(x.id, y.id));
   return {

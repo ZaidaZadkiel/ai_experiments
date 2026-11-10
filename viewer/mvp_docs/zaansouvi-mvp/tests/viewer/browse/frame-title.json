@@ -1,0 +1,100 @@
+[
+ [
+  "go",
+  "x"
+ ],
+ [
+  "wait",
+  "window.zaansouvi && window.zaansouvi.ready()",
+  20
+ ],
+ [
+  "sleep",
+  1
+ ],
+ [
+  "js",
+  "return fetch('/api/sources',{credentials:'same-origin'}).then(r=>r.json()).then(j=>{const s=j.sources.find(x=>x.sourceRoot.endsWith('/test-source-mvp2')); return fetch('/api/sources/current',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({source:s.sourceKey})}).then(r=>r.status)})"
+ ],
+ [
+  "go",
+  "x"
+ ],
+ [
+  "wait",
+  "window.zaansouvi && window.zaansouvi.ready() && document.querySelector('#cy canvas')",
+  20
+ ],
+ [
+  "sleep",
+  1
+ ],
+ [
+  "js",
+  "window.zaansouvi.enter('src/util/numbers.ts#percent@8:17'); return 1"
+ ],
+ [
+  "sleep",
+  1.2
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; const t=cy.nodes('.this'); const f=cy.nodes('.frame'); return (t.length? JSON.stringify(t.data('label'))+' parent '+t.parent().id()+' y '+Math.round(t.position('y'))+' vs frame top '+Math.round(f.boundingBox({}).y1) : 'no title')+' | edges at title: '+t.connectedEdges().map(e=>e.source().data('label').split('\\n')[0]+'->'+e.target().data('label').split('\\n')[0]+(e.data('label')?' ('+e.data('label')+')':'')).join(', ')+' | frame label '+JSON.stringify(f.data('label'))"
+ ],
+ [
+  "shot",
+  "title-percent.png"
+ ],
+ [
+  "js",
+  "window.zaansouvi.enter('src/shapes.ts#Base@12:23'); return 1"
+ ],
+ [
+  "sleep",
+  1.2
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; const t=cy.nodes('.this'); const f=cy.nodes('.frame'); return (t.length? JSON.stringify(t.data('label'))+' parent '+t.parent().id()+' y '+Math.round(t.position('y'))+' vs frame top '+Math.round(f.boundingBox({}).y1) : 'no title')+' | edges at title: '+t.connectedEdges().map(e=>e.source().data('label').split('\\n')[0]+'->'+e.target().data('label').split('\\n')[0]+(e.data('label')?' ('+e.data('label')+')':'')).join(', ')+' | frame label '+JSON.stringify(f.data('label'))"
+ ],
+ [
+  "shot",
+  "title-base.png"
+ ],
+ [
+  "js",
+  "window.zaansouvi.enter('src/shapes.ts'); return 1"
+ ],
+ [
+  "sleep",
+  1.2
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; const t=cy.nodes('.this'); const f=cy.nodes('.frame'); return (t.length? JSON.stringify(t.data('label'))+' parent '+t.parent().id()+' y '+Math.round(t.position('y'))+' vs frame top '+Math.round(f.boundingBox({}).y1) : 'no title')+' | edges at title: '+t.connectedEdges().map(e=>e.source().data('label').split('\\n')[0]+'->'+e.target().data('label').split('\\n')[0]+(e.data('label')?' ('+e.data('label')+')':'')).join(', ')+' | frame label '+JSON.stringify(f.data('label'))"
+ ],
+ [
+  "shot",
+  "title-shapes.png"
+ ],
+ [
+  "js",
+  "window.zaansouvi.enter('src/report/charts/bars.ts#bars@7:17'); return 1"
+ ],
+ [
+  "sleep",
+  1.2
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; const t=cy.nodes('.this'); const f=cy.nodes('.frame'); return (t.length? JSON.stringify(t.data('label'))+' parent '+t.parent().id()+' y '+Math.round(t.position('y'))+' vs frame top '+Math.round(f.boundingBox({}).y1) : 'no title')+' | edges at title: '+t.connectedEdges().map(e=>e.source().data('label').split('\\n')[0]+'->'+e.target().data('label').split('\\n')[0]+(e.data('label')?' ('+e.data('label')+')':'')).join(', ')+' | frame label '+JSON.stringify(f.data('label'))"
+ ],
+ [
+  "shot",
+  "title-bars.png"
+ ],
+ [
+  "js",
+  "window.zaansouvi.select('node','src/util/numbers.ts#percent@8:17'); return document.querySelector('#pane-details').innerText.slice(0,300)"
+ ]
+]

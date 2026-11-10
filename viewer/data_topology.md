@@ -14,7 +14,7 @@ Related files: `toolset.md` (tools, parameters, shared data), `runner.md` (the R
 These were made in other files and shape every section below:
 - **[Decided]** Tools describe themselves with `--info`, stating their own parameters and outputs. There is no manifest (`DT-1`).
 - **[Decided]** Tools never read the database. A tool reads only its JSON parameters, its `last_run.json` and its internal state derived from the examined source (`toolset.md`, section 4.2). Needing more is a design error in the tool; the Runner checks only a tool's input and output.
-- **[Decided]** Only tools whose `--info` says they read files read them, one file per invocation (`toolset.md`, section 4.2).
+- **[Decided]** Only tools whose `--info` says they read files read them, one file per invocation, or, for a program tool, every listed file of its type in one invocation (`toolset.md`, section 4.2, `TS-37`).
 - **[Decided]** The Runner reads and writes the database, reads every tool's output, decides per value whether it belongs in the database based on what it represents, and builds each tool's JSON (`runner.md`, sections 1.1 and 5).
 - **[Decided]** The Runner reads all files and updates the file list itself (`runner.md`, section 1.1).
 
@@ -42,7 +42,7 @@ So "a tool reads data X" now always means "the Runner hands the tool data X as p
 - **[Decided]** **No manifest.** Options B and C, which rely on a manifest file per tool, are not used.
 - **[Decided]** The Runner builds each tool's JSON parameters according to what the tool states with `--info`, from the database and from the tool outputs it has read (`toolset.md`, section 4.5; `runner.md`, section 5).
 - **[Makes sense]** What `--info` states must be enough for:
-  - the Runner: whether the tool reads files, and which kinds (for example `*.ts`); a tool that reads files declares `source_root`, and one that reads none says so ([Decided], `toolset.md`, section 4.2), since only such tools read files, one per invocation; the parameters it needs, so the Runner can work out the order (section 8), build the JSON and check it with a dry run; and its outputs, with what each represents, so the Runner can decide what goes in the database (`RN-12`)
+  - the Runner: whether the tool reads files, and which kinds (for example `*.ts`); a tool that reads files declares `source_root`, and one that reads none says so ([Decided], `toolset.md`, section 4.2), since only such tools read files, one per invocation (program tools: all their listed files in one, `TS-37`); the parameters it needs, so the Runner can work out the order (section 8), build the JSON and check it with a dry run; and its outputs, with what each represents, so the Runner can decide what goes in the database (`RN-12`)
   - the Viewer: which tool produced which data, and the tool's settings for the config manager
 - **[Makes sense]** For each parameter, `--info` says what it is in terms the Runner can look up: a data name, its **shape**, and whether it is required. The shape is what the tool's parameter check tests; a shape problem is an invocation error (`toolset.md`, section 4.4).
 - **[Makes sense]** Ideas from the other options can still be carried inside `--info` where they help, such as a containment hint (`containedIn`, section 7) or names from a shared list (`DT-2`). The dictionaries of options A and B are not ruled out by this decision, only the manifests.
@@ -70,7 +70,7 @@ Discussed with option A, but useful in every option.
 | Diagnostic | Severity, code, message, location and the tool that reported it |
 | Provenance | Which tool, which version, which snapshot |
 
-- **[Makes sense]** Every location points to a file ID, so the file list is the root that everything is anchored to. The Runner builds the file list (`runner.md`, section 1.1; whether a tool still owns it is `RN-13`), so file IDs reach tools as parameters.
+- **[Makes sense]** Every location points to a file ID, so the file list is the root that everything is anchored to. The Runner builds the file list (`runner.md`, section 1.1; ~~whether a tool still owns it is `RN-13`~~ the Runner owns it, `RN-13`, resolved), so file IDs reach tools as parameters.
 - **[Makes sense]** Two structures sit side by side:
   - a **containment tree**, for example repository › package › directory › file › symbol, which the view levels follow
   - a **relation graph** across the tree, for example reads, imports or deploys-to, which views draw as edges
@@ -186,11 +186,11 @@ For the Runner:
 - **[Makes sense]** `--info` is one more common option, like help and dry run, with parsable output.
 - **[Makes sense]** The Runner's dry run can find, before anything runs, parameters that neither a tool produces nor the Runner provides (`runner.md`, section 4: the Runner provides data no tool produces, from saved configuration or defaults), data produced by two tools, and cycles.
 - **[Makes sense]** Calling `--info` runs a ZaAnSouVi tool, never code from the examined source. The result is kept in the record of tools, filled by running the tool or at installation ([Decided], `runner.md`, section 1.0), and refreshed per tool version.
-- **[Makes sense]** Two kinds of input, now settled by decisions: **source files**, which a tool reads itself only if `--info` says so, one per invocation, with the kinds it reads (for example `*.ts`); and **other tools' data**, by name, which reaches the tool only as parameters built by the Runner (`toolset.md`, section 4.2).
+- **[Makes sense]** Two kinds of input, now settled by decisions: **source files**, which a tool reads itself only if `--info` says so, one per invocation (program tools: all their listed files in one, `TS-37`), with the kinds it reads (for example `*.ts`); and **other tools' data**, by name, which reaches the tool only as parameters built by the Runner (`toolset.md`, section 4.2).
 - **[Needs refinement]** Names must match exactly. The example has both `files.locations` and `file.extensions`. Without a shared list of names to check against, a one-letter difference silently disconnects two tools (`DT-2`).
 - **[Needs refinement]** Parameters are marked required or optional, with a shape (section "Chosen"). Outputs still need a version, and a way to say what each represents (`RN-12`).
 - **[Needs refinement]** The first example's `input` with a "default": tools have no defaults of their own any more, since a tool invoked with no parameters repeats its last run or fails ([Decided], `toolset.md`, section 4.5). Defaults belong to the Runner. Whether `--info` may still suggest a default for the Runner to use is part of `TS-29`.
-- **[Superseded]** ~~The example tool reads `*.ts` from a folder itself, overlapping with the file inventory.~~ A tool reads one file per invocation, and the Runner builds the file list ([Decided]). A tool that "lists TypeScript files" would read no files at all: it would get the file list as parameters.
+- **[Superseded]** ~~The example tool reads `*.ts` from a folder itself, overlapping with the file inventory.~~ A tool reads one file per invocation (program tools excepted, `TS-37`), and the Runner builds the file list ([Decided]). A tool that "lists TypeScript files" would read no files at all: it would get the file list as parameters.
 - **[Superseded]** ~~The `stores` entry.~~ Tools never write to the database, and the Runner decides per value what goes there (`runner.md`, section 5). A declaration of what each output represents replaces it (`RN-12`).
 
 Second example, refined during discussion, kept for history. Parts of it are superseded: `read.data` (tools take data only as parameters), `stores` (only the Runner writes the database), the folder scan (one file per invocation) and the `default` (tools have no defaults):
@@ -270,7 +270,7 @@ Data flow and containment often point the same way, but not always:
   4. check the graph
   5. order by dependencies, breaking ties by stage then name so every run has the same order
   6. skip tools whose parameters haven't changed
-  7. for a tool that reads files, plan one invocation per file ([Decided], `toolset.md`, section 4.2)
+  7. for a tool that reads files, plan one invocation per file ([Decided], `toolset.md`, section 4.2) *(except a program tool, which reads every listed file of its type in one invocation: `toolset.md`, section 4.2, `TS-37`, decided 2026-11-09)*
 - **[Makes sense]** "Applies when" is a description such as "files match a pattern" or "a path exists", not code, stated in `--info`. The Runner and the dry run can evaluate it without running the tool.
 - **[Makes sense]** When the Runner is asked for a target, its plan includes missing or outdated upstream tools. A tool run on its own with missing parameters fails with an invocation error instead, and the dry run says which tool to run first. Open as `RN-6`.
 - **[Needs refinement]** Is "applies when" enough for every check? Some may need more than file patterns and flags, for example "the examined project's package manifest declares a command-line entry point".

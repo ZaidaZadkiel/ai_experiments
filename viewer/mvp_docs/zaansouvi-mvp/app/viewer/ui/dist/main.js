@@ -63,6 +63,37 @@ const fileOf = (id) => { let n = node(id); while (n && n.container)
 // import symbol it starts from), else its ID. Generic: no data name or tool is named (VIEW-14).
 const relName = (r) => r.label ?? node(r.from)?.label ?? r.id;
 const childrenOf = (id) => model()?.nodes.filter((n) => n.container === id) ?? [];
+/** The frame's title (UI-36, UI-37, FND-105): the entered container with its kind, "ƒ percent()",
+ *  "class Base", "file shapes.ts"; a scope's display name already says what it is. */
+function titleOf(id) {
+    const n = node(id);
+    if (!n)
+        return id;
+    if (n.owner !== undefined)
+        return displayName(id);
+    const mark = ["function", "method", "constructor", "accessor"].includes(n.kind) ? "ƒ" : n.kind === "typeAlias" ? "type" : n.kind;
+    return `${mark} ${displayName(id)}`;
+}
+/** The facts written in a frame's top left corner (FND-109), one per line, in source order: exported (the export
+ *  keyword comes first), default, how a variable is declared (const, let, var; FND-110), the modifiers as written, then
+ *  the number of declarations when merged, and where a parameter property is declared. Every short fact a symbol record carries; nothing for a record with none. */
+function frameNotes(id) {
+    const a = node(id)?.attrs ?? {};
+    const notes = [];
+    if (a.exported === true)
+        notes.push("exported");
+    if (a.defaultExport === true)
+        notes.push("default"); // FND-110: export default, after export as written
+    if (typeof a.declaredWith === "string")
+        notes.push(a.declaredWith); // FND-110: const, let, var
+    if (Array.isArray(a.modifiers))
+        notes.push(...a.modifiers.filter((m) => typeof m === "string"));
+    if (Array.isArray(a.declarations) && a.declarations.length > 1)
+        notes.push(`${a.declarations.length} declarations`);
+    if (typeof a.declaredIn === "string")
+        notes.push(`declared in ${a.declaredIn}`);
+    return notes;
+}
 function displayName(id) {
     const n = node(id);
     if (!n)
@@ -72,7 +103,39 @@ function displayName(id) {
         return n.owner === n.container ? `${(n.container ?? "").split("/").pop()} · file scope` : `ƒ ${n.label}`;
     if (n.container === null)
         return n.label;
-    return n.kind === "function" ? `${n.label}()` : n.label;
+    return ["function", "method", "constructor"].includes(n.kind) ? `${n.label}()` : n.label;
+}
+// ---------------------------------------------------------------------------
+// MVP 2: entries' status icons (UI-48) and the "Not connected" frame (UI-47)
+// ---------------------------------------------------------------------------
+/** The status icons of a listed entry, in a fixed order: basic shapes, each status its own color (UI-48a). */
+const ICONS = [
+    { test: (a) => a.hidden === true, title: "hidden", svg: '<circle cx="5" cy="5" r="4" fill="#8a8f98"/>' },
+    { test: (a) => !!a.link && a.link.outside === false, title: "link inside the source", svg: '<path d="M5 0L10 5L5 10L0 5Z" fill="#2563eb"/>' },
+    { test: (a) => !!a.link && a.link.outside === true, title: "link outside the source", svg: '<path d="M5 0L10 5L5 10L0 5Z" fill="#ea7a17"/>' },
+    { test: (a) => a.readOnly === true, title: "read-only", svg: '<rect x="1" y="1" width="8" height="8" fill="#9333ea"/>' },
+    { test: (a) => typeof a.unreadable === "string", title: "unreadable", svg: '<path d="M5 0L10 10H0Z" fill="#dc2626"/>' },
+];
+const iconUrl = (svg) => "data:image/svg+xml;utf8," + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 10 10">${svg}</svg>`);
+const iconsOf = (n) => ICONS.filter((i) => n.attrs && i.test(n.attrs));
+const sizeText = (bytes) => (bytes < 1024 ? `${bytes} B` : bytes < 1048576 ? `${(bytes / 1024).toFixed(1)} KB` : `${(bytes / 1048576).toFixed(1)} MB`);
+/** A listed entry's label in the "Not connected" frame: "name · type" for a file, its file count or size for a folder. */
+function entryLabel(n) {
+    const a = n.attrs ?? {};
+    if (n.kind === "file")
+        return `${n.label} · ${typeof a.type === "string" ? a.type : "unknown"}`;
+    if (n.kind === "folder")
+        return `${n.label}/ · ${typeof a.fileCount === "number" ? plural(a.fileCount, "file") : typeof a.totalBytes === "number" ? sizeText(a.totalBytes) : "?"}${a.skipped ? " · not listed file by file" : ""}`;
+    if (n.kind === "link")
+        return `${n.label} → ${String(a.link?.target ?? "?")}`;
+    return `${n.label} · ${n.kind}`;
+}
+/** In the top view: the listed entries no edge reaches, which go in the "Not connected" frame (UI-47). */
+function unconnectedOf(view) {
+    if (state.view !== "")
+        return [];
+    const linked = new Set(view.edges.flatMap((e) => [e.from, e.to]));
+    return view.nodes.filter((id) => !linked.has(id));
 }
 // ---------------------------------------------------------------------------
 // Identity colors (UI-42): one per file, from its ID
@@ -95,12 +158,21 @@ function elementsFor(view) {
         const n = node(id);
         if (!n)
             return;
-        let label = cls.includes("this") ? "this scope" : displayName(id);
+        let members = false;
+        let label = cls.includes("this") ? titleOf(id) : cls.includes("free") ? entryLabel(n) : displayName(id);
         // A shown node's members are listed in its label when they are leaves (UI-30: a scope with its symbols). Drawn as
         // nested nodes they made the automatic layout overlap the scopes, so the MVP lists them instead (FND-69).
         const kids = cls.includes("shown") && state.view !== "" ? childrenOf(id) : [];
         if (kids.length > 0 && kids.every((k) => childrenOf(k.id).length === 0)) {
-            label += "\n" + kids.map((k) => (k.kind === "import" ? `↘ ${k.label}` : displayName(k.id))).join("  ·  ");
+            // The members in rows of about as many as there are rows (FND-102): 4 give 2 × 2, 7 give 3 rows of 3, 3 and 1,
+            // so the node stays roughly square instead of one long line.
+            const names = kids.map((k) => (k.kind === "import" ? `↘ ${k.label}` : displayName(k.id)));
+            const cols = Math.max(1, Math.ceil(Math.sqrt(names.length)));
+            const rows = [];
+            for (let i = 0; i < names.length; i += cols)
+                rows.push(names.slice(i, i + cols).join("  ·  "));
+            label += "\n" + rows.join("\n");
+            members = true;
         }
         const color = idColor(fileOf(id));
         let border = color;
@@ -112,20 +184,35 @@ function elementsFor(view) {
         // A node that a double-click enters (it has a view of its own, and isn't the one being viewed) gets a small
         // triangle in its bottom right corner (UI-45).
         const enterable = m.levels[id] !== undefined && id !== state.view ? " enterable" : "";
-        els.push({ group: "nodes", data: { id, real: id, label, color, border, parent }, classes: `${cls} ds-${n.dataName.replace(/\./g, "-")} k-${n.kind}${enterable}` });
+        els.push({ group: "nodes", data: { id, real: id, label, color, border, parent }, classes: `${cls} ds-${n.dataName.replace(/\./g, "-")} k-${n.kind}${enterable}${members ? " has-members" : ""}` });
     };
-    // The scope frame (UI-37): when the entered node is a scope, a box labeled with it holds everything declared in it,
-    // and its "this scope" node (UI-36) sits inside too, so edges from the scope's own code start from a node, not from
-    // the frame's border. Stubs stay outside: the frame's edge shows where "here" ends. A file (level 2) has no frame.
-    const frame = node(state.view)?.owner !== undefined ? `frame:${state.view}` : undefined; // a scope: it has an owner (BE-109)
+    // The frame (UI-37, TSP-D8): for ANY entered container (a file, a class, a function, a namespace), a box holds
+    // everything declared in it, and the entered node itself is the frame's title (UI-36, FND-105): a node at the top of
+    // the frame, its kind and name underlined, so edges from the container's own code and edges from outside to it start
+    // or end at the title, not at the frame's border. Stubs stay outside: the frame's edge shows where "here" ends.
+    const frame = state.view !== "" && node(state.view) ? `frame:${state.view}` : undefined;
     if (frame)
-        els.push({ group: "nodes", data: { id: frame, real: state.view, label: displayName(state.view) }, classes: "frame" });
+        els.push({ group: "nodes", data: { id: frame, real: state.view, label: frameNotes(state.view).join("\n") }, classes: "frame scope-frame" });
+    // The "Not connected" frame (UI-47, UI-48): in the top view, every listed entry no edge reaches, as a free node.
+    const free = new Set(unconnectedOf(view));
+    if (free.size) {
+        const count = (k) => [...free].filter((id) => node(id)?.kind === k).length;
+        const parts = [plural(count("file"), "file"), ...["folder", "link", "other"].filter((k) => count(k)).map((k) => plural(count(k), k === "other" ? "other entry" : k))];
+        els.push({ group: "nodes", data: { id: "frame:unconnected", real: "", label: `Not connected · ${parts.join(", ")}` }, classes: "frame free-frame" });
+    }
     for (const id of view.nodes)
-        add(id, "shown", frame);
+        add(id, free.has(id) ? "shown free" : "shown", free.has(id) ? "frame:unconnected" : frame);
     for (const id of view.stubs)
         add(id, "stub");
-    if (view.thisNode)
-        add(view.thisNode, "this", frame);
+    // The notes' spacer (FND-110): a hidden, unclickable child that makes the frame grow upward by the notes' height, so
+    // the notes in the corner never reach the title's row; placed by applyFrameNotes.
+    if (frame && frameNotes(state.view).length)
+        els.push({ group: "nodes", data: { id: `notes:${state.view}`, real: "", label: "", parent: frame }, classes: "notes-spacer" });
+    // The title, there even when no edge starts or ends at the entered node (the model's thisNode is then null).
+    if (frame)
+        add(state.view, "this", frame);
+    else if (view.thisNode)
+        add(view.thisNode, "this");
     for (const e of view.edges) {
         els.push({ group: "edges", data: { id: `e:${e.id}`, real: e.id, source: e.from, target: e.to, label: e.count > 1 ? String(e.count) : "", width: Math.min(1.6 + (e.count - 1) * 1.1, 6) }, classes: `kind-${e.kind}` });
     }
@@ -166,6 +253,7 @@ function fitKey() {
     box.style.setProperty("--rows", String(Math.max(1, Math.floor(room / (row + 1)))));
 }
 new ResizeObserver(fitKey).observe($("graphbox"));
+const underline = (color) => "data:image/svg+xml;utf8," + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="10" height="2" viewBox="0 0 10 2" preserveAspectRatio="none"><rect width="10" height="2" fill="${color}"/></svg>`);
 const enterMark = (color) => "data:image/svg+xml;utf8," + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="10" height="7" viewBox="0 0 10 7"><path d="M0 0H10L5 7Z" fill="${color}"/></svg>`);
 function graphStyle() {
     const ink = css("--ink"), muted = css("--muted"), soft = css("--soft"), panel = css("--panel"), link = css("--link"), grey = css("--grey"), sel = css("--sel"), selSoft = css("--sel-soft");
@@ -179,9 +267,30 @@ function graphStyle() {
         { selector: "node.ds-code-symbol.k-parameter", style: { shape: "rectangle", "font-style": "italic" } },
         { selector: "node.ds-code-symbol.k-import", style: { shape: "rectangle", "border-style": "dashed", "border-width": 2 } },
         { selector: "node.k-unknown", style: { shape: "ellipse", "background-color": grey } },
+        // MVP 2: shapes for the kinds TypeScript gives (UI-41), and for listed entries (UI-48).
+        { selector: "node.ds-code-symbol.k-class", style: { shape: "round-rectangle", "border-width": 2.5, "font-weight": "bold" } },
+        { selector: "node.ds-code-symbol.k-interface", style: { shape: "round-rectangle", "border-style": "dashed", "border-width": 2, "font-style": "italic" } },
+        { selector: "node.ds-code-symbol.k-typeAlias", style: { shape: "round-rectangle", "border-style": "dashed", "font-style": "italic" } },
+        { selector: "node.ds-code-symbol.k-enum", style: { shape: "hexagon", "font-weight": "bold" } },
+        { selector: "node.ds-code-symbol.k-enumMember", style: { shape: "rectangle", "font-size": 12 } },
+        { selector: "node.ds-code-symbol.k-namespace", style: { shape: "barrel", "font-weight": "bold" } },
+        { selector: "node.ds-code-symbol.k-method, node.ds-code-symbol.k-constructor", style: { shape: "ellipse" } },
+        { selector: "node.ds-code-symbol.k-accessor", style: { shape: "ellipse", "border-style": "double", "border-width": 3 } },
+        { selector: "node.ds-code-symbol.k-property", style: { shape: "rectangle" } },
+        { selector: "node.ds-files-folder", style: { shape: "tag", /* replaced per node by applyPoints (FND-103) */ "background-color": panel, "font-size": 12 } },
+        { selector: "node.ds-files-link, node.ds-files-other", style: { shape: "rhomboid", "background-color": panel, "font-size": 12 } },
+        // A node listing its members (FND-102): as tall as its rows, a little room around them, the first line its name.
+        { selector: "node.has-members", style: { height: "label", padding: "12px", "line-height": 1.35, "text-max-width": "420px" } },
+        { selector: "node.free", style: { "font-weight": "normal", "font-size": 12, height: 30, padding: "8px" } },
         { selector: "node.stub", style: { opacity: 0.6, "font-size": 12, height: 26 } },
+        { selector: "node.notes-spacer", style: { width: 1, height: 1, padding: "0px", opacity: 0, events: "no", label: "" } },
         { selector: "node.frame", style: { shape: "round-rectangle", "background-color": soft, "background-opacity": 0.45, "border-width": 1.5, "border-style": "solid", "border-color": muted, label: "data(label)", "text-valign": "top", "text-halign": "center", "text-margin-y": -6, "font-size": 13, "font-weight": "bold", color: muted, padding: "28px" } },
-        { selector: "node.this", style: { "border-style": "dotted", "border-color": ink, "border-width": 2 } },
+        // The frame's notes (FND-109): small, muted, italic, one per line; placed in the top left corner by applyFrameNotes.
+        { selector: "node.scope-frame", style: { "font-size": 11, "font-weight": "normal", "font-style": "italic", "text-wrap": "wrap", "text-justification": "left", "line-height": 1.3 } },
+        // The frame's title (FND-105): no box, bold, underlined (an image: Cytoscape has no text decoration).
+        { selector: "node.this", style: { shape: "rectangle", "border-width": 0, "background-opacity": 0, "font-weight": "bold", "font-size": 14, padding: "4px", width: "label", height: "label",
+                "background-image": underline(ink), "background-width": "100%", "background-height": "2px", "background-position-y": "100%",
+                "background-clip": "none", "background-image-containment": "over" } },
         { selector: "node.member", style: { "font-size": 12, height: 24 } },
         // The "can be entered" mark (UI-45): a small triangle pointing down, in the ink color, in the bottom right corner.
         // An SVG image (the page's security policy allows data: images); not clipped, so it shows on round shapes too.
@@ -265,6 +374,80 @@ function unresolvedLine(view) {
     const head = names.length < view.unresolved.length ? `${plural(view.unresolved.length, "unresolved relation")}, ${plural(names.length, "name")}` : plural(view.unresolved.length, "unresolved relation");
     return `${head}: ${list}${more}. See Problems.`;
 }
+/** Status icons in a column on the left inside the node (UI-48), drawn as background images beside the enterable mark
+ *  (UI-45), so a node carrying both keeps both. Set per node, since each has its own list of images. */
+/** The folder's point (FND-103): Cytoscape's "tag" draws its point a fixed share of the node's width, so a wide folder
+ *  got a long, flat point. The point is drawn with a right angle at its tip instead, whatever the node's size: it reaches
+ *  in by half the node's height, set per node as a polygon once the node's size is known. */
+function pointDepth(ele) {
+    return ele.hasClass("ds-files-folder") ? bodyHeight(ele) / 2 : 0;
+}
+function bodyHeight(ele) {
+    return ele.outerHeight() - 2 * parseFloat(String(ele.style("border-width")));
+}
+function applyPoints() {
+    cy.nodes(".ds-files-folder").forEach((ele) => {
+        const w = ele.outerWidth() - 2 * parseFloat(String(ele.style("border-width")));
+        const x = Math.max(-1, 1 - (2 * pointDepth(ele)) / w);
+        ele.style({ shape: "polygon", "shape-polygon-points": [-1, -1, x, -1, 1, 0, x, 1, -1, 1].join(" ") });
+        // The "can be entered" mark (UI-45) moves left of the point; with status icons, applyIcons has placed it already.
+        if (ele.hasClass("enterable") && !ele.data("icons"))
+            ele.style("background-offset-x", `-${7 + pointDepth(ele)}px`);
+    });
+}
+/** The frame's notes in its top left corner, inside it (FND-109). A compound node's label can only sit above, below
+ *  or across it, so the label is anchored at the top and moved by the frame's and the label's measured sizes. Labels
+ *  take no clicks (Cytoscape's text-events default), so the notes are not interactive. */
+function applyFrameNotes() {
+    cy.nodes(".scope-frame").forEach((f) => {
+        if (!f.data("label"))
+            return;
+        const lb = f.boundingBox({ includeNodes: false, includeEdges: false, includeLabels: true, includeOverlays: false });
+        // The spacer goes above the title by the notes' height: the frame's top moves up, and the notes, drawn from it,
+        // end above the title's row (FND-110: in narrow frames, two lines reached the title).
+        const spacer = f.children(".notes-spacer"), title = f.children(".this");
+        if (spacer.length && title.length)
+            spacer.first().position({ x: title.first().position("x"), y: title.boundingBox({}).y1 - lb.h - 4 });
+        f.style({ "text-margin-x": -f.outerWidth() / 2 + lb.w / 2 + 14, "text-margin-y": lb.h + 8 });
+    });
+}
+function applyIcons() {
+    const ink = css("--ink");
+    cy.nodes().forEach((ele) => {
+        const n = node(ele.data("real"));
+        const icons = n && ele.data("id") === n.id ? iconsOf(n) : [];
+        if (!icons.length)
+            return;
+        const images = icons.map((i) => iconUrl(i.svg));
+        const xs = icons.map(() => "0%"), ys = icons.map(() => "0%");
+        const ox = icons.map(() => "5px"), oy = icons.map((_, k) => `${5 + k * 12}px`);
+        const w = icons.map(() => "9px"), h = icons.map(() => "9px");
+        if (ele.hasClass("this")) { // the title keeps its underline (FND-105)
+            images.push(underline(ink));
+            xs.push("0%");
+            ys.push("100%");
+            ox.push("0px");
+            oy.push("0px");
+            w.push("100%");
+            h.push("2px");
+        }
+        if (ele.hasClass("enterable")) {
+            images.push(enterMark(ink));
+            xs.push("100%");
+            ys.push("100%");
+            ox.push(`-${7 + pointDepth(ele)}px`);
+            oy.push("-6px");
+            w.push("10px");
+            h.push("7px");
+        }
+        ele.style({
+            "background-image": images, "background-position-x": xs, "background-position-y": ys, "background-offset-x": ox, "background-offset-y": oy,
+            "background-width": w, "background-height": h, "background-clip": "none", "background-image-containment": "over", "background-image-opacity": 0.95,
+            "text-margin-x": 9, "padding-left": "22px", "min-height": `${10 + icons.length * 12}px`,
+        });
+        ele.data("icons", icons.map((i) => i.title).join(", "));
+    });
+}
 function drawGraph() {
     const m = model();
     const view = m?.levels[state.view];
@@ -296,21 +479,48 @@ function drawGraph() {
     seedPositions(view);
     cy.style(graphStyle());
     const cose = { name: "cose", animate: false, randomize: false, nodeRepulsion: () => 90000, idealEdgeLength: () => 140, componentSpacing: 120, padding: 40, nestingFactor: 0.9 };
-    const frame = cy.nodes(".frame");
-    if (frame.length > 0) {
+    const freeFrame = cy.nodes(".free-frame");
+    const frame = cy.nodes(".frame").not(".free-frame");
+    if (freeFrame.length > 0) {
+        // The top view with a "Not connected" frame (UI-47): the connected files laid out as usual, the free nodes on a grid
+        // inside the frame, ordered by ID, the frame placed to the right of the connected ones.
+        const inside = freeFrame.children();
+        const rest = cy.nodes().not(freeFrame).not(inside);
+        if (rest.length > 1)
+            rest.union(cy.edges()).layout(cose).run();
+        else if (rest.length === 1)
+            rest.position({ x: 0, y: 0 });
+        inside.layout({ name: "grid", cols: Math.ceil(Math.sqrt(inside.length)), avoidOverlap: true, avoidOverlapPadding: 30, condense: true,
+            boundingBox: { x1: 0, y1: 0, w: 1, h: 1 }, sort: (p, q) => (p.id() < q.id() ? -1 : 1) }).run();
+        if (rest.length) {
+            const a = rest.boundingBox({}), b = inside.boundingBox({});
+            inside.shift({ x: a.x2 + 160 - b.x1, y: a.y1 - b.y1 });
+        }
+    }
+    else if (frame.length > 0) {
         // With a scope frame (UI-37), the force layout let stubs drift into the frame and scattered its contents, which
-        // have few edges between them. So the contents go on a compact grid, "this scope" first, then the model's order
-        // (sorted by ID), and the stubs are placed around the frame (placeStubs).
+        // have few edges between them. So the contents go on a compact grid, in the model's order
+        // (sorted by ID), the title centered above them (FND-105), and the stubs are placed around the frame (placeStubs).
         const inside = frame.children();
-        const order = new Map([view.thisNode ?? "", ...view.nodes].map((id, i) => [id, i]));
-        inside.layout({ name: "grid", cols: Math.ceil(Math.sqrt(inside.length)), avoidOverlap: true, avoidOverlapPadding: 40, condense: true,
-            boundingBox: { x1: 0, y1: 0, w: 1, h: 1 }, sort: (p, q) => (order.get(p.id()) ?? 0) - (order.get(q.id()) ?? 0) }).run();
+        const title = inside.filter(".this");
+        const rest = inside.not(title).not(".notes-spacer");
+        const order = new Map(view.nodes.map((id, i) => [id, i]));
+        if (rest.length)
+            rest.layout({ name: "grid", cols: Math.ceil(Math.sqrt(rest.length)), avoidOverlap: true, avoidOverlapPadding: 40, condense: true,
+                boundingBox: { x1: 0, y1: 0, w: 1, h: 1 }, sort: (p, q) => (order.get(p.id()) ?? 0) - (order.get(q.id()) ?? 0) }).run();
+        if (title.length) {
+            const bb = rest.length ? rest.boundingBox({}) : { x1: 0, x2: 0, y1: 0 };
+            title.position({ x: (bb.x1 + bb.x2) / 2, y: bb.y1 - 50 - title.outerHeight() / 2 });
+        }
         placeStubs(inside);
     }
     else {
         const n = view.nodes.length + view.stubs.length;
         cy.layout(n <= 1 ? { name: "grid" } : cose).run();
     }
+    applyIcons();
+    applyPoints();
+    applyFrameNotes();
     cy.fit(undefined, 40);
     zoomReadout();
     drawKey(view);
@@ -370,6 +580,36 @@ function kv(pairs) {
     return dl;
 }
 const locText = (l) => (l ? `${l.file} ${l.start.line}:${l.start.column}` : "no location");
+const isLoc = (x) => !!x && typeof x === "object" && typeof x.file === "string" &&
+    Number.isInteger(x.start?.line) && Number.isInteger(x.end?.line);
+/** The text a range covers (FND-106): its lines from the source, the first cut at the start column, the last at the
+ *  end column (end is exclusive, as in every location). Written as text, never as HTML. */
+async function rangeText(loc, target) {
+    if (!state.source)
+        return;
+    const r = await api("GET", `/api/source?source=${encodeURIComponent(state.source.sourceKey)}&file=${encodeURIComponent(loc.file)}&line=${loc.start.line}&end=${loc.end.line}`);
+    if (r.status !== 200) {
+        target.append(el("span", { cls: "muted", text: "(source not available)" }));
+        return;
+    }
+    // The answer must be exactly the range's lines (FND-107): a server started before end existed answers with the
+    // lines around the start instead, and cutting those gave every record on that line the same wrong text.
+    const want = loc.end.line - loc.start.line + 1;
+    if (r.data.firstLine !== loc.start.line || (r.data.cut ? r.data.lines.length >= want : r.data.lines.length !== want)) {
+        target.append(el("span", { cls: "muted", text: "(the server didn't give this range's lines: restart the Viewer)" }));
+        return;
+    }
+    const lines = [...r.data.lines];
+    if (!r.data.cut)
+        lines[lines.length - 1] = lines[lines.length - 1].slice(0, loc.end.column - 1); // the end first: on one line, the start cut must not shift it
+    lines[0] = lines[0].slice(loc.start.column - 1);
+    // Numbered like the lines around a location, the line number then the text (FND-108), wrapped (CSS).
+    const pre = el("pre", { cls: "src wrap" });
+    lines.forEach((line, i) => pre.append(el("span", {}, el("i", { text: String(loc.start.line + i) }), line)));
+    if (r.data.cut)
+        pre.append(el("span", {}, el("i", { text: "" }), "(…)"));
+    target.append(pre);
+}
 async function sourceLines(loc, target) {
     if (!loc || !state.source)
         return;
@@ -433,7 +673,7 @@ function details() {
         const relCount = view.edges.reduce((s, e) => s + e.count, 0);
         pane.append(el("h3", { text: "This view" }), kv([
             ["Level", state.view === "" ? "top · files" : `inside ${displayName(state.view)}`],
-            ["Nodes", `${view.nodes.length} shown${view.stubs.length ? `, ${plural(view.stubs.length, "stub")}` : ""}${view.thisNode ? ", this scope" : ""}`],
+            ["Nodes", `${view.nodes.length} shown${view.stubs.length ? `, ${plural(view.stubs.length, "stub")}` : ""}`],
             ["Edges", `${view.edges.length}, standing for ${plural(relCount, "relation")}`],
             ["Unresolved", String(view.unresolved.length)],
             ["Run", `${m.run.runId} (${when(m.run.finished)})`],
@@ -484,8 +724,8 @@ function groupColor(id) {
     const file = n?.location?.file ?? (n && n.container === null ? n.id : undefined);
     return file ? ` id${idSlot(file)}` : "";
 }
-// A node's label as the graph draws it: "this scope" for the entered scope's own node, else its display name.
-const drawnLabel = (id) => (id === model()?.levels[state.view]?.thisNode ? "this scope" : displayName(id));
+// A node's label as the graph draws it: the frame's title for the entered node (FND-105), else its display name.
+const drawnLabel = (id) => (id === state.view && state.view !== "" ? titleOf(id) : displayName(id));
 function nodeDetails(id, pane, alone) {
     const m = model();
     const n = node(id);
@@ -497,11 +737,32 @@ function nodeDetails(id, pane, alone) {
     if (n.owner)
         pairs.push(["Owner", el("code", { text: n.owner })]);
     pairs.push(["Location", locText(n.location)]);
-    const what = n.owner !== undefined ? "Scope" : n.container === null ? "File" : "Node";
+    // Every other key of the record, as "key: value" (VIEW-15, FND-69 item 2): shown, so not extra data.
+    for (const [k, v] of Object.entries(n.attrs ?? {})) {
+        pairs.push([k, typeof v === "string" || typeof v === "number" || typeof v === "boolean" ? String(v) : el("code", { text: JSON.stringify(v) })]);
+    }
+    const icons = iconsOf(n).map((i) => i.title);
+    if (icons.length)
+        pairs.push(["Status", icons.join(", ")]);
+    const what = n.owner !== undefined ? "Scope" : n.container === null ? (n.kind === "file" ? "File" : n.kind === "folder" ? "Folder" : "Entry") : n.kind === "file" ? "File" : "Node";
     pane.append(el(alone ? "h3" : "h4", { text: what }), kv(pairs));
     const src = el("div");
     pane.append(src);
-    void sourceLines(n.location, src);
+    // The source box (FND-108): the text the record's range covers, numbered and wrapped, one column per range when a
+    // record has several. A record with no range keeps the lines around it.
+    const ranges = (Array.isArray(n.attrs?.range) ? n.attrs.range : [n.attrs?.range]).filter(isLoc);
+    if (ranges.length) {
+        const cols = el("div", { cls: "rangecols" });
+        cols.style.gridTemplateColumns = `repeat(${ranges.length}, minmax(0, 1fr))`;
+        for (const r of ranges) {
+            const box = el("div");
+            cols.append(box);
+            void rangeText(r, box);
+        }
+        src.append(cols);
+    }
+    else
+        void sourceLines(n.location, src);
     if (m.levels[n.id] && n.id !== state.view) {
         const go = el("button", { text: "Go into it" });
         go.onclick = () => enter(n.id);
@@ -551,6 +812,39 @@ function groupedItems(entries, describe) {
     }
     return ul;
 }
+// Built-ins grouped by the library type that declares them (FND-100): the part of the name before the first dot,
+// as TypeScript names it ("Array.map" under Array; "ReadonlyArray" and "Console" kept apart, as TypeScript keeps them).
+// One box per type, "N members · N uses"; one line per member, "member — places", sorted by member, then place.
+function builtinGroups(rels) {
+    const groups = new Map();
+    for (const r of rels) {
+        const full = typeof r.attrs?.builtin === "string" ? r.attrs.builtin : relName(r);
+        const dot = full.indexOf(".");
+        const type = dot > 0 ? full.slice(0, dot) : full;
+        const member = dot > 0 ? full.slice(dot + 1) : full; // a top-level built-in is its own member
+        const g = groups.get(type) ?? new Map();
+        g.set(member, [...(g.get(member) ?? []), r]);
+        groups.set(type, g);
+    }
+    const byName = (a, b) => a.localeCompare(b, "en", { sensitivity: "base" }) || (a < b ? -1 : a > b ? 1 : 0);
+    const place = (r) => `${r.location?.file ?? "?"} ${r.location?.start.line ?? "?"}:${r.location?.start.column ?? "?"}`;
+    const byPlace = (x, y) => (place(x) < place(y) ? -1 : place(x) > place(y) ? 1 : 0);
+    const ul = el("ul", { cls: "rows" });
+    for (const [type, members] of [...groups].sort(([a], [b]) => byName(a, b))) {
+        // A line named like its box ("Math" under Math) adds nothing when the type has other members: those uses are the
+        // receivers of its members (Math.PI, Math.round). It is left out then, and not counted; a type used only by its own
+        // name (Map, Promise) keeps its line, the only one giving its places (FND-100).
+        if (members.size > 1)
+            members.delete(type);
+        const uses = [...members.values()].reduce((n, l) => n + l.length, 0);
+        const dataNames = [...new Set([...members.values()].flat().map((r) => r.dataName))].join(", ");
+        ul.append(itemBox({
+            name: type, what: `${plural(members.size, "member")} · ${plural(uses, "use")}`, type: dataNames,
+            places: [...members].sort(([a], [b]) => byName(a, b)).map(([m, l]) => `${m} — ${l.sort(byPlace).map(place).join(", ")}`),
+        }));
+    }
+    return ul;
+}
 // What a node contains, in the form of Problems' items (UI-52, UI-57): one item per name and data name, "name · data
 // name · kind", its places listed under it ("path/file line:column", start only) by file, then line; a name declared
 // more than once shows how many times. Items sorted by name, ignoring case.
@@ -573,7 +867,8 @@ function edgeDetails(id, pane, alone) {
         const r = rel(rid);
         if (!r)
             continue;
-        const li = el("li", {}, el("b", { text: r.kind }), ` ${node(r.from)?.label ?? r.from} → ${r.to ? node(r.to)?.label ?? r.to : "unresolved"} · ${locText(r.location)} · `, el("code", { text: r.dataName }), ` from ${r.tool}`);
+        const more = Object.entries(r.attrs ?? {}).map(([k, v]) => ` · ${k}: ${typeof v === "string" ? v : JSON.stringify(v)}`).join("");
+        const li = el("li", {}, el("b", { text: r.kind }), ` ${node(r.from)?.label ?? r.from} → ${r.to ? node(r.to)?.label ?? r.to : "unresolved"} · ${locText(r.location)} · `, el("code", { text: r.dataName }), ` from ${r.tool}${more}`);
         ul.append(li);
         void sourceLines(r.location, li);
     }
@@ -692,7 +987,7 @@ function toolsPane() {
         if (bad.length)
             note += " · the run stopped here" + (perFile ? "; later files, if any, not run" : "");
         ul.append(itemBox({ name: tool, version: versionOf(tool), link: logs.length ? logLink(logs[logs.length - 1]) : undefined, pill, note, wrap: true, bad: bad.length > 0,
-            places: bad.map((i) => failurePlace(i.file_id, i.result?.error, bad.length > 1 ? i.result?.logPath : undefined)) }));
+            places: bad.map((i) => failurePlace(i.file_id, i.result?.error ?? i.dryRunError, bad.length > 1 ? i.result?.logPath : undefined)) }));
     }
     pane.append(ul);
     // The last dry run (a dry-run-only pass): go or no-go per tool, reasons counted; it also stops at a no-go.
@@ -757,7 +1052,7 @@ function problemsPane() {
     // holds in every view. One item per name and data name, its mentions listed under it by file, then line. A reason
     // shared by every mention is shown once on the item, otherwise on each mention.
     const inView = state.probScope === "view";
-    const ids = new Set(inView ? m.levels[state.view]?.unresolved ?? [] : m.relations.filter((r) => r.to === null).map((r) => r.id));
+    const ids = new Set(inView ? m.levels[state.view]?.unresolved ?? [] : m.relations.filter((r) => r.to === null && r.reason !== "built-in").map((r) => r.id));
     const unresolved = m.relations.filter((r) => ids.has(r.id));
     pane.append(el("h3", { text: `Unresolved relations · ${inView ? "this view" : "all"}` }));
     if (unresolved.length === 0)
@@ -766,6 +1061,14 @@ function problemsPane() {
         const ul = groupedItems(unresolved.map((r) => ({ name: relName(r), dataName: r.dataName, location: r.location, note: r.reason ?? "no reason recorded" })), (list) => plural(list.length, "mention"));
         pane.append(ul);
     }
+    // Built-ins (TPG-D5): uses of names TypeScript's library declares, listed apart and not counted as unresolved.
+    const bIds = new Set(inView ? m.levels[state.view]?.builtins ?? [] : m.relations.filter((r) => r.reason === "built-in").map((r) => r.id));
+    const builtins = m.relations.filter((r) => bIds.has(r.id));
+    pane.append(el("h3", { text: `Built-ins · ${inView ? "this view" : "all"}` }));
+    if (builtins.length === 0)
+        pane.append(el("p", { cls: "muted", text: inView ? "None in this view." : "None." }));
+    else
+        pane.append(builtinGroups(builtins));
     const toggle = el("div", { cls: "probscope" });
     for (const [which, text] of [["view", "This view"], ["all", "All"]]) {
         const b = el("button", { text, title: which === "view" ? "Unresolved relations of the view being shown" : "Unresolved relations of the whole run" });
@@ -857,7 +1160,7 @@ function statusBar() {
     }
     const c = $("st-counts");
     if (m) {
-        const unres = m.relations.filter((r) => r.to === null).length;
+        const unres = m.relations.filter((r) => r.to === null && r.reason !== "built-in").length;
         c.textContent = `${m.checks.invalid.length} invalid · ${m.checks.extra.length} extra · ${unres} unresolved`;
         c.className = m.checks.invalid.length ? "linkish bad" : "linkish";
         c.hidden = false;

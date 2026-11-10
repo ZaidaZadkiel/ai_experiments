@@ -1,0 +1,100 @@
+[
+ [
+  "go",
+  "x"
+ ],
+ [
+  "wait",
+  "window.zaansouvi && window.zaansouvi.ready()",
+  20
+ ],
+ [
+  "sleep",
+  1
+ ],
+ [
+  "js",
+  "return fetch('/api/sources',{credentials:'same-origin'}).then(r=>r.json()).then(j=>{const s=j.sources.find(x=>x.sourceRoot.endsWith('/test-source-mvp2')); return fetch('/api/sources/current',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({source:s.sourceKey})}).then(r=>r.status)})"
+ ],
+ [
+  "go",
+  "x"
+ ],
+ [
+  "wait",
+  "window.zaansouvi && window.zaansouvi.ready() && document.querySelector('#cy canvas')",
+  20
+ ],
+ [
+  "sleep",
+  1
+ ],
+ [
+  "js",
+  "window.zaansouvi.enter('src/shapes.ts#Anonymous@57:14'); return 1"
+ ],
+ [
+  "sleep",
+  1.2
+ ],
+ [
+  "js",
+  "window.zaansouvi.select('node','src/shapes.ts#name@57:56'); return 1"
+ ],
+ [
+  "sleep",
+  1
+ ],
+ [
+  "js",
+  "const rows=[...document.querySelectorAll('#pane-details .rangecols')]; const rowLabel=[...document.querySelectorAll('#pane-details dt')].some(d=>d.textContent==='rangeText'); return (rowLabel?'rangeText row still there! ':'')+(rows.map(r=>r.children.length+' column(s): '+[...r.querySelectorAll('pre')].map(p=>[...p.children].map(sp=>sp.firstChild.textContent+' '+JSON.stringify(sp.textContent.slice(sp.firstChild.textContent.length))).join(' / ')+(p.scrollWidth>p.clientWidth?' [scrolls sideways]':' [wrapped, '+Math.round(p.getBoundingClientRect().height)+'px high]')).join(' | ')).join(' || ') || 'no range box')"
+ ],
+ [
+  "shot",
+  "range-name.png"
+ ],
+ [
+  "js",
+  "window.zaansouvi.select('node','src/shapes.ts#Anonymous@57:14'); return 1"
+ ],
+ [
+  "sleep",
+  1
+ ],
+ [
+  "shot",
+  "range-anonymous.png"
+ ],
+ [
+  "sleep",
+  1
+ ],
+ [
+  "js",
+  "const rows=[...document.querySelectorAll('#pane-details .rangecols')]; const rowLabel=[...document.querySelectorAll('#pane-details dt')].some(d=>d.textContent==='rangeText'); return (rowLabel?'rangeText row still there! ':'')+(rows.map(r=>r.children.length+' column(s): '+[...r.querySelectorAll('pre')].map(p=>[...p.children].map(sp=>sp.firstChild.textContent+' '+JSON.stringify(sp.textContent.slice(sp.firstChild.textContent.length))).join(' / ')+(p.scrollWidth>p.clientWidth?' [scrolls sideways]':' [wrapped, '+Math.round(p.getBoundingClientRect().height)+'px high]')).join(' | ')).join(' || ') || 'no range box')"
+ ],
+ [
+  "js",
+  "window.zaansouvi.enter('src/shapes.ts'); return 1"
+ ],
+ [
+  "sleep",
+  1.2
+ ],
+ [
+  "js",
+  "window.zaansouvi.select('node','src/shapes.ts#Base@12:23'); return 1"
+ ],
+ [
+  "sleep",
+  1
+ ],
+ [
+  "js",
+  "const rows=[...document.querySelectorAll('#pane-details .rangecols')]; const rowLabel=[...document.querySelectorAll('#pane-details dt')].some(d=>d.textContent==='rangeText'); return (rowLabel?'rangeText row still there! ':'')+(rows.map(r=>r.children.length+' column(s): '+[...r.querySelectorAll('pre')].map(p=>[...p.children].map(sp=>sp.firstChild.textContent+' '+JSON.stringify(sp.textContent.slice(sp.firstChild.textContent.length))).join(' / ')+(p.scrollWidth>p.clientWidth?' [scrolls sideways]':' [wrapped, '+Math.round(p.getBoundingClientRect().height)+'px high]')).join(' | ')).join(' || ') || 'no range box')"
+ ],
+ [
+  "shot",
+  "range-base.png"
+ ]
+]

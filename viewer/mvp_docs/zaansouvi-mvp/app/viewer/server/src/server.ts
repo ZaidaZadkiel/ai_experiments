@@ -14,6 +14,9 @@ import { buildModel, type GraphModel } from "./model.ts";
 import { readCache, runRunner } from "./runner.ts";
 import { Store, type Source } from "./store.ts";
 
+/** The most lines /api/source gives for one range (FND-106). */
+const RANGE_LINES = 200;
+
 // ---------------------------------------------------------------------------
 // Places (BE-12): everything is found from this file's location, so the working folder doesn't matter
 // ---------------------------------------------------------------------------
@@ -420,7 +423,7 @@ async function route(req: http.IncomingMessage, res: http.ServerResponse) {
     return reply(res, 200, {
       tools: (cache?.tools ?? []).map((t) => ({ tool: t.tool, position: t.position, toolVersion: t.info?.toolVersion })),
       run: forThis ? cache?.run : null,
-      invocations: forThis ? (cache?.invocations ?? []).map((i) => ({ tool: i.tool, file_id: i.file_id, refreshReason: i.refreshReason, skipped: i.skipped ?? false, dryRun: i.dryRun?.dryRun, result: i.result })) : [],
+      invocations: forThis ? (cache?.invocations ?? []).map((i) => ({ tool: i.tool, file_id: i.file_id, refreshReason: i.refreshReason, skipped: i.skipped ?? false, dryRun: i.dryRun?.dryRun, ...(i.dryRun?.error ? { dryRunError: i.dryRun.error } : {}), result: i.result })) : [],
       dryRun: dryForThis ? cache?.dryRun : null,
     });
   }
@@ -449,7 +452,12 @@ async function route(req: http.IncomingMessage, res: http.ServerResponse) {
     const file = url.searchParams.get("file") ?? "";
     const line = Number(url.searchParams.get("line"));
     const model = s ? (shown.get(s.sourceKey) ?? (() => { const e = store.readEntry(s.sourceKey); return e?.ok ? e.model : undefined; })()) : undefined;
-    if (!s || !model || !model.files.includes(file) || !Number.isInteger(line) || line < 1) return fail(res, 404, "Not found.");
+    // Only lines of a listed file a tool read as text (security.md, section 7; MVP 2 lists every file, so binary or very
+    // large files are kept out this way). A first-stage graph has no readBy: its files were all .ts files a tool read.
+    const entry = model?.nodes.find((n) => n.id === file);
+    const anyReadBy = !!model?.nodes.some((n) => Array.isArray(n.attrs?.readBy));
+    const readByTool = !anyReadBy || (Array.isArray(entry?.attrs?.readBy) && !entry?.attrs?.unreadable);
+    if (!s || !model || !model.files.includes(file) || !readByTool || !Number.isInteger(line) || line < 1) return fail(res, 404, "Not found.");
     let real: string;
     try {
       real = fs.realpathSync(path.join(s.sourceRoot, file));
@@ -458,6 +466,13 @@ async function route(req: http.IncomingMessage, res: http.ServerResponse) {
     }
     if (!isInside(realOrSame(s.sourceRoot), real)) return fail(res, 404, "Not found.");
     const all = fs.readFileSync(real, "utf8").split(/\r?\n/);
+    // With end (FND-106): the lines line to end, a record's range, at most RANGE_LINES of them; else 2 lines around line.
+    if (url.searchParams.has("end")) {
+      const end = Number(url.searchParams.get("end"));
+      if (!Number.isInteger(end) || end < line) return fail(res, 404, "Not found.");
+      const last = Math.min(all.length, end, line + RANGE_LINES - 1);
+      return reply(res, 200, { file, firstLine: line, lines: all.slice(line - 1, last), cut: last < end });
+    }
     const first = Math.max(1, line - 2);
     return reply(res, 200, { file, firstLine: first, lines: all.slice(first - 1, Math.min(all.length, line + 2)) });
   }

@@ -39,7 +39,7 @@ export const STORE_PATH_PARAMETER = "store_path";
 export const SOURCE_ROOT_PARAMETER = "source_root";
 
 /** With no store given, a tool's store is <working folder>/zaansouvi/tools/<tool>/: the same layout as the Runner's data
- *  folder, so a copied data folder can be used by hand (decided by the user on 2026-11-08; toolset.md 4.5). */
+ *  folder, so a copied data folder can be used by hand (toolset.md 4.5). */
 export const DEFAULT_STORE_ROOT = path.join("zaansouvi", "tools");
 
 export type Position = { line: number; column: number };
@@ -354,7 +354,7 @@ function writeLastRun(r: Run, meta: Record<string, unknown>) {
   writeAtomic(r.lastRunPath, JSON.stringify({ ...params, _last_run }, null, 2) + "\n");
 }
 
-/** E14: a tool that is given a source root never runs from inside it (decided by the user on 2026-11-08). Tools that
+/** E14: a tool that is given a source root never runs from inside it. Tools that
  *  read no files have no source root, so they can't check this. */
 function checkNotInSource(p: Params) {
   const root = p[SOURCE_ROOT_PARAMETER];

@@ -70,7 +70,7 @@
  ],
  [
   "js",
-  "return fetch('/api/sources/current',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({source:'f364b93f4d22b1ad'})}).then(r=>r.status)"
+  "return (async()=>{ const a=await fetch('/api/sources',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({sourceRoot:'/tmp/zaansouvi-sources/runner'})}); const k=(await a.json()).sourceKey; const r=await fetch('/api/sources/current',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({source:k})}); return r.status; })()"
  ],
  [
   "go",

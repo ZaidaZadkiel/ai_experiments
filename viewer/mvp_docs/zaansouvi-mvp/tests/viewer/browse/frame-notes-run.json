@@ -1,0 +1,88 @@
+[
+ [
+  "go",
+  "x"
+ ],
+ [
+  "wait",
+  "window.zaansouvi && window.zaansouvi.ready()",
+  20
+ ],
+ [
+  "sleep",
+  1
+ ],
+ [
+  "js",
+  "return fetch('/api/sources',{credentials:'same-origin'}).then(r=>r.json()).then(j=>{const s=j.sources.find(x=>x.sourceRoot.endsWith('/test-source-mvp2')); return fetch('/api/sources/current',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({source:s.sourceKey})}).then(r=>r.status)})"
+ ],
+ [
+  "js",
+  "return (async()=>{ const j=await (await fetch('/api/sources',{credentials:'same-origin'})).json(); const k=j.sources.find(x=>x.sourceRoot.endsWith('/test-source-mvp2')).sourceKey; const before=(await (await fetch('/api/graph?source='+k+'&which=auto',{credentials:'same-origin'})).json()).model?.run?.runId; for(let t=0;t<40;t++){ const rr=await fetch('/api/run',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({source:k})}); if(rr.status===202) break; await new Promise(r=>setTimeout(r,500)); } for(let i=0;i<60;i++){ await new Promise(r=>setTimeout(r,500)); const g=await (await fetch('/api/graph?source='+k+'&which=auto',{credentials:'same-origin'})).json(); if(g.status==='latest' && g.model?.run?.runId!==before) return 'new run: '+g.model.nodes.length+' nodes'; } return 'timeout'; })()"
+ ],
+ [
+  "go",
+  "x"
+ ],
+ [
+  "wait",
+  "window.zaansouvi && window.zaansouvi.ready() && document.querySelector('#cy canvas')",
+  20
+ ],
+ [
+  "sleep",
+  1
+ ],
+ [
+  "js",
+  "window.zaansouvi.enter('src/shapes.ts#Circle@27:14'); return 1"
+ ],
+ [
+  "sleep",
+  1.2
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; const f=cy.nodes('.scope-frame'); if(!f.length) return 'no frame'; const fb=f.boundingBox({includeLabels:false}); const lb=f.boundingBox({includeNodes:false,includeEdges:false,includeLabels:true,includeOverlays:false}); const t=cy.nodes('.this').boundingBox({}); return JSON.stringify(f.data('label'))+' | label at '+Math.round(lb.x1-fb.x1)+','+Math.round(lb.y1-fb.y1)+' from the frame corner, inside: '+(lb.x1>=fb.x1&&lb.y1>=fb.y1&&lb.x2<=fb.x2&&lb.y2<=fb.y2)+', overlaps title: '+!(lb.x2<t.x1||lb.x1>t.x2||lb.y2<t.y1||lb.y1>t.y2)+' | text-events '+f.style('text-events')"
+ ],
+ [
+  "js",
+  "window.zaansouvi.enter('src/shapes.ts#Anonymous@57:14'); return 1"
+ ],
+ [
+  "sleep",
+  1.2
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; const f=cy.nodes('.scope-frame'); if(!f.length) return 'no frame'; const fb=f.boundingBox({includeLabels:false}); const lb=f.boundingBox({includeNodes:false,includeEdges:false,includeLabels:true,includeOverlays:false}); const t=cy.nodes('.this').boundingBox({}); return JSON.stringify(f.data('label'))+' | label at '+Math.round(lb.x1-fb.x1)+','+Math.round(lb.y1-fb.y1)+' from the frame corner, inside: '+(lb.x1>=fb.x1&&lb.y1>=fb.y1&&lb.x2<=fb.x2&&lb.y2<=fb.y2)+', overlaps title: '+!(lb.x2<t.x1||lb.x1>t.x2||lb.y2<t.y1||lb.y1>t.y2)+' | text-events '+f.style('text-events')"
+ ],
+ [
+  "js",
+  "window.zaansouvi.enter('src/shapes.ts#Base@12:23'); return 1"
+ ],
+ [
+  "sleep",
+  1.2
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; const f=cy.nodes('.scope-frame'); if(!f.length) return 'no frame'; const fb=f.boundingBox({includeLabels:false}); const lb=f.boundingBox({includeNodes:false,includeEdges:false,includeLabels:true,includeOverlays:false}); const t=cy.nodes('.this').boundingBox({}); return JSON.stringify(f.data('label'))+' | label at '+Math.round(lb.x1-fb.x1)+','+Math.round(lb.y1-fb.y1)+' from the frame corner, inside: '+(lb.x1>=fb.x1&&lb.y1>=fb.y1&&lb.x2<=fb.x2&&lb.y2<=fb.y2)+', overlaps title: '+!(lb.x2<t.x1||lb.x1>t.x2||lb.y2<t.y1||lb.y1>t.y2)+' | text-events '+f.style('text-events')"
+ ],
+ [
+  "js",
+  "window.zaansouvi.enter('src/report/summary.ts#summarize@7:23'); return 1"
+ ],
+ [
+  "sleep",
+  1.2
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; const f=cy.nodes('.scope-frame'); if(!f.length) return 'no frame'; const fb=f.boundingBox({includeLabels:false}); const lb=f.boundingBox({includeNodes:false,includeEdges:false,includeLabels:true,includeOverlays:false}); const t=cy.nodes('.this').boundingBox({}); return JSON.stringify(f.data('label'))+' | label at '+Math.round(lb.x1-fb.x1)+','+Math.round(lb.y1-fb.y1)+' from the frame corner, inside: '+(lb.x1>=fb.x1&&lb.y1>=fb.y1&&lb.x2<=fb.x2&&lb.y2<=fb.y2)+', overlaps title: '+!(lb.x2<t.x1||lb.x1>t.x2||lb.y2<t.y1||lb.y1>t.y2)+' | text-events '+f.style('text-events')"
+ ],
+ [
+  "shot",
+  "notes-anonymous.png"
+ ]
+]

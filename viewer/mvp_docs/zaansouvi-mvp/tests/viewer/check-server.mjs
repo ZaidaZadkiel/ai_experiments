@@ -1,7 +1,8 @@
-// BE-92 (the server's part), BE-93 and BE-94 (mvp_docs/55_viewer_backend.md, section 12): starts the Viewer backend on
-// a temporary copy of zaansouvi-mvp (node_modules linked, not copied), so the real data/ is never touched, and checks
-// security, the endpoints, the activity log, and how bad or missing data is handled across restarts.
-// Needs a Runner cache in data/ (a real run on test-source). Usage, from zaansouvi-mvp/: node tests/viewer/check-server.mjs
+// BE-92 (the server's part), BE-93 and BE-94 (mvp_docs/55_viewer_backend.md, section 12), for MVP 2 (FND-99; the
+// first stage's version is check-server-stage1.mjs, superseded). Starts the Viewer backend on a temporary copy of
+// zaansouvi-mvp (node_modules linked, not copied), so the real data/ is never touched: the copied Runner first runs
+// ts-program on a copy of test-source-mvp2, then the checks cover security, the endpoints, the activity log, and how bad
+// or missing data is handled across restarts. Usage, from zaansouvi-mvp/: node tests/viewer/check-server.mjs
 import { spawn, spawnSync } from "node:child_process";
 import fs from "node:fs";
 import http from "node:http";
@@ -27,17 +28,13 @@ function copyTree(from, to) {
     else fs.copyFileSync(a, b);
   }
 }
-if (!fs.existsSync(path.join(ROOT, "data/runner/cache.json"))) { console.error("No Runner cache in data/: run app/runner/zaansouvi-run test-source first."); process.exit(2); }
 copyTree(path.join(ROOT, "app"), path.join(MVP, "app"));
-copyTree(path.join(ROOT, "test-source"), path.join(MVP, "test-source"));
-copyTree(path.join(ROOT, "data"), path.join(MVP, "data"));
-fs.rmSync(path.join(MVP, "data/viewer"), { recursive: true, force: true });
-// The copied cache must name the copied source root.
+copyTree(path.join(ROOT, "test-source-mvp2"), path.join(MVP, "test-source-mvp2"));
+const SRC = path.join(MVP, "test-source-mvp2");
+// The copy's own data: the copied Runner runs ts-program on the copied source (RUN-33: ts-program alone).
+const made = spawnSync(path.join(MVP, "app/runner/zaansouvi-run"), [SRC], { cwd: TMP, encoding: "utf8" });
+if (made.status !== 0) { console.error(`The copied Runner failed: ${made.stdout.slice(-600)} ${made.stderr.slice(-600)}`); process.exit(2); }
 const cacheFile = path.join(MVP, "data/runner/cache.json");
-const cache0 = JSON.parse(fs.readFileSync(cacheFile, "utf8"));
-const SRC = path.join(MVP, "test-source");
-cache0.run.sourceRoot = SRC;
-fs.writeFileSync(cacheFile, JSON.stringify(cache0));
 
 // ---- the server
 let server, token, cookie = "";
@@ -93,22 +90,32 @@ try {
   const added = await req("POST", "/api/sources", { sourceRoot: SRC });
   check("add the test source: 201", added.status === 201, `got ${added.status} ${added.text}`);
   const key = added.json?.sourceKey;
-  check("a relative path is refused", (await req("POST", "/api/sources", { sourceRoot: "test-source" })).status === 400);
+  check("a relative path is refused", (await req("POST", "/api/sources", { sourceRoot: "test-source-mvp2" })).status === 400);
   check("ZaAnSouVi's own data folder is refused", (await req("POST", "/api/sources", { sourceRoot: path.join(MVP, "data") })).status === 400);
   const g1 = await req("GET", `/api/graph?source=${key}`);
-  check("graph: latest, 10 views, nothing invalid", g1.json?.status === "latest" && Object.keys(g1.json.model.levels).length === 10 && g1.json.model.checks.invalid.length === 0, g1.text.slice(0, 200));
+  const m1 = g1.json?.model;
+  check("graph: latest, format 2, 32 views, nothing invalid or extra", g1.json?.status === "latest" && m1.formatVersion === 2 && Object.keys(m1.levels).length === 32 &&
+    m1.checks.invalid.length === 0 && m1.checks.extra.length === 0, g1.text.slice(0, 200));
+  check("the top view: 1 unresolved use, 25 built-ins apart", m1?.levels[""].unresolved.length === 1 && m1?.levels[""].builtins.length === 25,
+    `${m1?.levels[""].unresolved.length} unresolved, built-ins ${JSON.stringify(m1?.levels[""].builtins.map((b) => b.name ?? b))}; views ${JSON.stringify(Object.keys(m1?.levels ?? {}))}`);
+  check("every listed entry is a node: README.md with its type, src as a folder",
+    m1?.nodes.find((n) => n.id === "README.md")?.attrs?.type === ".md" && m1?.nodes.find((n) => n.id === "src")?.kind === "folder");
   const entryFile = path.join(MVP, "data/viewer/sources", key, "last-good-graph.json");
   check("the valid graph is stored", fs.existsSync(entryFile));
 
   console.log("BE-93: reads only where allowed");
-  check("a listed file's lines: 200", (await req("GET", `/api/source?source=${key}&file=src/main.ts&line=7`)).json?.lines?.[2]?.includes("PRECISION"));
+  check("a file a tool read: its lines, 200", (await req("GET", `/api/source?source=${key}&file=src/shapes.ts&line=13`)).json?.lines?.[2]?.includes("static count"));
+  const rg = await req("GET", `/api/source?source=${key}&file=src/shapes.ts&line=12&end=25`);
+  check("a range (end): its lines, from line to end", rg.status === 200 && rg.json?.firstLine === 12 && rg.json?.lines?.length === 14 && rg.json.lines[0].includes("abstract class Base") && rg.json.cut === false);
+  check("a range ending before it starts: 404", (await req("GET", `/api/source?source=${key}&file=src/shapes.ts&line=12&end=11`)).status === 404);
+  check("a listed file no tool read (README.md): 404", (await req("GET", `/api/source?source=${key}&file=README.md&line=1`)).status === 404);
   check("../ in the file: 404", (await req("GET", `/api/source?source=${key}&file=../../etc/passwd&line=1`)).status === 404);
   check("a file not in the list: 404", (await req("GET", `/api/source?source=${key}&file=src/other.ts&line=1`)).status === 404);
-  fs.rmSync(path.join(SRC, "src/math.ts"));
-  fs.symlinkSync("/etc/hostname", path.join(SRC, "src/math.ts"));
-  check("a listed file that is a link out of the source: 404", (await req("GET", `/api/source?source=${key}&file=src/math.ts&line=1`)).status === 404);
-  fs.rmSync(path.join(SRC, "src/math.ts"));
-  fs.copyFileSync(path.join(ROOT, "test-source/src/math.ts"), path.join(SRC, "src/math.ts"));
+  fs.rmSync(path.join(SRC, "src/shapes.ts"));
+  fs.symlinkSync("/etc/hostname", path.join(SRC, "src/shapes.ts"));
+  check("a listed file that became a link out of the source: 404", (await req("GET", `/api/source?source=${key}&file=src/shapes.ts&line=1`)).status === 404);
+  fs.rmSync(path.join(SRC, "src/shapes.ts"));
+  fs.copyFileSync(path.join(ROOT, "test-source-mvp2/src/shapes.ts"), path.join(SRC, "src/shapes.ts"));
   const someLog = fs.readdirSync(path.join(MVP, "data/runner/logs")).find((f) => f.endsWith(".log"));
   check("a log under data/: 200 text", (await req("GET", `/api/log?path=${encodeURIComponent(path.join(MVP, "data/runner/logs", someLog))}`)).headers["content-type"]?.startsWith("text/plain"));
   check("a file outside data/: 404", (await req("GET", `/api/log?path=/etc/hostname`)).status === 404);
@@ -116,7 +123,7 @@ try {
   console.log("BE-94: the activity log");
   const actFile = path.join(MVP, "data/viewer/activity.log");
   fs.rmSync(actFile);
-  check("a page report recreates a deleted log", (await req("POST", "/api/activity", { event: "level_entered", nodeId: "src/main.ts", source: key })).status === 204 && fs.readFileSync(actFile, "utf8").includes("You entered main.ts"));
+  check("a page report recreates a deleted log", (await req("POST", "/api/activity", { event: "level_entered", nodeId: "src/app.ts", source: key })).status === 204 && fs.readFileSync(actFile, "utf8").includes("You entered app.ts"));
   check("an unknown page event: 400", (await req("POST", "/api/activity", { event: "anything" })).status === 400);
   check("Clear: 204, and the file holds only log_cleared", (await req("POST", "/api/activity/clear", {})).status === 204 && fs.readFileSync(actFile, "utf8").trim().split("\n").every((l) => l.includes("\tlog_cleared\t")));
   const lines = fs.readFileSync(actFile, "utf8").trim().split("\n");
@@ -135,16 +142,18 @@ try {
   const storedRun = JSON.parse(fs.readFileSync(entryFile, "utf8")).run.runId;
   const bad = JSON.parse(fs.readFileSync(cacheFile, "utf8"));
   bad.run.runId = "bad-run";
-  bad.data["code.membership"].outputs[0].records[0].parent = "src/x.ts#scope@9:9";
+  // A symbol whose container is unknown (the import Circle): it is skipped, and so is its import link, which starts
+  // from it: two invalid records.
+  bad.data["code.symbol"].outputs[0].records[0].parent = "src/x.ts#nothing@9:9";
   fs.writeFileSync(cacheFile, JSON.stringify(bad));
   const g2 = await req("GET", `/api/graph?source=${key}`);
-  check("a partly invalid run is shown, marked", g2.json?.status === "partly-invalid" && g2.json.model.checks.invalid.length === 1, g2.text.slice(0, 160));
+  check("a partly invalid run is shown, marked", g2.json?.status === "partly-invalid" && g2.json.model.checks.invalid.length === 2, g2.text.slice(0, 160));
   check("... and not stored", JSON.parse(fs.readFileSync(entryFile, "utf8")).run.runId === storedRun);
   const lg = await req("GET", `/api/graph?source=${key}&which=last-good`);
   check("the last good graph is still there", lg.json?.status === "last-good" && lg.json.model.run.runId === storedRun);
   await stop(); await start();
   const g3 = await req("GET", `/api/graph?source=${key}`);
-  check("after a restart: the same answer", g3.json?.status === "partly-invalid" && g3.json.model.checks.invalid.length === 1);
+  check("after a restart: the same answer", g3.json?.status === "partly-invalid" && g3.json.model.checks.invalid.length === 2);
   bad.run.outcome = "failed";
   fs.writeFileSync(cacheFile, JSON.stringify(bad));
   const g4 = await req("GET", `/api/graph?source=${key}`);
@@ -158,7 +167,7 @@ try {
   const g5 = await req("GET", `/api/graph?source=${key}`);
   check("an entry in another format: unusable, with the reason", g5.json?.status === "unusable" && /format 0/.test(g5.json.reason ?? ""), g5.text.slice(0, 160));
   fs.writeFileSync(path.join(MVP, "data/viewer/sources.json"), "{ damaged");
-  e.formatVersion = 1;
+  e.formatVersion = 2;
   fs.writeFileSync(entryFile, JSON.stringify(e));
   await stop(); await start();
   const s = await req("GET", "/api/sources");

@@ -1,0 +1,52 @@
+[
+ [
+  "go",
+  "x"
+ ],
+ [
+  "wait",
+  "window.zaansouvi && window.zaansouvi.ready()",
+  20
+ ],
+ [
+  "sleep",
+  1
+ ],
+ [
+  "js",
+  "return fetch('/api/sources',{credentials:'same-origin'}).then(r=>r.json()).then(j=>{const s=j.sources.find(x=>x.sourceRoot.endsWith('/test-source-mvp2')); return fetch('/api/sources/current',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({source:s.sourceKey})}).then(r=>r.status)})"
+ ],
+ [
+  "go",
+  "x"
+ ],
+ [
+  "wait",
+  "window.zaansouvi && window.zaansouvi.ready() && document.querySelector('#cy canvas')",
+  20
+ ],
+ [
+  "sleep",
+  1
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; return cy.nodes('.ds-files-folder').map(n=>n.id()+' '+n.style('shape')+' ['+n.style('shape-polygon-points')+'] '+Math.round(n.outerWidth())+'x'+Math.round(n.outerHeight())+' enter-x='+n.style('background-offset-x')).join(' || ')"
+ ],
+ [
+  "shot",
+  "folders-root.png"
+ ],
+ [
+  "js",
+  "document.querySelector('[data-tab=legend]')?.click(); return document.querySelector('#pane-legend .lg-folder') ? 'legend has folder' : 'missing'"
+ ],
+ [
+  "sleep",
+  0.5
+ ],
+ [
+  "shot",
+  "folders-legend.png"
+ ]
+]

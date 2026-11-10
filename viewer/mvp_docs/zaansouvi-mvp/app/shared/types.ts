@@ -26,14 +26,19 @@ export type ParameterInfo = {
   affectsOutput?: boolean;
   description?: string;
   whenAbsent?: string;
+  /** MVP 2: the Runner gives every value of the data name as one array (schema MVP 2, section 5). */
+  list?: boolean;
 };
 
 export type OutputInfo = {
   dataName: string;
   formatVersion: number;
   represents: Represents;
-  containedIn?: string;
+  /** MVP 2: may be a list, a node's parent being of any of these data names. */
+  containedIn?: string | string[];
   contains?: string;
+  /** MVP 2: a once tool writing one output file per file it was given (<file-key> filled per file). */
+  perFile?: boolean;
   outputFilePattern: string;
   jsonKey: string;
   fields?: Record<string, string>;
@@ -62,7 +67,16 @@ export type RefreshReason = "missing" | "never-run" | "last-failed" | "inputs-ch
 
 export type RunnerEvent =
   | { event: "run_started"; runId: string; mode: "real" | "dry-run"; sourceRoot: string; time: string }
-  | { event: "files_listed"; fileCount: number }
+  | {
+      event: "files_listed";
+      fileCount: number;
+      /** MVP 2 (RUN-34): the folders, the folders listed as a whole, the files each tool's patterns match. */
+      folderCount?: number;
+      skippedFolders?: { id: string; fileCount: number; totalBytes: number }[];
+      perTool?: Record<string, number>;
+      ignoreFiles?: "not applied";
+    }
+  | { event: "tool_not_listed"; tool: string }
   | { event: "tool_skipped"; tool: string; file_id?: string; refreshReason: "up-to-date" }
   | {
       event: "tool_dry_run";
@@ -87,7 +101,7 @@ export type CacheOutput = { tool: string; dataRef: string; file?: string; record
 
 export type CacheDataGroup = {
   represents: Represents;
-  containedIn?: string;
+  containedIn?: string | string[];
   contains?: string;
   fields?: Record<string, string>;
   outputs: CacheOutput[];
@@ -117,6 +131,24 @@ export type DryRunDiagnostics = {
   }[];
 };
 
+/** One entry of the Runner's file list (RUN-34, RUN-35; schema MVP 2, section 4.4). The first stage's entries had only
+ *  id, sourceBytes and sourceSha256, which a file entry still has (sourceSha256 only when some tool reads it). */
+export type ListedEntry = {
+  id: string;
+  kind?: "file" | "folder" | "link" | "other";
+  sourceBytes?: number;
+  sourceSha256?: string;
+  readBy?: string[];
+  hidden?: true;
+  readOnly?: true;
+  unreadable?: string;
+  executable?: true;
+  fileCount?: number;
+  totalBytes?: number;
+  skipped?: true;
+  link?: { target: string; outside: boolean };
+};
+
 export type RunnerCache = {
   formatVersion: number;
   run?: {
@@ -129,8 +161,10 @@ export type RunnerCache = {
     sourceRoot: string;
     logPath: string;
   };
-  files?: { id: string; sourceBytes: number; sourceSha256: string }[];
+  files?: ListedEntry[];
   tools?: { tool: string; position: number; info: ToolInfo }[];
+  /** MVP 2 (RUN-33): tool folders found and not in the run list. */
+  notListed?: string[];
   invocations?: CacheInvocation[];
   data?: Record<string, CacheDataGroup>;
   dryRun?: DryRunDiagnostics;

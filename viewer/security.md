@@ -58,7 +58,7 @@ Each item is marked:
 - **[Proposed]** A setting that points tools outside the examined project, or turns off a safety limit, is flagged in the change preview when the Viewer edits it, as for config files (section 7).
 - **[Proposed]** The configuration database holds no content from any examined source, so sharing it across analyses leaks nothing between codebases.
 - **[Decided]** Tools never read the codebase database; only the Runner reads it.
-- **[Decided]** Only tools whose `--info` says they read files read them, and only one file per invocation (`toolset.md`, section 4.2). This keeps each tool's access to the examined project narrow, **by design, not by enforcement**: the Runner checks a tool only through its input and output, never what it reads. A tool that reads more is a design error in that tool.
+- **[Decided]** Only tools whose `--info` says they read files read them, and only one file per invocation, or, for a program tool, the listed files of its one type (`toolset.md`, section 4.2, `TS-37`). This keeps each tool's access to the examined project narrow, **by design, not by enforcement**: the Runner checks a tool only through its input and output, never what it reads. A tool that reads more is a design error in that tool.
 - **[Proposed]** Concern raised by that decision: since nothing enforces those limits, a buggy or replaced tool could read other tools' stores, the databases or, on a shared machine, other codebases' stores, against the isolation between codebases (`toolset.md`, section 5.4). The same holds for writing outside its own store. Ways to catch it: review each tool's design against its `--info`, or, later, run tools with limits from the operating system on what they can read and write (`SEC-2`). **To define** in the security step (`SEC-6`).
 - **[Proposed]** The path of the file to read must be inside the examined project; a tool checks this before opening it (section 1).
 - **[Decided]** Only the Runner writes to the codebase database; tools write only to their own stores (`toolset.md`, section 5.2). A tool can't damage another tool's facts in the database.
@@ -103,6 +103,8 @@ A local server that runs tools and reads files is a real attack surface.
 - **[Proposed]** Omitting a tool from the Runner's order is a configuration change too. Adding a tool means the Runner will run it, so only known, installed tools can be added, never an arbitrary program.
 - **[Proposed]** Configuration changes the behavior of every tool. A setting that points tools outside the examined project, or turns off a safety limit, should be clearly flagged in the change preview.
 
+- **[Proposed]** **Once the Runner lists every file** (MVP 2, `mvp_docs/03_runner.md`, `RUN-34`), the server may show lines of any listed file, which section 2 allows (no redaction). What it guards against instead (raised on 2026-11-09): **binary or very large files** (show lines only of a file a tool read as text, or within a size limit); **a symbolic link leading outside the examined source** (listed as a link, never followed or served, `SEC-2`); and a path that resolves outside the source root (refused by real path, as now).
+
 ## 8. Viewer UI
 
 - **[Proposed]** Everything shown in the UI comes from the examined code: names, paths, quotes and labels. It must always be displayed as text and never interpreted as markup or script. Otherwise a crafted symbol name or comment could run code in the developer's browser.
@@ -118,7 +120,7 @@ A local server that runs tools and reads files is a real attack surface.
 
 - **[Decided]** Each type of runtime data falls to its own tool, for example one that reads row counts from a SQLite file in the examined project (`toolset.md`, section 6.7).
 - **[Proposed]** Reading a data file in the project is like reading any other file: it runs no code from the examined source, stays inside the project, and is subject to the same limits (section 1).
-- **[Proposed]** Connecting to a running database or service is a different case, still open (`VW-18`, `SEC-5`). If it becomes in scope:
+- **[Proposed]** Connecting to a running database or service is a different case, still open (~~`VW-18`~~ `TS-5`, `SEC-5`). If it becomes in scope:
   - it is a separate optional step, off by default, and the rest of the toolset never needs it
   - it needs connection details and credentials, which must never be stored in tool outputs, the codebase database, Viewer data or exports
   - it only reads, and it reads summary information (names, counts), never the stored data itself

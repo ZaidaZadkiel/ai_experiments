@@ -1,8 +1,8 @@
 # 40. Tools for file kinds (proposal)
 
-A proposal for the tool or tools that output `files.file.kind`: what kind each listed file is, and whether a tool can read it. It covers the tools themselves, a suggested description of the file kinds database, and how the Runner uses it. Written on 2026-11-09 at the user's request (`FND-80`).
+A proposal for the tool or tools that output `files.file.kind`: what kind each listed file is, and whether a tool can read it. It covers the tools themselves, a suggested description of the file kinds database, and how the Runner uses it.
 
-**Status: a proposal, deferred until after the MVP** (decided by the user on 2026-11-09). It is not part of the MVP's build or its success criteria; the decisions it needs are listed in section 8, to be taken when the work starts. Nothing here is built, and nothing here is decided unless it cites a decision in a working file. Items are marked **[Decided]** (decided elsewhere, cited), or **[Suggested]** (this proposal). IDs use the prefix `KIND`. It is the first step of the work planned first after the MVP, the file inventory (`toolset.md`, section 6.2). Field names and formats are examples, to be settled in the technology step.
+**Status: a proposal, deferred until after the MVP.** It is not part of the MVP's build or its success criteria; the decisions it needs are listed in section 8, to be taken when the work starts. Nothing here is built, and nothing here is decided unless it cites a decision in a working file. Items are marked **[Decided]** (decided elsewhere, cited), or **[Suggested]** (this proposal). IDs use the prefix `KIND`. It is the first step of the work planned first after the MVP, the file inventory (`toolset.md`, section 6.2). Field names and formats are examples, to be settled in the technology step.
 
 ## 1. Why
 
@@ -17,7 +17,7 @@ What the MVP showed, and what this answers:
 | A huge, generated or minified file | slow, and floods the graph | classified as too large or generated, and skipped with a reason |
 | A file that isn't valid text (another encoding, stray binary bytes) | parse error, or garbage symbols | classified as not readable as text |
 
-### 1.1 Evidence from a test (2026-11-09, `FND-81`)
+### 1.1 Evidence from a test (`FND-81`)
 
 M1 was fed JavaScript with no code changed:
 - **As `.js`**, M1 refuses the file in its own parameter check (`E12`, "reads only \*.ts files"), so a name alone already decides, three times over (the Runner's listing, M1's `--info`, M1's check).
@@ -172,10 +172,10 @@ flowchart LR
 ### 5.5 What the Viewer gets
 
 - **KIND-38 [Suggested]** The cache's file list carries each file's kind, and which tools read it (`readBy`, `FND-79`). The Viewer:
-  - makes nodes only of files some tool read, as in `FND-79`, option (a);
+  - shows every file in the top view, the unconnected ones in a frame "file name · type" (`UI-47`); this proposal's kind is that type (`UI-47b`);
   - shows a file's kind, readability and evidence in Details, as attributes (`KIND-16`);
   - lists, in Problems, the files skipped and why ("src/clip.ts · video-mpegts · not read by file-symbols"), and the count of unchecked files;
-  - serves source lines only for files of a kind readable as text, read by some tool (`/api/source`; `security.md`).
+  - serves source lines only for files of a kind readable as text (`/api/source`; `security.md`, section 7: binary and large files, not secrets, which section 2 lets the user see).
 
 ## 6. Against the design principles
 
@@ -206,7 +206,7 @@ Tests: the MVP's test source unchanged (three `typescript` files); a source with
 
 ## 8. Decisions required (deferred until after the MVP)
 
-Recorded on 2026-11-09 and left for after the MVP, at the user's request. Each has the suggested answer of this proposal; none is taken. They are needed before the first step in section 7 starts, roughly in this order, since the later ones build on the first.
+Left for after the MVP. Each has the suggested answer of this proposal; none is taken. They are needed before the first step in section 7 starts, roughly in this order, since the later ones build on the first.
 
 | ID | Decision | Suggested answer | Bears on |
 |---|---|---|---|
@@ -224,13 +224,3 @@ Recorded on 2026-11-09 and left for after the MVP, at the user's request. Each h
 | `KIND-101` | **Limits:** the size limit and the markers of generated code; fixed in each checker, or project settings | Fixed defaults in each checker, overridable per project through its parameters | `KIND-14` |
 | `KIND-102` | **Hashing only what a checker matches:** every file listed, only files some checker's patterns match hashed | Yes, with `FND-79` | `KIND-35` |
 | `KIND-103` | **What the Viewer shows:** nodes only for files some tool read; kinds in Details; skipped files in Problems; source lines only for files readable as text and read by some tool | Yes; record the `/api/source` limit in `security.md` | `KIND-38` |
-
-~~Open points~~ *(the earlier list, replaced by the table above and kept for the record):*
-
-1. **`attributes` as a fourth kind of output** (`KIND-16`): accept it, or carry kinds some other way.
-2. **One file type and several patterns** (`KIND-13`; `toolset.md`, section 4.2, To define): do `*.mts` and `*.cts` share `*.ts`'s type?
-3. **No file to read: stop or skip** (`KIND-34`).
-4. **Checkers in a dry-run pass** (`KIND-37`): stored kinds and patterns, or running checkers for real.
-5. **Where the catalog lives** (`KIND-20`): the configuration database, or the codebase database beside the kinds, if a catalog is tied to the checkers installed when a codebase was examined.
-6. **Limits:** the size limit and the generated-code markers; per project settings or fixed in each checker.
-7. **`toolset.md`, section 6.2:** it still describes one inventory tool invoked on every file, which `KIND-04` now forbids; to be rewritten if this proposal is accepted.

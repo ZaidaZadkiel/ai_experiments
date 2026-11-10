@@ -2,7 +2,7 @@
 
 How ZaAnSouVi's own programs and data are organized on disk: where the tools, the Runner and the Viewer each have their own work space, and where the shared store sits that every tool, the Runner and the Viewer can read.
 
-**Nothing in this file is decided yet.** Every item is **[Proposed]**, apart from the scope rule below, which is decided in `toolset.md`, section 1.
+~~**Nothing in this file is decided yet.** Every item is **[Proposed]**, apart from the scope rule below, which is decided in `toolset.md`, section 1.~~ **Nothing is decided in this file itself.** Its [Decided] items are decisions made in other files and repeated here with a pointer (the scope rule, `toolset.md`, section 1; where `last_run.json` and the stores live, `toolset.md`, sections 4.5 and 4.6; what tools read, `toolset.md`, section 4.2); everything else is **[Proposed]**.
 
 Related files: `toolset.md` (shared data, isolation between codebases), `runner.md` (Runner configurations, logs, `RN-3` and `RN-8`), `viewer.md` (Viewer internal storage), `data_topology.md` (data names), `security.md`.
 
@@ -17,7 +17,7 @@ Related files: `toolset.md` (shared data, isolation between codebases), `runner.
 - **[Proposed]** **Nothing is written into the examined project.** It stays strictly read-only.
 - **[Proposed]** **Programs are kept apart from data** inside the root, so upgrading ZaAnSouVi never touches settings or stores. ~~One decided exception: each tool's `last_run.json` lives next to its program (section 3).~~ No exception remains: `last_run.json` lives in the tool's store, and program folders are never written (decided by the user on 2026-11-08, `toolset.md`, section 4.5).
 - **[Proposed]** **Each program has its own work space**: one per tool, one for the Runner, one for the Viewer.
-- **[Proposed]** **One shared store per codebase** holds what tools publish. Every tool, the Runner and the Viewer can read it.
+- **[Proposed]** **One shared store per codebase** holds what tools publish. ~~Every tool, the Runner and the Viewer can read it.~~ The Runner reads it; tools get its data only as parameters the Runner builds, and the Viewer through the Runner (`toolset.md`, section 4.2; `viewer.md`, section 3.1).
 - **[Proposed]** **One writer per path.** The exceptions are the config areas, written by the user and by the Viewer after confirmation, and the configuration database, shared by the Runner and the Viewer's backend ([Decided], `toolset.md`, section 5.2). The codebase database has one writer: the Runner.
 - **[Proposed]** **Public and private are separated by folder.** Deleting a private folder that holds internal state or a cache loses speed, never correctness.
 
@@ -82,8 +82,8 @@ Related files: `toolset.md` (shared data, isolation between codebases), `runner.
 | `settings/config.sqlite` (configuration, record of tools, ordering) | the Runner and the Viewer's backend, kept in sync as part of development | Runner, Viewer (never tools) |
 | `stores/<id>/config/` | the user, the Viewer (after confirmation) | everyone |
 | `stores/<id>/shared/codebase.sqlite` | the Runner only, from the tools' outputs | the Runner only; the Viewer through the Runner (never tools) |
-| `stores/<id>/tools/<tool>/output/` | that tool | Runner, Viewer (other tools only as parameters the Runner builds) |
-| `stores/<id>/tools/<tool>/result.*` | that tool | Runner, Viewer |
+| `stores/<id>/tools/<tool>/output/` | that tool | Runner, ~~Viewer~~ the Viewer through the Runner (`viewer.md`, section 3.1); other tools only as parameters the Runner builds |
+| `stores/<id>/tools/<tool>/result.*` | that tool | Runner, ~~Viewer~~ the Viewer through the Runner (`viewer.md`, section 3.1) |
 | `stores/<id>/tools/<tool>/logs/` | that tool (not in a dry run) | that tool, Runner, Viewer |
 | `stores/<id>/tools/<tool>/state/` | that tool | that tool only |
 | system temp | Runner (staging, JSON parameter files), a tool (its intermediate data) | the same program, or the tool given the file with `--json` |
@@ -93,7 +93,7 @@ Related files: `toolset.md` (shared data, isolation between codebases), `runner.
 | the examined project | nobody | every tool, Viewer |
 
 - **[Decided]** Each tool writes only to its own store. Tools never read the database; they read only their JSON input, `last_run.json` and their internal state. Only the Runner reads and writes the database (`toolset.md`, sections 4.2 and 5.2). These are design rules: the Runner checks a tool only through its input and output.
-- **[Proposed]** **Tools stay unaware of each other** (`toolset.md`, section 4.2). A tool reads its JSON parameters, which the Runner builds from the database, its `last_run.json` and its own work space. It doesn't read `config/` either (`TS-29`). It finds data **by name** through the catalog in `codebase.sqlite`, which the Runner keeps: for each data name, where it is, which tool produced it and its version.
+- **[Proposed]** **Tools stay unaware of each other** (`toolset.md`, section 4.2). A tool reads its JSON parameters, which the Runner builds from the database, its `last_run.json` and its own work space. It doesn't read `config/` either (`TS-29`). ~~It finds data **by name** through the catalog in `codebase.sqlite`, which the Runner keeps:~~ It knows data only **by name**; the Runner finds it through the catalog in `codebase.sqlite`, which it keeps: for each data name, where it is, which tool produced it and its version.
 - **[Proposed]** Outputs sit in folders named after the data they hold, inside the producing tool's store, matching the decision that each tool's output is "named after what it produces" (`toolset.md`, section 4.1).
 - **[Proposed]** Every run, from the Viewer or the command line, leaves the same trace: tool results, the Runner's per-configuration facts and timestamped logs. This matches "all invocations are equal" (`runner.md`, section 1).
 

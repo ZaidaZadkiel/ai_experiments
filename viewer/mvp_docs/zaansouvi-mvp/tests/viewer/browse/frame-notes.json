@@ -1,0 +1,144 @@
+[
+ [
+  "go",
+  "x"
+ ],
+ [
+  "wait",
+  "window.zaansouvi && window.zaansouvi.ready()",
+  20
+ ],
+ [
+  "sleep",
+  1
+ ],
+ [
+  "js",
+  "return fetch('/api/sources',{credentials:'same-origin'}).then(r=>r.json()).then(j=>{const s=j.sources.find(x=>x.sourceRoot.endsWith('/test-source-mvp2')); return fetch('/api/sources/current',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({source:s.sourceKey})}).then(r=>r.status)})"
+ ],
+ [
+  "go",
+  "x"
+ ],
+ [
+  "wait",
+  "window.zaansouvi && window.zaansouvi.ready() && document.querySelector('#cy canvas')",
+  20
+ ],
+ [
+  "sleep",
+  1
+ ],
+ [
+  "js",
+  "window.zaansouvi.enter('src/shapes.ts#Base@12:23'); return 1"
+ ],
+ [
+  "sleep",
+  1.2
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; const f=cy.nodes('.scope-frame'); if(!f.length) return 'no frame'; const fb=f.boundingBox({includeLabels:false}); const lb=f.boundingBox({includeNodes:false,includeEdges:false,includeLabels:true,includeOverlays:false}); const t=cy.nodes('.this').boundingBox({}); return JSON.stringify(f.data('label'))+' | label at '+Math.round(lb.x1-fb.x1)+','+Math.round(lb.y1-fb.y1)+' from the frame corner, inside: '+(lb.x1>=fb.x1&&lb.y1>=fb.y1&&lb.x2<=fb.x2&&lb.y2<=fb.y2)+', overlaps title: '+!(lb.x2<t.x1||lb.x1>t.x2||lb.y2<t.y1||lb.y1>t.y2)+' | text-events '+f.style('text-events')"
+ ],
+ [
+  "shot",
+  "notes-base.png"
+ ],
+ [
+  "js",
+  "window.zaansouvi.enter('src/shapes.ts#total@44:17'); return 1"
+ ],
+ [
+  "sleep",
+  1.2
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; const f=cy.nodes('.scope-frame'); if(!f.length) return 'no frame'; const fb=f.boundingBox({includeLabels:false}); const lb=f.boundingBox({includeNodes:false,includeEdges:false,includeLabels:true,includeOverlays:false}); const t=cy.nodes('.this').boundingBox({}); return JSON.stringify(f.data('label'))+' | label at '+Math.round(lb.x1-fb.x1)+','+Math.round(lb.y1-fb.y1)+' from the frame corner, inside: '+(lb.x1>=fb.x1&&lb.y1>=fb.y1&&lb.x2<=fb.x2&&lb.y2<=fb.y2)+', overlaps title: '+!(lb.x2<t.x1||lb.x1>t.x2||lb.y2<t.y1||lb.y1>t.y2)+' | text-events '+f.style('text-events')"
+ ],
+ [
+  "shot",
+  "notes-total.png"
+ ],
+ [
+  "js",
+  "window.zaansouvi.enter('src/shapes.ts#label@22:7'); return 1"
+ ],
+ [
+  "sleep",
+  1.2
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; const f=cy.nodes('.scope-frame'); if(!f.length) return 'no frame'; const fb=f.boundingBox({includeLabels:false}); const lb=f.boundingBox({includeNodes:false,includeEdges:false,includeLabels:true,includeOverlays:false}); const t=cy.nodes('.this').boundingBox({}); return JSON.stringify(f.data('label'))+' | label at '+Math.round(lb.x1-fb.x1)+','+Math.round(lb.y1-fb.y1)+' from the frame corner, inside: '+(lb.x1>=fb.x1&&lb.y1>=fb.y1&&lb.x2<=fb.x2&&lb.y2<=fb.y2)+', overlaps title: '+!(lb.x2<t.x1||lb.x1>t.x2||lb.y2<t.y1||lb.y1>t.y2)+' | text-events '+f.style('text-events')"
+ ],
+ [
+  "shot",
+  "notes-label.png"
+ ],
+ [
+  "js",
+  "window.zaansouvi.enter('src/app.ts#render@7:9'); return 1"
+ ],
+ [
+  "sleep",
+  1.2
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; const f=cy.nodes('.scope-frame'); if(!f.length) return 'no frame'; const fb=f.boundingBox({includeLabels:false}); const lb=f.boundingBox({includeNodes:false,includeEdges:false,includeLabels:true,includeOverlays:false}); const t=cy.nodes('.this').boundingBox({}); return JSON.stringify(f.data('label'))+' | label at '+Math.round(lb.x1-fb.x1)+','+Math.round(lb.y1-fb.y1)+' from the frame corner, inside: '+(lb.x1>=fb.x1&&lb.y1>=fb.y1&&lb.x2<=fb.x2&&lb.y2<=fb.y2)+', overlaps title: '+!(lb.x2<t.x1||lb.x1>t.x2||lb.y2<t.y1||lb.y1>t.y2)+' | text-events '+f.style('text-events')"
+ ],
+ [
+  "shot",
+  "notes-render.png"
+ ],
+ [
+  "js",
+  "window.zaansouvi.enter('src/shapes.ts#Circle@27:14'); return 1"
+ ],
+ [
+  "sleep",
+  1.2
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; const f=cy.nodes('.scope-frame'); if(!f.length) return 'no frame'; const fb=f.boundingBox({includeLabels:false}); const lb=f.boundingBox({includeNodes:false,includeEdges:false,includeLabels:true,includeOverlays:false}); const t=cy.nodes('.this').boundingBox({}); return JSON.stringify(f.data('label'))+' | label at '+Math.round(lb.x1-fb.x1)+','+Math.round(lb.y1-fb.y1)+' from the frame corner, inside: '+(lb.x1>=fb.x1&&lb.y1>=fb.y1&&lb.x2<=fb.x2&&lb.y2<=fb.y2)+', overlaps title: '+!(lb.x2<t.x1||lb.x1>t.x2||lb.y2<t.y1||lb.y1>t.y2)+' | text-events '+f.style('text-events')"
+ ],
+ [
+  "shot",
+  "notes-circle.png"
+ ],
+ [
+  "js",
+  "window.zaansouvi.enter('src/shapes.ts'); return 1"
+ ],
+ [
+  "sleep",
+  1.2
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; const f=cy.nodes('.scope-frame'); if(!f.length) return 'no frame'; const fb=f.boundingBox({includeLabels:false}); const lb=f.boundingBox({includeNodes:false,includeEdges:false,includeLabels:true,includeOverlays:false}); const t=cy.nodes('.this').boundingBox({}); return JSON.stringify(f.data('label'))+' | label at '+Math.round(lb.x1-fb.x1)+','+Math.round(lb.y1-fb.y1)+' from the frame corner, inside: '+(lb.x1>=fb.x1&&lb.y1>=fb.y1&&lb.x2<=fb.x2&&lb.y2<=fb.y2)+', overlaps title: '+!(lb.x2<t.x1||lb.x1>t.x2||lb.y2<t.y1||lb.y1>t.y2)+' | text-events '+f.style('text-events')"
+ ],
+ [
+  "shot",
+  "notes-file.png"
+ ],
+ [
+  "js",
+  "window.zaansouvi.enter('src/util/numbers.ts#percent@8:17'); return 1"
+ ],
+ [
+  "sleep",
+  1.2
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; const f=cy.nodes('.scope-frame'); if(!f.length) return 'no frame'; const fb=f.boundingBox({includeLabels:false}); const lb=f.boundingBox({includeNodes:false,includeEdges:false,includeLabels:true,includeOverlays:false}); const t=cy.nodes('.this').boundingBox({}); return JSON.stringify(f.data('label'))+' | label at '+Math.round(lb.x1-fb.x1)+','+Math.round(lb.y1-fb.y1)+' from the frame corner, inside: '+(lb.x1>=fb.x1&&lb.y1>=fb.y1&&lb.x2<=fb.x2&&lb.y2<=fb.y2)+', overlaps title: '+!(lb.x2<t.x1||lb.x1>t.x2||lb.y2<t.y1||lb.y1>t.y2)+' | text-events '+f.style('text-events')"
+ ],
+ [
+  "shot",
+  "notes-percent.png"
+ ]
+]

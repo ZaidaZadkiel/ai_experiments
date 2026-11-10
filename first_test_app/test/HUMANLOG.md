@@ -27,3 +27,26 @@ The code ai produced was very ai-like, naturally. It definitively had no concern
 ![/consideration endpoint](README.md_assets/image4.png "how the consider endpoint renders")
 
 ![/consideration endpoint](README.md_assets/image3.png "the change on the main page after adding a new name and considering it")
+
+## cleanup
+
+something which i was already aware of, and decided to use a part of this experimenting, was starting from less than ideal assumptions and see how the ai adapts to it
+After working on the mvp and getting it to a "okay" version, it was evident that the limits of the original assumption had been reached. The ai noticed it on its own and made some suggestions to that end (moving from manual parsers to actual typescript)
+
+So the idea was to start with "obviously" unsatisfactory assumptions, see how much it would push back or go along, and what suggestions it can make to figure out the "better version"
+
+Current impression is kind of unsatisfactory.
+
+Ai will happily chug along with whatever the user says, it doesnt have any judgement besides "how to fit this curve" and doing whatever it deems to reach its "goal prompt" things, most of which it decided on its own. 
+
+This means that whatever i can write, the ai will try to make. The reasoning of WHY is it a good thing do write is 100% on the user, which is one of the things that makes me the most uncomfortable about the whole endeavour. I could make a joke about schoolchildren and computer decisions, but i wont.
+
+Next up, is seeing how it fares against such a human-centric thing: cleaning up trash code and docs.
+
+I started from the most general points which then were refined over and over, then when creating mvp2, it introduced way too much contradictions and confusions. 
+
+Cleaning has been an actual effort, as expected. Since i asked ai to keep the texts on its own id with striken text for older choices, it had to choke a lot and created sub-agents to process the files, doing who know what.
+
+apparently, ai is so hardwired for expanding symbols that *reducing* symbols is hard for it.
+
+In ny case, the typescript implementation was relatively straightforward, it only added more stuff to check and many of the original assumptions held well enough to not need too much rework, which is a good finding.

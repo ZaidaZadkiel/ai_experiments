@@ -10,7 +10,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import type {
-  CacheDataGroup, CacheInvocation, Diagnostic, DryRunDiagnostics, RefreshReason, RunnerCache, RunnerEvent,
+  CacheDataGroup, CacheInvocation, Diagnostic, DryRunDiagnostics, ListedEntry, ParameterInfo, RefreshReason, RunnerCache, RunnerEvent,
 } from "../../shared/types.ts";
 import { canonicalJson, readJson, sha256, writeAtomic } from "../../shared/fsutil.ts";
 import { nullLog, openLog, readLog } from "../../shared/log.ts";
@@ -18,7 +18,7 @@ import type { Log } from "../../shared/log.ts";
 import { openDb, readSettingIfExists } from "./db.ts";
 import type { Db } from "./db.ts";
 import {
-  StartupError, checkOutputFile, dryRun, findTools, isRunnerProvided, outputFiles, outputPath, producers, readsFile,
+  RUN_LIST, StartupError, checkOutputFile, dryRun, findListedTools, isRunnerProvided, outputFiles, outputPath, producers, readsFile,
   realRun, workOutOrder,
 } from "./tools.ts";
 import type { Tool } from "./tools.ts";
@@ -144,27 +144,137 @@ process.on("SIGINT", () => process.exit(130));
 process.on("SIGTERM", () => process.exit(143));
 
 // ---------------------------------------------------------------------------
-// The file list (RUN-06, RUN-28)
+// The file list (RUN-06, RUN-28; MVP 2: RUN-34, RUN-35)
 // ---------------------------------------------------------------------------
 
+/** A file the tools may read: its absolute path, size and, when some tool reads it, its hash. */
 type FileEntry = { id: string; abs: string; size: number; sha256: string };
 
-function listFiles(root: string): FileEntry[] {
-  const out: FileEntry[] = [];
-  const walk = (dir: string, rel: string) => {
-    for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
-      if (e.isDirectory()) {
-        if (e.name !== "node_modules") walk(path.join(dir, e.name), rel ? `${rel}/${e.name}` : e.name);
-      } else if (e.isFile() && e.name.endsWith(".ts")) {
-        const abs = path.join(dir, e.name);
-        const buf = fs.readFileSync(abs);
-        out.push({ id: rel ? `${rel}/${e.name}` : e.name, abs, size: buf.length, sha256: sha256(buf) });
+/** Folders listed as a whole, not file by file (RUN-34b). Ignore files are not applied (RUN-34a). */
+const SKIPPED_FOLDERS = new Set(["node_modules", ".git"]);
+
+const canAccess = (p: string, mode: number) => {
+  try {
+    fs.accessSync(p, mode);
+    return true;
+  } catch {
+    return false;
+  }
+};
+const accessError = (p: string, mode: number) => {
+  try {
+    fs.accessSync(p, mode);
+    return undefined;
+  } catch (e) {
+    return (e as Error).message;
+  }
+};
+const insideRoot = (root: string, p: string) => {
+  const rel = path.relative(root, p);
+  return rel === "" || (!rel.startsWith("..") && !path.isAbsolute(rel));
+};
+
+/** Every file below a folder, at any depth, and their bytes; links not followed. */
+function countBelow(dir: string): { fileCount: number; totalBytes: number } {
+  let fileCount = 0, totalBytes = 0;
+  const walk = (d: string) => {
+    let list: fs.Dirent[] = [];
+    try {
+      list = fs.readdirSync(d, { withFileTypes: true });
+    } catch {
+      return;
+    }
+    for (const e of list) {
+      const p = path.join(d, e.name);
+      if (e.isDirectory()) walk(p);
+      else if (e.isFile()) {
+        fileCount++;
+        try {
+          totalBytes += fs.lstatSync(p).size;
+        } catch { /* counted, size unknown */ }
       }
     }
   };
-  walk(root, "");
-  // One fixed order: sorted by file ID, plain string comparison (RUN-28).
-  return out.sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
+  walk(dir);
+  return { fileCount, totalBytes };
+}
+
+/**
+ * Lists every entry under the source root, accurately (RUN-34): files, folders, links, others, each with its status for
+ * the user who ran the Runner (RUN-35). Opens no file except those some tool reads, to hash them. Sorted by ID (RUN-28).
+ */
+function listEntries(root: string, tools: Tool[]): { entries: ListedEntry[]; files: FileEntry[] } {
+  const entries: ListedEntry[] = [];
+  const files: FileEntry[] = [];
+  const walk = (dir: string, rel: string, hiddenAbove: boolean): { fileCount: number; totalBytes: number } => {
+    let fileCount = 0, totalBytes = 0;
+    let list: fs.Dirent[] = [];
+    try {
+      list = fs.readdirSync(dir, { withFileTypes: true });
+    } catch {
+      return { fileCount, totalBytes };
+    }
+    for (const e of list) {
+      const abs = path.join(dir, e.name);
+      const id = rel ? `${rel}/${e.name}` : e.name;
+      const hidden = hiddenAbove || e.name.startsWith(".");
+      const status: Partial<ListedEntry> = {};
+      if (hidden) status.hidden = true;
+      if (e.isSymbolicLink()) {
+        let target = "";
+        try {
+          target = fs.readlinkSync(abs);
+        } catch { /* unreadable link: target unknown */ }
+        let real = path.resolve(dir, target);
+        try {
+          real = fs.realpathSync(abs);
+        } catch { /* a dangling link: judged by where it points */ }
+        entries.push({ id, kind: "link", ...status, link: { target, outside: !insideRoot(fs.realpathSync(root), real) } });
+      } else if (e.isDirectory()) {
+        const unreadable = accessError(abs, fs.constants.R_OK | fs.constants.X_OK);
+        if (unreadable) status.unreadable = unreadable;
+        else if (!canAccess(abs, fs.constants.W_OK)) status.readOnly = true;
+        if (SKIPPED_FOLDERS.has(e.name)) {
+          const c = countBelow(abs);
+          entries.push({ id, kind: "folder", ...status, skipped: true, ...c });
+          fileCount += c.fileCount;
+          totalBytes += c.totalBytes;
+        } else {
+          const c = walk(abs, id, hidden);
+          entries.push({ id, kind: "folder", ...status, ...c });
+          fileCount += c.fileCount;
+          totalBytes += c.totalBytes;
+        }
+      } else if (e.isFile()) {
+        let size = 0;
+        try {
+          size = fs.lstatSync(abs).size;
+        } catch { /* size unknown */ }
+        fileCount++;
+        totalBytes += size;
+        const unreadable = accessError(abs, fs.constants.R_OK);
+        if (unreadable) status.unreadable = unreadable;
+        if (!canAccess(abs, fs.constants.W_OK)) status.readOnly = true;
+        if (canAccess(abs, fs.constants.X_OK)) status.executable = true;
+        const readBy = tools.filter((t) => readsFile(t, id)).map((t) => t.name);
+        const entry: ListedEntry = { id, kind: "file", sourceBytes: size, ...status };
+        if (readBy.length) entry.readBy = readBy;
+        if (readBy.length && !unreadable) {
+          const buf = fs.readFileSync(abs);
+          entry.sourceSha256 = sha256(buf);
+          files.push({ id, abs, size: buf.length, sha256: entry.sourceSha256 });
+        }
+        entries.push(entry);
+      } else {
+        entries.push({ id, kind: "other", ...status });
+      }
+    }
+    return { fileCount, totalBytes };
+  };
+  walk(root, "", false);
+  // One fixed order: sorted by ID, plain string comparison (RUN-28).
+  const byId = (a: { id: string }, b: { id: string }) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0);
+  return { entries: entries.sort(byId), files: files.sort(byId) };
 }
 
 // ---------------------------------------------------------------------------
@@ -189,9 +299,14 @@ type RunContext = {
   dryRunDiagnostics: DryRunDiagnostics["invocations"];
 };
 
-/** Runner-provided values (RUN-29). */
-function provided(ctx: RunContext, tool: Tool, dataName: string, file?: FileEntry): unknown {
-  switch (dataName) {
+/** The files a tool reads, by its patterns (MVP 2: the files of a once tool given a list, or writing per-file outputs). */
+const filesOf = (ctx: RunContext, tool: Tool) => ctx.files.filter((f) => readsFile(tool, f.id));
+
+/** Runner-provided values (RUN-29). A `list` parameter gets every value as one array (MVP 2). */
+function provided(ctx: RunContext, tool: Tool, p: ParameterInfo, file?: FileEntry): unknown {
+  if (p.list && p.dataName === "files.file.id") return filesOf(ctx, tool).map((f) => f.id);
+  if (p.list && p.dataName === "files.file.path") return filesOf(ctx, tool).map((f) => f.abs);
+  switch (p.dataName) {
     case "files.file.id": return file?.id;
     case "files.file.path": return file?.abs;
     case "project.source_root": return ctx.sourceRoot;
@@ -199,9 +314,9 @@ function provided(ctx: RunContext, tool: Tool, dataName: string, file?: FileEntr
     default: return undefined;
   }
 }
-const canProvide = (tool: Tool, dataName: string) =>
-  dataName === "project.source_root" || dataName === "zaansouvi.store_path" ||
-  ((dataName === "files.file.id" || dataName === "files.file.path") && tool.info.invocation === "per-file");
+const canProvide = (tool: Tool, p: ParameterInfo) =>
+  p.dataName === "project.source_root" || p.dataName === "zaansouvi.store_path" ||
+  ((p.dataName === "files.file.id" || p.dataName === "files.file.path") && (tool.info.invocation === "per-file" || p.list === true));
 
 /**
  * Builds the JSON for one invocation (RUN-19): Runner-provided values, and only the records of each data name a tool asks for,
@@ -210,14 +325,16 @@ const canProvide = (tool: Tool, dataName: string) =>
 function buildInput(ctx: RunContext, tool: Tool, prod: Map<string, Tool>, file?: FileEntry) {
   const input: Record<string, unknown> = {};
   const forCache: Record<string, unknown> = {};
-  const fileHashes: Record<string, string> = {};
+  const fileHashes: Record<string, unknown> = {};
   const staleInputs = new Set<string>();
   for (const [key, p] of Object.entries(tool.info.parameters)) {
     if (isRunnerProvided(p.dataName)) {
-      const v = provided(ctx, tool, p.dataName, file);
+      const v = provided(ctx, tool, p, file);
       if (v === undefined) continue; // optional and not provided: the tool uses its default (TOOL-43)
       input[key] = forCache[key] = v;
       if (p.dataName.startsWith("files.file.") && file) fileHashes[key] = file.sha256;
+      // A list of files: the tool reruns when any of them changed (TSP-D11).
+      if (p.dataName.startsWith("files.file.") && p.list) fileHashes[key] = Object.fromEntries(filesOf(ctx, tool).map((f) => [f.id, f.sha256]));
       continue;
     }
     const from = prod.get(p.dataName);
@@ -239,6 +356,21 @@ function buildInput(ctx: RunContext, tool: Tool, prod: Map<string, Tool>, file?:
       }
       input[key] = values; // one flat array, in file order; sent even when empty: the tool then says no-go itself (RUN-16)
       forCache[key] = refs;
+    } else if (out.perFile) {
+      // A once tool's per-file outputs (MVP 2): the same as a per-file tool's, from the files it was given.
+      const values: unknown[] = [];
+      const refs: string[] = [];
+      for (const f of filesOf(ctx, from)) {
+        const json = ctx.available.get(outputPath(store, out, f.id));
+        if (!json) {
+          staleInputs.add(f.id);
+          continue;
+        }
+        values.push(...(json[out.jsonKey] as unknown[]));
+        refs.push(`${from.name}:${f.id}`);
+      }
+      input[key] = values;
+      forCache[key] = refs;
     } else {
       const json = ctx.available.get(outputPath(store, out));
       input[key] = json ? (json[out.jsonKey] as unknown[]) : [];
@@ -251,7 +383,7 @@ function buildInput(ctx: RunContext, tool: Tool, prod: Map<string, Tool>, file?:
 
 /** Reads and checks the output files of one invocation into `available`. */
 function loadOwnOutputs(ctx: RunContext, tool: Tool, fileId?: string): { ok: true } | { ok: false; problem: string } {
-  for (const [file, outs] of outputFiles(tool, ctx.stores.get(tool.name)!, fileId)) {
+  for (const [file, outs] of outputFiles(tool, ctx.stores.get(tool.name)!, fileId, filesOf(ctx, tool).map((f) => f.id))) {
     const r = checkOutputFile(file, outs);
     if ("problem" in r) {
       ctx.available.delete(file);
@@ -263,7 +395,7 @@ function loadOwnOutputs(ctx: RunContext, tool: Tool, fileId?: string): { ok: tru
 }
 
 function dropOwnOutputs(ctx: RunContext, tool: Tool, fileId?: string) {
-  for (const file of outputFiles(tool, ctx.stores.get(tool.name)!, fileId).keys()) ctx.available.delete(file);
+  for (const file of outputFiles(tool, ctx.stores.get(tool.name)!, fileId, filesOf(ctx, tool).map((f) => f.id)).keys()) ctx.available.delete(file);
 }
 
 /** RUN-20: the first matching reason, or up-to-date. */
@@ -385,7 +517,7 @@ function invoke(ctx: RunContext, tool: Tool, prod: Map<string, Tool>, file?: Fil
     dropOwnOutputs(ctx, tool, fileId);
     return false;
   }
-  for (const [file, outs] of outputFiles(tool, ctx.stores.get(tool.name)!, fileId)) {
+  for (const [file, outs] of outputFiles(tool, ctx.stores.get(tool.name)!, fileId, filesOf(ctx, tool).map((f) => f.id))) {
     for (const o of outs) ctx.db.recordOutput(tool.name, o.dataName, o.formatVersion, file, fingerprint);
   }
   return true;
@@ -397,7 +529,7 @@ function buildData(ctx: RunContext): Record<string, CacheDataGroup> {
   for (const tool of ctx.order) {
     const store = ctx.stores.get(tool.name)!;
     for (const o of tool.info.outputs) {
-      const targets = tool.info.invocation === "per-file" ? ctx.files.filter((f) => readsFile(tool, f.id)).map((f) => f.id) : [undefined];
+      const targets = tool.info.invocation === "per-file" || o.perFile ? filesOf(ctx, tool).map((f) => f.id) : [undefined];
       for (const fileId of targets) {
         const json = ctx.available.get(outputPath(store, o, fileId));
         if (!json || !Array.isArray(json[o.jsonKey])) continue;
@@ -504,13 +636,17 @@ function main(argv: string[]): number {
     // RUN-05: the tools, their --info, the order; RUN-29: what the Runner must provide.
     let order: Tool[];
     let prod: Map<string, Tool>;
+    let notListed: string[] = [];
     try {
-      const tools = findTools(TOOLS_DIR, (folder, reason) => log.entry("info", "tool_folder_skipped", { folder, reason }));
+      // RUN-33: the run list, checked against the folders; tool folders not listed are reported, not run.
+      const found = findListedTools(TOOLS_DIR, RUN_LIST);
+      notListed = found.notListed;
+      const tools = found.tools;
       order = workOutOrder(tools);
       prod = producers(tools);
       for (const t of order) {
         for (const [key, p] of Object.entries(t.info.parameters)) {
-          if (p.required && isRunnerProvided(p.dataName) && !canProvide(t, p.dataName)) {
+          if (p.required && isRunnerProvided(p.dataName) && !canProvide(t, p)) {
             throw new StartupError("no-provider", `Tool "${t.name}" requires parameter "${key}" (data "${p.dataName}"), which the Runner can't provide to it.`, { tool: t.name, parameter: key });
           }
         }
@@ -538,10 +674,19 @@ function main(argv: string[]): number {
 
     emit({ event: "run_started", runId, mode, sourceRoot, time: started.toISOString() });
     db.startRun(runId, mode, started.toISOString(), log.path);
+    for (const t of notListed) {
+      log.entry("info", "tool_not_listed", { tool: t });
+      emit({ event: "tool_not_listed", tool: t });
+    }
 
-    const files = listFiles(sourceRoot);
-    db.writeFiles(sourceRoot, files.map((f) => ({ id: f.id, size: f.size, sha256: f.sha256 })));
-    emit({ event: "files_listed", fileCount: files.length });
+    const { entries, files } = listEntries(sourceRoot, order);
+    db.writeFiles(sourceRoot, entries.filter((e) => e.kind === "file").map((e) => ({ id: e.id, size: e.sourceBytes ?? 0, sha256: e.sourceSha256 ?? "" })));
+    const fileEntries = entries.filter((e) => e.kind === "file");
+    emit({
+      event: "files_listed", fileCount: fileEntries.length, folderCount: entries.filter((e) => e.kind === "folder").length,
+      skippedFolders: entries.filter((e) => e.skipped).map((e) => ({ id: e.id, fileCount: e.fileCount ?? 0, totalBytes: e.totalBytes ?? 0 })),
+      perTool: Object.fromEntries(order.map((t) => [t.name, files.filter((f) => readsFile(t, f.id)).length])), ignoreFiles: "not applied",
+    });
 
     const ctx: RunContext = {
       mode, runId, sourceRoot, db, order, files, stores,
@@ -551,6 +696,16 @@ function main(argv: string[]): number {
     let ok = true;
     for (const tool of order) {
       const targets = tool.info.invocation === "per-file" ? files.filter((f) => readsFile(tool, f.id)) : [undefined];
+      // A tool given its files as a list with none to read: stop before running it, saying why (FND-75, the generic answer).
+      const listParam = Object.values(tool.info.parameters).some((p) => p.list && p.dataName.startsWith("files.file."));
+      if (listParam && files.filter((f) => readsFile(tool, f.id)).length === 0) {
+        const patterns = tool.info.readsFiles === false ? [] : tool.info.readsFiles.filePatterns ?? [];
+        const message = `${tool.name} reads files matching ${patterns.join(", ")}: none of the ${fileEntries.length} files listed under ${sourceRoot} matches.`;
+        log.entry("error", "no_files_to_read", { tool: tool.name, patterns, fileCount: fileEntries.length });
+        emit({ event: "tool_dry_run", tool: tool.name, refreshReason: "missing", dryRun: "no-go", errorKind: "run", error: { severity: "error", code: "E12", message }, staleInputs: [] });
+        ok = false;
+        break;
+      }
       for (const file of targets) {
         if (!invoke(ctx, tool, prod, file)) {
           ok = false;
@@ -570,8 +725,9 @@ function main(argv: string[]): number {
       const cache: RunnerCache = {
         formatVersion: CACHE_FORMAT_VERSION,
         run: { runId, mode: "real", outcome, exitCode, started: started.toISOString(), finished: finished.toISOString(), sourceRoot, logPath: log.path },
-        files: files.map((f) => ({ id: f.id, sourceBytes: f.size, sourceSha256: f.sha256 })),
+        files: entries,
         tools: order.map((t, i) => ({ tool: t.name, position: i + 1, info: t.info })),
+        notListed,
         invocations: ctx.invocations,
         data: buildData(ctx),
       };

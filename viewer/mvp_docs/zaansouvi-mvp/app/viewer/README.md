@@ -8,7 +8,7 @@ Needs Node 22.18 or later.
 
 ```
 cd app/viewer
-npm install                 # Cytoscape 3.34.4 (pinned), and TypeScript for the build and the type check
+npm ci                      # Cytoscape 3.34.4, and TypeScript for the build and the type check, exact from package-lock.json
 npm run build               # compiles the page (ui/src) into ui/dist; needed once, and after changing the page
 ./zaansouvi-view            # or with --port <n>; default 4310
 ```
@@ -39,8 +39,8 @@ The server runs its TypeScript directly with Node's type stripping, so it may us
 ## Checks
 
 From `zaansouvi-mvp/`:
-- `node tests/viewer/check-model.mjs`: the graph model against `expected/graph-views.json`, two builds byte-identical, six damaged caches (`BE-91`, `BE-92`).
-- `node tests/viewer/check-server.mjs`: the backend on a temporary copy of the MVP: security, reads, the activity log, runs, bad data across restarts (`BE-92` to `BE-94`). Needs a Runner cache in `data/`.
+- `node tests/viewer/check-model.mjs`: the graph model against `expected/graph-views.json`, two builds byte-identical, six damaged caches (`BE-91`, `BE-92`). It runs on MVP 1's frozen cache in `expected/`; no model check on `test-source-mvp2` exists yet.
+- `node tests/viewer/check-server.mjs`: the backend on a temporary copy of the MVP, after a run of `ts-program` on a copy of `test-source-mvp2`: security, reads, the activity log, runs, bad data across restarts (`BE-92` to `BE-94`), 37 checks.
 - `npm run typecheck` in this folder.
 
-The page itself is reviewed by a person (`BE-95`). `window.zaansouvi` exposes `enter`, `select`, `tab` and `tools` for scripted checks; `tests/viewer/browse/` drives the page in headless Firefox, printing what it holds and taking screenshots (its `README.md`).
+The page itself is reviewed by a person (`BE-95`, `M2Q-8`). `window.zaansouvi` exposes `enter`, `select`, `tab` and `tools` for scripted checks; `tests/viewer/browse/` drives the page in headless Firefox, printing what it holds and taking screenshots (its `README.md`). They use the real `data/`, so stop your own Viewer first.

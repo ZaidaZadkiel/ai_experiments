@@ -1,201 +1,526 @@
-2026-11-09T16:07:57.042Z	info	log_cleared	{"verbosity":"normal","actor":"user","text":"You cleared the log"}
-2026-11-09T16:07:59.834Z	info	run_requested	{"verbosity":"normal","actor":"user","text":"You executed a manual run","sourceRoot":"/home/zaida/viewercopy/runner"}
-2026-11-09T16:08:00.897Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Run started on /home/zaida/viewercopy/runner","runnerEvent":{"event":"run_started","runId":"2026-11-09T16-07-59.975Z-187935","mode":"real","sourceRoot":"/home/zaida/viewercopy/runner","time":"2026-11-09T16:07:59.975Z"}}
-2026-11-09T16:08:00.957Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"3 files listed","runnerEvent":{"event":"files_listed","fileCount":3}}
-2026-11-09T16:08:00.963Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"file-symbols, src/db.ts: skipped, up to date","runnerEvent":{"event":"tool_skipped","tool":"file-symbols","file_id":"src/db.ts","refreshReason":"up-to-date"}}
-2026-11-09T16:08:00.980Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"file-symbols, src/runner.ts: skipped, up to date","runnerEvent":{"event":"tool_skipped","tool":"file-symbols","file_id":"src/runner.ts","refreshReason":"up-to-date"}}
-2026-11-09T16:08:00.997Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"file-symbols, src/tools.ts: skipped, up to date","runnerEvent":{"event":"tool_skipped","tool":"file-symbols","file_id":"src/tools.ts","refreshReason":"up-to-date"}}
-2026-11-09T16:08:01.293Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"cross-file-links: go (inputs-changed)","runnerEvent":{"event":"tool_dry_run","tool":"cross-file-links","refreshReason":"inputs-changed","dryRun":"go","staleInputs":[]}}
-2026-11-09T16:08:01.555Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"cross-file-links: ran, output update","runnerEvent":{"event":"tool_run","tool":"cross-file-links","status":"succeeded","logPath":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/data/tools/cross-file-links/logs/2026-11-09T16-08-01.505Z.log","outputChange":"update"}}
-2026-11-09T16:08:01.788Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"symbol-scope: go (inputs-changed)","runnerEvent":{"event":"tool_dry_run","tool":"symbol-scope","refreshReason":"inputs-changed","dryRun":"go","staleInputs":[]}}
-2026-11-09T16:08:01.953Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"symbol-scope: ran, output update","runnerEvent":{"event":"tool_run","tool":"symbol-scope","status":"succeeded","logPath":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/data/tools/symbol-scope/logs/2026-11-09T16-08-01.918Z.log","outputChange":"update"}}
-2026-11-09T16:08:02.002Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Runner finished: succeeded, exit code 0","runnerEvent":{"event":"run_finished","runId":"2026-11-09T16-07-59.975Z-187935","outcome":"succeeded","exitCode":0,"time":"2026-11-09T16:08:01.969Z","logPath":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/data/runner/logs/2026-11-09T16-07-59.975Z.log"}}
-2026-11-09T16:08:02.011Z	info	run_result	{"verbosity":"minimal","actor":"app","text":"Run succeeded: 2 ran, 3 skipped, 0 errors","outcome":"succeeded","counts":{"ranCount":2,"skippedCount":3,"errorCount":0}}
-2026-11-09T16:08:02.219Z	info	output_checked	{"verbosity":"normal","actor":"app","text":"Checked the run's output: 0 records invalid, 3 extra","runId":"2026-11-09T16-07-59.975Z-187935","counts":{"invalidCount":0,"extraCount":3}}
-2026-11-09T16:08:02.219Z	info	output_checked	{"verbosity":"verbose","actor":"app","text":"Extra: code.link: not read by the Viewer: moduleSpecifier","item":{"dataName":"code.link","tool":"cross-file-links","what":"keys","detail":"not read by the Viewer: moduleSpecifier"}}
-2026-11-09T16:08:02.219Z	info	output_checked	{"verbosity":"verbose","actor":"app","text":"Extra: code.reference: not read by the Viewer: enclosing, symbol","item":{"dataName":"code.reference","tool":"file-symbols","what":"keys","detail":"not read by the Viewer: enclosing, symbol"}}
-2026-11-09T16:08:02.219Z	info	output_checked	{"verbosity":"verbose","actor":"app","text":"Extra: code.symbol: not read by the Viewer: exported, import, range","item":{"dataName":"code.symbol","tool":"file-symbols","what":"keys","detail":"not read by the Viewer: exported, import, range"}}
-2026-11-09T16:08:02.412Z	info	cached_graph_loaded	{"verbosity":"normal","actor":"app","text":"Loaded the graph from the run of 2026-11-09 16:08","runId":"2026-11-09T16-07-59.975Z-187935"}
 # [session] zaansouvi-view 0.1.0, port 4399
-2026-11-09T16:18:34.899Z	info	viewer_started	{"verbosity":"minimal","actor":"app","text":"Viewer 0.1.0 started on port 4399","port":4399}
-2026-11-09T16:18:42.548Z	info	cached_graph_loaded	{"verbosity":"normal","actor":"app","text":"Loaded the graph from the run of 2026-11-09 16:04","runId":"2026-11-09T16-04-08.322Z-187682"}
-2026-11-09T16:18:43.797Z	info	run_requested	{"verbosity":"normal","actor":"user","text":"You executed a manual run","sourceRoot":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source"}
-2026-11-09T16:18:44.658Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Run started on /home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source","runnerEvent":{"event":"run_started","runId":"2026-11-09T16-18-43.934Z-189097","mode":"real","sourceRoot":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source","time":"2026-11-09T16:18:43.934Z"}}
-2026-11-09T16:18:44.693Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"3 files listed","runnerEvent":{"event":"files_listed","fileCount":3}}
-2026-11-09T16:18:44.699Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"file-symbols, src/counter.ts: skipped, up to date","runnerEvent":{"event":"tool_skipped","tool":"file-symbols","file_id":"src/counter.ts","refreshReason":"up-to-date"}}
-2026-11-09T16:18:44.711Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"file-symbols, src/main.ts: skipped, up to date","runnerEvent":{"event":"tool_skipped","tool":"file-symbols","file_id":"src/main.ts","refreshReason":"up-to-date"}}
-2026-11-09T16:18:44.722Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"file-symbols, src/math.ts: skipped, up to date","runnerEvent":{"event":"tool_skipped","tool":"file-symbols","file_id":"src/math.ts","refreshReason":"up-to-date"}}
-2026-11-09T16:18:44.867Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"cross-file-links: go (inputs-changed)","runnerEvent":{"event":"tool_dry_run","tool":"cross-file-links","refreshReason":"inputs-changed","dryRun":"go","staleInputs":[]}}
-2026-11-09T16:18:45.115Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"cross-file-links: ran, output update","runnerEvent":{"event":"tool_run","tool":"cross-file-links","status":"succeeded","logPath":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/data/tools/cross-file-links/logs/2026-11-09T16-18-45.093Z.log","outputChange":"update"}}
-2026-11-09T16:18:45.246Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"symbol-scope: go (inputs-changed)","runnerEvent":{"event":"tool_dry_run","tool":"symbol-scope","refreshReason":"inputs-changed","dryRun":"go","staleInputs":[]}}
-2026-11-09T16:18:45.459Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"symbol-scope: ran, output update","runnerEvent":{"event":"tool_run","tool":"symbol-scope","status":"succeeded","logPath":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/data/tools/symbol-scope/logs/2026-11-09T16-18-45.426Z.log","outputChange":"update"}}
-2026-11-09T16:18:45.483Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Runner finished: succeeded, exit code 0","runnerEvent":{"event":"run_finished","runId":"2026-11-09T16-18-43.934Z-189097","outcome":"succeeded","exitCode":0,"time":"2026-11-09T16:18:45.472Z","logPath":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/data/runner/logs/2026-11-09T16-18-43.934Z.log"}}
-2026-11-09T16:18:45.493Z	info	run_result	{"verbosity":"minimal","actor":"app","text":"Run succeeded: 2 ran, 3 skipped, 0 errors","outcome":"succeeded","counts":{"ranCount":2,"skippedCount":3,"errorCount":0}}
-2026-11-09T16:18:45.662Z	info	output_checked	{"verbosity":"normal","actor":"app","text":"Checked the run's output: 0 records invalid, 3 extra","runId":"2026-11-09T16-18-43.934Z-189097","counts":{"invalidCount":0,"extraCount":3}}
-2026-11-09T16:18:45.662Z	info	output_checked	{"verbosity":"verbose","actor":"app","text":"Extra: code.link: not read by the Viewer: moduleSpecifier","item":{"dataName":"code.link","tool":"cross-file-links","what":"keys","detail":"not read by the Viewer: moduleSpecifier"}}
-2026-11-09T16:18:45.662Z	info	output_checked	{"verbosity":"verbose","actor":"app","text":"Extra: code.reference: not read by the Viewer: enclosing, symbol","item":{"dataName":"code.reference","tool":"file-symbols","what":"keys","detail":"not read by the Viewer: enclosing, symbol"}}
-2026-11-09T16:18:45.662Z	info	output_checked	{"verbosity":"verbose","actor":"app","text":"Extra: code.symbol: not read by the Viewer: exported, import, range","item":{"dataName":"code.symbol","tool":"file-symbols","what":"keys","detail":"not read by the Viewer: exported, import, range"}}
-2026-11-09T16:18:45.943Z	info	cached_graph_loaded	{"verbosity":"normal","actor":"app","text":"Loaded the graph from the run of 2026-11-09 16:18","runId":"2026-11-09T16-18-43.934Z-189097"}
-2026-11-09T16:18:47.515Z	info	dry_run_requested	{"verbosity":"normal","actor":"user","text":"You started a dry run","sourceRoot":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source"}
-2026-11-09T16:18:48.455Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Dry run started on /home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source","runnerEvent":{"event":"run_started","runId":"2026-11-09T16-18-47.741Z-189221","mode":"dry-run","sourceRoot":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source","time":"2026-11-09T16:18:47.741Z"}}
-2026-11-09T16:18:48.502Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"3 files listed","runnerEvent":{"event":"files_listed","fileCount":3}}
-2026-11-09T16:18:49.333Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"file-symbols, src/counter.ts: go (up-to-date)","runnerEvent":{"event":"tool_dry_run","tool":"file-symbols","file_id":"src/counter.ts","refreshReason":"up-to-date","dryRun":"go","staleInputs":[]}}
-2026-11-09T16:18:50.169Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"file-symbols, src/main.ts: go (up-to-date)","runnerEvent":{"event":"tool_dry_run","tool":"file-symbols","file_id":"src/main.ts","refreshReason":"up-to-date","dryRun":"go","staleInputs":[]}}
-2026-11-09T16:18:50.683Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"file-symbols, src/math.ts: go (up-to-date)","runnerEvent":{"event":"tool_dry_run","tool":"file-symbols","file_id":"src/math.ts","refreshReason":"up-to-date","dryRun":"go","staleInputs":[]}}
-2026-11-09T16:18:50.930Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"cross-file-links: go (up-to-date)","runnerEvent":{"event":"tool_dry_run","tool":"cross-file-links","refreshReason":"up-to-date","dryRun":"go","staleInputs":[]}}
-2026-11-09T16:18:51.068Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"symbol-scope: go (up-to-date)","runnerEvent":{"event":"tool_dry_run","tool":"symbol-scope","refreshReason":"up-to-date","dryRun":"go","staleInputs":[]}}
-2026-11-09T16:18:51.085Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Runner finished: succeeded, exit code 0","runnerEvent":{"event":"run_finished","runId":"2026-11-09T16-18-47.741Z-189221","outcome":"succeeded","exitCode":0,"time":"2026-11-09T16:18:51.076Z","logPath":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/data/runner/logs/2026-11-09T16-18-47.741Z.log"}}
-2026-11-09T16:18:51.095Z	info	dry_run_result	{"verbosity":"minimal","actor":"app","text":"Dry run resulted in 0 errors: 5 of 5 go","counts":{"goCount":5,"noGoCount":0}}
-2026-11-09T16:18:52.872Z	info	viewer_stopped	{"verbosity":"minimal","actor":"app","text":"Viewer stopped"}
+2026-11-10T17:20:57.166Z	info	viewer_started	{"verbosity":"minimal","actor":"app","text":"Viewer 0.1.0 started on port 4399","port":4399}
+2026-11-10T17:21:05.857Z	info	source_opened	{"verbosity":"normal","actor":"user","text":"You opened folder \"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source-mvp2\" for examination","sourceRoot":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source-mvp2"}
+2026-11-10T17:21:06.004Z	info	run_requested	{"verbosity":"normal","actor":"user","text":"You executed a manual run","sourceRoot":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source-mvp2"}
+2026-11-10T17:21:06.688Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Run started on /home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source-mvp2","runnerEvent":{"event":"run_started","runId":"2026-11-10T17-21-06.148Z-284678","mode":"real","sourceRoot":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source-mvp2","time":"2026-11-10T17:21:06.148Z"}}
+2026-11-10T17:21:06.700Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Runner event tool_not_listed","runnerEvent":{"event":"tool_not_listed","tool":"cross-file-links"}}
+2026-11-10T17:21:06.700Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Runner event tool_not_listed","runnerEvent":{"event":"tool_not_listed","tool":"file-symbols"}}
+2026-11-10T17:21:06.700Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Runner event tool_not_listed","runnerEvent":{"event":"tool_not_listed","tool":"symbol-scope"}}
+2026-11-10T17:21:06.771Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"7 files listed","runnerEvent":{"event":"files_listed","fileCount":7,"folderCount":4,"skippedFolders":[],"perTool":{"ts-program":6},"ignoreFiles":"not applied"}}
+2026-11-10T17:21:07.503Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"ts-program: go (missing)","runnerEvent":{"event":"tool_dry_run","tool":"ts-program","refreshReason":"missing","dryRun":"go","staleInputs":[]}}
+2026-11-10T17:21:08.329Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"ts-program: ran, output create","runnerEvent":{"event":"tool_run","tool":"ts-program","status":"succeeded","logPath":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/data/tools/ts-program/logs/2026-11-10T17-21-07.906Z_program.log","outputChange":"create"}}
+2026-11-10T17:21:08.445Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Runner finished: succeeded, exit code 0","runnerEvent":{"event":"run_finished","runId":"2026-11-10T17-21-06.148Z-284678","outcome":"succeeded","exitCode":0,"time":"2026-11-10T17:21:08.431Z","logPath":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/data/runner/logs/2026-11-10T17-21-06.148Z.log"}}
+2026-11-10T17:21:08.456Z	info	run_result	{"verbosity":"minimal","actor":"app","text":"Run succeeded: 1 ran, 0 skipped, 0 errors","outcome":"succeeded","counts":{"ranCount":1,"skippedCount":0,"errorCount":0}}
+2026-11-10T17:21:08.694Z	info	output_checked	{"verbosity":"normal","actor":"app","text":"Checked the run's output: nothing invalid, no extra data","runId":"2026-11-10T17-21-06.148Z-284678","counts":{"invalidCount":0,"extraCount":0}}
+2026-11-10T17:21:08.826Z	info	cached_graph_loaded	{"verbosity":"normal","actor":"app","text":"Loaded the graph from the run of 2026-11-10 17:21","runId":"2026-11-10T17-21-06.148Z-284678"}
+2026-11-10T17:21:10.764Z	info	level_entered	{"verbosity":"verbose","actor":"user","text":"You entered bars.ts","nodeId":"src/report/charts/bars.ts"}
+2026-11-10T17:21:12.444Z	info	viewer_stopped	{"verbosity":"minimal","actor":"app","text":"Viewer stopped"}
 # [session] zaansouvi-view 0.1.0, port 4399
-2026-11-09T16:19:16.986Z	info	viewer_started	{"verbosity":"minimal","actor":"app","text":"Viewer 0.1.0 started on port 4399","port":4399}
-2026-11-09T16:19:24.846Z	info	cached_graph_loaded	{"verbosity":"normal","actor":"app","text":"Loaded the graph from the run of 2026-11-09 16:18","runId":"2026-11-09T16-18-43.934Z-189097"}
-2026-11-09T16:19:26.182Z	info	run_requested	{"verbosity":"normal","actor":"user","text":"You executed a manual run","sourceRoot":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source"}
-2026-11-09T16:19:27.348Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Run started on /home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source","runnerEvent":{"event":"run_started","runId":"2026-11-09T16-19-26.323Z-190029","mode":"real","sourceRoot":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source","time":"2026-11-09T16:19:26.323Z"}}
-2026-11-09T16:19:27.403Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"3 files listed","runnerEvent":{"event":"files_listed","fileCount":3}}
-2026-11-09T16:19:27.406Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"file-symbols, src/counter.ts: skipped, up to date","runnerEvent":{"event":"tool_skipped","tool":"file-symbols","file_id":"src/counter.ts","refreshReason":"up-to-date"}}
-2026-11-09T16:19:27.414Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"file-symbols, src/main.ts: skipped, up to date","runnerEvent":{"event":"tool_skipped","tool":"file-symbols","file_id":"src/main.ts","refreshReason":"up-to-date"}}
-2026-11-09T16:19:27.426Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"file-symbols, src/math.ts: skipped, up to date","runnerEvent":{"event":"tool_skipped","tool":"file-symbols","file_id":"src/math.ts","refreshReason":"up-to-date"}}
-2026-11-09T16:19:27.441Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"cross-file-links: skipped, up to date","runnerEvent":{"event":"tool_skipped","tool":"cross-file-links","refreshReason":"up-to-date"}}
-2026-11-09T16:19:27.453Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"symbol-scope: skipped, up to date","runnerEvent":{"event":"tool_skipped","tool":"symbol-scope","refreshReason":"up-to-date"}}
-2026-11-09T16:19:27.476Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Runner finished: succeeded, exit code 0","runnerEvent":{"event":"run_finished","runId":"2026-11-09T16-19-26.323Z-190029","outcome":"succeeded","exitCode":0,"time":"2026-11-09T16:19:27.465Z","logPath":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/data/runner/logs/2026-11-09T16-19-26.323Z.log"}}
-2026-11-09T16:19:27.485Z	info	run_result	{"verbosity":"minimal","actor":"app","text":"Run succeeded: 0 ran, 5 skipped, 0 errors","outcome":"succeeded","counts":{"ranCount":0,"skippedCount":5,"errorCount":0}}
-2026-11-09T16:19:27.730Z	info	output_checked	{"verbosity":"normal","actor":"app","text":"Checked the run's output: 0 records invalid, 3 extra","runId":"2026-11-09T16-19-26.323Z-190029","counts":{"invalidCount":0,"extraCount":3}}
-2026-11-09T16:19:27.730Z	info	output_checked	{"verbosity":"verbose","actor":"app","text":"Extra: code.link: not read by the Viewer: moduleSpecifier","item":{"dataName":"code.link","tool":"cross-file-links","what":"keys","detail":"not read by the Viewer: moduleSpecifier"}}
-2026-11-09T16:19:27.730Z	info	output_checked	{"verbosity":"verbose","actor":"app","text":"Extra: code.reference: not read by the Viewer: enclosing, symbol","item":{"dataName":"code.reference","tool":"file-symbols","what":"keys","detail":"not read by the Viewer: enclosing, symbol"}}
-2026-11-09T16:19:27.730Z	info	output_checked	{"verbosity":"verbose","actor":"app","text":"Extra: code.symbol: not read by the Viewer: exported, import, range","item":{"dataName":"code.symbol","tool":"file-symbols","what":"keys","detail":"not read by the Viewer: exported, import, range"}}
-2026-11-09T16:19:27.881Z	info	cached_graph_loaded	{"verbosity":"normal","actor":"app","text":"Loaded the graph from the run of 2026-11-09 16:19","runId":"2026-11-09T16-19-26.323Z-190029"}
-2026-11-09T16:19:29.576Z	info	dry_run_requested	{"verbosity":"normal","actor":"user","text":"You started a dry run","sourceRoot":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source"}
-2026-11-09T16:19:30.409Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Dry run started on /home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source","runnerEvent":{"event":"run_started","runId":"2026-11-09T16-19-29.708Z-190108","mode":"dry-run","sourceRoot":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source","time":"2026-11-09T16:19:29.708Z"}}
-2026-11-09T16:19:30.443Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"3 files listed","runnerEvent":{"event":"files_listed","fileCount":3}}
-2026-11-09T16:19:30.889Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"file-symbols, src/counter.ts: go (up-to-date)","runnerEvent":{"event":"tool_dry_run","tool":"file-symbols","file_id":"src/counter.ts","refreshReason":"up-to-date","dryRun":"go","staleInputs":[]}}
-2026-11-09T16:19:31.743Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"file-symbols, src/main.ts: go (up-to-date)","runnerEvent":{"event":"tool_dry_run","tool":"file-symbols","file_id":"src/main.ts","refreshReason":"up-to-date","dryRun":"go","staleInputs":[]}}
-2026-11-09T16:19:32.616Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"file-symbols, src/math.ts: go (up-to-date)","runnerEvent":{"event":"tool_dry_run","tool":"file-symbols","file_id":"src/math.ts","refreshReason":"up-to-date","dryRun":"go","staleInputs":[]}}
-2026-11-09T16:19:32.861Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"cross-file-links: go (up-to-date)","runnerEvent":{"event":"tool_dry_run","tool":"cross-file-links","refreshReason":"up-to-date","dryRun":"go","staleInputs":[]}}
-2026-11-09T16:19:33.103Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"symbol-scope: go (up-to-date)","runnerEvent":{"event":"tool_dry_run","tool":"symbol-scope","refreshReason":"up-to-date","dryRun":"go","staleInputs":[]}}
-2026-11-09T16:19:33.122Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Runner finished: succeeded, exit code 0","runnerEvent":{"event":"run_finished","runId":"2026-11-09T16-19-29.708Z-190108","outcome":"succeeded","exitCode":0,"time":"2026-11-09T16:19:33.113Z","logPath":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/data/runner/logs/2026-11-09T16-19-29.708Z.log"}}
-2026-11-09T16:19:33.129Z	info	dry_run_result	{"verbosity":"minimal","actor":"app","text":"Dry run resulted in 0 errors: 5 of 5 go","counts":{"goCount":5,"noGoCount":0}}
-2026-11-09T16:19:34.983Z	info	viewer_stopped	{"verbosity":"minimal","actor":"app","text":"Viewer stopped"}
+2026-11-10T17:21:12.718Z	info	viewer_started	{"verbosity":"minimal","actor":"app","text":"Viewer 0.1.0 started on port 4399","port":4399}
+2026-11-10T17:21:38.030Z	info	viewer_stopped	{"verbosity":"minimal","actor":"app","text":"Viewer stopped"}
 # [session] zaansouvi-view 0.1.0, port 4399
-2026-11-09T16:19:43.767Z	info	viewer_started	{"verbosity":"minimal","actor":"app","text":"Viewer 0.1.0 started on port 4399","port":4399}
-2026-11-09T16:19:51.348Z	info	cached_graph_loaded	{"verbosity":"normal","actor":"app","text":"Loaded the graph from the run of 2026-11-09 16:19","runId":"2026-11-09T16-19-26.323Z-190029"}
-2026-11-09T16:19:52.587Z	info	run_requested	{"verbosity":"normal","actor":"user","text":"You executed a manual run","sourceRoot":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source"}
-2026-11-09T16:19:53.647Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Run started on /home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source","runnerEvent":{"event":"run_started","runId":"2026-11-09T16-19-52.721Z-190819","mode":"real","sourceRoot":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source","time":"2026-11-09T16:19:52.721Z"}}
-2026-11-09T16:19:53.685Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"3 files listed","runnerEvent":{"event":"files_listed","fileCount":3}}
-2026-11-09T16:19:53.690Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"file-symbols, src/counter.ts: skipped, up to date","runnerEvent":{"event":"tool_skipped","tool":"file-symbols","file_id":"src/counter.ts","refreshReason":"up-to-date"}}
-2026-11-09T16:19:53.704Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"file-symbols, src/main.ts: skipped, up to date","runnerEvent":{"event":"tool_skipped","tool":"file-symbols","file_id":"src/main.ts","refreshReason":"up-to-date"}}
-2026-11-09T16:19:53.720Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"file-symbols, src/math.ts: skipped, up to date","runnerEvent":{"event":"tool_skipped","tool":"file-symbols","file_id":"src/math.ts","refreshReason":"up-to-date"}}
-2026-11-09T16:19:53.731Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"cross-file-links: skipped, up to date","runnerEvent":{"event":"tool_skipped","tool":"cross-file-links","refreshReason":"up-to-date"}}
-2026-11-09T16:19:53.743Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"symbol-scope: skipped, up to date","runnerEvent":{"event":"tool_skipped","tool":"symbol-scope","refreshReason":"up-to-date"}}
-2026-11-09T16:19:53.761Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Runner finished: succeeded, exit code 0","runnerEvent":{"event":"run_finished","runId":"2026-11-09T16-19-52.721Z-190819","outcome":"succeeded","exitCode":0,"time":"2026-11-09T16:19:53.751Z","logPath":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/data/runner/logs/2026-11-09T16-19-52.721Z.log"}}
-2026-11-09T16:19:53.771Z	info	run_result	{"verbosity":"minimal","actor":"app","text":"Run succeeded: 0 ran, 5 skipped, 0 errors","outcome":"succeeded","counts":{"ranCount":0,"skippedCount":5,"errorCount":0}}
-2026-11-09T16:19:53.924Z	info	output_checked	{"verbosity":"normal","actor":"app","text":"Checked the run's output: 0 records invalid, 3 extra","runId":"2026-11-09T16-19-52.721Z-190819","counts":{"invalidCount":0,"extraCount":3}}
-2026-11-09T16:19:53.924Z	info	output_checked	{"verbosity":"verbose","actor":"app","text":"Extra: code.link: not read by the Viewer: moduleSpecifier","item":{"dataName":"code.link","tool":"cross-file-links","what":"keys","detail":"not read by the Viewer: moduleSpecifier"}}
-2026-11-09T16:19:53.924Z	info	output_checked	{"verbosity":"verbose","actor":"app","text":"Extra: code.reference: not read by the Viewer: enclosing, symbol","item":{"dataName":"code.reference","tool":"file-symbols","what":"keys","detail":"not read by the Viewer: enclosing, symbol"}}
-2026-11-09T16:19:53.924Z	info	output_checked	{"verbosity":"verbose","actor":"app","text":"Extra: code.symbol: not read by the Viewer: exported, import, range","item":{"dataName":"code.symbol","tool":"file-symbols","what":"keys","detail":"not read by the Viewer: exported, import, range"}}
-2026-11-09T16:19:54.085Z	info	cached_graph_loaded	{"verbosity":"normal","actor":"app","text":"Loaded the graph from the run of 2026-11-09 16:19","runId":"2026-11-09T16-19-52.721Z-190819"}
-2026-11-09T16:19:55.688Z	info	dry_run_requested	{"verbosity":"normal","actor":"user","text":"You started a dry run","sourceRoot":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source"}
-2026-11-09T16:19:56.904Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Dry run started on /home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source","runnerEvent":{"event":"run_started","runId":"2026-11-09T16-19-55.948Z-190903","mode":"dry-run","sourceRoot":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source","time":"2026-11-09T16:19:55.948Z"}}
-2026-11-09T16:19:56.983Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"3 files listed","runnerEvent":{"event":"files_listed","fileCount":3}}
-2026-11-09T16:19:57.758Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"file-symbols, src/counter.ts: go (up-to-date)","runnerEvent":{"event":"tool_dry_run","tool":"file-symbols","file_id":"src/counter.ts","refreshReason":"up-to-date","dryRun":"go","staleInputs":[]}}
-2026-11-09T16:19:58.417Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"file-symbols, src/main.ts: go (up-to-date)","runnerEvent":{"event":"tool_dry_run","tool":"file-symbols","file_id":"src/main.ts","refreshReason":"up-to-date","dryRun":"go","staleInputs":[]}}
-2026-11-09T16:19:58.962Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"file-symbols, src/math.ts: go (up-to-date)","runnerEvent":{"event":"tool_dry_run","tool":"file-symbols","file_id":"src/math.ts","refreshReason":"up-to-date","dryRun":"go","staleInputs":[]}}
-2026-11-09T16:19:59.100Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"cross-file-links: go (up-to-date)","runnerEvent":{"event":"tool_dry_run","tool":"cross-file-links","refreshReason":"up-to-date","dryRun":"go","staleInputs":[]}}
-2026-11-09T16:19:59.280Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"symbol-scope: go (up-to-date)","runnerEvent":{"event":"tool_dry_run","tool":"symbol-scope","refreshReason":"up-to-date","dryRun":"go","staleInputs":[]}}
-2026-11-09T16:19:59.296Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Runner finished: succeeded, exit code 0","runnerEvent":{"event":"run_finished","runId":"2026-11-09T16-19-55.948Z-190903","outcome":"succeeded","exitCode":0,"time":"2026-11-09T16:19:59.287Z","logPath":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/data/runner/logs/2026-11-09T16-19-55.948Z.log"}}
-2026-11-09T16:19:59.306Z	info	dry_run_result	{"verbosity":"minimal","actor":"app","text":"Dry run resulted in 0 errors: 5 of 5 go","counts":{"goCount":5,"noGoCount":0}}
-2026-11-09T16:20:01.026Z	info	viewer_stopped	{"verbosity":"minimal","actor":"app","text":"Viewer stopped"}
+2026-11-10T17:21:38.242Z	info	viewer_started	{"verbosity":"minimal","actor":"app","text":"Viewer 0.1.0 started on port 4399","port":4399}
+2026-11-10T17:21:47.151Z	info	source_opened	{"verbosity":"normal","actor":"user","text":"You opened folder \"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source-mvp2\" for examination","sourceRoot":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source-mvp2"}
+2026-11-10T17:21:47.508Z	info	cached_graph_loaded	{"verbosity":"normal","actor":"app","text":"Loaded the graph from the run of 2026-11-10 17:21","runId":"2026-11-10T17-21-06.148Z-284678"}
+2026-11-10T17:21:48.787Z	info	viewer_stopped	{"verbosity":"minimal","actor":"app","text":"Viewer stopped"}
 # [session] zaansouvi-view 0.1.0, port 4399
-2026-11-09T16:20:14.824Z	info	viewer_started	{"verbosity":"minimal","actor":"app","text":"Viewer 0.1.0 started on port 4399","port":4399}
-2026-11-09T16:20:22.184Z	info	cached_graph_loaded	{"verbosity":"normal","actor":"app","text":"Loaded the graph from the run of 2026-11-09 16:19","runId":"2026-11-09T16-19-52.721Z-190819"}
-2026-11-09T16:20:23.333Z	info	run_requested	{"verbosity":"normal","actor":"user","text":"You executed a manual run","sourceRoot":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source"}
-2026-11-09T16:20:24.310Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Run started on /home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source","runnerEvent":{"event":"run_started","runId":"2026-11-09T16-20-23.468Z-191643","mode":"real","sourceRoot":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source","time":"2026-11-09T16:20:23.468Z"}}
-2026-11-09T16:20:24.341Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"3 files listed","runnerEvent":{"event":"files_listed","fileCount":3}}
-2026-11-09T16:20:24.343Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"file-symbols, src/counter.ts: skipped, up to date","runnerEvent":{"event":"tool_skipped","tool":"file-symbols","file_id":"src/counter.ts","refreshReason":"up-to-date"}}
-2026-11-09T16:20:24.349Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"file-symbols, src/main.ts: skipped, up to date","runnerEvent":{"event":"tool_skipped","tool":"file-symbols","file_id":"src/main.ts","refreshReason":"up-to-date"}}
-2026-11-09T16:20:24.356Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"file-symbols, src/math.ts: skipped, up to date","runnerEvent":{"event":"tool_skipped","tool":"file-symbols","file_id":"src/math.ts","refreshReason":"up-to-date"}}
-2026-11-09T16:20:24.370Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"cross-file-links: skipped, up to date","runnerEvent":{"event":"tool_skipped","tool":"cross-file-links","refreshReason":"up-to-date"}}
-2026-11-09T16:20:24.381Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"symbol-scope: skipped, up to date","runnerEvent":{"event":"tool_skipped","tool":"symbol-scope","refreshReason":"up-to-date"}}
-2026-11-09T16:20:24.404Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Runner finished: succeeded, exit code 0","runnerEvent":{"event":"run_finished","runId":"2026-11-09T16-20-23.468Z-191643","outcome":"succeeded","exitCode":0,"time":"2026-11-09T16:20:24.392Z","logPath":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/data/runner/logs/2026-11-09T16-20-23.468Z.log"}}
-2026-11-09T16:20:24.412Z	info	run_result	{"verbosity":"minimal","actor":"app","text":"Run succeeded: 0 ran, 5 skipped, 0 errors","outcome":"succeeded","counts":{"ranCount":0,"skippedCount":5,"errorCount":0}}
-2026-11-09T16:20:24.562Z	info	output_checked	{"verbosity":"normal","actor":"app","text":"Checked the run's output: 0 records invalid, 3 extra","runId":"2026-11-09T16-20-23.468Z-191643","counts":{"invalidCount":0,"extraCount":3}}
-2026-11-09T16:20:24.562Z	info	output_checked	{"verbosity":"verbose","actor":"app","text":"Extra: code.link: not read by the Viewer: moduleSpecifier","item":{"dataName":"code.link","tool":"cross-file-links","what":"keys","detail":"not read by the Viewer: moduleSpecifier"}}
-2026-11-09T16:20:24.562Z	info	output_checked	{"verbosity":"verbose","actor":"app","text":"Extra: code.reference: not read by the Viewer: enclosing, symbol","item":{"dataName":"code.reference","tool":"file-symbols","what":"keys","detail":"not read by the Viewer: enclosing, symbol"}}
-2026-11-09T16:20:24.562Z	info	output_checked	{"verbosity":"verbose","actor":"app","text":"Extra: code.symbol: not read by the Viewer: exported, import, range","item":{"dataName":"code.symbol","tool":"file-symbols","what":"keys","detail":"not read by the Viewer: exported, import, range"}}
-2026-11-09T16:20:24.715Z	info	cached_graph_loaded	{"verbosity":"normal","actor":"app","text":"Loaded the graph from the run of 2026-11-09 16:20","runId":"2026-11-09T16-20-23.468Z-191643"}
-2026-11-09T16:20:26.407Z	info	dry_run_requested	{"verbosity":"normal","actor":"user","text":"You started a dry run","sourceRoot":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source"}
-2026-11-09T16:20:27.242Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Dry run started on /home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source","runnerEvent":{"event":"run_started","runId":"2026-11-09T16-20-26.552Z-191721","mode":"dry-run","sourceRoot":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source","time":"2026-11-09T16:20:26.552Z"}}
-2026-11-09T16:20:27.284Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"3 files listed","runnerEvent":{"event":"files_listed","fileCount":3}}
-2026-11-09T16:20:27.720Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"file-symbols, src/counter.ts: go (up-to-date)","runnerEvent":{"event":"tool_dry_run","tool":"file-symbols","file_id":"src/counter.ts","refreshReason":"up-to-date","dryRun":"go","staleInputs":[]}}
-2026-11-09T16:20:28.170Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"file-symbols, src/main.ts: go (up-to-date)","runnerEvent":{"event":"tool_dry_run","tool":"file-symbols","file_id":"src/main.ts","refreshReason":"up-to-date","dryRun":"go","staleInputs":[]}}
-2026-11-09T16:20:28.729Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"file-symbols, src/math.ts: go (up-to-date)","runnerEvent":{"event":"tool_dry_run","tool":"file-symbols","file_id":"src/math.ts","refreshReason":"up-to-date","dryRun":"go","staleInputs":[]}}
-2026-11-09T16:20:28.873Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"cross-file-links: go (up-to-date)","runnerEvent":{"event":"tool_dry_run","tool":"cross-file-links","refreshReason":"up-to-date","dryRun":"go","staleInputs":[]}}
-2026-11-09T16:20:29.123Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"symbol-scope: go (up-to-date)","runnerEvent":{"event":"tool_dry_run","tool":"symbol-scope","refreshReason":"up-to-date","dryRun":"go","staleInputs":[]}}
-2026-11-09T16:20:29.139Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Runner finished: succeeded, exit code 0","runnerEvent":{"event":"run_finished","runId":"2026-11-09T16-20-26.552Z-191721","outcome":"succeeded","exitCode":0,"time":"2026-11-09T16:20:29.131Z","logPath":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/data/runner/logs/2026-11-09T16-20-26.552Z.log"}}
-2026-11-09T16:20:29.145Z	info	dry_run_result	{"verbosity":"minimal","actor":"app","text":"Dry run resulted in 0 errors: 5 of 5 go","counts":{"goCount":5,"noGoCount":0}}
-2026-11-09T16:20:31.179Z	info	viewer_stopped	{"verbosity":"minimal","actor":"app","text":"Viewer stopped"}
+2026-11-10T17:21:48.985Z	info	viewer_started	{"verbosity":"minimal","actor":"app","text":"Viewer 0.1.0 started on port 4399","port":4399}
+2026-11-10T17:22:14.137Z	info	viewer_stopped	{"verbosity":"minimal","actor":"app","text":"Viewer stopped"}
 # [session] zaansouvi-view 0.1.0, port 4399
-2026-11-09T16:20:31.392Z	info	viewer_started	{"verbosity":"minimal","actor":"app","text":"Viewer 0.1.0 started on port 4399","port":4399}
-2026-11-09T16:20:39.259Z	info	cached_graph_loaded	{"verbosity":"normal","actor":"app","text":"Loaded the graph from the run of 2026-11-09 16:20","runId":"2026-11-09T16-20-23.468Z-191643"}
-2026-11-09T16:20:40.415Z	info	level_entered	{"verbosity":"verbose","actor":"user","text":"You entered scope run","nodeId":"src/main.ts#scope@4:1"}
-2026-11-09T16:20:40.953Z	info	level_entered	{"verbosity":"verbose","actor":"user","text":"You entered math.ts","nodeId":"src/math.ts"}
-2026-11-09T16:20:41.530Z	info	source_opened	{"verbosity":"normal","actor":"user","text":"You opened folder \"/home/zaida/viewercopy/runner\" for examination","sourceRoot":"/home/zaida/viewercopy/runner"}
-2026-11-09T16:20:41.775Z	info	cached_graph_loaded	{"verbosity":"normal","actor":"app","text":"Loaded the graph from the run of 2026-11-09 16:08","runId":"2026-11-09T16-07-59.975Z-187935"}
-2026-11-09T16:20:43.484Z	info	source_opened	{"verbosity":"normal","actor":"user","text":"You opened folder \"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source\" for examination","sourceRoot":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source"}
-2026-11-09T16:20:43.530Z	info	viewer_stopped	{"verbosity":"minimal","actor":"app","text":"Viewer stopped"}
+2026-11-10T17:22:14.378Z	info	viewer_started	{"verbosity":"minimal","actor":"app","text":"Viewer 0.1.0 started on port 4399","port":4399}
+2026-11-10T17:22:38.274Z	info	viewer_stopped	{"verbosity":"minimal","actor":"app","text":"Viewer stopped"}
 # [session] zaansouvi-view 0.1.0, port 4399
-2026-11-09T16:20:43.731Z	info	viewer_started	{"verbosity":"minimal","actor":"app","text":"Viewer 0.1.0 started on port 4399","port":4399}
-2026-11-09T16:20:51.535Z	info	cached_graph_loaded	{"verbosity":"normal","actor":"app","text":"Loaded the graph from the run of 2026-11-09 16:20","runId":"2026-11-09T16-20-23.468Z-191643"}
-2026-11-09T16:20:53.052Z	info	viewer_stopped	{"verbosity":"minimal","actor":"app","text":"Viewer stopped"}
+2026-11-10T17:22:38.519Z	info	viewer_started	{"verbosity":"minimal","actor":"app","text":"Viewer 0.1.0 started on port 4399","port":4399}
+2026-11-10T17:22:47.306Z	info	source_opened	{"verbosity":"normal","actor":"user","text":"You opened folder \"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source-mvp2\" for examination","sourceRoot":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source-mvp2"}
+2026-11-10T17:22:47.507Z	info	cached_graph_loaded	{"verbosity":"normal","actor":"app","text":"Loaded the graph from the run of 2026-11-10 17:21","runId":"2026-11-10T17-21-06.148Z-284678"}
+2026-11-10T17:22:49.327Z	info	viewer_stopped	{"verbosity":"minimal","actor":"app","text":"Viewer stopped"}
 # [session] zaansouvi-view 0.1.0, port 4399
-2026-11-09T16:20:53.241Z	info	viewer_started	{"verbosity":"minimal","actor":"app","text":"Viewer 0.1.0 started on port 4399","port":4399}
-2026-11-09T16:21:00.801Z	info	cached_graph_loaded	{"verbosity":"normal","actor":"app","text":"Loaded the graph from the run of 2026-11-09 16:20","runId":"2026-11-09T16-20-23.468Z-191643"}
-2026-11-09T16:21:01.960Z	info	node_selected	{"verbosity":"verbose","actor":"user","text":"You selected main.ts","nodeId":"src/main.ts"}
-2026-11-09T16:21:02.416Z	info	level_entered	{"verbosity":"verbose","actor":"user","text":"You entered main.ts","nodeId":"src/main.ts"}
-2026-11-09T16:21:02.429Z	info	node_selected	{"verbosity":"verbose","actor":"user","text":"You selected the file scope of main.ts","nodeId":"src/main.ts#scope@file"}
-2026-11-09T16:21:03.105Z	info	node_selected	{"verbosity":"verbose","actor":"user","text":"You selected scope run","nodeId":"src/main.ts#scope@4:1"}
-2026-11-09T16:21:03.554Z	info	viewer_stopped	{"verbosity":"minimal","actor":"app","text":"Viewer stopped"}
+2026-11-10T17:22:49.518Z	info	viewer_started	{"verbosity":"minimal","actor":"app","text":"Viewer 0.1.0 started on port 4399","port":4399}
+2026-11-10T17:22:58.570Z	info	source_opened	{"verbosity":"normal","actor":"user","text":"You opened folder \"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source-mvp2\" for examination","sourceRoot":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source-mvp2"}
+2026-11-10T17:22:58.797Z	info	cached_graph_loaded	{"verbosity":"normal","actor":"app","text":"Loaded the graph from the run of 2026-11-10 17:21","runId":"2026-11-10T17-21-06.148Z-284678"}
+2026-11-10T17:22:59.941Z	info	level_entered	{"verbosity":"verbose","actor":"user","text":"You entered Base","nodeId":"src/shapes.ts#Base@12:23"}
+2026-11-10T17:23:01.259Z	info	level_entered	{"verbosity":"verbose","actor":"user","text":"You entered total","nodeId":"src/shapes.ts#total@44:17"}
+2026-11-10T17:23:02.535Z	info	level_entered	{"verbosity":"verbose","actor":"user","text":"You entered label","nodeId":"src/shapes.ts#label@22:7"}
+2026-11-10T17:23:03.827Z	info	level_entered	{"verbosity":"verbose","actor":"user","text":"You entered render","nodeId":"src/app.ts#render@7:9"}
+2026-11-10T17:23:05.111Z	info	level_entered	{"verbosity":"verbose","actor":"user","text":"You entered Circle","nodeId":"src/shapes.ts#Circle@27:14"}
+2026-11-10T17:23:06.415Z	info	level_entered	{"verbosity":"verbose","actor":"user","text":"You entered shapes.ts","nodeId":"src/shapes.ts"}
+2026-11-10T17:23:07.766Z	info	level_entered	{"verbosity":"verbose","actor":"user","text":"You entered percent","nodeId":"src/util/numbers.ts#percent@8:17"}
+2026-11-10T17:23:09.081Z	info	viewer_stopped	{"verbosity":"minimal","actor":"app","text":"Viewer stopped"}
 # [session] zaansouvi-view 0.1.0, port 4399
-2026-11-09T16:21:10.293Z	info	viewer_started	{"verbosity":"minimal","actor":"app","text":"Viewer 0.1.0 started on port 4399","port":4399}
-2026-11-09T16:21:18.743Z	info	cached_graph_loaded	{"verbosity":"normal","actor":"app","text":"Loaded the graph from the run of 2026-11-09 16:20","runId":"2026-11-09T16-20-23.468Z-191643"}
-2026-11-09T16:21:19.874Z	info	level_entered	{"verbosity":"verbose","actor":"user","text":"You entered scope run","nodeId":"src/main.ts#scope@4:1"}
-2026-11-09T16:21:20.421Z	info	level_entered	{"verbosity":"verbose","actor":"user","text":"You entered math.ts","nodeId":"src/math.ts"}
-2026-11-09T16:21:20.985Z	info	source_opened	{"verbosity":"normal","actor":"user","text":"You opened folder \"/home/zaida/viewercopy/runner\" for examination","sourceRoot":"/home/zaida/viewercopy/runner"}
-2026-11-09T16:21:21.246Z	info	cached_graph_loaded	{"verbosity":"normal","actor":"app","text":"Loaded the graph from the run of 2026-11-09 16:08","runId":"2026-11-09T16-07-59.975Z-187935"}
-2026-11-09T16:21:22.960Z	info	source_opened	{"verbosity":"normal","actor":"user","text":"You opened folder \"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source\" for examination","sourceRoot":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source"}
-2026-11-09T16:21:23.005Z	info	viewer_stopped	{"verbosity":"minimal","actor":"app","text":"Viewer stopped"}
-2026-11-09T16:22:48.302Z	info	run_requested	{"verbosity":"normal","actor":"user","text":"You executed a manual run","sourceRoot":"/home/zaida/viewercopy/runner"}
-2026-11-09T16:22:49.474Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Run started on /home/zaida/viewercopy/runner","runnerEvent":{"event":"run_started","runId":"2026-11-09T16-22-48.612Z-194436","mode":"real","sourceRoot":"/home/zaida/viewercopy/runner","time":"2026-11-09T16:22:48.612Z"}}
-2026-11-09T16:22:49.534Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"3 files listed","runnerEvent":{"event":"files_listed","fileCount":3}}
-2026-11-09T16:22:49.539Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"file-symbols, src/db.ts: skipped, up to date","runnerEvent":{"event":"tool_skipped","tool":"file-symbols","file_id":"src/db.ts","refreshReason":"up-to-date"}}
-2026-11-09T16:22:49.561Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"file-symbols, src/runner.ts: skipped, up to date","runnerEvent":{"event":"tool_skipped","tool":"file-symbols","file_id":"src/runner.ts","refreshReason":"up-to-date"}}
-2026-11-09T16:22:49.580Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"file-symbols, src/tools.ts: skipped, up to date","runnerEvent":{"event":"tool_skipped","tool":"file-symbols","file_id":"src/tools.ts","refreshReason":"up-to-date"}}
-2026-11-09T16:22:49.863Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"cross-file-links: go (inputs-changed)","runnerEvent":{"event":"tool_dry_run","tool":"cross-file-links","refreshReason":"inputs-changed","dryRun":"go","staleInputs":[]}}
-2026-11-09T16:22:50.142Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"cross-file-links: ran, output update","runnerEvent":{"event":"tool_run","tool":"cross-file-links","status":"succeeded","logPath":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/data/tools/cross-file-links/logs/2026-11-09T16-22-50.053Z.log","outputChange":"update"}}
-2026-11-09T16:22:50.351Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"symbol-scope: go (inputs-changed)","runnerEvent":{"event":"tool_dry_run","tool":"symbol-scope","refreshReason":"inputs-changed","dryRun":"go","staleInputs":[]}}
-2026-11-09T16:22:50.651Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"symbol-scope: ran, output update","runnerEvent":{"event":"tool_run","tool":"symbol-scope","status":"succeeded","logPath":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/data/tools/symbol-scope/logs/2026-11-09T16-22-50.599Z.log","outputChange":"update"}}
-2026-11-09T16:22:50.707Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Runner finished: succeeded, exit code 0","runnerEvent":{"event":"run_finished","runId":"2026-11-09T16-22-48.612Z-194436","outcome":"succeeded","exitCode":0,"time":"2026-11-09T16:22:50.671Z","logPath":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/data/runner/logs/2026-11-09T16-22-48.612Z.log"}}
-2026-11-09T16:22:50.726Z	info	run_result	{"verbosity":"minimal","actor":"app","text":"Run succeeded: 2 ran, 3 skipped, 0 errors","outcome":"succeeded","counts":{"ranCount":2,"skippedCount":3,"errorCount":0}}
-2026-11-09T16:22:51.103Z	info	output_checked	{"verbosity":"normal","actor":"app","text":"Checked the run's output: 0 records invalid, 3 extra","runId":"2026-11-09T16-22-48.612Z-194436","counts":{"invalidCount":0,"extraCount":3}}
-2026-11-09T16:22:51.103Z	info	output_checked	{"verbosity":"verbose","actor":"app","text":"Extra: code.link: not read by the Viewer: moduleSpecifier","item":{"dataName":"code.link","tool":"cross-file-links","what":"keys","detail":"not read by the Viewer: moduleSpecifier"}}
-2026-11-09T16:22:51.104Z	info	output_checked	{"verbosity":"verbose","actor":"app","text":"Extra: code.reference: not read by the Viewer: enclosing, symbol","item":{"dataName":"code.reference","tool":"file-symbols","what":"keys","detail":"not read by the Viewer: enclosing, symbol"}}
-2026-11-09T16:22:51.104Z	info	output_checked	{"verbosity":"verbose","actor":"app","text":"Extra: code.symbol: not read by the Viewer: exported, import, range","item":{"dataName":"code.symbol","tool":"file-symbols","what":"keys","detail":"not read by the Viewer: exported, import, range"}}
-2026-11-09T16:22:51.380Z	info	cached_graph_loaded	{"verbosity":"normal","actor":"app","text":"Loaded the graph from the run of 2026-11-09 16:22","runId":"2026-11-09T16-22-48.612Z-194436"}
-2026-11-09T16:23:11.164Z	info	dry_run_requested	{"verbosity":"normal","actor":"user","text":"You started a dry run","sourceRoot":"/home/zaida/viewercopy/runner"}
-2026-11-09T16:23:12.434Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Dry run started on /home/zaida/viewercopy/runner","runnerEvent":{"event":"run_started","runId":"2026-11-09T16-23-11.375Z-194573","mode":"dry-run","sourceRoot":"/home/zaida/viewercopy/runner","time":"2026-11-09T16:23:11.375Z"}}
-2026-11-09T16:23:12.501Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"3 files listed","runnerEvent":{"event":"files_listed","fileCount":3}}
-2026-11-09T16:23:13.250Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"file-symbols, src/db.ts: go (up-to-date)","runnerEvent":{"event":"tool_dry_run","tool":"file-symbols","file_id":"src/db.ts","refreshReason":"up-to-date","dryRun":"go","staleInputs":[]}}
-2026-11-09T16:23:13.945Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"file-symbols, src/runner.ts: go (up-to-date)","runnerEvent":{"event":"tool_dry_run","tool":"file-symbols","file_id":"src/runner.ts","refreshReason":"up-to-date","dryRun":"go","staleInputs":[]}}
-2026-11-09T16:23:14.828Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"file-symbols, src/tools.ts: go (up-to-date)","runnerEvent":{"event":"tool_dry_run","tool":"file-symbols","file_id":"src/tools.ts","refreshReason":"up-to-date","dryRun":"go","staleInputs":[]}}
-2026-11-09T16:23:15.135Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"cross-file-links: go (up-to-date)","runnerEvent":{"event":"tool_dry_run","tool":"cross-file-links","refreshReason":"up-to-date","dryRun":"go","staleInputs":[]}}
-2026-11-09T16:23:15.462Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"symbol-scope: go (up-to-date)","runnerEvent":{"event":"tool_dry_run","tool":"symbol-scope","refreshReason":"up-to-date","dryRun":"go","staleInputs":[]}}
-2026-11-09T16:23:15.541Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Runner finished: succeeded, exit code 0","runnerEvent":{"event":"run_finished","runId":"2026-11-09T16-23-11.375Z-194573","outcome":"succeeded","exitCode":0,"time":"2026-11-09T16:23:15.474Z","logPath":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/data/runner/logs/2026-11-09T16-23-11.375Z.log"}}
-2026-11-09T16:23:15.558Z	info	dry_run_result	{"verbosity":"minimal","actor":"app","text":"Dry run resulted in 0 errors: 5 of 5 go","counts":{"goCount":5,"noGoCount":0}}
-2026-11-09T16:31:18.319Z	info	node_selected	{"verbosity":"verbose","actor":"user","text":"You selected runner.ts","nodeId":"src/runner.ts"}
-2026-11-09T16:31:18.518Z	info	level_entered	{"verbosity":"verbose","actor":"user","text":"You entered runner.ts","nodeId":"src/runner.ts"}
-2026-11-09T16:32:33.684Z	info	node_selected	{"verbosity":"verbose","actor":"user","text":"You selected scope takeLock","nodeId":"src/runner.ts#scope@103:1"}
-2026-11-09T16:32:44.852Z	info	level_entered	{"verbosity":"verbose","actor":"user","text":"You entered scope takeLock","nodeId":"src/runner.ts#scope@103:1"}
-2026-11-09T16:32:46.806Z	info	node_selected	{"verbosity":"verbose","actor":"user","text":"You selected e","nodeId":"src/runner.ts#e@111:14"}
-2026-11-09T16:32:50.677Z	info	node_selected	{"verbosity":"verbose","actor":"user","text":"You selected e","nodeId":"src/runner.ts#e@124:16"}
-2026-11-09T16:36:14.926Z	info	node_selected	{"verbosity":"verbose","actor":"user","text":"You selected the edge scope takeLock → the file scope of runner.ts","nodeId":"src/runner.ts#scope@103:1->src/runner.ts#scope@file"}
-2026-11-09T16:42:47.455Z	info	level_left	{"verbosity":"verbose","actor":"user","text":"You went back to the top level","nodeId":""}
+2026-11-10T17:23:09.278Z	info	viewer_started	{"verbosity":"minimal","actor":"app","text":"Viewer 0.1.0 started on port 4399","port":4399}
+2026-11-10T17:23:17.979Z	info	source_opened	{"verbosity":"normal","actor":"user","text":"You opened folder \"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source-mvp2\" for examination","sourceRoot":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source-mvp2"}
+2026-11-10T17:23:18.124Z	info	cached_graph_loaded	{"verbosity":"normal","actor":"app","text":"Loaded the graph from the run of 2026-11-10 17:21","runId":"2026-11-10T17-21-06.148Z-284678"}
+2026-11-10T17:23:18.133Z	info	run_requested	{"verbosity":"normal","actor":"user","text":"You executed a manual run","sourceRoot":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source-mvp2"}
+2026-11-10T17:23:18.709Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Run started on /home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source-mvp2","runnerEvent":{"event":"run_started","runId":"2026-11-10T17-23-18.269Z-289271","mode":"real","sourceRoot":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source-mvp2","time":"2026-11-10T17:23:18.269Z"}}
+2026-11-10T17:23:18.716Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Runner event tool_not_listed","runnerEvent":{"event":"tool_not_listed","tool":"cross-file-links"}}
+2026-11-10T17:23:18.716Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Runner event tool_not_listed","runnerEvent":{"event":"tool_not_listed","tool":"file-symbols"}}
+2026-11-10T17:23:18.717Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Runner event tool_not_listed","runnerEvent":{"event":"tool_not_listed","tool":"symbol-scope"}}
+2026-11-10T17:23:18.783Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"7 files listed","runnerEvent":{"event":"files_listed","fileCount":7,"folderCount":4,"skippedFolders":[],"perTool":{"ts-program":6},"ignoreFiles":"not applied"}}
+2026-11-10T17:23:18.793Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"ts-program: skipped, up to date","runnerEvent":{"event":"tool_skipped","tool":"ts-program","refreshReason":"up-to-date"}}
+2026-11-10T17:23:18.818Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Runner finished: succeeded, exit code 0","runnerEvent":{"event":"run_finished","runId":"2026-11-10T17-23-18.269Z-289271","outcome":"succeeded","exitCode":0,"time":"2026-11-10T17:23:18.801Z","logPath":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/data/runner/logs/2026-11-10T17-23-18.269Z.log"}}
+2026-11-10T17:23:18.829Z	info	run_result	{"verbosity":"minimal","actor":"app","text":"Run succeeded: 0 ran, 1 skipped, 0 errors","outcome":"succeeded","counts":{"ranCount":0,"skippedCount":1,"errorCount":0}}
+2026-11-10T17:23:18.886Z	info	output_checked	{"verbosity":"normal","actor":"app","text":"Checked the run's output: nothing invalid, no extra data","runId":"2026-11-10T17-23-18.269Z-289271","counts":{"invalidCount":0,"extraCount":0}}
+2026-11-10T17:23:18.888Z	info	cached_graph_loaded	{"verbosity":"normal","actor":"app","text":"Loaded the graph from the run of 2026-11-10 17:23","runId":"2026-11-10T17-23-18.269Z-289271"}
+2026-11-10T17:23:20.294Z	info	level_entered	{"verbosity":"verbose","actor":"user","text":"You entered Circle","nodeId":"src/shapes.ts#Circle@27:14"}
+2026-11-10T17:23:21.568Z	info	level_entered	{"verbosity":"verbose","actor":"user","text":"You entered Anonymous","nodeId":"src/shapes.ts#Anonymous@57:14"}
+2026-11-10T17:23:22.779Z	info	level_entered	{"verbosity":"verbose","actor":"user","text":"You entered Base","nodeId":"src/shapes.ts#Base@12:23"}
+2026-11-10T17:23:24.013Z	info	level_entered	{"verbosity":"verbose","actor":"user","text":"You entered summarize","nodeId":"src/report/summary.ts#summarize@7:23"}
+2026-11-10T17:23:25.329Z	info	viewer_stopped	{"verbosity":"minimal","actor":"app","text":"Viewer stopped"}
+# [session] zaansouvi-view 0.1.0, port 4399
+2026-11-10T17:23:25.608Z	info	viewer_started	{"verbosity":"minimal","actor":"app","text":"Viewer 0.1.0 started on port 4399","port":4399}
+2026-11-10T17:23:34.611Z	info	source_opened	{"verbosity":"normal","actor":"user","text":"You opened folder \"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source-mvp2\" for examination","sourceRoot":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source-mvp2"}
+2026-11-10T17:23:34.903Z	info	cached_graph_loaded	{"verbosity":"normal","actor":"app","text":"Loaded the graph from the run of 2026-11-10 17:23","runId":"2026-11-10T17-23-18.269Z-289271"}
+2026-11-10T17:23:36.034Z	info	level_entered	{"verbosity":"verbose","actor":"user","text":"You entered percent","nodeId":"src/util/numbers.ts#percent@8:17"}
+2026-11-10T17:23:37.382Z	info	level_entered	{"verbosity":"verbose","actor":"user","text":"You entered Base","nodeId":"src/shapes.ts#Base@12:23"}
+2026-11-10T17:23:38.739Z	info	level_entered	{"verbosity":"verbose","actor":"user","text":"You entered shapes.ts","nodeId":"src/shapes.ts"}
+2026-11-10T17:23:40.099Z	info	level_entered	{"verbosity":"verbose","actor":"user","text":"You entered bars","nodeId":"src/report/charts/bars.ts#bars@7:17"}
+2026-11-10T17:23:41.468Z	info	viewer_stopped	{"verbosity":"minimal","actor":"app","text":"Viewer stopped"}
+# [session] zaansouvi-view 0.1.0, port 4399
+2026-11-10T17:23:41.666Z	info	viewer_started	{"verbosity":"minimal","actor":"app","text":"Viewer 0.1.0 started on port 4399","port":4399}
+2026-11-10T17:24:06.362Z	info	viewer_stopped	{"verbosity":"minimal","actor":"app","text":"Viewer stopped"}
+# [session] zaansouvi-view 0.1.0, port 4399
+2026-11-10T17:24:06.731Z	info	viewer_started	{"verbosity":"minimal","actor":"app","text":"Viewer 0.1.0 started on port 4399","port":4399}
+2026-11-10T17:24:31.311Z	info	viewer_stopped	{"verbosity":"minimal","actor":"app","text":"Viewer stopped"}
+# [session] zaansouvi-view 0.1.0, port 4399
+2026-11-10T17:24:31.548Z	info	viewer_started	{"verbosity":"minimal","actor":"app","text":"Viewer 0.1.0 started on port 4399","port":4399}
+2026-11-10T17:24:41.715Z	info	source_opened	{"verbosity":"normal","actor":"user","text":"You opened folder \"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source-mvp2\" for examination","sourceRoot":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source-mvp2"}
+2026-11-10T17:24:41.983Z	info	cached_graph_loaded	{"verbosity":"normal","actor":"app","text":"Loaded the graph from the run of 2026-11-10 17:23","runId":"2026-11-10T17-23-18.269Z-289271"}
+2026-11-10T17:24:43.099Z	info	level_entered	{"verbosity":"verbose","actor":"user","text":"You entered app.ts","nodeId":"src/app.ts"}
+2026-11-10T17:24:44.393Z	info	level_entered	{"verbosity":"verbose","actor":"user","text":"You entered shapes.ts","nodeId":"src/shapes.ts"}
+2026-11-10T17:24:45.714Z	info	viewer_stopped	{"verbosity":"minimal","actor":"app","text":"Viewer stopped"}
+# [session] zaansouvi-view 0.1.0, port 4399
+2026-11-10T17:24:45.937Z	info	viewer_started	{"verbosity":"minimal","actor":"app","text":"Viewer 0.1.0 started on port 4399","port":4399}
+2026-11-10T17:24:54.405Z	info	run_requested	{"verbosity":"normal","actor":"user","text":"You executed a manual run","sourceRoot":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source-mvp2"}
+2026-11-10T17:24:54.974Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Run started on /home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source-mvp2","runnerEvent":{"event":"run_started","runId":"2026-11-10T17-24-54.542Z-292537","mode":"real","sourceRoot":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source-mvp2","time":"2026-11-10T17:24:54.542Z"}}
+2026-11-10T17:24:54.983Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Runner event tool_not_listed","runnerEvent":{"event":"tool_not_listed","tool":"cross-file-links"}}
+2026-11-10T17:24:54.984Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Runner event tool_not_listed","runnerEvent":{"event":"tool_not_listed","tool":"file-symbols"}}
+2026-11-10T17:24:54.984Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Runner event tool_not_listed","runnerEvent":{"event":"tool_not_listed","tool":"symbol-scope"}}
+2026-11-10T17:24:55.053Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"7 files listed","runnerEvent":{"event":"files_listed","fileCount":7,"folderCount":4,"skippedFolders":[],"perTool":{"ts-program":6},"ignoreFiles":"not applied"}}
+2026-11-10T17:24:55.062Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"ts-program: skipped, up to date","runnerEvent":{"event":"tool_skipped","tool":"ts-program","refreshReason":"up-to-date"}}
+2026-11-10T17:24:55.077Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Runner finished: succeeded, exit code 0","runnerEvent":{"event":"run_finished","runId":"2026-11-10T17-24-54.542Z-292537","outcome":"succeeded","exitCode":0,"time":"2026-11-10T17:24:55.069Z","logPath":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/data/runner/logs/2026-11-10T17-24-54.542Z.log"}}
+2026-11-10T17:24:55.086Z	info	run_result	{"verbosity":"minimal","actor":"app","text":"Run succeeded: 0 ran, 1 skipped, 0 errors","outcome":"succeeded","counts":{"ranCount":0,"skippedCount":1,"errorCount":0}}
+2026-11-10T17:24:55.213Z	info	output_checked	{"verbosity":"normal","actor":"app","text":"Checked the run's output: nothing invalid, no extra data","runId":"2026-11-10T17-24-54.542Z-292537","counts":{"invalidCount":0,"extraCount":0}}
+2026-11-10T17:24:55.216Z	info	cached_graph_loaded	{"verbosity":"normal","actor":"app","text":"Loaded the graph from the run of 2026-11-10 17:24","runId":"2026-11-10T17-24-54.542Z-292537"}
+2026-11-10T17:24:55.233Z	warn	run_refused	{"verbosity":"minimal","actor":"app","text":"Run refused: a run is already in progress"}
+2026-11-10T17:24:55.737Z	info	run_requested	{"verbosity":"normal","actor":"user","text":"You executed a manual run","sourceRoot":"/tmp/claude-1000/-home-zaida-viewer-mvp-docs/a2cc0ba2-419e-451e-9900-23bbe1643dbb/scratchpad/mvp2-statuses"}
+2026-11-10T17:24:56.426Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Run started on /tmp/claude-1000/-home-zaida-viewer-mvp-docs/a2cc0ba2-419e-451e-9900-23bbe1643dbb/scratchpad/mvp2-statuses","runnerEvent":{"event":"run_started","runId":"2026-11-10T17-24-55.924Z-292581","mode":"real","sourceRoot":"/tmp/claude-1000/-home-zaida-viewer-mvp-docs/a2cc0ba2-419e-451e-9900-23bbe1643dbb/scratchpad/mvp2-statuses","time":"2026-11-10T17:24:55.924Z"}}
+2026-11-10T17:24:56.438Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Runner event tool_not_listed","runnerEvent":{"event":"tool_not_listed","tool":"cross-file-links"}}
+2026-11-10T17:24:56.439Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Runner event tool_not_listed","runnerEvent":{"event":"tool_not_listed","tool":"file-symbols"}}
+2026-11-10T17:24:56.439Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Runner event tool_not_listed","runnerEvent":{"event":"tool_not_listed","tool":"symbol-scope"}}
+2026-11-10T17:24:56.487Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"5 files listed","runnerEvent":{"event":"files_listed","fileCount":5,"folderCount":3,"skippedFolders":[{"id":".git","fileCount":1,"totalBytes":10},{"id":"node_modules","fileCount":1,"totalBytes":2}],"perTool":{"ts-program":2},"ignoreFiles":"not applied"}}
+2026-11-10T17:24:57.374Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"ts-program: go (inputs-changed)","runnerEvent":{"event":"tool_dry_run","tool":"ts-program","refreshReason":"inputs-changed","dryRun":"go","staleInputs":[]}}
+2026-11-10T17:24:58.434Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"ts-program: ran, output unchanged","runnerEvent":{"event":"tool_run","tool":"ts-program","status":"succeeded","logPath":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/data/tools/ts-program/logs/2026-11-10T17-24-57.898Z_program.log","outputChange":"unchanged"}}
+2026-11-10T17:24:58.491Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Runner finished: succeeded, exit code 0","runnerEvent":{"event":"run_finished","runId":"2026-11-10T17-24-55.924Z-292581","outcome":"succeeded","exitCode":0,"time":"2026-11-10T17:24:58.480Z","logPath":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/data/runner/logs/2026-11-10T17-24-55.924Z.log"}}
+2026-11-10T17:24:58.498Z	info	run_result	{"verbosity":"minimal","actor":"app","text":"Run succeeded: 1 ran, 0 skipped, 0 errors","outcome":"succeeded","counts":{"ranCount":1,"skippedCount":0,"errorCount":0}}
+2026-11-10T17:24:58.654Z	info	output_checked	{"verbosity":"normal","actor":"app","text":"Checked the run's output: nothing invalid, no extra data","runId":"2026-11-10T17-24-55.924Z-292581","counts":{"invalidCount":0,"extraCount":0}}
+2026-11-10T17:24:58.680Z	info	cached_graph_loaded	{"verbosity":"normal","actor":"app","text":"Loaded the graph from the run of 2026-11-10 17:24","runId":"2026-11-10T17-24-55.924Z-292581"}
+2026-11-10T17:24:58.691Z	info	source_opened	{"verbosity":"normal","actor":"user","text":"You opened folder \"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source-mvp2\" for examination","sourceRoot":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source-mvp2"}
+2026-11-10T17:25:00.660Z	info	level_entered	{"verbosity":"verbose","actor":"user","text":"You entered shapes.ts","nodeId":"src/shapes.ts"}
+2026-11-10T17:25:02.041Z	info	level_entered	{"verbosity":"verbose","actor":"user","text":"You entered Circle","nodeId":"src/shapes.ts#Circle@27:14"}
+2026-11-10T17:25:03.350Z	info	node_selected	{"verbosity":"verbose","actor":"user","text":"You selected radius","nodeId":"src/shapes.ts#radius@29:23"}
+2026-11-10T17:25:03.415Z	info	source_opened	{"verbosity":"normal","actor":"user","text":"You opened folder \"/tmp/claude-1000/-home-zaida-viewer-mvp-docs/a2cc0ba2-419e-451e-9900-23bbe1643dbb/scratchpad/mvp2-statuses\" for examination","sourceRoot":"/tmp/claude-1000/-home-zaida-viewer-mvp-docs/a2cc0ba2-419e-451e-9900-23bbe1643dbb/scratchpad/mvp2-statuses"}
+2026-11-10T17:25:05.372Z	info	node_selected	{"verbosity":"verbose","actor":"user","text":"You selected readonly.txt","nodeId":"readonly.txt"}
+2026-11-10T17:25:05.375Z	info	source_opened	{"verbosity":"normal","actor":"user","text":"You opened folder \"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source-mvp2\" for examination","sourceRoot":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source-mvp2"}
+2026-11-10T17:25:05.432Z	info	viewer_stopped	{"verbosity":"minimal","actor":"app","text":"Viewer stopped"}
+# [session] zaansouvi-view 0.1.0, port 4399
+2026-11-10T17:25:05.628Z	info	viewer_started	{"verbosity":"minimal","actor":"app","text":"Viewer 0.1.0 started on port 4399","port":4399}
+2026-11-10T17:25:29.906Z	info	viewer_stopped	{"verbosity":"minimal","actor":"app","text":"Viewer stopped"}
+# [session] zaansouvi-view 0.1.0, port 4399
+2026-11-10T17:25:30.197Z	info	viewer_started	{"verbosity":"minimal","actor":"app","text":"Viewer 0.1.0 started on port 4399","port":4399}
+2026-11-10T17:25:54.932Z	info	viewer_stopped	{"verbosity":"minimal","actor":"app","text":"Viewer stopped"}
+# [session] zaansouvi-view 0.1.0, port 4399
+2026-11-10T17:25:55.125Z	info	viewer_started	{"verbosity":"minimal","actor":"app","text":"Viewer 0.1.0 started on port 4399","port":4399}
+2026-11-10T17:26:03.893Z	info	source_opened	{"verbosity":"normal","actor":"user","text":"You opened folder \"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source-mvp2\" for examination","sourceRoot":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source-mvp2"}
+2026-11-10T17:26:04.159Z	info	cached_graph_loaded	{"verbosity":"normal","actor":"app","text":"Loaded the graph from the run of 2026-11-10 17:24","runId":"2026-11-10T17-24-54.542Z-292537"}
+2026-11-10T17:26:05.295Z	info	level_entered	{"verbosity":"verbose","actor":"user","text":"You entered Anonymous","nodeId":"src/shapes.ts#Anonymous@57:14"}
+2026-11-10T17:26:06.524Z	info	node_selected	{"verbosity":"verbose","actor":"user","text":"You selected name","nodeId":"src/shapes.ts#name@57:56"}
+2026-11-10T17:26:07.577Z	info	node_selected	{"verbosity":"verbose","actor":"user","text":"You selected Anonymous","nodeId":"src/shapes.ts#Anonymous@57:14"}
+2026-11-10T17:26:09.659Z	info	level_entered	{"verbosity":"verbose","actor":"user","text":"You entered shapes.ts","nodeId":"src/shapes.ts"}
+2026-11-10T17:26:10.902Z	info	node_selected	{"verbosity":"verbose","actor":"user","text":"You selected Base","nodeId":"src/shapes.ts#Base@12:23"}
+2026-11-10T17:26:12.033Z	info	viewer_stopped	{"verbosity":"minimal","actor":"app","text":"Viewer stopped"}
+# [session] zaansouvi-view 0.1.0, port 4399
+2026-11-10T17:26:12.258Z	info	viewer_started	{"verbosity":"minimal","actor":"app","text":"Viewer 0.1.0 started on port 4399","port":4399}
+2026-11-10T17:26:36.407Z	info	viewer_stopped	{"verbosity":"minimal","actor":"app","text":"Viewer stopped"}
+# [session] zaansouvi-view 0.1.0, port 4399
+2026-11-10T17:26:36.601Z	info	viewer_started	{"verbosity":"minimal","actor":"app","text":"Viewer 0.1.0 started on port 4399","port":4399}
+2026-11-10T17:27:00.022Z	info	run_requested	{"verbosity":"normal","actor":"user","text":"You executed a manual run","sourceRoot":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source"}
+2026-11-10T17:27:00.565Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Run started on /home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source","runnerEvent":{"event":"run_started","runId":"2026-11-10T17-27-00.158Z-295924","mode":"real","sourceRoot":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source","time":"2026-11-10T17:27:00.158Z"}}
+2026-11-10T17:27:00.575Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Runner event tool_not_listed","runnerEvent":{"event":"tool_not_listed","tool":"cross-file-links"}}
+2026-11-10T17:27:00.575Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Runner event tool_not_listed","runnerEvent":{"event":"tool_not_listed","tool":"file-symbols"}}
+2026-11-10T17:27:00.575Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Runner event tool_not_listed","runnerEvent":{"event":"tool_not_listed","tool":"symbol-scope"}}
+2026-11-10T17:27:00.604Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"3 files listed","runnerEvent":{"event":"files_listed","fileCount":3,"folderCount":1,"skippedFolders":[],"perTool":{"ts-program":3},"ignoreFiles":"not applied"}}
+2026-11-10T17:27:01.372Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"ts-program: go (missing)","runnerEvent":{"event":"tool_dry_run","tool":"ts-program","refreshReason":"missing","dryRun":"go","staleInputs":[]}}
+2026-11-10T17:27:02.500Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"ts-program: ran, output create","runnerEvent":{"event":"tool_run","tool":"ts-program","status":"succeeded","logPath":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/data/tools/ts-program/logs/2026-11-10T17-27-02.055Z_program.log","outputChange":"create"}}
+2026-11-10T17:27:02.547Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Runner finished: succeeded, exit code 0","runnerEvent":{"event":"run_finished","runId":"2026-11-10T17-27-00.158Z-295924","outcome":"succeeded","exitCode":0,"time":"2026-11-10T17:27:02.539Z","logPath":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/data/runner/logs/2026-11-10T17-27-00.158Z.log"}}
+2026-11-10T17:27:02.555Z	info	run_result	{"verbosity":"minimal","actor":"app","text":"Run succeeded: 1 ran, 0 skipped, 0 errors","outcome":"succeeded","counts":{"ranCount":1,"skippedCount":0,"errorCount":0}}
+2026-11-10T17:27:02.708Z	info	output_checked	{"verbosity":"normal","actor":"app","text":"Checked the run's output: nothing invalid, no extra data","runId":"2026-11-10T17-27-00.158Z-295924","counts":{"invalidCount":0,"extraCount":0}}
+2026-11-10T17:27:02.851Z	info	cached_graph_loaded	{"verbosity":"normal","actor":"app","text":"Loaded the graph from the run of 2026-11-10 17:27","runId":"2026-11-10T17-27-00.158Z-295924"}
+2026-11-10T17:27:04.301Z	info	dry_run_requested	{"verbosity":"normal","actor":"user","text":"You started a dry run","sourceRoot":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source"}
+2026-11-10T17:27:04.848Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Dry run started on /home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source","runnerEvent":{"event":"run_started","runId":"2026-11-10T17-27-04.426Z-296007","mode":"dry-run","sourceRoot":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source","time":"2026-11-10T17:27:04.426Z"}}
+2026-11-10T17:27:04.856Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Runner event tool_not_listed","runnerEvent":{"event":"tool_not_listed","tool":"cross-file-links"}}
+2026-11-10T17:27:04.857Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Runner event tool_not_listed","runnerEvent":{"event":"tool_not_listed","tool":"file-symbols"}}
+2026-11-10T17:27:04.857Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Runner event tool_not_listed","runnerEvent":{"event":"tool_not_listed","tool":"symbol-scope"}}
+2026-11-10T17:27:04.890Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"3 files listed","runnerEvent":{"event":"files_listed","fileCount":3,"folderCount":1,"skippedFolders":[],"perTool":{"ts-program":3},"ignoreFiles":"not applied"}}
+2026-11-10T17:27:05.540Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"ts-program: go (up-to-date)","runnerEvent":{"event":"tool_dry_run","tool":"ts-program","refreshReason":"up-to-date","dryRun":"go","staleInputs":[]}}
+2026-11-10T17:27:05.557Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Runner finished: succeeded, exit code 0","runnerEvent":{"event":"run_finished","runId":"2026-11-10T17-27-04.426Z-296007","outcome":"succeeded","exitCode":0,"time":"2026-11-10T17:27:05.548Z","logPath":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/data/runner/logs/2026-11-10T17-27-04.426Z.log"}}
+2026-11-10T17:27:05.566Z	info	dry_run_result	{"verbosity":"minimal","actor":"app","text":"Dry run resulted in 0 errors: 1 of 1 go","counts":{"goCount":1,"noGoCount":0}}
+2026-11-10T17:27:07.470Z	info	viewer_stopped	{"verbosity":"minimal","actor":"app","text":"Viewer stopped"}
+# [session] zaansouvi-view 0.1.0, port 4399
+2026-11-10T17:27:07.684Z	info	viewer_started	{"verbosity":"minimal","actor":"app","text":"Viewer 0.1.0 started on port 4399","port":4399}
+2026-11-10T17:27:15.362Z	info	cached_graph_loaded	{"verbosity":"normal","actor":"app","text":"Loaded the graph from the run of 2026-11-10 17:27","runId":"2026-11-10T17-27-00.158Z-295924"}
+2026-11-10T17:27:17.532Z	info	viewer_stopped	{"verbosity":"minimal","actor":"app","text":"Viewer stopped"}
+# [session] zaansouvi-view 0.1.0, port 4399
+2026-11-10T17:27:17.732Z	info	viewer_started	{"verbosity":"minimal","actor":"app","text":"Viewer 0.1.0 started on port 4399","port":4399}
+2026-11-10T17:27:25.233Z	info	cached_graph_loaded	{"verbosity":"normal","actor":"app","text":"Loaded the graph from the run of 2026-11-10 17:27","runId":"2026-11-10T17-27-00.158Z-295924"}
+2026-11-10T17:27:25.999Z	info	source_added	{"verbosity":"normal","actor":"user","text":"You added the source \"/tmp/tmp.Jev5gIBuYh/b7-source\"","sourceRoot":"/tmp/tmp.Jev5gIBuYh/b7-source"}
+2026-11-10T17:27:26.002Z	info	run_requested	{"verbosity":"normal","actor":"user","text":"You executed a manual run","sourceRoot":"/tmp/tmp.Jev5gIBuYh/b7-source"}
+2026-11-10T17:27:26.676Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Run started on /tmp/tmp.Jev5gIBuYh/b7-source","runnerEvent":{"event":"run_started","runId":"2026-11-10T17-27-26.237Z-297297","mode":"real","sourceRoot":"/tmp/tmp.Jev5gIBuYh/b7-source","time":"2026-11-10T17:27:26.237Z"}}
+2026-11-10T17:27:26.680Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Runner event tool_not_listed","runnerEvent":{"event":"tool_not_listed","tool":"cross-file-links"}}
+2026-11-10T17:27:26.681Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Runner event tool_not_listed","runnerEvent":{"event":"tool_not_listed","tool":"file-symbols"}}
+2026-11-10T17:27:26.681Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Runner event tool_not_listed","runnerEvent":{"event":"tool_not_listed","tool":"symbol-scope"}}
+2026-11-10T17:27:26.735Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"7 files listed","runnerEvent":{"event":"files_listed","fileCount":7,"folderCount":4,"skippedFolders":[],"perTool":{"ts-program":6},"ignoreFiles":"not applied"}}
+2026-11-10T17:27:27.468Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"ts-program: go (inputs-changed)","runnerEvent":{"event":"tool_dry_run","tool":"ts-program","refreshReason":"inputs-changed","dryRun":"go","staleInputs":[]}}
+2026-11-10T17:27:28.265Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"ts-program: ran, output unchanged","runnerEvent":{"event":"tool_run","tool":"ts-program","status":"succeeded","logPath":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/data/tools/ts-program/logs/2026-11-10T17-27-27.850Z_program.log","outputChange":"unchanged"}}
+2026-11-10T17:27:28.379Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Runner finished: succeeded, exit code 0","runnerEvent":{"event":"run_finished","runId":"2026-11-10T17-27-26.237Z-297297","outcome":"succeeded","exitCode":0,"time":"2026-11-10T17:27:28.370Z","logPath":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/data/runner/logs/2026-11-10T17-27-26.237Z.log"}}
+2026-11-10T17:27:28.389Z	info	run_result	{"verbosity":"minimal","actor":"app","text":"Run succeeded: 1 ran, 0 skipped, 0 errors","outcome":"succeeded","counts":{"ranCount":1,"skippedCount":0,"errorCount":0}}
+2026-11-10T17:27:28.690Z	info	output_checked	{"verbosity":"normal","actor":"app","text":"Checked the run's output: nothing invalid, no extra data","runId":"2026-11-10T17-27-26.237Z-297297","counts":{"invalidCount":0,"extraCount":0}}
+2026-11-10T17:27:28.792Z	info	cached_graph_loaded	{"verbosity":"normal","actor":"app","text":"Loaded the graph from the run of 2026-11-10 17:27","runId":"2026-11-10T17-27-26.237Z-297297"}
+2026-11-10T17:27:28.800Z	info	source_opened	{"verbosity":"normal","actor":"user","text":"You opened folder \"/tmp/tmp.Jev5gIBuYh/b7-source\" for examination","sourceRoot":"/tmp/tmp.Jev5gIBuYh/b7-source"}
+2026-11-10T17:27:28.864Z	info	viewer_stopped	{"verbosity":"minimal","actor":"app","text":"Viewer stopped"}
+# [session] zaansouvi-view 0.1.0, port 4399
+2026-11-10T17:27:29.072Z	info	viewer_started	{"verbosity":"minimal","actor":"app","text":"Viewer 0.1.0 started on port 4399","port":4399}
+2026-11-10T17:27:36.829Z	info	cached_graph_loaded	{"verbosity":"normal","actor":"app","text":"Loaded the graph from the run of 2026-11-10 17:27","runId":"2026-11-10T17-27-00.158Z-295924"}
+2026-11-10T17:27:37.656Z	info	run_requested	{"verbosity":"normal","actor":"user","text":"You executed a manual run","sourceRoot":"/tmp/tmp.Jev5gIBuYh/b7-source"}
+2026-11-10T17:27:38.342Z	info	cached_graph_loaded	{"verbosity":"normal","actor":"app","text":"Loaded the graph from the run of 2026-11-10 17:27","runId":"2026-11-10T17-27-26.237Z-297297"}
+2026-11-10T17:27:38.372Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Run started on /tmp/tmp.Jev5gIBuYh/b7-source","runnerEvent":{"event":"run_started","runId":"2026-11-10T17-27-37.912Z-298004","mode":"real","sourceRoot":"/tmp/tmp.Jev5gIBuYh/b7-source","time":"2026-11-10T17:27:37.912Z"}}
+2026-11-10T17:27:38.380Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Runner event tool_not_listed","runnerEvent":{"event":"tool_not_listed","tool":"cross-file-links"}}
+2026-11-10T17:27:38.381Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Runner event tool_not_listed","runnerEvent":{"event":"tool_not_listed","tool":"file-symbols"}}
+2026-11-10T17:27:38.381Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Runner event tool_not_listed","runnerEvent":{"event":"tool_not_listed","tool":"symbol-scope"}}
+2026-11-10T17:27:38.441Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"7 files listed","runnerEvent":{"event":"files_listed","fileCount":7,"folderCount":4,"skippedFolders":[],"perTool":{"ts-program":6},"ignoreFiles":"not applied"}}
+2026-11-10T17:27:39.302Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"ts-program: no-go (E12: 1 syntax error(s). First, in src/app.ts: Syntax error TS1005: '}' expected.)","runnerEvent":{"event":"tool_dry_run","tool":"ts-program","refreshReason":"inputs-changed","dryRun":"no-go","errorKind":"run","error":{"severity":"error","code":"E12","message":"1 syntax error(s). First, in src/app.ts: Syntax error TS1005: '}' expected.","location":{"file":"src/app.ts","start":{"line":29,"column":1},"end":{"line":29,"column":1}},"details":{"syntaxErrors":[{"severity":"error","code":"E12","message":"Syntax error TS1005: '}' expected.","location":{"file":"src/app.ts","start":{"line":29,"column":1},"end":{"line":29,"column":1}}}]}},"staleInputs":[]}}
+2026-11-10T17:27:39.323Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Runner finished: failed, exit code 1","runnerEvent":{"event":"run_finished","runId":"2026-11-10T17-27-37.912Z-298004","outcome":"failed","exitCode":1,"time":"2026-11-10T17:27:39.314Z","logPath":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/data/runner/logs/2026-11-10T17-27-37.912Z.log"}}
+2026-11-10T17:27:39.333Z	error	run_result	{"verbosity":"minimal","actor":"app","text":"Run failed: 0 ran, 0 skipped, 1 error","outcome":"failed","counts":{"ranCount":0,"skippedCount":0,"errorCount":1}}
+2026-11-10T17:27:39.707Z	info	source_opened	{"verbosity":"normal","actor":"user","text":"You opened folder \"/tmp/tmp.Jev5gIBuYh/b7-source\" for examination","sourceRoot":"/tmp/tmp.Jev5gIBuYh/b7-source"}
+2026-11-10T17:27:41.719Z	info	viewer_stopped	{"verbosity":"minimal","actor":"app","text":"Viewer stopped"}
+# [session] zaansouvi-view 0.1.0, port 4399
+2026-11-10T17:28:18.468Z	info	viewer_started	{"verbosity":"minimal","actor":"app","text":"Viewer 0.1.0 started on port 4399","port":4399}
+2026-11-10T17:28:26.703Z	info	cached_graph_loaded	{"verbosity":"normal","actor":"app","text":"Loaded the graph from the run of 2026-11-10 17:27","runId":"2026-11-10T17-27-00.158Z-295924"}
+2026-11-10T17:28:27.867Z	info	level_entered	{"verbosity":"verbose","actor":"user","text":"You entered main.ts","nodeId":"src/main.ts"}
+2026-11-10T17:28:29.710Z	info	viewer_stopped	{"verbosity":"minimal","actor":"app","text":"Viewer stopped"}
+# [session] zaansouvi-view 0.1.0, port 4399
+2026-11-10T17:28:30.097Z	info	viewer_started	{"verbosity":"minimal","actor":"app","text":"Viewer 0.1.0 started on port 4399","port":4399}
+2026-11-10T17:28:37.768Z	info	cached_graph_loaded	{"verbosity":"normal","actor":"app","text":"Loaded the graph from the run of 2026-11-10 17:27","runId":"2026-11-10T17-27-00.158Z-295924"}
+2026-11-10T17:28:38.915Z	info	level_entered	{"verbosity":"verbose","actor":"user","text":"You entered main.ts","nodeId":"src/main.ts"}
+2026-11-10T17:28:45.681Z	info	viewer_stopped	{"verbosity":"minimal","actor":"app","text":"Viewer stopped"}
+# [session] zaansouvi-view 0.1.0, port 4399
+2026-11-10T17:28:46.047Z	info	viewer_started	{"verbosity":"minimal","actor":"app","text":"Viewer 0.1.0 started on port 4399","port":4399}
+2026-11-10T17:28:53.791Z	info	cached_graph_loaded	{"verbosity":"normal","actor":"app","text":"Loaded the graph from the run of 2026-11-10 17:27","runId":"2026-11-10T17-27-00.158Z-295924"}
+2026-11-10T17:28:55.497Z	info	level_entered	{"verbosity":"verbose","actor":"user","text":"You entered main.ts","nodeId":"src/main.ts"}
+2026-11-10T17:28:58.859Z	info	viewer_stopped	{"verbosity":"minimal","actor":"app","text":"Viewer stopped"}
+# [session] zaansouvi-view 0.1.0, port 4399
+2026-11-10T17:28:59.243Z	info	viewer_started	{"verbosity":"minimal","actor":"app","text":"Viewer 0.1.0 started on port 4399","port":4399}
+2026-11-10T17:29:07.049Z	info	cached_graph_loaded	{"verbosity":"normal","actor":"app","text":"Loaded the graph from the run of 2026-11-10 17:27","runId":"2026-11-10T17-27-00.158Z-295924"}
+2026-11-10T17:29:08.642Z	info	viewer_stopped	{"verbosity":"minimal","actor":"app","text":"Viewer stopped"}
+# [session] zaansouvi-view 0.1.0, port 4399
+2026-11-10T17:29:08.840Z	info	viewer_started	{"verbosity":"minimal","actor":"app","text":"Viewer 0.1.0 started on port 4399","port":4399}
+2026-11-10T17:29:17.695Z	info	cached_graph_loaded	{"verbosity":"normal","actor":"app","text":"Loaded the graph from the run of 2026-11-10 17:27","runId":"2026-11-10T17-27-00.158Z-295924"}
+2026-11-10T17:29:18.803Z	info	node_selected	{"verbosity":"verbose","actor":"user","text":"You selected main.ts","nodeId":"src/main.ts"}
+2026-11-10T17:29:19.159Z	info	node_selected	{"verbosity":"verbose","actor":"user","text":"You selected math.ts","nodeId":"src/math.ts"}
+2026-11-10T17:29:19.468Z	info	node_selected	{"verbosity":"verbose","actor":"user","text":"You selected the edge counter.ts → math.ts","nodeId":"src/counter.ts->src/math.ts"}
+2026-11-10T17:29:20.942Z	info	node_selected	{"verbosity":"verbose","actor":"user","text":"You selected counter.ts","nodeId":"src/counter.ts"}
+2026-11-10T17:29:21.644Z	info	node_selected	{"verbosity":"verbose","actor":"user","text":"You selected src","nodeId":"src"}
+2026-11-10T17:29:21.645Z	info	node_selected	{"verbosity":"verbose","actor":"user","text":"You selected math.ts","nodeId":"src/math.ts"}
+2026-11-10T17:29:21.646Z	info	node_selected	{"verbosity":"verbose","actor":"user","text":"You selected counter.ts","nodeId":"src/counter.ts"}
+2026-11-10T17:29:22.071Z	info	viewer_stopped	{"verbosity":"minimal","actor":"app","text":"Viewer stopped"}
+# [session] zaansouvi-view 0.1.0, port 4399
+2026-11-10T17:29:22.296Z	info	viewer_started	{"verbosity":"minimal","actor":"app","text":"Viewer 0.1.0 started on port 4399","port":4399}
+2026-11-10T17:29:30.009Z	info	cached_graph_loaded	{"verbosity":"normal","actor":"app","text":"Loaded the graph from the run of 2026-11-10 17:27","runId":"2026-11-10T17-27-00.158Z-295924"}
+2026-11-10T17:29:31.655Z	info	level_entered	{"verbosity":"verbose","actor":"user","text":"You entered math.ts","nodeId":"src/math.ts"}
+2026-11-10T17:29:32.256Z	info	source_opened	{"verbosity":"normal","actor":"user","text":"You opened folder \"/home/zaida/viewercopy/runner\" for examination","sourceRoot":"/home/zaida/viewercopy/runner"}
+2026-11-10T17:29:49.088Z	info	viewer_stopped	{"verbosity":"minimal","actor":"app","text":"Viewer stopped"}
+# [session] zaansouvi-view 0.1.0, port 4399
+2026-11-10T17:32:55.626Z	info	viewer_started	{"verbosity":"minimal","actor":"app","text":"Viewer 0.1.0 started on port 4399","port":4399}
+2026-11-10T17:33:03.641Z	info	cached_graph_loaded	{"verbosity":"normal","actor":"app","text":"Loaded the graph from the run of 2026-11-10 17:27","runId":"2026-11-10T17-27-00.158Z-295924"}
+2026-11-10T17:33:04.355Z	info	source_added	{"verbosity":"normal","actor":"user","text":"You added the source \"/tmp/zaansouvi-sources/runner\"","sourceRoot":"/tmp/zaansouvi-sources/runner"}
+2026-11-10T17:33:04.362Z	info	run_requested	{"verbosity":"normal","actor":"user","text":"You executed a manual run","sourceRoot":"/tmp/zaansouvi-sources/runner"}
+2026-11-10T17:33:04.919Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Run started on /tmp/zaansouvi-sources/runner","runnerEvent":{"event":"run_started","runId":"2026-11-10T17-33-04.495Z-303873","mode":"real","sourceRoot":"/tmp/zaansouvi-sources/runner","time":"2026-11-10T17:33:04.495Z"}}
+2026-11-10T17:33:04.924Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Runner event tool_not_listed","runnerEvent":{"event":"tool_not_listed","tool":"cross-file-links"}}
+2026-11-10T17:33:04.925Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Runner event tool_not_listed","runnerEvent":{"event":"tool_not_listed","tool":"file-symbols"}}
+2026-11-10T17:33:04.925Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Runner event tool_not_listed","runnerEvent":{"event":"tool_not_listed","tool":"symbol-scope"}}
+2026-11-10T17:33:04.998Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"8 files listed","runnerEvent":{"event":"files_listed","fileCount":8,"folderCount":1,"skippedFolders":[],"perTool":{"ts-program":3},"ignoreFiles":"not applied"}}
+2026-11-10T17:33:05.754Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"ts-program: go (missing)","runnerEvent":{"event":"tool_dry_run","tool":"ts-program","refreshReason":"missing","dryRun":"go","staleInputs":[]}}
+2026-11-10T17:33:07.003Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"ts-program: ran, output create","runnerEvent":{"event":"tool_run","tool":"ts-program","status":"succeeded","logPath":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/data/tools/ts-program/logs/2026-11-10T17-33-06.374Z_program.log","outputChange":"create"}}
+2026-11-10T17:33:07.064Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Runner finished: succeeded, exit code 0","runnerEvent":{"event":"run_finished","runId":"2026-11-10T17-33-04.495Z-303873","outcome":"succeeded","exitCode":0,"time":"2026-11-10T17:33:07.050Z","logPath":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/data/runner/logs/2026-11-10T17-33-04.495Z.log"}}
+2026-11-10T17:33:07.073Z	info	run_result	{"verbosity":"minimal","actor":"app","text":"Run succeeded: 1 ran, 0 skipped, 0 errors","outcome":"succeeded","counts":{"ranCount":1,"skippedCount":0,"errorCount":0}}
+2026-11-10T17:33:07.350Z	info	output_checked	{"verbosity":"normal","actor":"app","text":"Checked the run's output: nothing invalid, no extra data","runId":"2026-11-10T17-33-04.495Z-303873","counts":{"invalidCount":0,"extraCount":0}}
+2026-11-10T17:33:07.513Z	info	cached_graph_loaded	{"verbosity":"normal","actor":"app","text":"Loaded the graph from the run of 2026-11-10 17:33","runId":"2026-11-10T17-33-04.495Z-303873"}
+2026-11-10T17:33:07.556Z	info	run_requested	{"verbosity":"normal","actor":"user","text":"You executed a manual run","sourceRoot":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source-mvp2"}
+2026-11-10T17:33:08.226Z	info	cached_graph_loaded	{"verbosity":"normal","actor":"app","text":"Loaded the graph from the run of 2026-11-10 17:24","runId":"2026-11-10T17-24-54.542Z-292537"}
+2026-11-10T17:33:08.377Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Run started on /home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source-mvp2","runnerEvent":{"event":"run_started","runId":"2026-11-10T17-33-07.770Z-303966","mode":"real","sourceRoot":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source-mvp2","time":"2026-11-10T17:33:07.770Z"}}
+2026-11-10T17:33:08.383Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Runner event tool_not_listed","runnerEvent":{"event":"tool_not_listed","tool":"cross-file-links"}}
+2026-11-10T17:33:08.384Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Runner event tool_not_listed","runnerEvent":{"event":"tool_not_listed","tool":"file-symbols"}}
+2026-11-10T17:33:08.384Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Runner event tool_not_listed","runnerEvent":{"event":"tool_not_listed","tool":"symbol-scope"}}
+2026-11-10T17:33:08.450Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"7 files listed","runnerEvent":{"event":"files_listed","fileCount":7,"folderCount":4,"skippedFolders":[],"perTool":{"ts-program":6},"ignoreFiles":"not applied"}}
+2026-11-10T17:33:09.136Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"ts-program: go (inputs-changed)","runnerEvent":{"event":"tool_dry_run","tool":"ts-program","refreshReason":"inputs-changed","dryRun":"go","staleInputs":[]}}
+2026-11-10T17:33:09.924Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"ts-program: ran, output unchanged","runnerEvent":{"event":"tool_run","tool":"ts-program","status":"succeeded","logPath":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/data/tools/ts-program/logs/2026-11-10T17-33-09.530Z_program.log","outputChange":"unchanged"}}
+2026-11-10T17:33:10.028Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Runner finished: succeeded, exit code 0","runnerEvent":{"event":"run_finished","runId":"2026-11-10T17-33-07.770Z-303966","outcome":"succeeded","exitCode":0,"time":"2026-11-10T17:33:10.021Z","logPath":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/data/runner/logs/2026-11-10T17-33-07.770Z.log"}}
+2026-11-10T17:33:10.034Z	info	run_result	{"verbosity":"minimal","actor":"app","text":"Run succeeded: 1 ran, 0 skipped, 0 errors","outcome":"succeeded","counts":{"ranCount":1,"skippedCount":0,"errorCount":0}}
+2026-11-10T17:33:10.207Z	info	output_checked	{"verbosity":"normal","actor":"app","text":"Checked the run's output: nothing invalid, no extra data","runId":"2026-11-10T17-33-07.770Z-303966","counts":{"invalidCount":0,"extraCount":0}}
+2026-11-10T17:33:10.267Z	info	cached_graph_loaded	{"verbosity":"normal","actor":"app","text":"Loaded the graph from the run of 2026-11-10 17:33","runId":"2026-11-10T17-33-07.770Z-303966"}
+2026-11-10T17:33:10.287Z	info	run_requested	{"verbosity":"normal","actor":"user","text":"You executed a manual run","sourceRoot":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source"}
+2026-11-10T17:33:10.860Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Run started on /home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source","runnerEvent":{"event":"run_started","runId":"2026-11-10T17-33-10.416Z-304062","mode":"real","sourceRoot":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source","time":"2026-11-10T17:33:10.416Z"}}
+2026-11-10T17:33:10.867Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Runner event tool_not_listed","runnerEvent":{"event":"tool_not_listed","tool":"cross-file-links"}}
+2026-11-10T17:33:10.867Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Runner event tool_not_listed","runnerEvent":{"event":"tool_not_listed","tool":"file-symbols"}}
+2026-11-10T17:33:10.867Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Runner event tool_not_listed","runnerEvent":{"event":"tool_not_listed","tool":"symbol-scope"}}
+2026-11-10T17:33:10.925Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"3 files listed","runnerEvent":{"event":"files_listed","fileCount":3,"folderCount":1,"skippedFolders":[],"perTool":{"ts-program":3},"ignoreFiles":"not applied"}}
+2026-11-10T17:33:11.676Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"ts-program: go (inputs-changed)","runnerEvent":{"event":"tool_dry_run","tool":"ts-program","refreshReason":"inputs-changed","dryRun":"go","staleInputs":[]}}
+2026-11-10T17:33:12.501Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"ts-program: ran, output unchanged","runnerEvent":{"event":"tool_run","tool":"ts-program","status":"succeeded","logPath":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/data/tools/ts-program/logs/2026-11-10T17-33-12.099Z_program.log","outputChange":"unchanged"}}
+2026-11-10T17:33:12.565Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Runner finished: succeeded, exit code 0","runnerEvent":{"event":"run_finished","runId":"2026-11-10T17-33-10.416Z-304062","outcome":"succeeded","exitCode":0,"time":"2026-11-10T17:33:12.556Z","logPath":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/data/runner/logs/2026-11-10T17-33-10.416Z.log"}}
+2026-11-10T17:33:12.573Z	info	run_result	{"verbosity":"minimal","actor":"app","text":"Run succeeded: 1 ran, 0 skipped, 0 errors","outcome":"succeeded","counts":{"ranCount":1,"skippedCount":0,"errorCount":0}}
+2026-11-10T17:33:12.719Z	info	output_checked	{"verbosity":"normal","actor":"app","text":"Checked the run's output: nothing invalid, no extra data","runId":"2026-11-10T17-33-10.416Z-304062","counts":{"invalidCount":0,"extraCount":0}}
+2026-11-10T17:33:12.863Z	info	cached_graph_loaded	{"verbosity":"normal","actor":"app","text":"Loaded the graph from the run of 2026-11-10 17:33","runId":"2026-11-10T17-33-10.416Z-304062"}
+2026-11-10T17:33:13.011Z	info	source_opened	{"verbosity":"normal","actor":"user","text":"You opened folder \"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source\" for examination","sourceRoot":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source"}
+2026-11-10T17:33:13.048Z	info	viewer_stopped	{"verbosity":"minimal","actor":"app","text":"Viewer stopped"}
+# [session] zaansouvi-view 0.1.0, port 4399
+2026-11-10T17:33:13.308Z	info	viewer_started	{"verbosity":"minimal","actor":"app","text":"Viewer 0.1.0 started on port 4399","port":4399}
+2026-11-10T17:33:21.141Z	info	cached_graph_loaded	{"verbosity":"normal","actor":"app","text":"Loaded the graph from the run of 2026-11-10 17:33","runId":"2026-11-10T17-33-10.416Z-304062"}
+2026-11-10T17:33:22.216Z	info	node_selected	{"verbosity":"verbose","actor":"user","text":"You selected main.ts","nodeId":"src/main.ts"}
+2026-11-10T17:33:22.218Z	info	node_selected	{"verbosity":"verbose","actor":"user","text":"You selected math.ts","nodeId":"src/math.ts"}
+2026-11-10T17:33:22.219Z	info	level_entered	{"verbosity":"verbose","actor":"user","text":"You entered main.ts","nodeId":"src/main.ts"}
+2026-11-10T17:33:23.972Z	info	viewer_stopped	{"verbosity":"minimal","actor":"app","text":"Viewer stopped"}
+# [session] zaansouvi-view 0.1.0, port 4399
+2026-11-10T17:33:24.161Z	info	viewer_started	{"verbosity":"minimal","actor":"app","text":"Viewer 0.1.0 started on port 4399","port":4399}
+2026-11-10T17:33:31.800Z	info	cached_graph_loaded	{"verbosity":"normal","actor":"app","text":"Loaded the graph from the run of 2026-11-10 17:33","runId":"2026-11-10T17-33-10.416Z-304062"}
+2026-11-10T17:33:32.934Z	info	node_selected	{"verbosity":"verbose","actor":"user","text":"You selected main.ts","nodeId":"src/main.ts"}
+2026-11-10T17:33:33.388Z	info	level_entered	{"verbosity":"verbose","actor":"user","text":"You entered main.ts","nodeId":"src/main.ts"}
+2026-11-10T17:33:34.502Z	info	viewer_stopped	{"verbosity":"minimal","actor":"app","text":"Viewer stopped"}
+# [session] zaansouvi-view 0.1.0, port 4399
+2026-11-10T17:33:34.703Z	info	viewer_started	{"verbosity":"minimal","actor":"app","text":"Viewer 0.1.0 started on port 4399","port":4399}
+2026-11-10T17:33:42.141Z	info	cached_graph_loaded	{"verbosity":"normal","actor":"app","text":"Loaded the graph from the run of 2026-11-10 17:33","runId":"2026-11-10T17-33-10.416Z-304062"}
+2026-11-10T17:33:43.493Z	info	level_entered	{"verbosity":"verbose","actor":"user","text":"You entered main.ts","nodeId":"src/main.ts"}
+2026-11-10T17:33:45.280Z	info	viewer_stopped	{"verbosity":"minimal","actor":"app","text":"Viewer stopped"}
+# [session] zaansouvi-view 0.1.0, port 4399
+2026-11-10T17:33:45.647Z	info	viewer_started	{"verbosity":"minimal","actor":"app","text":"Viewer 0.1.0 started on port 4399","port":4399}
+2026-11-10T17:33:53.847Z	info	cached_graph_loaded	{"verbosity":"normal","actor":"app","text":"Loaded the graph from the run of 2026-11-10 17:33","runId":"2026-11-10T17-33-10.416Z-304062"}
+2026-11-10T17:33:54.956Z	info	level_entered	{"verbosity":"verbose","actor":"user","text":"You entered main.ts","nodeId":"src/main.ts"}
+2026-11-10T17:34:01.751Z	info	viewer_stopped	{"verbosity":"minimal","actor":"app","text":"Viewer stopped"}
+# [session] zaansouvi-view 0.1.0, port 4399
+2026-11-10T17:34:02.104Z	info	viewer_started	{"verbosity":"minimal","actor":"app","text":"Viewer 0.1.0 started on port 4399","port":4399}
+2026-11-10T17:34:09.986Z	info	cached_graph_loaded	{"verbosity":"normal","actor":"app","text":"Loaded the graph from the run of 2026-11-10 17:33","runId":"2026-11-10T17-33-10.416Z-304062"}
+2026-11-10T17:34:11.705Z	info	level_entered	{"verbosity":"verbose","actor":"user","text":"You entered main.ts","nodeId":"src/main.ts"}
+2026-11-10T17:34:15.033Z	info	viewer_stopped	{"verbosity":"minimal","actor":"app","text":"Viewer stopped"}
+# [session] zaansouvi-view 0.1.0, port 4399
+2026-11-10T17:34:15.352Z	info	viewer_started	{"verbosity":"minimal","actor":"app","text":"Viewer 0.1.0 started on port 4399","port":4399}
+2026-11-10T17:34:22.865Z	info	cached_graph_loaded	{"verbosity":"normal","actor":"app","text":"Loaded the graph from the run of 2026-11-10 17:33","runId":"2026-11-10T17-33-10.416Z-304062"}
+2026-11-10T17:34:24.422Z	info	viewer_stopped	{"verbosity":"minimal","actor":"app","text":"Viewer stopped"}
+# [session] zaansouvi-view 0.1.0, port 4399
+2026-11-10T17:34:24.753Z	info	viewer_started	{"verbosity":"minimal","actor":"app","text":"Viewer 0.1.0 started on port 4399","port":4399}
+2026-11-10T17:34:32.783Z	info	cached_graph_loaded	{"verbosity":"normal","actor":"app","text":"Loaded the graph from the run of 2026-11-10 17:33","runId":"2026-11-10T17-33-10.416Z-304062"}
+2026-11-10T17:34:33.945Z	info	node_selected	{"verbosity":"verbose","actor":"user","text":"You selected main.ts","nodeId":"src/main.ts"}
+2026-11-10T17:34:34.309Z	info	node_selected	{"verbosity":"verbose","actor":"user","text":"You selected math.ts","nodeId":"src/math.ts"}
+2026-11-10T17:34:34.618Z	info	node_selected	{"verbosity":"verbose","actor":"user","text":"You selected the edge counter.ts → math.ts","nodeId":"src/counter.ts->src/math.ts"}
+2026-11-10T17:34:36.094Z	info	node_selected	{"verbosity":"verbose","actor":"user","text":"You selected counter.ts","nodeId":"src/counter.ts"}
+2026-11-10T17:34:36.751Z	info	node_selected	{"verbosity":"verbose","actor":"user","text":"You selected src","nodeId":"src"}
+2026-11-10T17:34:36.751Z	info	node_selected	{"verbosity":"verbose","actor":"user","text":"You selected math.ts","nodeId":"src/math.ts"}
+2026-11-10T17:34:36.752Z	info	node_selected	{"verbosity":"verbose","actor":"user","text":"You selected counter.ts","nodeId":"src/counter.ts"}
+2026-11-10T17:34:37.158Z	info	viewer_stopped	{"verbosity":"minimal","actor":"app","text":"Viewer stopped"}
+# [session] zaansouvi-view 0.1.0, port 4399
+2026-11-10T17:34:37.347Z	info	viewer_started	{"verbosity":"minimal","actor":"app","text":"Viewer 0.1.0 started on port 4399","port":4399}
+2026-11-10T17:34:45.257Z	info	cached_graph_loaded	{"verbosity":"normal","actor":"app","text":"Loaded the graph from the run of 2026-11-10 17:33","runId":"2026-11-10T17-33-10.416Z-304062"}
+2026-11-10T17:34:47.493Z	info	viewer_stopped	{"verbosity":"minimal","actor":"app","text":"Viewer stopped"}
+# [session] zaansouvi-view 0.1.0, port 4399
+2026-11-10T17:34:47.780Z	info	viewer_started	{"verbosity":"minimal","actor":"app","text":"Viewer 0.1.0 started on port 4399","port":4399}
+2026-11-10T17:34:55.780Z	info	cached_graph_loaded	{"verbosity":"normal","actor":"app","text":"Loaded the graph from the run of 2026-11-10 17:33","runId":"2026-11-10T17-33-10.416Z-304062"}
+2026-11-10T17:34:57.362Z	info	level_entered	{"verbosity":"verbose","actor":"user","text":"You entered math.ts","nodeId":"src/math.ts"}
+2026-11-10T17:34:57.969Z	info	source_opened	{"verbosity":"normal","actor":"user","text":"You opened folder \"/tmp/zaansouvi-sources/runner\" for examination","sourceRoot":"/tmp/zaansouvi-sources/runner"}
+2026-11-10T17:34:58.329Z	info	cached_graph_loaded	{"verbosity":"normal","actor":"app","text":"Loaded the graph from the run of 2026-11-10 17:33","runId":"2026-11-10T17-33-04.495Z-303873"}
+2026-11-10T17:35:00.268Z	info	source_opened	{"verbosity":"normal","actor":"user","text":"You opened folder \"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source\" for examination","sourceRoot":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source"}
+2026-11-10T17:35:00.307Z	info	viewer_stopped	{"verbosity":"minimal","actor":"app","text":"Viewer stopped"}
+# [session] zaansouvi-view 0.1.0, port 4399
+2026-11-10T17:35:00.496Z	info	viewer_started	{"verbosity":"minimal","actor":"app","text":"Viewer 0.1.0 started on port 4399","port":4399}
+2026-11-10T17:35:08.044Z	info	cached_graph_loaded	{"verbosity":"normal","actor":"app","text":"Loaded the graph from the run of 2026-11-10 17:33","runId":"2026-11-10T17-33-10.416Z-304062"}
+2026-11-10T17:35:09.263Z	info	run_requested	{"verbosity":"normal","actor":"user","text":"You executed a manual run","sourceRoot":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source"}
+2026-11-10T17:35:09.943Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Run started on /home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source","runnerEvent":{"event":"run_started","runId":"2026-11-10T17-35-09.516Z-310456","mode":"real","sourceRoot":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source","time":"2026-11-10T17:35:09.516Z"}}
+2026-11-10T17:35:09.951Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Runner event tool_not_listed","runnerEvent":{"event":"tool_not_listed","tool":"cross-file-links"}}
+2026-11-10T17:35:09.951Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Runner event tool_not_listed","runnerEvent":{"event":"tool_not_listed","tool":"file-symbols"}}
+2026-11-10T17:35:09.952Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Runner event tool_not_listed","runnerEvent":{"event":"tool_not_listed","tool":"symbol-scope"}}
+2026-11-10T17:35:09.984Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"3 files listed","runnerEvent":{"event":"files_listed","fileCount":3,"folderCount":1,"skippedFolders":[],"perTool":{"ts-program":3},"ignoreFiles":"not applied"}}
+2026-11-10T17:35:09.990Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"ts-program: skipped, up to date","runnerEvent":{"event":"tool_skipped","tool":"ts-program","refreshReason":"up-to-date"}}
+2026-11-10T17:35:10.013Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Runner finished: succeeded, exit code 0","runnerEvent":{"event":"run_finished","runId":"2026-11-10T17-35-09.516Z-310456","outcome":"succeeded","exitCode":0,"time":"2026-11-10T17:35:10.002Z","logPath":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/data/runner/logs/2026-11-10T17-35-09.516Z.log"}}
+2026-11-10T17:35:10.022Z	info	run_result	{"verbosity":"minimal","actor":"app","text":"Run succeeded: 0 ran, 1 skipped, 0 errors","outcome":"succeeded","counts":{"ranCount":0,"skippedCount":1,"errorCount":0}}
+2026-11-10T17:35:10.181Z	info	output_checked	{"verbosity":"normal","actor":"app","text":"Checked the run's output: nothing invalid, no extra data","runId":"2026-11-10T17-35-09.516Z-310456","counts":{"invalidCount":0,"extraCount":0}}
+2026-11-10T17:35:10.456Z	info	cached_graph_loaded	{"verbosity":"normal","actor":"app","text":"Loaded the graph from the run of 2026-11-10 17:35","runId":"2026-11-10T17-35-09.516Z-310456"}
+2026-11-10T17:35:12.050Z	info	dry_run_requested	{"verbosity":"normal","actor":"user","text":"You started a dry run","sourceRoot":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source"}
+2026-11-10T17:35:12.687Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Dry run started on /home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source","runnerEvent":{"event":"run_started","runId":"2026-11-10T17-35-12.236Z-310509","mode":"dry-run","sourceRoot":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source","time":"2026-11-10T17:35:12.236Z"}}
+2026-11-10T17:35:12.695Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Runner event tool_not_listed","runnerEvent":{"event":"tool_not_listed","tool":"cross-file-links"}}
+2026-11-10T17:35:12.695Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Runner event tool_not_listed","runnerEvent":{"event":"tool_not_listed","tool":"file-symbols"}}
+2026-11-10T17:35:12.695Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Runner event tool_not_listed","runnerEvent":{"event":"tool_not_listed","tool":"symbol-scope"}}
+2026-11-10T17:35:12.734Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"3 files listed","runnerEvent":{"event":"files_listed","fileCount":3,"folderCount":1,"skippedFolders":[],"perTool":{"ts-program":3},"ignoreFiles":"not applied"}}
+2026-11-10T17:35:13.429Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"ts-program: go (up-to-date)","runnerEvent":{"event":"tool_dry_run","tool":"ts-program","refreshReason":"up-to-date","dryRun":"go","staleInputs":[]}}
+2026-11-10T17:35:13.444Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Runner finished: succeeded, exit code 0","runnerEvent":{"event":"run_finished","runId":"2026-11-10T17-35-12.236Z-310509","outcome":"succeeded","exitCode":0,"time":"2026-11-10T17:35:13.436Z","logPath":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/data/runner/logs/2026-11-10T17-35-12.236Z.log"}}
+2026-11-10T17:35:13.454Z	info	dry_run_result	{"verbosity":"minimal","actor":"app","text":"Dry run resulted in 0 errors: 1 of 1 go","counts":{"goCount":1,"noGoCount":0}}
+2026-11-10T17:35:15.250Z	info	viewer_stopped	{"verbosity":"minimal","actor":"app","text":"Viewer stopped"}
+# [session] zaansouvi-view 0.1.0, port 4399
+2026-11-10T17:35:15.497Z	info	viewer_started	{"verbosity":"minimal","actor":"app","text":"Viewer 0.1.0 started on port 4399","port":4399}
+2026-11-10T17:35:23.218Z	info	cached_graph_loaded	{"verbosity":"normal","actor":"app","text":"Loaded the graph from the run of 2026-11-10 17:35","runId":"2026-11-10T17-35-09.516Z-310456"}
+2026-11-10T17:35:24.339Z	info	source_opened	{"verbosity":"normal","actor":"user","text":"You opened folder \"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source-mvp2\" for examination","sourceRoot":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source-mvp2"}
+2026-11-10T17:35:24.627Z	info	cached_graph_loaded	{"verbosity":"normal","actor":"app","text":"Loaded the graph from the run of 2026-11-10 17:33","runId":"2026-11-10T17-33-07.770Z-303966"}
+2026-11-10T17:35:25.840Z	info	viewer_stopped	{"verbosity":"minimal","actor":"app","text":"Viewer stopped"}
+# [session] zaansouvi-view 0.1.0, port 4399
+2026-11-10T17:35:26.031Z	info	viewer_started	{"verbosity":"minimal","actor":"app","text":"Viewer 0.1.0 started on port 4399","port":4399}
+2026-11-10T17:35:33.673Z	info	cached_graph_loaded	{"verbosity":"normal","actor":"app","text":"Loaded the graph from the run of 2026-11-10 17:35","runId":"2026-11-10T17-35-09.516Z-310456"}
+2026-11-10T17:35:34.827Z	info	source_opened	{"verbosity":"normal","actor":"user","text":"You opened folder \"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source-mvp2\" for examination","sourceRoot":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source-mvp2"}
+2026-11-10T17:35:35.047Z	info	cached_graph_loaded	{"verbosity":"normal","actor":"app","text":"Loaded the graph from the run of 2026-11-10 17:33","runId":"2026-11-10T17-33-07.770Z-303966"}
+2026-11-10T17:35:36.920Z	info	viewer_stopped	{"verbosity":"minimal","actor":"app","text":"Viewer stopped"}
+# [session] zaansouvi-view 0.1.0, port 4399
+2026-11-10T17:35:37.284Z	info	viewer_started	{"verbosity":"minimal","actor":"app","text":"Viewer 0.1.0 started on port 4399","port":4399}
+2026-11-10T17:35:45.401Z	info	cached_graph_loaded	{"verbosity":"normal","actor":"app","text":"Loaded the graph from the run of 2026-11-10 17:35","runId":"2026-11-10T17-35-09.516Z-310456"}
+2026-11-10T17:35:46.566Z	info	source_opened	{"verbosity":"normal","actor":"user","text":"You opened folder \"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source-mvp2\" for examination","sourceRoot":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source-mvp2"}
+2026-11-10T17:35:46.796Z	info	cached_graph_loaded	{"verbosity":"normal","actor":"app","text":"Loaded the graph from the run of 2026-11-10 17:33","runId":"2026-11-10T17-33-07.770Z-303966"}
+2026-11-10T17:35:47.950Z	info	level_entered	{"verbosity":"verbose","actor":"user","text":"You entered Base","nodeId":"src/shapes.ts#Base@12:23"}
+2026-11-10T17:35:49.317Z	info	level_entered	{"verbosity":"verbose","actor":"user","text":"You entered total","nodeId":"src/shapes.ts#total@44:17"}
+2026-11-10T17:35:50.643Z	info	level_entered	{"verbosity":"verbose","actor":"user","text":"You entered label","nodeId":"src/shapes.ts#label@22:7"}
+2026-11-10T17:35:51.898Z	info	level_entered	{"verbosity":"verbose","actor":"user","text":"You entered render","nodeId":"src/app.ts#render@7:9"}
+2026-11-10T17:35:53.163Z	info	level_entered	{"verbosity":"verbose","actor":"user","text":"You entered Circle","nodeId":"src/shapes.ts#Circle@27:14"}
+2026-11-10T17:35:54.444Z	info	level_entered	{"verbosity":"verbose","actor":"user","text":"You entered shapes.ts","nodeId":"src/shapes.ts"}
+2026-11-10T17:35:55.807Z	info	level_entered	{"verbosity":"verbose","actor":"user","text":"You entered percent","nodeId":"src/util/numbers.ts#percent@8:17"}
+2026-11-10T17:35:57.147Z	info	viewer_stopped	{"verbosity":"minimal","actor":"app","text":"Viewer stopped"}
+# [session] zaansouvi-view 0.1.0, port 4399
+2026-11-10T17:35:57.517Z	info	viewer_started	{"verbosity":"minimal","actor":"app","text":"Viewer 0.1.0 started on port 4399","port":4399}
+2026-11-10T17:36:05.012Z	info	cached_graph_loaded	{"verbosity":"normal","actor":"app","text":"Loaded the graph from the run of 2026-11-10 17:35","runId":"2026-11-10T17-35-09.516Z-310456"}
+2026-11-10T17:36:06.087Z	info	source_opened	{"verbosity":"normal","actor":"user","text":"You opened folder \"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source-mvp2\" for examination","sourceRoot":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source-mvp2"}
+2026-11-10T17:36:06.248Z	info	cached_graph_loaded	{"verbosity":"normal","actor":"app","text":"Loaded the graph from the run of 2026-11-10 17:33","runId":"2026-11-10T17-33-07.770Z-303966"}
+2026-11-10T17:36:06.255Z	info	run_requested	{"verbosity":"normal","actor":"user","text":"You executed a manual run","sourceRoot":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source-mvp2"}
+2026-11-10T17:36:06.805Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Run started on /home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source-mvp2","runnerEvent":{"event":"run_started","runId":"2026-11-10T17-36-06.380Z-313100","mode":"real","sourceRoot":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source-mvp2","time":"2026-11-10T17:36:06.380Z"}}
+2026-11-10T17:36:06.821Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Runner event tool_not_listed","runnerEvent":{"event":"tool_not_listed","tool":"cross-file-links"}}
+2026-11-10T17:36:06.821Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Runner event tool_not_listed","runnerEvent":{"event":"tool_not_listed","tool":"file-symbols"}}
+2026-11-10T17:36:06.822Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Runner event tool_not_listed","runnerEvent":{"event":"tool_not_listed","tool":"symbol-scope"}}
+2026-11-10T17:36:06.911Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"7 files listed","runnerEvent":{"event":"files_listed","fileCount":7,"folderCount":4,"skippedFolders":[],"perTool":{"ts-program":6},"ignoreFiles":"not applied"}}
+2026-11-10T17:36:07.809Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"ts-program: go (inputs-changed)","runnerEvent":{"event":"tool_dry_run","tool":"ts-program","refreshReason":"inputs-changed","dryRun":"go","staleInputs":[]}}
+2026-11-10T17:36:08.653Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"ts-program: ran, output unchanged","runnerEvent":{"event":"tool_run","tool":"ts-program","status":"succeeded","logPath":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/data/tools/ts-program/logs/2026-11-10T17-36-08.206Z_program.log","outputChange":"unchanged"}}
+2026-11-10T17:36:08.769Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Runner finished: succeeded, exit code 0","runnerEvent":{"event":"run_finished","runId":"2026-11-10T17-36-06.380Z-313100","outcome":"succeeded","exitCode":0,"time":"2026-11-10T17:36:08.759Z","logPath":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/data/runner/logs/2026-11-10T17-36-06.380Z.log"}}
+2026-11-10T17:36:08.775Z	info	run_result	{"verbosity":"minimal","actor":"app","text":"Run succeeded: 1 ran, 0 skipped, 0 errors","outcome":"succeeded","counts":{"ranCount":1,"skippedCount":0,"errorCount":0}}
+2026-11-10T17:36:09.075Z	info	output_checked	{"verbosity":"normal","actor":"app","text":"Checked the run's output: nothing invalid, no extra data","runId":"2026-11-10T17-36-06.380Z-313100","counts":{"invalidCount":0,"extraCount":0}}
+2026-11-10T17:36:09.176Z	info	cached_graph_loaded	{"verbosity":"normal","actor":"app","text":"Loaded the graph from the run of 2026-11-10 17:36","runId":"2026-11-10T17-36-06.380Z-313100"}
+2026-11-10T17:36:10.594Z	info	level_entered	{"verbosity":"verbose","actor":"user","text":"You entered Circle","nodeId":"src/shapes.ts#Circle@27:14"}
+2026-11-10T17:36:11.831Z	info	level_entered	{"verbosity":"verbose","actor":"user","text":"You entered Anonymous","nodeId":"src/shapes.ts#Anonymous@57:14"}
+2026-11-10T17:36:13.046Z	info	level_entered	{"verbosity":"verbose","actor":"user","text":"You entered Base","nodeId":"src/shapes.ts#Base@12:23"}
+2026-11-10T17:36:14.296Z	info	level_entered	{"verbosity":"verbose","actor":"user","text":"You entered summarize","nodeId":"src/report/summary.ts#summarize@7:23"}
+2026-11-10T17:36:15.647Z	info	viewer_stopped	{"verbosity":"minimal","actor":"app","text":"Viewer stopped"}
+# [session] zaansouvi-view 0.1.0, port 4399
+2026-11-10T17:36:15.846Z	info	viewer_started	{"verbosity":"minimal","actor":"app","text":"Viewer 0.1.0 started on port 4399","port":4399}
+2026-11-10T17:36:24.478Z	info	cached_graph_loaded	{"verbosity":"normal","actor":"app","text":"Loaded the graph from the run of 2026-11-10 17:35","runId":"2026-11-10T17-35-09.516Z-310456"}
+2026-11-10T17:36:25.607Z	info	source_opened	{"verbosity":"normal","actor":"user","text":"You opened folder \"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source-mvp2\" for examination","sourceRoot":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source-mvp2"}
+2026-11-10T17:36:25.805Z	info	cached_graph_loaded	{"verbosity":"normal","actor":"app","text":"Loaded the graph from the run of 2026-11-10 17:36","runId":"2026-11-10T17-36-06.380Z-313100"}
+2026-11-10T17:36:26.979Z	info	level_entered	{"verbosity":"verbose","actor":"user","text":"You entered percent","nodeId":"src/util/numbers.ts#percent@8:17"}
+2026-11-10T17:36:28.288Z	info	level_entered	{"verbosity":"verbose","actor":"user","text":"You entered Base","nodeId":"src/shapes.ts#Base@12:23"}
+2026-11-10T17:36:29.594Z	info	level_entered	{"verbosity":"verbose","actor":"user","text":"You entered shapes.ts","nodeId":"src/shapes.ts"}
+2026-11-10T17:36:30.909Z	info	level_entered	{"verbosity":"verbose","actor":"user","text":"You entered bars","nodeId":"src/report/charts/bars.ts#bars@7:17"}
+2026-11-10T17:36:32.241Z	info	viewer_stopped	{"verbosity":"minimal","actor":"app","text":"Viewer stopped"}
+# [session] zaansouvi-view 0.1.0, port 4399
+2026-11-10T17:36:32.449Z	info	viewer_started	{"verbosity":"minimal","actor":"app","text":"Viewer 0.1.0 started on port 4399","port":4399}
+2026-11-10T17:36:40.165Z	info	cached_graph_loaded	{"verbosity":"normal","actor":"app","text":"Loaded the graph from the run of 2026-11-10 17:35","runId":"2026-11-10T17-35-09.516Z-310456"}
+2026-11-10T17:36:41.314Z	info	source_opened	{"verbosity":"normal","actor":"user","text":"You opened folder \"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source-mvp2\" for examination","sourceRoot":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source-mvp2"}
+2026-11-10T17:36:41.531Z	info	cached_graph_loaded	{"verbosity":"normal","actor":"app","text":"Loaded the graph from the run of 2026-11-10 17:36","runId":"2026-11-10T17-36-06.380Z-313100"}
+2026-11-10T17:36:42.689Z	info	level_entered	{"verbosity":"verbose","actor":"user","text":"You entered app.ts","nodeId":"src/app.ts"}
+2026-11-10T17:36:43.988Z	info	level_entered	{"verbosity":"verbose","actor":"user","text":"You entered shapes.ts","nodeId":"src/shapes.ts"}
+2026-11-10T17:36:45.342Z	info	viewer_stopped	{"verbosity":"minimal","actor":"app","text":"Viewer stopped"}
+# [session] zaansouvi-view 0.1.0, port 4399
+2026-11-10T17:36:45.601Z	info	viewer_started	{"verbosity":"minimal","actor":"app","text":"Viewer 0.1.0 started on port 4399","port":4399}
+2026-11-10T17:36:53.295Z	info	cached_graph_loaded	{"verbosity":"normal","actor":"app","text":"Loaded the graph from the run of 2026-11-10 17:35","runId":"2026-11-10T17-35-09.516Z-310456"}
+2026-11-10T17:36:54.439Z	info	source_opened	{"verbosity":"normal","actor":"user","text":"You opened folder \"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source-mvp2\" for examination","sourceRoot":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source-mvp2"}
+2026-11-10T17:36:54.664Z	info	cached_graph_loaded	{"verbosity":"normal","actor":"app","text":"Loaded the graph from the run of 2026-11-10 17:36","runId":"2026-11-10T17-36-06.380Z-313100"}
+2026-11-10T17:36:55.817Z	info	level_entered	{"verbosity":"verbose","actor":"user","text":"You entered Anonymous","nodeId":"src/shapes.ts#Anonymous@57:14"}
+2026-11-10T17:36:57.043Z	info	node_selected	{"verbosity":"verbose","actor":"user","text":"You selected name","nodeId":"src/shapes.ts#name@57:56"}
+2026-11-10T17:36:58.100Z	info	node_selected	{"verbosity":"verbose","actor":"user","text":"You selected Anonymous","nodeId":"src/shapes.ts#Anonymous@57:14"}
+2026-11-10T17:37:00.153Z	info	level_entered	{"verbosity":"verbose","actor":"user","text":"You entered shapes.ts","nodeId":"src/shapes.ts"}
+2026-11-10T17:37:01.395Z	info	node_selected	{"verbosity":"verbose","actor":"user","text":"You selected Base","nodeId":"src/shapes.ts#Base@12:23"}
+2026-11-10T17:37:02.549Z	info	viewer_stopped	{"verbosity":"minimal","actor":"app","text":"Viewer stopped"}
+# [session] zaansouvi-view 0.1.0, port 4399
+2026-11-10T17:37:02.757Z	info	viewer_started	{"verbosity":"minimal","actor":"app","text":"Viewer 0.1.0 started on port 4399","port":4399}
+2026-11-10T17:37:10.545Z	info	cached_graph_loaded	{"verbosity":"normal","actor":"app","text":"Loaded the graph from the run of 2026-11-10 17:35","runId":"2026-11-10T17-35-09.516Z-310456"}
+2026-11-10T17:37:11.696Z	info	source_opened	{"verbosity":"normal","actor":"user","text":"You opened folder \"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source-mvp2\" for examination","sourceRoot":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source-mvp2"}
+2026-11-10T17:37:11.918Z	info	cached_graph_loaded	{"verbosity":"normal","actor":"app","text":"Loaded the graph from the run of 2026-11-10 17:36","runId":"2026-11-10T17-36-06.380Z-313100"}
+2026-11-10T17:37:11.924Z	info	run_requested	{"verbosity":"normal","actor":"user","text":"You executed a manual run","sourceRoot":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source-mvp2"}
+2026-11-10T17:37:12.639Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Run started on /home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source-mvp2","runnerEvent":{"event":"run_started","runId":"2026-11-10T17-37-12.168Z-315788","mode":"real","sourceRoot":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source-mvp2","time":"2026-11-10T17:37:12.168Z"}}
+2026-11-10T17:37:12.647Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Runner event tool_not_listed","runnerEvent":{"event":"tool_not_listed","tool":"cross-file-links"}}
+2026-11-10T17:37:12.647Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Runner event tool_not_listed","runnerEvent":{"event":"tool_not_listed","tool":"file-symbols"}}
+2026-11-10T17:37:12.647Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Runner event tool_not_listed","runnerEvent":{"event":"tool_not_listed","tool":"symbol-scope"}}
+2026-11-10T17:37:12.707Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"7 files listed","runnerEvent":{"event":"files_listed","fileCount":7,"folderCount":4,"skippedFolders":[],"perTool":{"ts-program":6},"ignoreFiles":"not applied"}}
+2026-11-10T17:37:12.714Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"ts-program: skipped, up to date","runnerEvent":{"event":"tool_skipped","tool":"ts-program","refreshReason":"up-to-date"}}
+2026-11-10T17:37:12.749Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Runner finished: succeeded, exit code 0","runnerEvent":{"event":"run_finished","runId":"2026-11-10T17-37-12.168Z-315788","outcome":"succeeded","exitCode":0,"time":"2026-11-10T17:37:12.728Z","logPath":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/data/runner/logs/2026-11-10T17-37-12.168Z.log"}}
+2026-11-10T17:37:12.768Z	info	run_result	{"verbosity":"minimal","actor":"app","text":"Run succeeded: 0 ran, 1 skipped, 0 errors","outcome":"succeeded","counts":{"ranCount":0,"skippedCount":1,"errorCount":0}}
+2026-11-10T17:37:12.931Z	info	output_checked	{"verbosity":"normal","actor":"app","text":"Checked the run's output: nothing invalid, no extra data","runId":"2026-11-10T17-37-12.168Z-315788","counts":{"invalidCount":0,"extraCount":0}}
+2026-11-10T17:37:13.262Z	info	cached_graph_loaded	{"verbosity":"normal","actor":"app","text":"Loaded the graph from the run of 2026-11-10 17:37","runId":"2026-11-10T17-37-12.168Z-315788"}
+2026-11-10T17:37:15.223Z	info	level_entered	{"verbosity":"verbose","actor":"user","text":"You entered bars.ts","nodeId":"src/report/charts/bars.ts"}
+2026-11-10T17:37:16.846Z	info	viewer_stopped	{"verbosity":"minimal","actor":"app","text":"Viewer stopped"}
+# [session] zaansouvi-view 0.1.0, port 4399
+2026-11-10T17:37:17.086Z	info	viewer_started	{"verbosity":"minimal","actor":"app","text":"Viewer 0.1.0 started on port 4399","port":4399}
+2026-11-10T17:37:25.078Z	info	cached_graph_loaded	{"verbosity":"normal","actor":"app","text":"Loaded the graph from the run of 2026-11-10 17:35","runId":"2026-11-10T17-35-09.516Z-310456"}
+2026-11-10T17:37:25.817Z	info	run_requested	{"verbosity":"normal","actor":"user","text":"You executed a manual run","sourceRoot":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source-mvp2"}
+2026-11-10T17:37:26.469Z	info	cached_graph_loaded	{"verbosity":"normal","actor":"app","text":"Loaded the graph from the run of 2026-11-10 17:37","runId":"2026-11-10T17-37-12.168Z-315788"}
+2026-11-10T17:37:26.498Z	info	source_added	{"verbosity":"normal","actor":"user","text":"You added the source \"/tmp/zaansouvi-status-source\"","sourceRoot":"/tmp/zaansouvi-status-source"}
+2026-11-10T17:37:26.506Z	warn	run_refused	{"verbosity":"minimal","actor":"app","text":"Run refused: a run is already in progress"}
+2026-11-10T17:37:26.815Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Run started on /home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source-mvp2","runnerEvent":{"event":"run_started","runId":"2026-11-10T17-37-26.066Z-316490","mode":"real","sourceRoot":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source-mvp2","time":"2026-11-10T17:37:26.066Z"}}
+2026-11-10T17:37:26.821Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Runner event tool_not_listed","runnerEvent":{"event":"tool_not_listed","tool":"cross-file-links"}}
+2026-11-10T17:37:26.822Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Runner event tool_not_listed","runnerEvent":{"event":"tool_not_listed","tool":"file-symbols"}}
+2026-11-10T17:37:26.822Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Runner event tool_not_listed","runnerEvent":{"event":"tool_not_listed","tool":"symbol-scope"}}
+2026-11-10T17:37:26.881Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"7 files listed","runnerEvent":{"event":"files_listed","fileCount":7,"folderCount":4,"skippedFolders":[],"perTool":{"ts-program":6},"ignoreFiles":"not applied"}}
+2026-11-10T17:37:26.887Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"ts-program: skipped, up to date","runnerEvent":{"event":"tool_skipped","tool":"ts-program","refreshReason":"up-to-date"}}
+2026-11-10T17:37:26.902Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Runner finished: succeeded, exit code 0","runnerEvent":{"event":"run_finished","runId":"2026-11-10T17-37-26.066Z-316490","outcome":"succeeded","exitCode":0,"time":"2026-11-10T17:37:26.895Z","logPath":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/data/runner/logs/2026-11-10T17-37-26.066Z.log"}}
+2026-11-10T17:37:26.909Z	info	run_result	{"verbosity":"minimal","actor":"app","text":"Run succeeded: 0 ran, 1 skipped, 0 errors","outcome":"succeeded","counts":{"ranCount":0,"skippedCount":1,"errorCount":0}}
+2026-11-10T17:37:27.018Z	warn	run_refused	{"verbosity":"minimal","actor":"app","text":"Run refused: a run is already in progress"}
+2026-11-10T17:37:27.069Z	info	output_checked	{"verbosity":"normal","actor":"app","text":"Checked the run's output: nothing invalid, no extra data","runId":"2026-11-10T17-37-26.066Z-316490","counts":{"invalidCount":0,"extraCount":0}}
+2026-11-10T17:37:27.523Z	info	run_requested	{"verbosity":"normal","actor":"user","text":"You executed a manual run","sourceRoot":"/tmp/zaansouvi-status-source"}
+2026-11-10T17:37:28.169Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Run started on /tmp/zaansouvi-status-source","runnerEvent":{"event":"run_started","runId":"2026-11-10T17-37-27.705Z-316530","mode":"real","sourceRoot":"/tmp/zaansouvi-status-source","time":"2026-11-10T17:37:27.705Z"}}
+2026-11-10T17:37:28.178Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Runner event tool_not_listed","runnerEvent":{"event":"tool_not_listed","tool":"cross-file-links"}}
+2026-11-10T17:37:28.179Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Runner event tool_not_listed","runnerEvent":{"event":"tool_not_listed","tool":"file-symbols"}}
+2026-11-10T17:37:28.180Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Runner event tool_not_listed","runnerEvent":{"event":"tool_not_listed","tool":"symbol-scope"}}
+2026-11-10T17:37:28.235Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"5 files listed","runnerEvent":{"event":"files_listed","fileCount":5,"folderCount":3,"skippedFolders":[{"id":".git","fileCount":1,"totalBytes":10},{"id":"node_modules","fileCount":1,"totalBytes":2}],"perTool":{"ts-program":2},"ignoreFiles":"not applied"}}
+2026-11-10T17:37:29.020Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"ts-program: go (inputs-changed)","runnerEvent":{"event":"tool_dry_run","tool":"ts-program","refreshReason":"inputs-changed","dryRun":"go","staleInputs":[]}}
+2026-11-10T17:37:30.088Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"ts-program: ran, output unchanged","runnerEvent":{"event":"tool_run","tool":"ts-program","status":"succeeded","logPath":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/data/tools/ts-program/logs/2026-11-10T17-37-29.693Z_program.log","outputChange":"unchanged"}}
+2026-11-10T17:37:30.137Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Runner finished: succeeded, exit code 0","runnerEvent":{"event":"run_finished","runId":"2026-11-10T17-37-27.705Z-316530","outcome":"succeeded","exitCode":0,"time":"2026-11-10T17:37:30.126Z","logPath":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/data/runner/logs/2026-11-10T17-37-27.705Z.log"}}
+2026-11-10T17:37:30.147Z	info	run_result	{"verbosity":"minimal","actor":"app","text":"Run succeeded: 1 ran, 0 skipped, 0 errors","outcome":"succeeded","counts":{"ranCount":1,"skippedCount":0,"errorCount":0}}
+2026-11-10T17:37:30.411Z	info	output_checked	{"verbosity":"normal","actor":"app","text":"Checked the run's output: nothing invalid, no extra data","runId":"2026-11-10T17-37-27.705Z-316530","counts":{"invalidCount":0,"extraCount":0}}
+2026-11-10T17:37:30.412Z	info	cached_graph_loaded	{"verbosity":"normal","actor":"app","text":"Loaded the graph from the run of 2026-11-10 17:37","runId":"2026-11-10T17-37-27.705Z-316530"}
+2026-11-10T17:37:30.925Z	info	source_opened	{"verbosity":"normal","actor":"user","text":"You opened folder \"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source-mvp2\" for examination","sourceRoot":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source-mvp2"}
+2026-11-10T17:37:31.292Z	info	cached_graph_loaded	{"verbosity":"normal","actor":"app","text":"Loaded the graph from the run of 2026-11-10 17:37","runId":"2026-11-10T17-37-26.066Z-316490"}
+2026-11-10T17:37:32.979Z	info	level_entered	{"verbosity":"verbose","actor":"user","text":"You entered shapes.ts","nodeId":"src/shapes.ts"}
+2026-11-10T17:37:34.298Z	info	level_entered	{"verbosity":"verbose","actor":"user","text":"You entered Circle","nodeId":"src/shapes.ts#Circle@27:14"}
+2026-11-10T17:37:35.577Z	info	node_selected	{"verbosity":"verbose","actor":"user","text":"You selected radius","nodeId":"src/shapes.ts#radius@29:23"}
+2026-11-10T17:37:35.659Z	info	source_opened	{"verbosity":"normal","actor":"user","text":"You opened folder \"/tmp/zaansouvi-status-source\" for examination","sourceRoot":"/tmp/zaansouvi-status-source"}
+2026-11-10T17:37:37.649Z	info	node_selected	{"verbosity":"verbose","actor":"user","text":"You selected readonly.txt","nodeId":"readonly.txt"}
+2026-11-10T17:37:37.653Z	info	source_opened	{"verbosity":"normal","actor":"user","text":"You opened folder \"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source-mvp2\" for examination","sourceRoot":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source-mvp2"}
+2026-11-10T17:37:37.721Z	info	viewer_stopped	{"verbosity":"minimal","actor":"app","text":"Viewer stopped"}
+# [session] zaansouvi-view 0.1.0, port 4399
+2026-11-10T17:37:38.061Z	info	viewer_started	{"verbosity":"minimal","actor":"app","text":"Viewer 0.1.0 started on port 4399","port":4399}
+2026-11-10T17:37:46.360Z	info	cached_graph_loaded	{"verbosity":"normal","actor":"app","text":"Loaded the graph from the run of 2026-11-10 17:35","runId":"2026-11-10T17-35-09.516Z-310456"}
+2026-11-10T17:37:47.218Z	info	source_added	{"verbosity":"normal","actor":"user","text":"You added the source \"/tmp/zaansouvi-sources/b7-source\"","sourceRoot":"/tmp/zaansouvi-sources/b7-source"}
+2026-11-10T17:37:47.223Z	info	run_requested	{"verbosity":"normal","actor":"user","text":"You executed a manual run","sourceRoot":"/tmp/zaansouvi-sources/b7-source"}
+2026-11-10T17:37:47.809Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Run started on /tmp/zaansouvi-sources/b7-source","runnerEvent":{"event":"run_started","runId":"2026-11-10T17-37-47.354Z-317278","mode":"real","sourceRoot":"/tmp/zaansouvi-sources/b7-source","time":"2026-11-10T17:37:47.354Z"}}
+2026-11-10T17:37:47.820Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Runner event tool_not_listed","runnerEvent":{"event":"tool_not_listed","tool":"cross-file-links"}}
+2026-11-10T17:37:47.820Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Runner event tool_not_listed","runnerEvent":{"event":"tool_not_listed","tool":"file-symbols"}}
+2026-11-10T17:37:47.821Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Runner event tool_not_listed","runnerEvent":{"event":"tool_not_listed","tool":"symbol-scope"}}
+2026-11-10T17:37:47.880Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"7 files listed","runnerEvent":{"event":"files_listed","fileCount":7,"folderCount":4,"skippedFolders":[],"perTool":{"ts-program":6},"ignoreFiles":"not applied"}}
+2026-11-10T17:37:48.762Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"ts-program: go (inputs-changed)","runnerEvent":{"event":"tool_dry_run","tool":"ts-program","refreshReason":"inputs-changed","dryRun":"go","staleInputs":[]}}
+2026-11-10T17:37:49.597Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"ts-program: ran, output unchanged","runnerEvent":{"event":"tool_run","tool":"ts-program","status":"succeeded","logPath":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/data/tools/ts-program/logs/2026-11-10T17-37-49.156Z_program.log","outputChange":"unchanged"}}
+2026-11-10T17:37:49.718Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Runner finished: succeeded, exit code 0","runnerEvent":{"event":"run_finished","runId":"2026-11-10T17-37-47.354Z-317278","outcome":"succeeded","exitCode":0,"time":"2026-11-10T17:37:49.709Z","logPath":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/data/runner/logs/2026-11-10T17-37-47.354Z.log"}}
+2026-11-10T17:37:49.724Z	info	run_result	{"verbosity":"minimal","actor":"app","text":"Run succeeded: 1 ran, 0 skipped, 0 errors","outcome":"succeeded","counts":{"ranCount":1,"skippedCount":0,"errorCount":0}}
+2026-11-10T17:37:49.880Z	info	output_checked	{"verbosity":"normal","actor":"app","text":"Checked the run's output: nothing invalid, no extra data","runId":"2026-11-10T17-37-47.354Z-317278","counts":{"invalidCount":0,"extraCount":0}}
+2026-11-10T17:37:50.038Z	info	cached_graph_loaded	{"verbosity":"normal","actor":"app","text":"Loaded the graph from the run of 2026-11-10 17:37","runId":"2026-11-10T17-37-47.354Z-317278"}
+2026-11-10T17:37:50.044Z	info	source_opened	{"verbosity":"normal","actor":"user","text":"You opened folder \"/tmp/zaansouvi-sources/b7-source\" for examination","sourceRoot":"/tmp/zaansouvi-sources/b7-source"}
+2026-11-10T17:37:50.080Z	info	viewer_stopped	{"verbosity":"minimal","actor":"app","text":"Viewer stopped"}
+# [session] zaansouvi-view 0.1.0, port 4399
+2026-11-10T17:37:50.274Z	info	viewer_started	{"verbosity":"minimal","actor":"app","text":"Viewer 0.1.0 started on port 4399","port":4399}
+2026-11-10T17:37:58.669Z	info	cached_graph_loaded	{"verbosity":"normal","actor":"app","text":"Loaded the graph from the run of 2026-11-10 17:35","runId":"2026-11-10T17-35-09.516Z-310456"}
+2026-11-10T17:37:59.535Z	info	run_requested	{"verbosity":"normal","actor":"user","text":"You executed a manual run","sourceRoot":"/tmp/zaansouvi-sources/b7-source"}
+2026-11-10T17:38:00.104Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Run started on /tmp/zaansouvi-sources/b7-source","runnerEvent":{"event":"run_started","runId":"2026-11-10T17-37-59.670Z-318016","mode":"real","sourceRoot":"/tmp/zaansouvi-sources/b7-source","time":"2026-11-10T17:37:59.670Z"}}
+2026-11-10T17:38:00.113Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Runner event tool_not_listed","runnerEvent":{"event":"tool_not_listed","tool":"cross-file-links"}}
+2026-11-10T17:38:00.113Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Runner event tool_not_listed","runnerEvent":{"event":"tool_not_listed","tool":"file-symbols"}}
+2026-11-10T17:38:00.113Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Runner event tool_not_listed","runnerEvent":{"event":"tool_not_listed","tool":"symbol-scope"}}
+2026-11-10T17:38:00.179Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"7 files listed","runnerEvent":{"event":"files_listed","fileCount":7,"folderCount":4,"skippedFolders":[],"perTool":{"ts-program":6},"ignoreFiles":"not applied"}}
+2026-11-10T17:38:00.238Z	info	cached_graph_loaded	{"verbosity":"normal","actor":"app","text":"Loaded the graph from the run of 2026-11-10 17:37","runId":"2026-11-10T17-37-47.354Z-317278"}
+2026-11-10T17:38:00.878Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"ts-program: no-go (E12: 1 syntax error(s). First, in src/app.ts: Syntax error TS1005: '}' expected.)","runnerEvent":{"event":"tool_dry_run","tool":"ts-program","refreshReason":"inputs-changed","dryRun":"no-go","errorKind":"run","error":{"severity":"error","code":"E12","message":"1 syntax error(s). First, in src/app.ts: Syntax error TS1005: '}' expected.","location":{"file":"src/app.ts","start":{"line":29,"column":1},"end":{"line":29,"column":1}},"details":{"syntaxErrors":[{"severity":"error","code":"E12","message":"Syntax error TS1005: '}' expected.","location":{"file":"src/app.ts","start":{"line":29,"column":1},"end":{"line":29,"column":1}}}]}},"staleInputs":[]}}
+2026-11-10T17:38:00.899Z	info	runner_event	{"verbosity":"verbose","actor":"app","text":"Runner finished: failed, exit code 1","runnerEvent":{"event":"run_finished","runId":"2026-11-10T17-37-59.670Z-318016","outcome":"failed","exitCode":1,"time":"2026-11-10T17:38:00.888Z","logPath":"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/data/runner/logs/2026-11-10T17-37-59.670Z.log"}}
+2026-11-10T17:38:00.910Z	error	run_result	{"verbosity":"minimal","actor":"app","text":"Run failed: 0 ran, 0 skipped, 1 error","outcome":"failed","counts":{"ranCount":0,"skippedCount":0,"errorCount":1}}
+2026-11-10T17:38:02.942Z	info	viewer_stopped	{"verbosity":"minimal","actor":"app","text":"Viewer stopped"}

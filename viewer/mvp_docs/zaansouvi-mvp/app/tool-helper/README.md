@@ -1,6 +1,6 @@
 # Tool helper
 
-The contract every ZaAnSouVi MVP tool shares, written once (`mvp_docs/04_tools.md`, `TOOL-45`; `ARCH-02`). M1 (`file-symbols`) and M2 (`cross-file-links`) use it; M3 will.
+The contract every ZaAnSouVi MVP tool shares, written once (`mvp_docs/04_tools.md`, `TOOL-45`; `ARCH-02`). `ts-program` uses it, as do the frozen M1, M2 and M3 (`zaansouvi-mvp/README.md`).
 
 It **knows nothing about any specific tool**. Everything tool-specific comes from the tool itself: its `--info`, which also drives the parameter options and the shape check; its help text; its extra shape checks; and its work. It uses only Node built-ins, and imports nothing from a tool, the Runner or the Viewer.
 

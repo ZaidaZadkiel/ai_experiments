@@ -1,0 +1,2167 @@
+{
+ "about": "Expected graph of test-source-mvp2, written by hand from mvp_docs/41_typescript_program_plan.md, section 1.1 (the definition of a correct graph, as refined on 2026-11-09). Positions are file line:column, 1-based, of the name. Edges are uses (one per use); links are imports; built-ins and unresolved uses have no edge.",
+ "counts": {
+  "nodes": 120,
+  "edges": 156,
+  "links": 20,
+  "builtins": 25,
+  "unresolved": 1
+ },
+ "nodes": [
+  {
+   "id": "src/shapes.ts#Shape@2:18",
+   "name": "Shape",
+   "kind": "interface",
+   "parent": "src/shapes.ts",
+   "exported": true
+  },
+  {
+   "id": "src/shapes.ts#area@2:26",
+   "name": "area",
+   "kind": "method",
+   "parent": "src/shapes.ts#Shape@2:18"
+  },
+  {
+   "id": "src/shapes.ts#name@2:51",
+   "name": "name",
+   "kind": "property",
+   "parent": "src/shapes.ts#Shape@2:18",
+   "modifiers": [
+    "readonly"
+   ]
+  },
+  {
+   "id": "src/shapes.ts#Point@3:13",
+   "name": "Point",
+   "kind": "typeAlias",
+   "parent": "src/shapes.ts",
+   "exported": true
+  },
+  {
+   "id": "src/shapes.ts#x@3:23",
+   "name": "x",
+   "kind": "property",
+   "parent": "src/shapes.ts#Point@3:13"
+  },
+  {
+   "id": "src/shapes.ts#y@3:34",
+   "name": "y",
+   "kind": "property",
+   "parent": "src/shapes.ts#Point@3:13"
+  },
+  {
+   "id": "src/shapes.ts#Color@4:13",
+   "name": "Color",
+   "kind": "enum",
+   "parent": "src/shapes.ts",
+   "exported": true
+  },
+  {
+   "id": "src/shapes.ts#Red@4:21",
+   "name": "Red",
+   "kind": "enumMember",
+   "parent": "src/shapes.ts#Color@4:13"
+  },
+  {
+   "id": "src/shapes.ts#Green@4:34",
+   "name": "Green",
+   "kind": "enumMember",
+   "parent": "src/shapes.ts#Color@4:13"
+  },
+  {
+   "id": "src/shapes.ts#Flag@5:19",
+   "name": "Flag",
+   "kind": "enum",
+   "parent": "src/shapes.ts",
+   "exported": true,
+   "modifiers": [
+    "const"
+   ]
+  },
+  {
+   "id": "src/shapes.ts#On@5:26",
+   "name": "On",
+   "kind": "enumMember",
+   "parent": "src/shapes.ts#Flag@5:19"
+  },
+  {
+   "id": "src/shapes.ts#Off@5:34",
+   "name": "Off",
+   "kind": "enumMember",
+   "parent": "src/shapes.ts#Flag@5:19"
+  },
+  {
+   "id": "src/shapes.ts#UNIT@7:14",
+   "name": "UNIT",
+   "kind": "variable",
+   "parent": "src/shapes.ts",
+   "exported": true,
+   "declaredWith": "const"
+  },
+  {
+   "id": "src/shapes.ts#created@8:5",
+   "name": "created",
+   "kind": "variable",
+   "parent": "src/shapes.ts",
+   "declaredWith": "let"
+  },
+  {
+   "id": "src/shapes.ts#log@10:10",
+   "name": "log",
+   "kind": "function",
+   "parent": "src/shapes.ts"
+  },
+  {
+   "id": "src/shapes.ts#target@10:14",
+   "name": "target",
+   "kind": "parameter",
+   "parent": "src/shapes.ts#log@10:10"
+  },
+  {
+   "id": "src/shapes.ts#key@10:31",
+   "name": "key",
+   "kind": "parameter",
+   "parent": "src/shapes.ts#log@10:10"
+  },
+  {
+   "id": "src/shapes.ts#Base@12:23",
+   "name": "Base",
+   "kind": "class",
+   "parent": "src/shapes.ts",
+   "exported": true,
+   "modifiers": [
+    "abstract"
+   ]
+  },
+  {
+   "id": "src/shapes.ts#count@13:10",
+   "name": "count",
+   "kind": "property",
+   "parent": "src/shapes.ts#Base@12:23",
+   "modifiers": [
+    "static"
+   ]
+  },
+  {
+   "id": "src/shapes.ts#id@14:22",
+   "name": "id",
+   "kind": "property",
+   "parent": "src/shapes.ts#Base@12:23",
+   "modifiers": [
+    "protected",
+    "readonly"
+   ]
+  },
+  {
+   "id": "src/shapes.ts##tag@15:3",
+   "name": "#tag",
+   "kind": "property",
+   "parent": "src/shapes.ts#Base@12:23"
+  },
+  {
+   "id": "src/shapes.ts#name@16:21",
+   "name": "name",
+   "kind": "property",
+   "parent": "src/shapes.ts#Base@12:23",
+   "modifiers": [
+    "abstract",
+    "readonly"
+   ]
+  },
+  {
+   "id": "src/shapes.ts#constructor@17:3",
+   "name": "constructor",
+   "kind": "constructor",
+   "parent": "src/shapes.ts#Base@12:23"
+  },
+  {
+   "id": "src/shapes.ts#color@17:22",
+   "name": "color",
+   "kind": "property",
+   "parent": "src/shapes.ts#Base@12:23",
+   "declaredIn": "constructor",
+   "modifiers": [
+    "public"
+   ]
+  },
+  {
+   "id": "src/shapes.ts#scale@17:56",
+   "name": "scale",
+   "kind": "property",
+   "parent": "src/shapes.ts#Base@12:23",
+   "declaredIn": "constructor",
+   "modifiers": [
+    "private"
+   ]
+  },
+  {
+   "id": "src/shapes.ts#area@21:12",
+   "name": "area",
+   "kind": "method",
+   "parent": "src/shapes.ts#Base@12:23",
+   "modifiers": [
+    "abstract"
+   ]
+  },
+  {
+   "id": "src/shapes.ts#label@22:7",
+   "name": "label",
+   "kind": "accessor",
+   "parent": "src/shapes.ts#Base@12:23",
+   "declarations": [
+    "src/shapes.ts 22:7",
+    "src/shapes.ts 23:7"
+   ]
+  },
+  {
+   "id": "src/shapes.ts#value@23:13",
+   "name": "value",
+   "kind": "parameter",
+   "parent": "src/shapes.ts#label@22:7"
+  },
+  {
+   "id": "src/shapes.ts#describe@24:8",
+   "name": "describe",
+   "kind": "method",
+   "parent": "src/shapes.ts#Base@12:23"
+  },
+  {
+   "id": "src/shapes.ts#Circle@27:14",
+   "name": "Circle",
+   "kind": "class",
+   "parent": "src/shapes.ts",
+   "exported": true,
+   "defaultExport": true
+  },
+  {
+   "id": "src/shapes.ts#name@28:12",
+   "name": "name",
+   "kind": "property",
+   "parent": "src/shapes.ts#Circle@27:14",
+   "modifiers": [
+    "readonly"
+   ]
+  },
+  {
+   "id": "src/shapes.ts#constructor@29:3",
+   "name": "constructor",
+   "kind": "constructor",
+   "parent": "src/shapes.ts#Circle@27:14"
+  },
+  {
+   "id": "src/shapes.ts#radius@29:23",
+   "name": "radius",
+   "kind": "property",
+   "parent": "src/shapes.ts#Circle@27:14",
+   "declaredIn": "constructor",
+   "modifiers": [
+    "private"
+   ]
+  },
+  {
+   "id": "src/shapes.ts#color@29:39",
+   "name": "color",
+   "kind": "parameter",
+   "parent": "src/shapes.ts#constructor@29:3"
+  },
+  {
+   "id": "src/shapes.ts#area@30:3",
+   "name": "area",
+   "kind": "method",
+   "parent": "src/shapes.ts#Circle@27:14"
+  },
+  {
+   "id": "src/shapes.ts#unit@31:10",
+   "name": "unit",
+   "kind": "method",
+   "parent": "src/shapes.ts#Circle@27:14",
+   "modifiers": [
+    "static"
+   ]
+  },
+  {
+   "id": "src/shapes.ts#Rect@34:14",
+   "name": "Rect",
+   "kind": "class",
+   "parent": "src/shapes.ts",
+   "exported": true
+  },
+  {
+   "id": "src/shapes.ts#name@35:12",
+   "name": "name",
+   "kind": "property",
+   "parent": "src/shapes.ts#Rect@34:14",
+   "modifiers": [
+    "readonly"
+   ]
+  },
+  {
+   "id": "src/shapes.ts#constructor@36:3",
+   "name": "constructor",
+   "kind": "constructor",
+   "parent": "src/shapes.ts#Rect@34:14"
+  },
+  {
+   "id": "src/shapes.ts#corner@36:22",
+   "name": "corner",
+   "kind": "property",
+   "parent": "src/shapes.ts#Rect@34:14",
+   "declaredIn": "constructor",
+   "modifiers": [
+    "public"
+   ]
+  },
+  {
+   "id": "src/shapes.ts#w@36:41",
+   "name": "w",
+   "kind": "property",
+   "parent": "src/shapes.ts#Rect@34:14",
+   "declaredIn": "constructor",
+   "modifiers": [
+    "private"
+   ]
+  },
+  {
+   "id": "src/shapes.ts#h@36:60",
+   "name": "h",
+   "kind": "property",
+   "parent": "src/shapes.ts#Rect@34:14",
+   "declaredIn": "constructor",
+   "modifiers": [
+    "private"
+   ]
+  },
+  {
+   "id": "src/shapes.ts#area@37:3",
+   "name": "area",
+   "kind": "method",
+   "parent": "src/shapes.ts#Rect@34:14"
+  },
+  {
+   "id": "src/shapes.ts#move@38:3",
+   "name": "move",
+   "kind": "method",
+   "parent": "src/shapes.ts#Rect@34:14"
+  },
+  {
+   "id": "src/shapes.ts#by@38:8",
+   "name": "by",
+   "kind": "parameter",
+   "parent": "src/shapes.ts#move@38:3"
+  },
+  {
+   "id": "src/shapes.ts#x@39:13",
+   "name": "x",
+   "kind": "variable",
+   "parent": "src/shapes.ts#move@38:3",
+   "declaredWith": "const"
+  },
+  {
+   "id": "src/shapes.ts#y@39:20",
+   "name": "y",
+   "kind": "variable",
+   "parent": "src/shapes.ts#move@38:3",
+   "declaredWith": "const"
+  },
+  {
+   "id": "src/shapes.ts#total@44:17",
+   "name": "total",
+   "kind": "function",
+   "parent": "src/shapes.ts",
+   "declarations": [
+    "src/shapes.ts 44:17",
+    "src/shapes.ts 45:17",
+    "src/shapes.ts 46:17"
+   ],
+   "exported": true
+  },
+  {
+   "id": "src/shapes.ts#shapes@46:23",
+   "name": "shapes",
+   "kind": "parameter",
+   "parent": "src/shapes.ts#total@44:17"
+  },
+  {
+   "id": "src/shapes.ts#round@46:49",
+   "name": "round",
+   "kind": "parameter",
+   "parent": "src/shapes.ts#total@44:17"
+  },
+  {
+   "id": "src/shapes.ts#sum@47:9",
+   "name": "sum",
+   "kind": "variable",
+   "parent": "src/shapes.ts#total@44:17",
+   "declaredWith": "const"
+  },
+  {
+   "id": "src/shapes.ts#acc@47:30",
+   "name": "acc",
+   "kind": "parameter",
+   "parent": "src/shapes.ts#total@44:17"
+  },
+  {
+   "id": "src/shapes.ts#s@47:35",
+   "name": "s",
+   "kind": "parameter",
+   "parent": "src/shapes.ts#total@44:17"
+  },
+  {
+   "id": "src/shapes.ts#Geometry@51:18",
+   "name": "Geometry",
+   "kind": "namespace",
+   "parent": "src/shapes.ts",
+   "exported": true
+  },
+  {
+   "id": "src/shapes.ts#ORIGIN@52:16",
+   "name": "ORIGIN",
+   "kind": "variable",
+   "parent": "src/shapes.ts#Geometry@51:18",
+   "exported": true,
+   "declaredWith": "const"
+  },
+  {
+   "id": "src/shapes.ts#distance@53:19",
+   "name": "distance",
+   "kind": "function",
+   "parent": "src/shapes.ts#Geometry@51:18",
+   "exported": true
+  },
+  {
+   "id": "src/shapes.ts#a@53:28",
+   "name": "a",
+   "kind": "parameter",
+   "parent": "src/shapes.ts#distance@53:19"
+  },
+  {
+   "id": "src/shapes.ts#b@53:38",
+   "name": "b",
+   "kind": "parameter",
+   "parent": "src/shapes.ts#distance@53:19"
+  },
+  {
+   "id": "src/shapes.ts#registry@56:14",
+   "name": "registry",
+   "kind": "variable",
+   "parent": "src/shapes.ts",
+   "exported": true,
+   "declaredWith": "const"
+  },
+  {
+   "id": "src/shapes.ts#Anonymous@57:14",
+   "name": "Anonymous",
+   "kind": "variable",
+   "parent": "src/shapes.ts",
+   "exported": true,
+   "declaredWith": "const"
+  },
+  {
+   "id": "src/shapes.ts#name@57:56",
+   "name": "name",
+   "kind": "property",
+   "parent": "src/shapes.ts#Anonymous@57:14",
+   "modifiers": [
+    "readonly"
+   ]
+  },
+  {
+   "id": "src/shapes.ts#area@57:71",
+   "name": "area",
+   "kind": "method",
+   "parent": "src/shapes.ts#Anonymous@57:14"
+  },
+  {
+   "id": "src/shapes.ts#config@58:14",
+   "name": "config",
+   "kind": "variable",
+   "parent": "src/shapes.ts",
+   "exported": true,
+   "declaredWith": "const"
+  },
+  {
+   "id": "src/app.ts#Circle@1:8",
+   "name": "Circle",
+   "kind": "import",
+   "parent": "src/app.ts"
+  },
+  {
+   "id": "src/app.ts#Rect@1:18",
+   "name": "Rect",
+   "kind": "import",
+   "parent": "src/app.ts"
+  },
+  {
+   "id": "src/app.ts#total@1:24",
+   "name": "total",
+   "kind": "import",
+   "parent": "src/app.ts"
+  },
+  {
+   "id": "src/app.ts#Color@1:31",
+   "name": "Color",
+   "kind": "import",
+   "parent": "src/app.ts"
+  },
+  {
+   "id": "src/app.ts#Geometry@1:38",
+   "name": "Geometry",
+   "kind": "import",
+   "parent": "src/app.ts"
+  },
+  {
+   "id": "src/app.ts#UNIT@1:48",
+   "name": "UNIT",
+   "kind": "import",
+   "parent": "src/app.ts"
+  },
+  {
+   "id": "src/app.ts#Shape@1:59",
+   "name": "Shape",
+   "kind": "import",
+   "parent": "src/app.ts"
+  },
+  {
+   "id": "src/app.ts#all@2:13",
+   "name": "all",
+   "kind": "import",
+   "parent": "src/app.ts"
+  },
+  {
+   "id": "src/app.ts#Scene@4:7",
+   "name": "Scene",
+   "kind": "class",
+   "parent": "src/app.ts"
+  },
+  {
+   "id": "src/app.ts#items@5:11",
+   "name": "items",
+   "kind": "property",
+   "parent": "src/app.ts#Scene@4:7",
+   "modifiers": [
+    "private"
+   ]
+  },
+  {
+   "id": "src/app.ts#add@6:3",
+   "name": "add",
+   "kind": "method",
+   "parent": "src/app.ts#Scene@4:7"
+  },
+  {
+   "id": "src/app.ts#shape@6:7",
+   "name": "shape",
+   "kind": "parameter",
+   "parent": "src/app.ts#add@6:3"
+  },
+  {
+   "id": "src/app.ts#render@7:9",
+   "name": "render",
+   "kind": "method",
+   "parent": "src/app.ts#Scene@4:7",
+   "modifiers": [
+    "async"
+   ]
+  },
+  {
+   "id": "src/app.ts#s@9:30",
+   "name": "s",
+   "kind": "parameter",
+   "parent": "src/app.ts#render@7:9"
+  },
+  {
+   "id": "src/app.ts#i@9:33",
+   "name": "i",
+   "kind": "parameter",
+   "parent": "src/app.ts#render@7:9"
+  },
+  {
+   "id": "src/app.ts#err@10:14",
+   "name": "err",
+   "kind": "variable",
+   "parent": "src/app.ts#render@7:9"
+  },
+  {
+   "id": "src/app.ts#build@18:17",
+   "name": "build",
+   "kind": "function",
+   "parent": "src/app.ts",
+   "exported": true
+  },
+  {
+   "id": "src/app.ts#scene@19:9",
+   "name": "scene",
+   "kind": "variable",
+   "parent": "src/app.ts#build@18:17",
+   "declaredWith": "const"
+  },
+  {
+   "id": "src/app.ts#c@20:9",
+   "name": "c",
+   "kind": "variable",
+   "parent": "src/app.ts#build@18:17",
+   "declaredWith": "const"
+  },
+  {
+   "id": "src/app.ts#r@21:9",
+   "name": "r",
+   "kind": "variable",
+   "parent": "src/app.ts#build@18:17",
+   "declaredWith": "const"
+  },
+  {
+   "id": "src/app.ts#d@23:9",
+   "name": "d",
+   "kind": "variable",
+   "parent": "src/app.ts#build@18:17",
+   "declaredWith": "const"
+  },
+  {
+   "id": "src/app.ts#sum@24:9",
+   "name": "sum",
+   "kind": "variable",
+   "parent": "src/app.ts#build@18:17",
+   "declaredWith": "const"
+  },
+  {
+   "id": "src/app.ts#index@25:15",
+   "name": "index",
+   "kind": "variable",
+   "parent": "src/app.ts#build@18:17",
+   "declaredWith": "const"
+  },
+  {
+   "id": "src/app.ts#shape@25:22",
+   "name": "shape",
+   "kind": "variable",
+   "parent": "src/app.ts#build@18:17",
+   "declaredWith": "const"
+  },
+  {
+   "id": "src/util/numbers.ts#total@2:10",
+   "name": "total",
+   "kind": "import",
+   "parent": "src/util/numbers.ts"
+  },
+  {
+   "id": "src/util/numbers.ts#Shape@2:22",
+   "name": "Shape",
+   "kind": "import",
+   "parent": "src/util/numbers.ts"
+  },
+  {
+   "id": "src/util/numbers.ts#round2@4:17",
+   "name": "round2",
+   "kind": "function",
+   "parent": "src/util/numbers.ts",
+   "exported": true
+  },
+  {
+   "id": "src/util/numbers.ts#value@4:24",
+   "name": "value",
+   "kind": "parameter",
+   "parent": "src/util/numbers.ts#round2@4:17"
+  },
+  {
+   "id": "src/util/numbers.ts#percent@8:17",
+   "name": "percent",
+   "kind": "function",
+   "parent": "src/util/numbers.ts",
+   "exported": true
+  },
+  {
+   "id": "src/util/numbers.ts#part@8:25",
+   "name": "part",
+   "kind": "parameter",
+   "parent": "src/util/numbers.ts#percent@8:17"
+  },
+  {
+   "id": "src/util/numbers.ts#whole@8:39",
+   "name": "whole",
+   "kind": "parameter",
+   "parent": "src/util/numbers.ts#percent@8:17"
+  },
+  {
+   "id": "src/util/numbers.ts#share@12:17",
+   "name": "share",
+   "kind": "function",
+   "parent": "src/util/numbers.ts",
+   "exported": true
+  },
+  {
+   "id": "src/util/numbers.ts#shapes@12:23",
+   "name": "shapes",
+   "kind": "parameter",
+   "parent": "src/util/numbers.ts#share@12:17"
+  },
+  {
+   "id": "src/util/numbers.ts#one@12:49",
+   "name": "one",
+   "kind": "parameter",
+   "parent": "src/util/numbers.ts#share@12:17"
+  },
+  {
+   "id": "src/report/format.ts#round2@2:10",
+   "name": "round2",
+   "kind": "import",
+   "parent": "src/report/format.ts"
+  },
+  {
+   "id": "src/report/format.ts#formatArea@4:17",
+   "name": "formatArea",
+   "kind": "function",
+   "parent": "src/report/format.ts",
+   "exported": true
+  },
+  {
+   "id": "src/report/format.ts#area@4:28",
+   "name": "area",
+   "kind": "parameter",
+   "parent": "src/report/format.ts#formatArea@4:17"
+  },
+  {
+   "id": "src/report/summary.ts#build@2:10",
+   "name": "build",
+   "kind": "import",
+   "parent": "src/report/summary.ts"
+  },
+  {
+   "id": "src/report/summary.ts#Geometry@3:10",
+   "name": "Geometry",
+   "kind": "import",
+   "parent": "src/report/summary.ts"
+  },
+  {
+   "id": "src/report/summary.ts#formatArea@4:10",
+   "name": "formatArea",
+   "kind": "import",
+   "parent": "src/report/summary.ts"
+  },
+  {
+   "id": "src/report/summary.ts#percent@5:10",
+   "name": "percent",
+   "kind": "import",
+   "parent": "src/report/summary.ts"
+  },
+  {
+   "id": "src/report/summary.ts#summarize@7:23",
+   "name": "summarize",
+   "kind": "function",
+   "parent": "src/report/summary.ts",
+   "exported": true,
+   "modifiers": [
+    "async"
+   ]
+  },
+  {
+   "id": "src/report/summary.ts#scene@8:9",
+   "name": "scene",
+   "kind": "variable",
+   "parent": "src/report/summary.ts#summarize@7:23",
+   "declaredWith": "const"
+  },
+  {
+   "id": "src/report/summary.ts#text@9:9",
+   "name": "text",
+   "kind": "variable",
+   "parent": "src/report/summary.ts#summarize@7:23",
+   "declaredWith": "const"
+  },
+  {
+   "id": "src/report/summary.ts#far@10:9",
+   "name": "far",
+   "kind": "variable",
+   "parent": "src/report/summary.ts#summarize@7:23",
+   "declaredWith": "const"
+  },
+  {
+   "id": "src/report/charts/bars.ts#Circle@2:8",
+   "name": "Circle",
+   "kind": "import",
+   "parent": "src/report/charts/bars.ts"
+  },
+  {
+   "id": "src/report/charts/bars.ts#total@2:18",
+   "name": "total",
+   "kind": "import",
+   "parent": "src/report/charts/bars.ts"
+  },
+  {
+   "id": "src/report/charts/bars.ts#formatArea@3:10",
+   "name": "formatArea",
+   "kind": "import",
+   "parent": "src/report/charts/bars.ts"
+  },
+  {
+   "id": "src/report/charts/bars.ts#summarize@4:10",
+   "name": "summarize",
+   "kind": "import",
+   "parent": "src/report/charts/bars.ts"
+  },
+  {
+   "id": "src/report/charts/bars.ts#share@5:10",
+   "name": "share",
+   "kind": "import",
+   "parent": "src/report/charts/bars.ts"
+  },
+  {
+   "id": "src/report/charts/bars.ts#bars@7:17",
+   "name": "bars",
+   "kind": "function",
+   "parent": "src/report/charts/bars.ts",
+   "exported": true
+  },
+  {
+   "id": "src/report/charts/bars.ts#sizes@7:22",
+   "name": "sizes",
+   "kind": "parameter",
+   "parent": "src/report/charts/bars.ts#bars@7:17"
+  },
+  {
+   "id": "src/report/charts/bars.ts#circles@8:9",
+   "name": "circles",
+   "kind": "variable",
+   "parent": "src/report/charts/bars.ts#bars@7:17",
+   "declaredWith": "const"
+  },
+  {
+   "id": "src/report/charts/bars.ts#size@8:30",
+   "name": "size",
+   "kind": "parameter",
+   "parent": "src/report/charts/bars.ts#bars@7:17"
+  },
+  {
+   "id": "src/report/charts/bars.ts#whole@9:9",
+   "name": "whole",
+   "kind": "variable",
+   "parent": "src/report/charts/bars.ts#bars@7:17",
+   "declaredWith": "const"
+  },
+  {
+   "id": "src/report/charts/bars.ts#circle@10:23",
+   "name": "circle",
+   "kind": "parameter",
+   "parent": "src/report/charts/bars.ts#bars@7:17"
+  },
+  {
+   "id": "src/report/charts/bars.ts#report@13:23",
+   "name": "report",
+   "kind": "function",
+   "parent": "src/report/charts/bars.ts",
+   "exported": true,
+   "modifiers": [
+    "async"
+   ]
+  }
+ ],
+ "edges": [
+  {
+   "from": "src/shapes.ts#log@10:10",
+   "to": "src/shapes.ts#target@10:14",
+   "kind": "read",
+   "at": "src/shapes.ts 10:57"
+  },
+  {
+   "from": "src/shapes.ts#log@10:10",
+   "to": "src/shapes.ts#key@10:31",
+   "kind": "read",
+   "at": "src/shapes.ts 10:70"
+  },
+  {
+   "from": "src/shapes.ts#Base@12:23",
+   "to": "src/shapes.ts#Shape@2:18",
+   "kind": "implements",
+   "at": "src/shapes.ts 12:39"
+  },
+  {
+   "from": "src/shapes.ts#constructor@17:3",
+   "to": "src/shapes.ts#Color@4:13",
+   "kind": "type",
+   "at": "src/shapes.ts 17:29"
+  },
+  {
+   "from": "src/shapes.ts#constructor@17:3",
+   "to": "src/shapes.ts#Color@4:13",
+   "kind": "read",
+   "at": "src/shapes.ts 17:37"
+  },
+  {
+   "from": "src/shapes.ts#constructor@17:3",
+   "to": "src/shapes.ts#Red@4:21",
+   "kind": "read",
+   "at": "src/shapes.ts 17:43",
+   "member": true
+  },
+  {
+   "from": "src/shapes.ts#constructor@17:3",
+   "to": "src/shapes.ts#UNIT@7:14",
+   "kind": "read",
+   "at": "src/shapes.ts 17:64"
+  },
+  {
+   "from": "src/shapes.ts#constructor@17:3",
+   "to": "src/shapes.ts#id@14:22",
+   "kind": "write",
+   "at": "src/shapes.ts 18:10",
+   "member": true
+  },
+  {
+   "from": "src/shapes.ts#constructor@17:3",
+   "to": "src/shapes.ts#Base@12:23",
+   "kind": "read",
+   "at": "src/shapes.ts 18:17"
+  },
+  {
+   "from": "src/shapes.ts#constructor@17:3",
+   "to": "src/shapes.ts#count@13:10",
+   "kind": "write",
+   "at": "src/shapes.ts 18:22",
+   "member": true
+  },
+  {
+   "from": "src/shapes.ts#constructor@17:3",
+   "to": "src/shapes.ts#created@8:5",
+   "kind": "write",
+   "at": "src/shapes.ts 19:5"
+  },
+  {
+   "from": "src/shapes.ts#label@22:7",
+   "to": "src/shapes.ts#name@16:21",
+   "kind": "read",
+   "at": "src/shapes.ts 22:40",
+   "member": true
+  },
+  {
+   "from": "src/shapes.ts#label@22:7",
+   "to": "src/shapes.ts#id@14:22",
+   "kind": "read",
+   "at": "src/shapes.ts 22:53",
+   "member": true
+  },
+  {
+   "from": "src/shapes.ts#label@22:7",
+   "to": "src/shapes.ts##tag@15:3",
+   "kind": "read",
+   "at": "src/shapes.ts 22:64",
+   "member": true
+  },
+  {
+   "from": "src/shapes.ts#label@22:7",
+   "to": "src/shapes.ts##tag@15:3",
+   "kind": "write",
+   "at": "src/shapes.ts 23:35",
+   "member": true
+  },
+  {
+   "from": "src/shapes.ts#label@22:7",
+   "to": "src/shapes.ts#value@23:13",
+   "kind": "read",
+   "at": "src/shapes.ts 23:42"
+  },
+  {
+   "from": "src/shapes.ts#Base@12:23",
+   "to": "src/shapes.ts#log@10:10",
+   "kind": "call",
+   "at": "src/shapes.ts 24:4"
+  },
+  {
+   "from": "src/shapes.ts#describe@24:8",
+   "to": "src/shapes.ts#label@22:7",
+   "kind": "read",
+   "at": "src/shapes.ts 24:44",
+   "member": true
+  },
+  {
+   "from": "src/shapes.ts#describe@24:8",
+   "to": "src/shapes.ts#area@21:12",
+   "kind": "call",
+   "at": "src/shapes.ts 24:59",
+   "member": true
+  },
+  {
+   "from": "src/shapes.ts#describe@24:8",
+   "to": "src/shapes.ts#scale@17:56",
+   "kind": "read",
+   "at": "src/shapes.ts 24:73",
+   "member": true
+  },
+  {
+   "from": "src/shapes.ts#Circle@27:14",
+   "to": "src/shapes.ts#Base@12:23",
+   "kind": "extends",
+   "at": "src/shapes.ts 27:29"
+  },
+  {
+   "from": "src/shapes.ts#constructor@29:3",
+   "to": "src/shapes.ts#Color@4:13",
+   "kind": "type",
+   "at": "src/shapes.ts 29:47"
+  },
+  {
+   "from": "src/shapes.ts#constructor@29:3",
+   "to": "src/shapes.ts#constructor@17:3",
+   "kind": "call",
+   "at": "src/shapes.ts 29:56"
+  },
+  {
+   "from": "src/shapes.ts#constructor@29:3",
+   "to": "src/shapes.ts#color@29:39",
+   "kind": "read",
+   "at": "src/shapes.ts 29:62"
+  },
+  {
+   "from": "src/shapes.ts#area@30:3",
+   "to": "src/shapes.ts#radius@29:23",
+   "kind": "read",
+   "at": "src/shapes.ts 30:42",
+   "member": true
+  },
+  {
+   "from": "src/shapes.ts#unit@31:10",
+   "to": "src/shapes.ts#Circle@27:14",
+   "kind": "type",
+   "at": "src/shapes.ts 31:18"
+  },
+  {
+   "from": "src/shapes.ts#unit@31:10",
+   "to": "src/shapes.ts#Circle@27:14",
+   "kind": "new",
+   "at": "src/shapes.ts 31:38"
+  },
+  {
+   "from": "src/shapes.ts#unit@31:10",
+   "to": "src/shapes.ts#UNIT@7:14",
+   "kind": "read",
+   "at": "src/shapes.ts 31:45"
+  },
+  {
+   "from": "src/shapes.ts#Rect@34:14",
+   "to": "src/shapes.ts#Point@3:13",
+   "kind": "type",
+   "at": "src/shapes.ts 34:29"
+  },
+  {
+   "from": "src/shapes.ts#Rect@34:14",
+   "to": "src/shapes.ts#Point@3:13",
+   "kind": "type",
+   "at": "src/shapes.ts 34:37"
+  },
+  {
+   "from": "src/shapes.ts#Rect@34:14",
+   "to": "src/shapes.ts#Base@12:23",
+   "kind": "extends",
+   "at": "src/shapes.ts 34:52"
+  },
+  {
+   "from": "src/shapes.ts#constructor@36:3",
+   "to": "src/shapes.ts#constructor@17:3",
+   "kind": "call",
+   "at": "src/shapes.ts 36:73"
+  },
+  {
+   "from": "src/shapes.ts#constructor@36:3",
+   "to": "src/shapes.ts#Color@4:13",
+   "kind": "read",
+   "at": "src/shapes.ts 36:79"
+  },
+  {
+   "from": "src/shapes.ts#constructor@36:3",
+   "to": "src/shapes.ts#Green@4:34",
+   "kind": "read",
+   "at": "src/shapes.ts 36:85",
+   "member": true
+  },
+  {
+   "from": "src/shapes.ts#area@37:3",
+   "to": "src/shapes.ts#w@36:41",
+   "kind": "read",
+   "at": "src/shapes.ts 37:32",
+   "member": true
+  },
+  {
+   "from": "src/shapes.ts#area@37:3",
+   "to": "src/shapes.ts#h@36:60",
+   "kind": "read",
+   "at": "src/shapes.ts 37:41",
+   "member": true
+  },
+  {
+   "from": "src/shapes.ts#move@38:3",
+   "to": "src/shapes.ts#Point@3:13",
+   "kind": "type",
+   "at": "src/shapes.ts 38:20"
+  },
+  {
+   "from": "src/shapes.ts#move@38:3",
+   "to": "src/shapes.ts#Rect@34:14",
+   "kind": "type",
+   "at": "src/shapes.ts 38:29"
+  },
+  {
+   "from": "src/shapes.ts#move@38:3",
+   "to": "src/shapes.ts#x@3:23",
+   "kind": "read",
+   "at": "src/shapes.ts 39:13",
+   "member": true
+  },
+  {
+   "from": "src/shapes.ts#move@38:3",
+   "to": "src/shapes.ts#y@3:34",
+   "kind": "read",
+   "at": "src/shapes.ts 39:20",
+   "member": true
+  },
+  {
+   "from": "src/shapes.ts#move@38:3",
+   "to": "src/shapes.ts#by@38:8",
+   "kind": "read",
+   "at": "src/shapes.ts 39:30"
+  },
+  {
+   "from": "src/shapes.ts#move@38:3",
+   "to": "src/shapes.ts#Rect@34:14",
+   "kind": "new",
+   "at": "src/shapes.ts 40:16"
+  },
+  {
+   "from": "src/shapes.ts#move@38:3",
+   "to": "src/shapes.ts#corner@36:22",
+   "kind": "read",
+   "at": "src/shapes.ts 40:31",
+   "member": true
+  },
+  {
+   "from": "src/shapes.ts#move@38:3",
+   "to": "src/shapes.ts#corner@36:22",
+   "kind": "read",
+   "at": "src/shapes.ts 40:47",
+   "member": true
+  },
+  {
+   "from": "src/shapes.ts#move@38:3",
+   "to": "src/shapes.ts#x@3:23",
+   "kind": "read",
+   "at": "src/shapes.ts 40:54",
+   "member": true
+  },
+  {
+   "from": "src/shapes.ts#move@38:3",
+   "to": "src/shapes.ts#x@39:13",
+   "kind": "read",
+   "at": "src/shapes.ts 40:58"
+  },
+  {
+   "from": "src/shapes.ts#move@38:3",
+   "to": "src/shapes.ts#corner@36:22",
+   "kind": "read",
+   "at": "src/shapes.ts 40:69",
+   "member": true
+  },
+  {
+   "from": "src/shapes.ts#move@38:3",
+   "to": "src/shapes.ts#y@3:34",
+   "kind": "read",
+   "at": "src/shapes.ts 40:76",
+   "member": true
+  },
+  {
+   "from": "src/shapes.ts#move@38:3",
+   "to": "src/shapes.ts#y@39:20",
+   "kind": "read",
+   "at": "src/shapes.ts 40:80"
+  },
+  {
+   "from": "src/shapes.ts#move@38:3",
+   "to": "src/shapes.ts#w@36:41",
+   "kind": "read",
+   "at": "src/shapes.ts 40:90",
+   "member": true
+  },
+  {
+   "from": "src/shapes.ts#move@38:3",
+   "to": "src/shapes.ts#h@36:60",
+   "kind": "read",
+   "at": "src/shapes.ts 40:98",
+   "member": true
+  },
+  {
+   "from": "src/shapes.ts#total@44:17",
+   "to": "src/shapes.ts#Shape@2:18",
+   "kind": "type",
+   "at": "src/shapes.ts 44:40"
+  },
+  {
+   "from": "src/shapes.ts#total@44:17",
+   "to": "src/shapes.ts#Shape@2:18",
+   "kind": "type",
+   "at": "src/shapes.ts 45:40"
+  },
+  {
+   "from": "src/shapes.ts#total@44:17",
+   "to": "src/shapes.ts#Shape@2:18",
+   "kind": "type",
+   "at": "src/shapes.ts 46:40"
+  },
+  {
+   "from": "src/shapes.ts#total@44:17",
+   "to": "src/shapes.ts#shapes@46:23",
+   "kind": "read",
+   "at": "src/shapes.ts 47:15"
+  },
+  {
+   "from": "src/shapes.ts#total@44:17",
+   "to": "src/shapes.ts#acc@47:30",
+   "kind": "read",
+   "at": "src/shapes.ts 47:41"
+  },
+  {
+   "from": "src/shapes.ts#total@44:17",
+   "to": "src/shapes.ts#s@47:35",
+   "kind": "read",
+   "at": "src/shapes.ts 47:47"
+  },
+  {
+   "from": "src/shapes.ts#total@44:17",
+   "to": "src/shapes.ts#area@2:26",
+   "kind": "call",
+   "at": "src/shapes.ts 47:49",
+   "member": true
+  },
+  {
+   "from": "src/shapes.ts#total@44:17",
+   "to": "src/shapes.ts#round@46:49",
+   "kind": "read",
+   "at": "src/shapes.ts 48:10"
+  },
+  {
+   "from": "src/shapes.ts#total@44:17",
+   "to": "src/shapes.ts#sum@47:9",
+   "kind": "read",
+   "at": "src/shapes.ts 48:29"
+  },
+  {
+   "from": "src/shapes.ts#total@44:17",
+   "to": "src/shapes.ts#sum@47:9",
+   "kind": "read",
+   "at": "src/shapes.ts 48:36"
+  },
+  {
+   "from": "src/shapes.ts#ORIGIN@52:16",
+   "to": "src/shapes.ts#Point@3:13",
+   "kind": "type",
+   "at": "src/shapes.ts 52:24"
+  },
+  {
+   "from": "src/shapes.ts#distance@53:19",
+   "to": "src/shapes.ts#Point@3:13",
+   "kind": "type",
+   "at": "src/shapes.ts 53:31"
+  },
+  {
+   "from": "src/shapes.ts#distance@53:19",
+   "to": "src/shapes.ts#Point@3:13",
+   "kind": "type",
+   "at": "src/shapes.ts 53:41"
+  },
+  {
+   "from": "src/shapes.ts#distance@53:19",
+   "to": "src/shapes.ts#ORIGIN@52:16",
+   "kind": "read",
+   "at": "src/shapes.ts 53:49"
+  },
+  {
+   "from": "src/shapes.ts#distance@53:19",
+   "to": "src/shapes.ts#a@53:28",
+   "kind": "read",
+   "at": "src/shapes.ts 53:85"
+  },
+  {
+   "from": "src/shapes.ts#distance@53:19",
+   "to": "src/shapes.ts#x@3:23",
+   "kind": "read",
+   "at": "src/shapes.ts 53:87",
+   "member": true
+  },
+  {
+   "from": "src/shapes.ts#distance@53:19",
+   "to": "src/shapes.ts#b@53:38",
+   "kind": "read",
+   "at": "src/shapes.ts 53:91"
+  },
+  {
+   "from": "src/shapes.ts#distance@53:19",
+   "to": "src/shapes.ts#x@3:23",
+   "kind": "read",
+   "at": "src/shapes.ts 53:93",
+   "member": true
+  },
+  {
+   "from": "src/shapes.ts#distance@53:19",
+   "to": "src/shapes.ts#a@53:28",
+   "kind": "read",
+   "at": "src/shapes.ts 53:96"
+  },
+  {
+   "from": "src/shapes.ts#distance@53:19",
+   "to": "src/shapes.ts#y@3:34",
+   "kind": "read",
+   "at": "src/shapes.ts 53:98",
+   "member": true
+  },
+  {
+   "from": "src/shapes.ts#distance@53:19",
+   "to": "src/shapes.ts#b@53:38",
+   "kind": "read",
+   "at": "src/shapes.ts 53:102"
+  },
+  {
+   "from": "src/shapes.ts#distance@53:19",
+   "to": "src/shapes.ts#y@3:34",
+   "kind": "read",
+   "at": "src/shapes.ts 53:104",
+   "member": true
+  },
+  {
+   "from": "src/shapes.ts#registry@56:14",
+   "to": "src/shapes.ts#Shape@2:18",
+   "kind": "type",
+   "at": "src/shapes.ts 56:47"
+  },
+  {
+   "from": "src/shapes.ts#registry@56:14",
+   "to": "src/shapes.ts#Circle@27:14",
+   "kind": "read",
+   "at": "src/shapes.ts 56:70"
+  },
+  {
+   "from": "src/shapes.ts#registry@56:14",
+   "to": "src/shapes.ts#unit@31:10",
+   "kind": "call",
+   "at": "src/shapes.ts 56:77",
+   "member": true
+  },
+  {
+   "from": "src/shapes.ts#Anonymous@57:14",
+   "to": "src/shapes.ts#Base@12:23",
+   "kind": "extends",
+   "at": "src/shapes.ts 57:40"
+  },
+  {
+   "from": "src/app.ts#Scene@4:7",
+   "to": "src/shapes.ts#Shape@2:18",
+   "kind": "type",
+   "at": "src/app.ts 5:18",
+   "viaImport": "src/app.ts#Shape@1:59"
+  },
+  {
+   "from": "src/app.ts#add@6:3",
+   "to": "src/shapes.ts#Shape@2:18",
+   "kind": "type",
+   "at": "src/app.ts 6:14",
+   "viaImport": "src/app.ts#Shape@1:59"
+  },
+  {
+   "from": "src/app.ts#add@6:3",
+   "to": "src/app.ts#items@5:11",
+   "kind": "read",
+   "at": "src/app.ts 6:34",
+   "member": true
+  },
+  {
+   "from": "src/app.ts#add@6:3",
+   "to": "src/app.ts#shape@6:7",
+   "kind": "read",
+   "at": "src/app.ts 6:45"
+  },
+  {
+   "from": "src/app.ts#render@7:9",
+   "to": "src/app.ts#items@5:11",
+   "kind": "read",
+   "at": "src/app.ts 9:19",
+   "member": true
+  },
+  {
+   "from": "src/app.ts#render@7:9",
+   "to": "src/app.ts#i@9:33",
+   "kind": "read",
+   "at": "src/app.ts 9:42"
+  },
+  {
+   "from": "src/app.ts#render@7:9",
+   "to": "src/app.ts#s@9:30",
+   "kind": "read",
+   "at": "src/app.ts 9:48"
+  },
+  {
+   "from": "src/app.ts#render@7:9",
+   "to": "src/shapes.ts#area@2:26",
+   "kind": "call",
+   "at": "src/app.ts 9:50",
+   "member": true
+  },
+  {
+   "from": "src/app.ts#render@7:9",
+   "to": "src/app.ts#err@10:14",
+   "kind": "read",
+   "at": "src/app.ts 11:21"
+  },
+  {
+   "from": "src/app.ts#build@18:17",
+   "to": "src/app.ts#Scene@4:7",
+   "kind": "type",
+   "at": "src/app.ts 18:26"
+  },
+  {
+   "from": "src/app.ts#build@18:17",
+   "to": "src/app.ts#Scene@4:7",
+   "kind": "new",
+   "at": "src/app.ts 19:21"
+  },
+  {
+   "from": "src/app.ts#build@18:17",
+   "to": "src/shapes.ts#Circle@27:14",
+   "kind": "new",
+   "at": "src/app.ts 20:17",
+   "viaImport": "src/app.ts#Circle@1:8"
+  },
+  {
+   "from": "src/app.ts#build@18:17",
+   "to": "src/shapes.ts#Color@4:13",
+   "kind": "read",
+   "at": "src/app.ts 20:27",
+   "viaImport": "src/app.ts#Color@1:31"
+  },
+  {
+   "from": "src/app.ts#build@18:17",
+   "to": "src/shapes.ts#Green@4:34",
+   "kind": "read",
+   "at": "src/app.ts 20:33",
+   "member": true
+  },
+  {
+   "from": "src/app.ts#build@18:17",
+   "to": "src/shapes.ts#Rect@34:14",
+   "kind": "new",
+   "at": "src/app.ts 21:17",
+   "viaImport": "src/app.ts#Rect@1:18"
+  },
+  {
+   "from": "src/app.ts#build@18:17",
+   "to": "src/shapes.ts#move@38:3",
+   "kind": "call",
+   "at": "src/app.ts 21:44",
+   "member": true
+  },
+  {
+   "from": "src/app.ts#build@18:17",
+   "to": "src/shapes.ts#UNIT@7:14",
+   "kind": "read",
+   "at": "src/app.ts 21:54",
+   "viaImport": "src/app.ts#UNIT@1:48"
+  },
+  {
+   "from": "src/app.ts#build@18:17",
+   "to": "src/app.ts#scene@19:9",
+   "kind": "read",
+   "at": "src/app.ts 22:3"
+  },
+  {
+   "from": "src/app.ts#build@18:17",
+   "to": "src/app.ts#add@6:3",
+   "kind": "call",
+   "at": "src/app.ts 22:9",
+   "member": true
+  },
+  {
+   "from": "src/app.ts#build@18:17",
+   "to": "src/app.ts#c@20:9",
+   "kind": "read",
+   "at": "src/app.ts 22:13"
+  },
+  {
+   "from": "src/app.ts#build@18:17",
+   "to": "src/app.ts#add@6:3",
+   "kind": "call",
+   "at": "src/app.ts 22:16",
+   "member": true
+  },
+  {
+   "from": "src/app.ts#build@18:17",
+   "to": "src/app.ts#r@21:9",
+   "kind": "read",
+   "at": "src/app.ts 22:20"
+  },
+  {
+   "from": "src/app.ts#build@18:17",
+   "to": "src/app.ts#add@6:3",
+   "kind": "call",
+   "at": "src/app.ts 22:23",
+   "member": true
+  },
+  {
+   "from": "src/app.ts#build@18:17",
+   "to": "src/shapes.ts",
+   "kind": "read",
+   "at": "src/app.ts 22:27",
+   "viaImport": "src/app.ts#all@2:13"
+  },
+  {
+   "from": "src/app.ts#build@18:17",
+   "to": "src/shapes.ts#Circle@27:14",
+   "kind": "read",
+   "at": "src/app.ts 22:31",
+   "member": true
+  },
+  {
+   "from": "src/app.ts#build@18:17",
+   "to": "src/shapes.ts#unit@31:10",
+   "kind": "call",
+   "at": "src/app.ts 22:38",
+   "member": true
+  },
+  {
+   "from": "src/app.ts#build@18:17",
+   "to": "src/shapes.ts#Geometry@51:18",
+   "kind": "read",
+   "at": "src/app.ts 23:13",
+   "viaImport": "src/app.ts#Geometry@1:38"
+  },
+  {
+   "from": "src/app.ts#build@18:17",
+   "to": "src/shapes.ts#distance@53:19",
+   "kind": "call",
+   "at": "src/app.ts 23:22",
+   "member": true
+  },
+  {
+   "from": "src/app.ts#build@18:17",
+   "to": "src/shapes.ts#total@44:17",
+   "kind": "call",
+   "at": "src/app.ts 24:15",
+   "viaImport": "src/app.ts#total@1:24"
+  },
+  {
+   "from": "src/app.ts#build@18:17",
+   "to": "src/app.ts#c@20:9",
+   "kind": "read",
+   "at": "src/app.ts 24:22"
+  },
+  {
+   "from": "src/app.ts#build@18:17",
+   "to": "src/app.ts#r@21:9",
+   "kind": "read",
+   "at": "src/app.ts 24:25"
+  },
+  {
+   "from": "src/app.ts#build@18:17",
+   "to": "src/app.ts#c@20:9",
+   "kind": "read",
+   "at": "src/app.ts 25:33"
+  },
+  {
+   "from": "src/app.ts#build@18:17",
+   "to": "src/app.ts#r@21:9",
+   "kind": "read",
+   "at": "src/app.ts 25:36"
+  },
+  {
+   "from": "src/app.ts#build@18:17",
+   "to": "src/app.ts#shape@25:22",
+   "kind": "read",
+   "at": "src/app.ts 25:56"
+  },
+  {
+   "from": "src/app.ts#build@18:17",
+   "to": "src/shapes.ts#area@30:3",
+   "kind": "call",
+   "at": "src/app.ts 25:62",
+   "member": true,
+   "union": true
+  },
+  {
+   "from": "src/app.ts#build@18:17",
+   "to": "src/shapes.ts#area@37:3",
+   "kind": "call",
+   "at": "src/app.ts 25:62",
+   "member": true,
+   "union": true
+  },
+  {
+   "from": "src/app.ts#build@18:17",
+   "to": "src/app.ts#sum@24:9",
+   "kind": "read",
+   "at": "src/app.ts 25:71"
+  },
+  {
+   "from": "src/app.ts#build@18:17",
+   "to": "src/app.ts#d@23:9",
+   "kind": "read",
+   "at": "src/app.ts 25:77"
+  },
+  {
+   "from": "src/app.ts#build@18:17",
+   "to": "src/app.ts#index@25:15",
+   "kind": "read",
+   "at": "src/app.ts 25:92"
+  },
+  {
+   "from": "src/app.ts#build@18:17",
+   "to": "src/app.ts#scene@19:9",
+   "kind": "read",
+   "at": "src/app.ts 26:10"
+  },
+  {
+   "from": "src/util/numbers.ts#round2@4:17",
+   "to": "src/util/numbers.ts#value@4:24",
+   "kind": "read",
+   "at": "src/util/numbers.ts 5:21"
+  },
+  {
+   "from": "src/util/numbers.ts#percent@8:17",
+   "to": "src/util/numbers.ts#whole@8:39",
+   "kind": "read",
+   "at": "src/util/numbers.ts 9:10"
+  },
+  {
+   "from": "src/util/numbers.ts#percent@8:17",
+   "to": "src/util/numbers.ts#round2@4:17",
+   "kind": "call",
+   "at": "src/util/numbers.ts 9:28"
+  },
+  {
+   "from": "src/util/numbers.ts#percent@8:17",
+   "to": "src/util/numbers.ts#part@8:25",
+   "kind": "read",
+   "at": "src/util/numbers.ts 9:36"
+  },
+  {
+   "from": "src/util/numbers.ts#percent@8:17",
+   "to": "src/util/numbers.ts#whole@8:39",
+   "kind": "read",
+   "at": "src/util/numbers.ts 9:43"
+  },
+  {
+   "from": "src/util/numbers.ts#share@12:17",
+   "to": "src/shapes.ts#Shape@2:18",
+   "kind": "type",
+   "at": "src/util/numbers.ts 12:40",
+   "viaImport": "src/util/numbers.ts#Shape@2:22"
+  },
+  {
+   "from": "src/util/numbers.ts#share@12:17",
+   "to": "src/shapes.ts#Shape@2:18",
+   "kind": "type",
+   "at": "src/util/numbers.ts 12:54",
+   "viaImport": "src/util/numbers.ts#Shape@2:22"
+  },
+  {
+   "from": "src/util/numbers.ts#share@12:17",
+   "to": "src/util/numbers.ts#percent@8:17",
+   "kind": "call",
+   "at": "src/util/numbers.ts 13:10"
+  },
+  {
+   "from": "src/util/numbers.ts#share@12:17",
+   "to": "src/util/numbers.ts#one@12:49",
+   "kind": "read",
+   "at": "src/util/numbers.ts 13:18"
+  },
+  {
+   "from": "src/util/numbers.ts#share@12:17",
+   "to": "src/shapes.ts#area@2:26",
+   "kind": "call",
+   "at": "src/util/numbers.ts 13:22",
+   "member": true
+  },
+  {
+   "from": "src/util/numbers.ts#share@12:17",
+   "to": "src/shapes.ts#total@44:17",
+   "kind": "call",
+   "at": "src/util/numbers.ts 13:30",
+   "viaImport": "src/util/numbers.ts#total@2:10"
+  },
+  {
+   "from": "src/util/numbers.ts#share@12:17",
+   "to": "src/util/numbers.ts#shapes@12:23",
+   "kind": "read",
+   "at": "src/util/numbers.ts 13:36"
+  },
+  {
+   "from": "src/report/format.ts#formatArea@4:17",
+   "to": "src/util/numbers.ts#round2@4:17",
+   "kind": "call",
+   "at": "src/report/format.ts 5:13",
+   "viaImport": "src/report/format.ts#round2@2:10"
+  },
+  {
+   "from": "src/report/format.ts#formatArea@4:17",
+   "to": "src/report/format.ts#area@4:28",
+   "kind": "read",
+   "at": "src/report/format.ts 5:20"
+  },
+  {
+   "from": "src/report/summary.ts#summarize@7:23",
+   "to": "src/app.ts#build@18:17",
+   "kind": "call",
+   "at": "src/report/summary.ts 8:17",
+   "viaImport": "src/report/summary.ts#build@2:10"
+  },
+  {
+   "from": "src/report/summary.ts#summarize@7:23",
+   "to": "src/report/summary.ts#scene@8:9",
+   "kind": "read",
+   "at": "src/report/summary.ts 9:22"
+  },
+  {
+   "from": "src/report/summary.ts#summarize@7:23",
+   "to": "src/app.ts#render@7:9",
+   "kind": "call",
+   "at": "src/report/summary.ts 9:28",
+   "member": true
+  },
+  {
+   "from": "src/report/summary.ts#summarize@7:23",
+   "to": "src/shapes.ts#Geometry@51:18",
+   "kind": "read",
+   "at": "src/report/summary.ts 10:15",
+   "viaImport": "src/report/summary.ts#Geometry@3:10"
+  },
+  {
+   "from": "src/report/summary.ts#summarize@7:23",
+   "to": "src/shapes.ts#distance@53:19",
+   "kind": "call",
+   "at": "src/report/summary.ts 10:24",
+   "member": true
+  },
+  {
+   "from": "src/report/summary.ts#summarize@7:23",
+   "to": "src/report/format.ts#formatArea@4:17",
+   "kind": "call",
+   "at": "src/report/summary.ts 11:13",
+   "viaImport": "src/report/summary.ts#formatArea@4:10"
+  },
+  {
+   "from": "src/report/summary.ts#summarize@7:23",
+   "to": "src/report/summary.ts#far@10:9",
+   "kind": "read",
+   "at": "src/report/summary.ts 11:24"
+  },
+  {
+   "from": "src/report/summary.ts#summarize@7:23",
+   "to": "src/util/numbers.ts#percent@8:17",
+   "kind": "call",
+   "at": "src/report/summary.ts 11:32",
+   "viaImport": "src/report/summary.ts#percent@5:10"
+  },
+  {
+   "from": "src/report/summary.ts#summarize@7:23",
+   "to": "src/report/summary.ts#text@9:9",
+   "kind": "read",
+   "at": "src/report/summary.ts 11:51"
+  },
+  {
+   "from": "src/report/charts/bars.ts#bars@7:17",
+   "to": "src/report/charts/bars.ts#sizes@7:22",
+   "kind": "read",
+   "at": "src/report/charts/bars.ts 8:19"
+  },
+  {
+   "from": "src/report/charts/bars.ts#bars@7:17",
+   "to": "src/shapes.ts#Circle@27:14",
+   "kind": "new",
+   "at": "src/report/charts/bars.ts 8:43",
+   "viaImport": "src/report/charts/bars.ts#Circle@2:8"
+  },
+  {
+   "from": "src/report/charts/bars.ts#bars@7:17",
+   "to": "src/report/charts/bars.ts#size@8:30",
+   "kind": "read",
+   "at": "src/report/charts/bars.ts 8:50"
+  },
+  {
+   "from": "src/report/charts/bars.ts#bars@7:17",
+   "to": "src/shapes.ts#total@44:17",
+   "kind": "call",
+   "at": "src/report/charts/bars.ts 9:17",
+   "viaImport": "src/report/charts/bars.ts#total@2:18"
+  },
+  {
+   "from": "src/report/charts/bars.ts#bars@7:17",
+   "to": "src/report/charts/bars.ts#circles@8:9",
+   "kind": "read",
+   "at": "src/report/charts/bars.ts 9:23"
+  },
+  {
+   "from": "src/report/charts/bars.ts#bars@7:17",
+   "to": "src/report/charts/bars.ts#circles@8:9",
+   "kind": "read",
+   "at": "src/report/charts/bars.ts 10:10"
+  },
+  {
+   "from": "src/report/charts/bars.ts#bars@7:17",
+   "to": "src/report/format.ts#formatArea@4:17",
+   "kind": "call",
+   "at": "src/report/charts/bars.ts 10:37",
+   "viaImport": "src/report/charts/bars.ts#formatArea@3:10"
+  },
+  {
+   "from": "src/report/charts/bars.ts#bars@7:17",
+   "to": "src/report/charts/bars.ts#circle@10:23",
+   "kind": "read",
+   "at": "src/report/charts/bars.ts 10:48"
+  },
+  {
+   "from": "src/report/charts/bars.ts#bars@7:17",
+   "to": "src/shapes.ts#area@30:3",
+   "kind": "call",
+   "at": "src/report/charts/bars.ts 10:55",
+   "member": true
+  },
+  {
+   "from": "src/report/charts/bars.ts#bars@7:17",
+   "to": "src/report/format.ts#formatArea@4:17",
+   "kind": "call",
+   "at": "src/report/charts/bars.ts 10:69",
+   "viaImport": "src/report/charts/bars.ts#formatArea@3:10"
+  },
+  {
+   "from": "src/report/charts/bars.ts#bars@7:17",
+   "to": "src/report/charts/bars.ts#whole@9:9",
+   "kind": "read",
+   "at": "src/report/charts/bars.ts 10:80"
+  },
+  {
+   "from": "src/report/charts/bars.ts#bars@7:17",
+   "to": "src/util/numbers.ts#share@12:17",
+   "kind": "call",
+   "at": "src/report/charts/bars.ts 10:91",
+   "viaImport": "src/report/charts/bars.ts#share@5:10"
+  },
+  {
+   "from": "src/report/charts/bars.ts#bars@7:17",
+   "to": "src/report/charts/bars.ts#circles@8:9",
+   "kind": "read",
+   "at": "src/report/charts/bars.ts 10:97"
+  },
+  {
+   "from": "src/report/charts/bars.ts#bars@7:17",
+   "to": "src/report/charts/bars.ts#circle@10:23",
+   "kind": "read",
+   "at": "src/report/charts/bars.ts 10:106"
+  },
+  {
+   "from": "src/report/charts/bars.ts#report@13:23",
+   "to": "src/report/summary.ts#summarize@7:23",
+   "kind": "call",
+   "at": "src/report/charts/bars.ts 14:19",
+   "viaImport": "src/report/charts/bars.ts#summarize@4:10"
+  },
+  {
+   "from": "src/report/charts/bars.ts#report@13:23",
+   "to": "src/report/charts/bars.ts#bars@7:17",
+   "kind": "call",
+   "at": "src/report/charts/bars.ts 14:35"
+  }
+ ],
+ "links": [
+  {
+   "from": "src/app.ts#Circle@1:8",
+   "to": "src/shapes.ts#Circle@27:14",
+   "kind": "import"
+  },
+  {
+   "from": "src/app.ts#Rect@1:18",
+   "to": "src/shapes.ts#Rect@34:14",
+   "kind": "import"
+  },
+  {
+   "from": "src/app.ts#total@1:24",
+   "to": "src/shapes.ts#total@44:17",
+   "kind": "import"
+  },
+  {
+   "from": "src/app.ts#Color@1:31",
+   "to": "src/shapes.ts#Color@4:13",
+   "kind": "import"
+  },
+  {
+   "from": "src/app.ts#Geometry@1:38",
+   "to": "src/shapes.ts#Geometry@51:18",
+   "kind": "import"
+  },
+  {
+   "from": "src/app.ts#UNIT@1:48",
+   "to": "src/shapes.ts#UNIT@7:14",
+   "kind": "import"
+  },
+  {
+   "from": "src/app.ts#Shape@1:59",
+   "to": "src/shapes.ts#Shape@2:18",
+   "kind": "import"
+  },
+  {
+   "from": "src/app.ts#all@2:13",
+   "to": "src/shapes.ts",
+   "kind": "import"
+  },
+  {
+   "from": "src/util/numbers.ts#total@2:10",
+   "to": "src/shapes.ts#total@44:17",
+   "kind": "import"
+  },
+  {
+   "from": "src/util/numbers.ts#Shape@2:22",
+   "to": "src/shapes.ts#Shape@2:18",
+   "kind": "import"
+  },
+  {
+   "from": "src/report/format.ts#round2@2:10",
+   "to": "src/util/numbers.ts#round2@4:17",
+   "kind": "import"
+  },
+  {
+   "from": "src/report/summary.ts#build@2:10",
+   "to": "src/app.ts#build@18:17",
+   "kind": "import"
+  },
+  {
+   "from": "src/report/summary.ts#Geometry@3:10",
+   "to": "src/shapes.ts#Geometry@51:18",
+   "kind": "import"
+  },
+  {
+   "from": "src/report/summary.ts#formatArea@4:10",
+   "to": "src/report/format.ts#formatArea@4:17",
+   "kind": "import"
+  },
+  {
+   "from": "src/report/summary.ts#percent@5:10",
+   "to": "src/util/numbers.ts#percent@8:17",
+   "kind": "import"
+  },
+  {
+   "from": "src/report/charts/bars.ts#Circle@2:8",
+   "to": "src/shapes.ts#Circle@27:14",
+   "kind": "import"
+  },
+  {
+   "from": "src/report/charts/bars.ts#total@2:18",
+   "to": "src/shapes.ts#total@44:17",
+   "kind": "import"
+  },
+  {
+   "from": "src/report/charts/bars.ts#formatArea@3:10",
+   "to": "src/report/format.ts#formatArea@4:17",
+   "kind": "import"
+  },
+  {
+   "from": "src/report/charts/bars.ts#summarize@4:10",
+   "to": "src/report/summary.ts#summarize@7:23",
+   "kind": "import"
+  },
+  {
+   "from": "src/report/charts/bars.ts#share@5:10",
+   "to": "src/util/numbers.ts#share@12:17",
+   "kind": "import"
+  }
+ ],
+ "builtins": [
+  {
+   "from": "src/shapes.ts#area@30:3",
+   "name": "Math",
+   "kind": "read",
+   "at": "src/shapes.ts 30:27",
+   "reason": "built-in"
+  },
+  {
+   "from": "src/shapes.ts#area@30:3",
+   "name": "Math.PI",
+   "kind": "read",
+   "at": "src/shapes.ts 30:32",
+   "reason": "built-in",
+   "member": true
+  },
+  {
+   "from": "src/shapes.ts#move@38:3",
+   "name": "Partial",
+   "kind": "type",
+   "at": "src/shapes.ts 38:12",
+   "reason": "built-in"
+  },
+  {
+   "from": "src/shapes.ts#total@44:17",
+   "name": "ReadonlyArray.reduce",
+   "kind": "call",
+   "at": "src/shapes.ts 47:22",
+   "reason": "built-in",
+   "member": true
+  },
+  {
+   "from": "src/shapes.ts#total@44:17",
+   "name": "Math",
+   "kind": "read",
+   "at": "src/shapes.ts 48:18",
+   "reason": "built-in"
+  },
+  {
+   "from": "src/shapes.ts#total@44:17",
+   "name": "Math.round",
+   "kind": "call",
+   "at": "src/shapes.ts 48:23",
+   "reason": "built-in",
+   "member": true
+  },
+  {
+   "from": "src/shapes.ts#distance@53:19",
+   "name": "Math",
+   "kind": "read",
+   "at": "src/shapes.ts 53:74",
+   "reason": "built-in"
+  },
+  {
+   "from": "src/shapes.ts#distance@53:19",
+   "name": "Math.hypot",
+   "kind": "call",
+   "at": "src/shapes.ts 53:79",
+   "reason": "built-in",
+   "member": true
+  },
+  {
+   "from": "src/shapes.ts#registry@56:14",
+   "name": "Map",
+   "kind": "new",
+   "at": "src/shapes.ts 56:29",
+   "reason": "built-in"
+  },
+  {
+   "from": "src/shapes.ts#config@58:14",
+   "name": "Record",
+   "kind": "type",
+   "at": "src/shapes.ts 58:73",
+   "reason": "built-in"
+  },
+  {
+   "from": "src/app.ts#add@6:3",
+   "name": "Array.push",
+   "kind": "call",
+   "at": "src/app.ts 6:40",
+   "reason": "built-in",
+   "member": true
+  },
+  {
+   "from": "src/app.ts#render@7:9",
+   "name": "Promise",
+   "kind": "type",
+   "at": "src/app.ts 7:19",
+   "reason": "built-in"
+  },
+  {
+   "from": "src/app.ts#render@7:9",
+   "name": "Array.map",
+   "kind": "call",
+   "at": "src/app.ts 9:25",
+   "reason": "built-in",
+   "member": true
+  },
+  {
+   "from": "src/app.ts#render@7:9",
+   "name": "Array.join",
+   "kind": "call",
+   "at": "src/app.ts 9:60",
+   "reason": "built-in",
+   "member": true
+  },
+  {
+   "from": "src/app.ts#render@7:9",
+   "name": "String",
+   "kind": "call",
+   "at": "src/app.ts 11:14",
+   "reason": "built-in"
+  },
+  {
+   "from": "src/app.ts#build@18:17",
+   "name": "Array.entries",
+   "kind": "call",
+   "at": "src/app.ts 25:39",
+   "reason": "built-in",
+   "member": true
+  },
+  {
+   "from": "src/app.ts#build@18:17",
+   "name": "console",
+   "kind": "read",
+   "at": "src/app.ts 25:80",
+   "reason": "built-in"
+  },
+  {
+   "from": "src/app.ts#build@18:17",
+   "name": "Console.log",
+   "kind": "call",
+   "at": "src/app.ts 25:88",
+   "reason": "built-in",
+   "member": true
+  },
+  {
+   "from": "src/util/numbers.ts#round2@4:17",
+   "name": "Math",
+   "kind": "read",
+   "at": "src/util/numbers.ts 5:10",
+   "reason": "built-in"
+  },
+  {
+   "from": "src/util/numbers.ts#round2@4:17",
+   "name": "Math.round",
+   "kind": "call",
+   "at": "src/util/numbers.ts 5:15",
+   "reason": "built-in",
+   "member": true
+  },
+  {
+   "from": "src/report/summary.ts#summarize@7:23",
+   "name": "Promise",
+   "kind": "type",
+   "at": "src/report/summary.ts 7:36",
+   "reason": "built-in"
+  },
+  {
+   "from": "src/report/charts/bars.ts#bars@7:17",
+   "name": "Array.map",
+   "kind": "call",
+   "at": "src/report/charts/bars.ts 8:25",
+   "reason": "built-in",
+   "member": true
+  },
+  {
+   "from": "src/report/charts/bars.ts#bars@7:17",
+   "name": "Array.map",
+   "kind": "call",
+   "at": "src/report/charts/bars.ts 10:18",
+   "reason": "built-in",
+   "member": true
+  },
+  {
+   "from": "src/report/charts/bars.ts#report@13:23",
+   "name": "Promise",
+   "kind": "type",
+   "at": "src/report/charts/bars.ts 13:33",
+   "reason": "built-in"
+  },
+  {
+   "from": "src/report/charts/bars.ts#report@13:23",
+   "name": "Array.join",
+   "kind": "call",
+   "at": "src/report/charts/bars.ts 14:48",
+   "reason": "built-in",
+   "member": true
+  }
+ ],
+ "unresolved": [
+  {
+   "from": "src/shapes.ts",
+   "name": "./extra",
+   "kind": "re-export",
+   "at": "src/shapes.ts 59:1",
+   "reason": "missing module"
+  }
+ ]
+}

@@ -1,0 +1,125 @@
+[
+ [
+  "go",
+  "x"
+ ],
+ [
+  "wait",
+  "window.zaansouvi && document.querySelector('#cy') && window.zaansouvi.state.sources !== undefined",
+  15
+ ],
+ [
+  "sleep",
+  1
+ ],
+ [
+  "js",
+  "return (async()=>{ const a=await fetch('/api/sources',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({sourceRoot:\"/home/zaida/viewer/mvp_docs/zaansouvi-mvp/test-source-mvp2\"})}); const s=await a.json(); window.k2=s.sourceKey; localStorage.setItem('k2', s.sourceKey);\n for(let t=0;t<40;t++){ const rr=await fetch('/api/run',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({source:s.sourceKey})}); if(rr.status===202) break; await new Promise(r=>setTimeout(r,500)); }  // one run at a time (VIEW-05): retry while the last one finishes\n\n for(let i=0;i<40;i++){ await new Promise(r=>setTimeout(r,500)); const g=await (await fetch('/api/graph?source='+s.sourceKey+'&which=auto',{credentials:'same-origin'})).json(); if(g.model && g.status==='latest') return 'k2 '+s.sourceKey+': '+g.status+', '+g.model.nodes.length+' nodes, format '+g.model.formatVersion; } return 'timeout'; })()"
+ ],
+ [
+  "js",
+  "return (async()=>{ const a=await fetch('/api/sources',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({sourceRoot:\"/tmp/zaansouvi-status-source\"})}); const s=await a.json(); window.k3=s.sourceKey; localStorage.setItem('k3', s.sourceKey);\n for(let t=0;t<40;t++){ const rr=await fetch('/api/run',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({source:s.sourceKey})}); if(rr.status===202) break; await new Promise(r=>setTimeout(r,500)); }  // one run at a time (VIEW-05): retry while the last one finishes\n\n for(let i=0;i<40;i++){ await new Promise(r=>setTimeout(r,500)); const g=await (await fetch('/api/graph?source='+s.sourceKey+'&which=auto',{credentials:'same-origin'})).json(); if(g.model && g.status==='latest') return 'k3 '+s.sourceKey+': '+g.status+', '+g.model.nodes.length+' nodes, format '+g.model.formatVersion; } return 'timeout'; })()"
+ ],
+ [
+  "js",
+  "return (async()=>{ for(let t=0;t<40;t++){ const r=await fetch('/api/sources/current',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({source:localStorage.getItem(\"k2\")})}); if(r.status!==409) return r.status; await new Promise(x=>setTimeout(x,500)); } return 'still busy'; })()"
+ ],
+ [
+  "go",
+  "x"
+ ],
+ [
+  "wait",
+  "window.zaansouvi && window.zaansouvi.ready() && document.querySelector('#cy canvas')",
+  20
+ ],
+ [
+  "sleep",
+  1.5
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; const z=window.zaansouvi; const v=z.state.answer.model.levels[z.state.view]; return 'view \"'+z.state.view+'\": nodes '+v.nodes.length+', stubs '+v.stubs.length+', edges '+v.edges.length+', unresolved '+v.unresolved.length+', builtins '+(v.builtins||[]).length+' | drawn: '+cy.nodes().map(n=>n.data('label').replace(/\\n/g,' / ')+(n.data('icons')?' ['+n.data('icons')+']':'')).join(' | ').slice(0,1500)+' | frames: '+cy.nodes('.frame').map(n=>n.data('label')).join(', ')"
+ ],
+ [
+  "shot",
+  "mvp2-1-top.png"
+ ],
+ [
+  "js",
+  "window.zaansouvi.enter('src/shapes.ts'); return 1"
+ ],
+ [
+  "sleep",
+  1.2
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; const z=window.zaansouvi; const v=z.state.answer.model.levels[z.state.view]; return 'view \"'+z.state.view+'\": nodes '+v.nodes.length+', stubs '+v.stubs.length+', edges '+v.edges.length+', unresolved '+v.unresolved.length+', builtins '+(v.builtins||[]).length+' | drawn: '+cy.nodes().map(n=>n.data('label').replace(/\\n/g,' / ')+(n.data('icons')?' ['+n.data('icons')+']':'')).join(' | ').slice(0,1500)+' | frames: '+cy.nodes('.frame').map(n=>n.data('label')).join(', ')"
+ ],
+ [
+  "shot",
+  "mvp2-2-shapes.png"
+ ],
+ [
+  "js",
+  "window.zaansouvi.enter('src/shapes.ts#Circle@27:14'); return 1"
+ ],
+ [
+  "sleep",
+  1.2
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; const z=window.zaansouvi; const v=z.state.answer.model.levels[z.state.view]; return 'view \"'+z.state.view+'\": nodes '+v.nodes.length+', stubs '+v.stubs.length+', edges '+v.edges.length+', unresolved '+v.unresolved.length+', builtins '+(v.builtins||[]).length+' | drawn: '+cy.nodes().map(n=>n.data('label').replace(/\\n/g,' / ')+(n.data('icons')?' ['+n.data('icons')+']':'')).join(' | ').slice(0,1500)+' | frames: '+cy.nodes('.frame').map(n=>n.data('label')).join(', ')"
+ ],
+ [
+  "shot",
+  "mvp2-3-circle.png"
+ ],
+ [
+  "js",
+  "window.zaansouvi.select('node','src/shapes.ts#Circle.radius@29:23'); window.zaansouvi.select('node','src/shapes.ts#radius@29:23'); return [...document.querySelectorAll('#pane-details dt,#pane-details dd')].map(e=>e.textContent).join(' | ').slice(0,600)"
+ ],
+ [
+  "js",
+  "window.zaansouvi.tab('problems'); [...document.querySelectorAll('.probscope button')].find(b=>b.textContent==='All').click(); return [...document.querySelectorAll('#pane-problems h3')].map(h=>h.textContent+' ('+(h.nextElementSibling?.querySelectorAll?.(':scope > li').length ?? 0)+')').join(' / ')"
+ ],
+ [
+  "shot",
+  "mvp2-4-problems.png"
+ ],
+ [
+  "js",
+  "return (async()=>{ for(let t=0;t<40;t++){ const r=await fetch('/api/sources/current',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({source:localStorage.getItem(\"k3\")})}); if(r.status!==409) return r.status; await new Promise(x=>setTimeout(x,500)); } return 'still busy'; })()"
+ ],
+ [
+  "go",
+  "x"
+ ],
+ [
+  "wait",
+  "window.zaansouvi && window.zaansouvi.ready() && document.querySelector('#cy canvas')",
+  20
+ ],
+ [
+  "sleep",
+  1.5
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; const z=window.zaansouvi; const v=z.state.answer.model.levels[z.state.view]; return 'view \"'+z.state.view+'\": nodes '+v.nodes.length+', stubs '+v.stubs.length+', edges '+v.edges.length+', unresolved '+v.unresolved.length+', builtins '+(v.builtins||[]).length+' | drawn: '+cy.nodes().map(n=>n.data('label').replace(/\\n/g,' / ')+(n.data('icons')?' ['+n.data('icons')+']':'')).join(' | ').slice(0,1500)+' | frames: '+cy.nodes('.frame').map(n=>n.data('label')).join(', ')"
+ ],
+ [
+  "shot",
+  "mvp2-5-statuses.png"
+ ],
+ [
+  "js",
+  "window.zaansouvi.select('node','readonly.txt'); return [...document.querySelectorAll('#pane-details dt,#pane-details dd')].map(e=>e.textContent).join(' | ').slice(0,500)"
+ ],
+ [
+  "js",
+  "return (async()=>{ for(let t=0;t<40;t++){ const r=await fetch('/api/sources/current',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({source:localStorage.getItem(\"k2\")})}); if(r.status!==409) return r.status; await new Promise(x=>setTimeout(x,500)); } return 'still busy'; })()"
+ ]
+]

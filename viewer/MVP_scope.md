@@ -2,6 +2,8 @@
 
 What the minimum viable product (MVP) of ZaAnSouVi contains, and what it leaves out.
 
+> **Note (2026-11-10).** This version takes in what the process of implementation found, in MVP 1 and MVP 2 (`mvp_docs/summary/`, `mvp_docs/99_findings.md`, `mvp_docs/mvp1/`). **Some original assumptions no longer stand**, for example the least-effort rule for MVP 2 (section 1.2), one file per invocation for a language tool (`TS-37`), and the three tools M1 to M3 as the MVP's analysis (section 2). They need to be reviewed when the feasibility document is written (`DOC-5`, `CLAUDE.md`).
+
 Each item is marked:
 - **[Decided]**: agreed in discussion.
 - **[Proposed]**: inferred, to be confirmed or changed.
@@ -33,7 +35,19 @@ Related files: `toolset.md` (all tools and their common rules), `runner.md`, `vi
 - **[Proposed]** "Among other things" leaves room for more; candidates are cross-file linking working on the test source, and the single database working (section 4).
 - **[Proposed]** A "no" on any of P1 to P4 is a finding, not a failure of the MVP: it tells the feasibility document what doesn't work and why.
 
+### 1.2 The second stage (MVP 2)
+
+- **[Decided]** **The MVP has a second stage, MVP 2** (decided by the user on 2026-11-09; `mvp_docs/41_typescript_program_plan.md`, `TSP-D1`). The first stage's build is kept as its record (~~`mvp_docs/98_first_implementation.md`~~ `mvp_docs/mvp1/98_first_implementation.md`, moved into the frozen snapshot on 2026-11-10); the MVP's state from then on is in `mvp_docs/97_second_implementation.md`.
+- **[Decided]** **MVP 2's main goal: a correct graph in the Viewer, from real TypeScript data** (decided by the user on 2026-11-09): the graph built from what TypeScript's own compiler knows about the examined source, not from hand-written approximations. It follows from what the first stage showed on real code (`mvp_docs/99_findings.md`, `FND-81` to `FND-84`).
+- **[Decided]** **In MVP 2, correctness comes before consistency with the earlier work** (decided by the user on 2026-11-09). **Every part of the MVP is reconsidered** against that goal: its contracts, tools, Runner, Viewer, tests and expected results. A part is kept only where it serves a correct graph; earlier choices are not kept for consistency alone.
+- **[Decided]** For MVP 2, this replaces the first stage's rules in section 1 where they conflict: "least effort, with acceptable failures", "the happy path", "the simplest test on a basic examined source", and "simplicity, not precision" give way to correctness within the constructs MVP 2 supports. They still describe the first stage.
+- **[Proposed]** **A decision in another working file that stands in the way of a correct graph is reopened explicitly** in the file that owns it, as an open question with the reason, not overridden in `mvp_docs/` (`CLAUDE.md`: a working file wins over `mvp_docs/`). Candidates: a tool reads one file per invocation, and one file type for one tool (`toolset.md`, section 4.2).
+- **[Decided]** **What "correct" means for MVP 2: `mvp_docs/41_typescript_program_plan.md`, section 1.1 (`TSP-01`), decided by the user on 2026-11-09 as the starting point,** to be refined as the build shows more. In short: the graph shows what TypeScript itself knows and nothing it doesn't; every declaration a node, once, in its lexical container; every use an edge to the declaration TypeScript resolves it to, statically, across files; every import a link to what it names; what can't be resolved listed with its reason, built-ins apart; checked against an expected graph written by hand, and against TypeScript's "go to definition". ~~**[Proposed]** What "correct" means for MVP 2 is stated in `mvp_docs/41_typescript_program_plan.md`, `TSP-01`: every declaration a node in its container; every use an edge from the function or member holding it to the declaration it means, across files; every import reaching the declaration it names; built-ins told apart. It is checked against expected results written by hand.~~
+- **[Proposed]** It is tracked as a fifth claim beside P1 to P4: **P5. The Viewer shows a correct graph of real TypeScript.**
+
 ## 2. What is in the MVP
+
+*This section describes the first stage, MVP 1. MVP 2 keeps M1, M2 and M3 as built and runs `ts-program` alone (section 1.2; `mvp_docs/97_second_implementation.md`).*
 
 - **[Decided]** **The Runner.**
 - **[Decided]** **The Viewer.**
@@ -55,6 +69,8 @@ Related files: `toolset.md` (all tools and their common rules), `runner.md`, `vi
 
 ## 3. The basic examined source
 
+- **[Decided] For MVP 2** (2026-11-09, `mvp_docs/99_findings.md`, `FND-92`): the test source is `mvp_docs/zaansouvi-mvp/test-source-mvp2/`, two class-heavy TypeScript files, and its expected graph is written by hand in `mvp_docs/zaansouvi-mvp/expected-mvp2/` from the definition of a correct graph (`mvp_docs/41_typescript_program_plan.md`, section 1.1). Real code is measured too: ZaAnSouVi's own `app/` (`FND-99`). What follows describes the first stage.
+
 - **[Decided]** The MVP is tested on the simplest useful case: a basic examined source.
 - **[Proposed]** A small, hand-written TypeScript project made for the test, for example:
   - two or three files
@@ -66,6 +82,8 @@ Related files: `toolset.md` (all tools and their common rules), `runner.md`, `vi
 - **[Proposed]** Anything outside the basic source, such as re-exports, overloads, type-only symbols, dynamic access, decorators or mixed JavaScript, is an edge case. Failing on it is acceptable (section 1).
 
 ## 4. What the MVP keeps from the full design
+
+- **[Decided] For MVP 2:** the same contracts, with the changes recorded in `mvp_docs/42_tool_ts_program.md` and the MVP 2 schema (`mvp_docs/02_data_contracts.md`, `DATA-24`): a program tool reading every listed `.ts` file in one invocation (`toolset.md`, section 4.2, `TS-37`), list parameters, per-file outputs from a once tool, new record keys; the Runner runs a fixed list of tools (`RUN-33`) and lists every file with its status (`RUN-34`, `RUN-35`). What follows describes the first stage.
 
 The MVP is a proof of concept for the toolset's architecture as well as its analysis, so some contracts are worth keeping even in a thin form.
 
@@ -99,6 +117,8 @@ The MVP is a proof of concept for the toolset's architecture as well as its anal
   - the file list: the Runner reads the files and lists them ~~(whether that stays the Runner's job is `RN-13`)~~ (`RN-13` resolved: the Runner's job, for the product too, `runner.md`, section 4)
 
 ## 5. The Viewer in the MVP
+
+- **[Decided] For MVP 2:** the levels follow TypeScript's own nesting, to any depth (file › namespace › class › member), with no scope tool (`TPG-06`, closed 2026-11-09); a frame for any entered container (`TSP-D8`); the top view shows every listed entry, the unconnected ones in a frame with their status icons (`UI-47`, `UI-48`); built-ins listed apart. What follows, section 5.1 included, describes the first stage.
 
 - **[Decided]** **The graph has at least two levels.** Which levels they are is defined once the tools are decided on, that is, once M1–M3's outputs are settled (`--info`).
 - **[Proposed]** Moving between levels follows the Viewer's rules (`viewer.md`, section 4.9).
@@ -136,6 +156,8 @@ This applies to the MVP only; the product's level hierarchy is `VW-19`.
 
 ## 6. What is out of the MVP
 
+- **[Decided] Out of MVP 2, besides what follows:** `ts-config` to start with (`TPG-D4a`); JavaScript and JSX (`TSP-D12`); file kinds (`mvp_docs/40_tools_fileKind.md`); `node_modules` and `@types` in the program (`TPG-20`, its cost measured, `FND-99`, and open again as `TPG-D8`).
+
 - **[Proposed]** Left out entirely:
   - the git step, environment variables, modules, infrastructure, project overview facts and the Mermaid generator (`toolset.md`, section 6)
   - the product's full level hierarchy (`viewer.md`, section 4.9.1); the MVP has its own two or more levels (section 5)
@@ -153,6 +175,15 @@ This applies to the MVP only; the product's level hierarchy is `VW-19`.
 
 ## 7. Success criteria
 
+- **[Proposed] For MVP 2** (2026-11-09), each with its state then (`mvp_docs/97_second_implementation.md`, `FND-98`, `FND-99`):
+  1. **(P2)** one command runs the Runner, which runs `ts-program` alone and leaves the data the Viewer needs: **met**.
+  2. **(P2, P5)** `ts-program`'s output matches the expected graph written by hand, and every edge agrees with TypeScript's "go to definition": **met** (~~87 nodes, 117 edges; 117 of 117~~ 120 nodes, 156 edges; 156 of 156, once the test source gained subfolders, `mvp_docs/99_findings.md`, `FND-104`).
+  3. **(P1, P3, P5)** the Viewer starts the Runner, shows the graph at every depth with frames, and every element leads back to its file and line: **built and checked by script; the human review is in progress**.
+  4. **(P1)** a broken input gives a clear no-go, shown in the Viewer, which keeps the last good graph (`B7`): **met**.
+  5. **(P1)** a dry-run-only pass reports go and writes nothing (`TEST-02`, `TEST-03`); a source with no file to read stops, saying why (`R11`): **met**.
+  6. **(P5)** on real code, the run times and the share of uses resolved are measured and their limits recorded: **met** (`app/`: 4.4 s a full run, 69% of uses resolved; limits: packages without type declarations, the readability of large views).
+- **[Proposed]** P5, "the Viewer shows a correct graph of real TypeScript", is judged on criteria 2, 3 and 6; what follows describes the first stage.
+
 - **[Proposed]** The MVP succeeds when, on the basic examined source (each criterion names the claim in section 1.1 it supports):
   1. **(P2)** one command runs the Runner, which calls M1 for every file, then M2, then M3, updates the MVP's single database, and leaves the data the Viewer needs ([Decided] that this is the Runner's test)
   2. **(P2)** the output matches the expected result written down by hand (section 3)
@@ -168,7 +199,7 @@ This applies to the MVP only; the product's level hierarchy is `VW-19`.
 - `MVP-1` ~~**Basic examined source:** is the small hand-written project in section 3 the right test? Who writes it and its expected result?~~ Answered for the MVP: the test source is in `mvp_docs/test_plan/` (a runnable app) and `mvp_docs/zaansouvi-mvp/test-source/`, its expected result in `mvp_docs/zaansouvi-mvp/expected/`, written by the developer (`mvp_docs/07_delivery.md`, `DEL-04`; `FND-21`).
 - `MVP-2` ~~**How M1 is called**~~: resolved. Once per file: a tool reads only one file per invocation (`toolset.md`, section 4.2).
 - `MVP-3` ~~**Deduplication:** is the meaning in section 2 right: one symbol per declaration, every occurrence kept as a reference?~~ Answered for the MVP: yes, one symbol per declaration and every occurrence a reference; M1 does this and its tests check it (`mvp_docs/04_tools.md`, `TOOL-11` to `TOOL-14`; `FND-21`).
-- `MVP-4` **What "scope of related symbols" shows:** the lexical scope a symbol is declared in (file, function, block), the set of symbols used together in one scope, or both? *(Resolved, decided by the user on 2026-11-08: option C with C1. M3 records the lexical scope only, from M1's symbols alone: the file scope and one scope per top-level function, each scope naming its `owner` (the function symbol, or the file for the file scope). The symbols a scope is used with are shown by the Viewer, which lifts M1's references and M2's links up to the nearest visible container with a generic rule, the one it already uses for file edges. Weighed against B (M3 also reads references and outputs scope uses), A (lexical only, without the uses) and D (nested and block scopes, kept for after the MVP, section 10.3). Recorded in `mvp_docs/04_tools.md`, `TOOL-33`, and `05_viewer.md`, `VIEW-13`; `mvp_docs/99_findings.md`, `FND-55`.)*
+- `MVP-4` ~~**What "scope of related symbols" shows:** the lexical scope a symbol is declared in (file, function, block), the set of symbols used together in one scope, or both?~~ Resolved *(decided by the user on 2026-11-08: option C with C1. M3 records the lexical scope only, from M1's symbols alone: the file scope and one scope per top-level function, each scope naming its `owner` (the function symbol, or the file for the file scope). The symbols a scope is used with are shown by the Viewer, which lifts M1's references and M2's links up to the nearest visible container with a generic rule, the one it already uses for file edges. Weighed against B (M3 also reads references and outputs scope uses), A (lexical only, without the uses) and D (nested and block scopes, kept for after the MVP, section 10.3). Recorded in `mvp_docs/04_tools.md`, `TOOL-33`, and `05_viewer.md`, `VIEW-13`; `mvp_docs/99_findings.md`, `FND-55`.)*
 - `MVP-5` **Contracts kept:** is the list in section 4 the right amount of the full design for a proof of concept, or should the MVP drop more (for example the database) to stay smaller? *(Since written, the MVP has grown: incremental runs, the Runner's cache, a run lock, a tool helper.)*
 - `MVP-6` ~~**Viewer in the MVP**~~: resolved. The graph has at least two levels, defined once the tools are decided on (section 5).
 - `MVP-7` ~~**Tokenizing versus parsing**~~: resolved. Use an existing library or built-in feature when it solves the requirement (section 1), so M1 uses an existing TypeScript parser rather than a hand-made tokenizer. Which one is a technology choice.
@@ -183,20 +214,20 @@ This applies to the MVP only; the product's level hierarchy is `VW-19`.
 
 ### 8.1 MVP-only answers
 
-These answer open product questions for the MVP only, by the least-effort rule (section 1). They decide nothing for the product.
+These answer open product questions for the MVP only, by the least-effort rule (section 1). They decide nothing for the product. Each row cites the product question it answers; the question itself is defined in its own file. They are the first stage's answers; MVP 2's state is in `mvp_docs/97_second_implementation.md`.
 
-| Question | MVP-only answer | Status |
+| Answer for the MVP to | MVP-only answer | Status |
 |---|---|---|
-| `TS-29` Config files | No config files. The Runner takes the source path on the command line; ~~everything else is a default~~ it saves it in the database and reuses it, as it does the store paths (`RUN-29`); everything else is a default. | [Proposed] |
-| `RN-13` File list | The Runner builds it. | ~~[Proposed]~~ [Decided] for the product too (`runner.md`, section 4) |
-| `RN-15` Repeated tool runs | One dry run, then one real run, per invocation; or a skip when it is up to date (`RUN-17`). | [Proposed] |
-| `RN-16` Database updated per tool | Accepted; no staging. | [Proposed] |
-| `RN-17` Viewer-specific Runner parameters | Run, dry-run only, read cache (exactly the Runner's cache, `RUN-27`). | [Proposed] |
-| `RN-19` Record of tools | The three tools are present; the Runner fills their entries on start by calling each `--info`. | [Proposed] |
-| `TS-25` `last_run.json` shared between codebases | Doesn't matter with one codebase. | [Proposed] |
-| `TS-30` Arguments without JSON | The Runner always sends JSON. | [Proposed] |
-| `TS-31` One file per invocation at scale | Doesn't matter for two or three files; record the timings as a finding. Measured on 2026-11-08: about 0.5 s per M1 invocation, about 3.5 s for a full run of M1 on three files. | [Proposed] |
-| `VW-36` Viewer data access | ~~The Viewer's backend reads the single database directly.~~ The Viewer's backend may read the single database directly (section 4), but in `mvp_docs/` it reads only the Runner's cache (`VIEW-03`), as the Viewer prefers the Runner's cache (`runner.md`, section 10.2). | [Decided] (section 4) that it may |
+| Config files (`TS-29`) | No config files. The Runner takes the source path on the command line; ~~everything else is a default~~ it saves it in the database and reuses it, as it does the store paths (`RUN-29`); everything else is a default. | [Proposed] |
+| File list (`RN-13`) | The Runner builds it. | ~~[Proposed]~~ [Decided] for the product too (`runner.md`, section 4) |
+| Repeated tool runs (`RN-15`) | One dry run, then one real run, per invocation; or a skip when it is up to date (`RUN-17`). | [Proposed] |
+| Database updated per tool (`RN-16`) | Accepted; no staging. | [Proposed] |
+| Viewer-specific Runner parameters (`RN-17`) | Run, dry-run only, read cache (exactly the Runner's cache, `RUN-27`). | [Proposed] |
+| Record of tools (`RN-19`) | The three tools are present; the Runner fills their entries on start by calling each `--info`. | [Proposed] |
+| `last_run.json` shared between codebases (`TS-25`) | Doesn't matter with one codebase. | [Proposed] |
+| Arguments without JSON (`TS-30`) | The Runner always sends JSON. | [Proposed] |
+| One file per invocation at scale (`TS-31`) | Doesn't matter for two or three files; record the timings as a finding. Measured on 2026-11-08: about 0.5 s per M1 invocation, about 3.5 s for a full run of M1 on three files. | [Proposed] |
+| Viewer data access (`VW-36`) | ~~The Viewer's backend reads the single database directly.~~ The Viewer's backend may read the single database directly (section 4), but in `mvp_docs/` it reads only the Runner's cache (`VIEW-03`), as the Viewer prefers the Runner's cache (`runner.md`, section 10.2). | [Decided] (section 4) that it may |
 | Output modes | Only the Viewer output mode; `--human` is out. | [Proposed] |
 | Tool list in the Viewer | Shown read-only: the three tools and whether each runs, from the Runner's cache. No enabling or disabling. | [Proposed] |
 

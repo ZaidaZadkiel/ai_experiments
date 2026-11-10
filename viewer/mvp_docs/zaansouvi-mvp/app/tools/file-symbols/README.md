@@ -1,5 +1,7 @@
 # file-symbols (M1)
 
+> **Stale and frozen (2026-11-10).** Kept as built in MVP 1, **not run in MVP 2 and not maintained** (`TPG-01`, `RUN-33`). Kept for future tests, for example as a ready source of wrong data and wrong input (`mvp_docs/97_second_implementation.md`, `M2Q-14`). Don't change it; when a test needs it changed, copy it. What it does is described below as it stood at the end of MVP 1 (`mvp_docs/summary/00_definitions_mvp1.md`).
+
 Reads **one** TypeScript file and lists its symbols and every reference to them (`04_tools.md`, M1). It depends on Node built-ins, the `typescript` package (used only as a parser) and, from version 0.4.0, the tool helper in `app/tool-helper/`, which carries the contract every tool shares (`TOOL-45`). It imports nothing from the Runner, the Viewer or another tool. Its options, parameters, log, `result.json` and dry run behave exactly as before the helper: `--info` and `--help` are byte-identical, and every test passes unchanged.
 
 This is a first, generous version of the contract. It is meant to be overwritten once the open findings in `mvp_docs/99_findings.md` are settled.
@@ -93,3 +95,21 @@ Syntax errors come from `ts.transpileModule` with `reportDiagnostics`, a public 
 From `zaansouvi-mvp/`:
 - `node tests/m1/check.mjs`: TEST-01 for M1 alone. Runs each test file (dry run, then real run) and compares with `expected/file-symbols.json`. It also checks the preview, the declaration references, the function ranges and repeatability.
 - `bash tests/m1/broken.sh`: B1 to B7 from `06_test_plan.md`, plus extras (unknown option, invocation error in a dry run, incongruent paths, command-line override, `--log`). It uses a temporary store and restores `last_run.json`.
+
+## Choices M1 made where the documents left them open
+
+M1 takes these answers to the findings in `mvp_docs/99_findings.md`. They are starting points, not decisions:
+
+| Finding | Choice in M1 |
+|---|---|
+| FND-01 data name to JSON key | `dataNames` in the output; `jsonKey` and `fields` in `--info` |
+| FND-02 uniform relations | References carry `enclosing`, plus `from`/`to` |
+| FND-04 dry-run chaining | The dry run prints the would-be output on a `preview` line |
+| FND-07 where tools write | Resolved: optional `store_path`; if the input lacks it, ~~the program folder~~ `./zaansouvi/tools/<tool>/` in the working folder (`TOOL-43`, `FND-59`) |
+| FND-09 `range` | The whole declaration, from `export` or `function` |
+| FND-10 call or read | Only a bare-name callee is a call |
+| FND-13 no-go on invocation errors | Printed on standard output too, with exit code 2 |
+| FND-14 options | `--help`, `--version`, and one option per parameter |
+| FND-15 syntax errors | `ts.transpileModule` with `reportDiagnostics` |
+| FND-29 repeatability | No times in the output file; checked by `check.mjs` |
+| FND-40 key names | One meaning per key (`DATA-19`). Version 0.2.0 renamed the clashing keys, for example `toolVersion`, `formatVersion`, `import.moduleSpecifier`, `effectiveParameters`, `outputPaths`, `errorKind` |
