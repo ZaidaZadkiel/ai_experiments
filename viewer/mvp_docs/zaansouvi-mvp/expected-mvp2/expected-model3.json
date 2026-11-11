@@ -1,0 +1,2219 @@
+{
+ "about": "The expected graph model, format 3, of test-source-mvp2 (mvp_docs/55_viewer_backend.md, BE-110 to BE-115). index and inventoryFiles are mechanical, from the hand-written graph and the listing; views and display are written by hand. Relations are named by key: '<at> <kind> <to>' for a use, 'link <from> <to>' for an import. A view's edges are [from, to, kind, [relation keys]] where given; edgeCount and relationCount where given.",
+ "formatVersion": 3,
+ "index": {
+  "fileOf": {
+   "README.md": "README.md",
+   "src/app.ts": "src/app.ts",
+   "src/report/charts/bars.ts": "src/report/charts/bars.ts",
+   "src/report/format.ts": "src/report/format.ts",
+   "src/report/summary.ts": "src/report/summary.ts",
+   "src/shapes.ts": "src/shapes.ts",
+   "src/util/numbers.ts": "src/util/numbers.ts",
+   "src/shapes.ts#Shape@2:18": "src/shapes.ts",
+   "src/shapes.ts#area@2:26": "src/shapes.ts",
+   "src/shapes.ts#name@2:51": "src/shapes.ts",
+   "src/shapes.ts#Point@3:13": "src/shapes.ts",
+   "src/shapes.ts#x@3:23": "src/shapes.ts",
+   "src/shapes.ts#y@3:34": "src/shapes.ts",
+   "src/shapes.ts#Color@4:13": "src/shapes.ts",
+   "src/shapes.ts#Red@4:21": "src/shapes.ts",
+   "src/shapes.ts#Green@4:34": "src/shapes.ts",
+   "src/shapes.ts#Flag@5:19": "src/shapes.ts",
+   "src/shapes.ts#On@5:26": "src/shapes.ts",
+   "src/shapes.ts#Off@5:34": "src/shapes.ts",
+   "src/shapes.ts#UNIT@7:14": "src/shapes.ts",
+   "src/shapes.ts#created@8:5": "src/shapes.ts",
+   "src/shapes.ts#log@10:10": "src/shapes.ts",
+   "src/shapes.ts#target@10:14": "src/shapes.ts",
+   "src/shapes.ts#key@10:31": "src/shapes.ts",
+   "src/shapes.ts#Base@12:23": "src/shapes.ts",
+   "src/shapes.ts#count@13:10": "src/shapes.ts",
+   "src/shapes.ts#id@14:22": "src/shapes.ts",
+   "src/shapes.ts##tag@15:3": "src/shapes.ts",
+   "src/shapes.ts#name@16:21": "src/shapes.ts",
+   "src/shapes.ts#constructor@17:3": "src/shapes.ts",
+   "src/shapes.ts#color@17:22": "src/shapes.ts",
+   "src/shapes.ts#scale@17:56": "src/shapes.ts",
+   "src/shapes.ts#area@21:12": "src/shapes.ts",
+   "src/shapes.ts#label@22:7": "src/shapes.ts",
+   "src/shapes.ts#value@23:13": "src/shapes.ts",
+   "src/shapes.ts#describe@24:8": "src/shapes.ts",
+   "src/shapes.ts#Circle@27:14": "src/shapes.ts",
+   "src/shapes.ts#name@28:12": "src/shapes.ts",
+   "src/shapes.ts#constructor@29:3": "src/shapes.ts",
+   "src/shapes.ts#radius@29:23": "src/shapes.ts",
+   "src/shapes.ts#color@29:39": "src/shapes.ts",
+   "src/shapes.ts#area@30:3": "src/shapes.ts",
+   "src/shapes.ts#unit@31:10": "src/shapes.ts",
+   "src/shapes.ts#Rect@34:14": "src/shapes.ts",
+   "src/shapes.ts#name@35:12": "src/shapes.ts",
+   "src/shapes.ts#constructor@36:3": "src/shapes.ts",
+   "src/shapes.ts#corner@36:22": "src/shapes.ts",
+   "src/shapes.ts#w@36:41": "src/shapes.ts",
+   "src/shapes.ts#h@36:60": "src/shapes.ts",
+   "src/shapes.ts#area@37:3": "src/shapes.ts",
+   "src/shapes.ts#move@38:3": "src/shapes.ts",
+   "src/shapes.ts#by@38:8": "src/shapes.ts",
+   "src/shapes.ts#x@39:13": "src/shapes.ts",
+   "src/shapes.ts#y@39:20": "src/shapes.ts",
+   "src/shapes.ts#total@44:17": "src/shapes.ts",
+   "src/shapes.ts#shapes@46:23": "src/shapes.ts",
+   "src/shapes.ts#round@46:49": "src/shapes.ts",
+   "src/shapes.ts#sum@47:9": "src/shapes.ts",
+   "src/shapes.ts#acc@47:30": "src/shapes.ts",
+   "src/shapes.ts#s@47:35": "src/shapes.ts",
+   "src/shapes.ts#Geometry@51:18": "src/shapes.ts",
+   "src/shapes.ts#ORIGIN@52:16": "src/shapes.ts",
+   "src/shapes.ts#distance@53:19": "src/shapes.ts",
+   "src/shapes.ts#a@53:28": "src/shapes.ts",
+   "src/shapes.ts#b@53:38": "src/shapes.ts",
+   "src/shapes.ts#registry@56:14": "src/shapes.ts",
+   "src/shapes.ts#Anonymous@57:14": "src/shapes.ts",
+   "src/shapes.ts#name@57:56": "src/shapes.ts",
+   "src/shapes.ts#area@57:71": "src/shapes.ts",
+   "src/shapes.ts#config@58:14": "src/shapes.ts",
+   "src/app.ts#Circle@1:8": "src/app.ts",
+   "src/app.ts#Rect@1:18": "src/app.ts",
+   "src/app.ts#total@1:24": "src/app.ts",
+   "src/app.ts#Color@1:31": "src/app.ts",
+   "src/app.ts#Geometry@1:38": "src/app.ts",
+   "src/app.ts#UNIT@1:48": "src/app.ts",
+   "src/app.ts#Shape@1:59": "src/app.ts",
+   "src/app.ts#all@2:13": "src/app.ts",
+   "src/app.ts#Scene@4:7": "src/app.ts",
+   "src/app.ts#items@5:11": "src/app.ts",
+   "src/app.ts#add@6:3": "src/app.ts",
+   "src/app.ts#shape@6:7": "src/app.ts",
+   "src/app.ts#render@7:9": "src/app.ts",
+   "src/app.ts#s@9:30": "src/app.ts",
+   "src/app.ts#i@9:33": "src/app.ts",
+   "src/app.ts#err@10:14": "src/app.ts",
+   "src/app.ts#build@18:17": "src/app.ts",
+   "src/app.ts#scene@19:9": "src/app.ts",
+   "src/app.ts#c@20:9": "src/app.ts",
+   "src/app.ts#r@21:9": "src/app.ts",
+   "src/app.ts#d@23:9": "src/app.ts",
+   "src/app.ts#sum@24:9": "src/app.ts",
+   "src/app.ts#index@25:15": "src/app.ts",
+   "src/app.ts#shape@25:22": "src/app.ts",
+   "src/util/numbers.ts#total@2:10": "src/util/numbers.ts",
+   "src/util/numbers.ts#Shape@2:22": "src/util/numbers.ts",
+   "src/util/numbers.ts#round2@4:17": "src/util/numbers.ts",
+   "src/util/numbers.ts#value@4:24": "src/util/numbers.ts",
+   "src/util/numbers.ts#percent@8:17": "src/util/numbers.ts",
+   "src/util/numbers.ts#part@8:25": "src/util/numbers.ts",
+   "src/util/numbers.ts#whole@8:39": "src/util/numbers.ts",
+   "src/util/numbers.ts#share@12:17": "src/util/numbers.ts",
+   "src/util/numbers.ts#shapes@12:23": "src/util/numbers.ts",
+   "src/util/numbers.ts#one@12:49": "src/util/numbers.ts",
+   "src/report/format.ts#round2@2:10": "src/report/format.ts",
+   "src/report/format.ts#formatArea@4:17": "src/report/format.ts",
+   "src/report/format.ts#area@4:28": "src/report/format.ts",
+   "src/report/summary.ts#build@2:10": "src/report/summary.ts",
+   "src/report/summary.ts#Geometry@3:10": "src/report/summary.ts",
+   "src/report/summary.ts#formatArea@4:10": "src/report/summary.ts",
+   "src/report/summary.ts#percent@5:10": "src/report/summary.ts",
+   "src/report/summary.ts#summarize@7:23": "src/report/summary.ts",
+   "src/report/summary.ts#scene@8:9": "src/report/summary.ts",
+   "src/report/summary.ts#text@9:9": "src/report/summary.ts",
+   "src/report/summary.ts#far@10:9": "src/report/summary.ts",
+   "src/report/charts/bars.ts#Circle@2:8": "src/report/charts/bars.ts",
+   "src/report/charts/bars.ts#total@2:18": "src/report/charts/bars.ts",
+   "src/report/charts/bars.ts#formatArea@3:10": "src/report/charts/bars.ts",
+   "src/report/charts/bars.ts#summarize@4:10": "src/report/charts/bars.ts",
+   "src/report/charts/bars.ts#share@5:10": "src/report/charts/bars.ts",
+   "src/report/charts/bars.ts#bars@7:17": "src/report/charts/bars.ts",
+   "src/report/charts/bars.ts#sizes@7:22": "src/report/charts/bars.ts",
+   "src/report/charts/bars.ts#circles@8:9": "src/report/charts/bars.ts",
+   "src/report/charts/bars.ts#size@8:30": "src/report/charts/bars.ts",
+   "src/report/charts/bars.ts#whole@9:9": "src/report/charts/bars.ts",
+   "src/report/charts/bars.ts#circle@10:23": "src/report/charts/bars.ts",
+   "src/report/charts/bars.ts#report@13:23": "src/report/charts/bars.ts"
+  },
+  "children": {
+   "src/shapes.ts": [
+    "src/shapes.ts#Shape@2:18",
+    "src/shapes.ts#Point@3:13",
+    "src/shapes.ts#Color@4:13",
+    "src/shapes.ts#Flag@5:19",
+    "src/shapes.ts#UNIT@7:14",
+    "src/shapes.ts#created@8:5",
+    "src/shapes.ts#log@10:10",
+    "src/shapes.ts#Base@12:23",
+    "src/shapes.ts#Circle@27:14",
+    "src/shapes.ts#Rect@34:14",
+    "src/shapes.ts#total@44:17",
+    "src/shapes.ts#Geometry@51:18",
+    "src/shapes.ts#registry@56:14",
+    "src/shapes.ts#Anonymous@57:14",
+    "src/shapes.ts#config@58:14"
+   ],
+   "src/shapes.ts#Shape@2:18": [
+    "src/shapes.ts#area@2:26",
+    "src/shapes.ts#name@2:51"
+   ],
+   "src/shapes.ts#Point@3:13": [
+    "src/shapes.ts#x@3:23",
+    "src/shapes.ts#y@3:34"
+   ],
+   "src/shapes.ts#Color@4:13": [
+    "src/shapes.ts#Red@4:21",
+    "src/shapes.ts#Green@4:34"
+   ],
+   "src/shapes.ts#Flag@5:19": [
+    "src/shapes.ts#On@5:26",
+    "src/shapes.ts#Off@5:34"
+   ],
+   "src/shapes.ts#log@10:10": [
+    "src/shapes.ts#target@10:14",
+    "src/shapes.ts#key@10:31"
+   ],
+   "src/shapes.ts#Base@12:23": [
+    "src/shapes.ts#count@13:10",
+    "src/shapes.ts#id@14:22",
+    "src/shapes.ts##tag@15:3",
+    "src/shapes.ts#name@16:21",
+    "src/shapes.ts#constructor@17:3",
+    "src/shapes.ts#color@17:22",
+    "src/shapes.ts#scale@17:56",
+    "src/shapes.ts#area@21:12",
+    "src/shapes.ts#label@22:7",
+    "src/shapes.ts#describe@24:8"
+   ],
+   "src/shapes.ts#label@22:7": [
+    "src/shapes.ts#value@23:13"
+   ],
+   "src/shapes.ts#Circle@27:14": [
+    "src/shapes.ts#name@28:12",
+    "src/shapes.ts#constructor@29:3",
+    "src/shapes.ts#radius@29:23",
+    "src/shapes.ts#area@30:3",
+    "src/shapes.ts#unit@31:10"
+   ],
+   "src/shapes.ts#constructor@29:3": [
+    "src/shapes.ts#color@29:39"
+   ],
+   "src/shapes.ts#Rect@34:14": [
+    "src/shapes.ts#name@35:12",
+    "src/shapes.ts#constructor@36:3",
+    "src/shapes.ts#corner@36:22",
+    "src/shapes.ts#w@36:41",
+    "src/shapes.ts#h@36:60",
+    "src/shapes.ts#area@37:3",
+    "src/shapes.ts#move@38:3"
+   ],
+   "src/shapes.ts#move@38:3": [
+    "src/shapes.ts#by@38:8",
+    "src/shapes.ts#x@39:13",
+    "src/shapes.ts#y@39:20"
+   ],
+   "src/shapes.ts#total@44:17": [
+    "src/shapes.ts#shapes@46:23",
+    "src/shapes.ts#round@46:49",
+    "src/shapes.ts#sum@47:9",
+    "src/shapes.ts#acc@47:30",
+    "src/shapes.ts#s@47:35"
+   ],
+   "src/shapes.ts#Geometry@51:18": [
+    "src/shapes.ts#ORIGIN@52:16",
+    "src/shapes.ts#distance@53:19"
+   ],
+   "src/shapes.ts#distance@53:19": [
+    "src/shapes.ts#a@53:28",
+    "src/shapes.ts#b@53:38"
+   ],
+   "src/shapes.ts#Anonymous@57:14": [
+    "src/shapes.ts#name@57:56",
+    "src/shapes.ts#area@57:71"
+   ],
+   "src/app.ts": [
+    "src/app.ts#Circle@1:8",
+    "src/app.ts#Rect@1:18",
+    "src/app.ts#total@1:24",
+    "src/app.ts#Color@1:31",
+    "src/app.ts#Geometry@1:38",
+    "src/app.ts#UNIT@1:48",
+    "src/app.ts#Shape@1:59",
+    "src/app.ts#all@2:13",
+    "src/app.ts#Scene@4:7",
+    "src/app.ts#build@18:17"
+   ],
+   "src/app.ts#Scene@4:7": [
+    "src/app.ts#items@5:11",
+    "src/app.ts#add@6:3",
+    "src/app.ts#render@7:9"
+   ],
+   "src/app.ts#add@6:3": [
+    "src/app.ts#shape@6:7"
+   ],
+   "src/app.ts#render@7:9": [
+    "src/app.ts#s@9:30",
+    "src/app.ts#i@9:33",
+    "src/app.ts#err@10:14"
+   ],
+   "src/app.ts#build@18:17": [
+    "src/app.ts#scene@19:9",
+    "src/app.ts#c@20:9",
+    "src/app.ts#r@21:9",
+    "src/app.ts#d@23:9",
+    "src/app.ts#sum@24:9",
+    "src/app.ts#index@25:15",
+    "src/app.ts#shape@25:22"
+   ],
+   "src/util/numbers.ts": [
+    "src/util/numbers.ts#total@2:10",
+    "src/util/numbers.ts#Shape@2:22",
+    "src/util/numbers.ts#round2@4:17",
+    "src/util/numbers.ts#percent@8:17",
+    "src/util/numbers.ts#share@12:17"
+   ],
+   "src/util/numbers.ts#round2@4:17": [
+    "src/util/numbers.ts#value@4:24"
+   ],
+   "src/util/numbers.ts#percent@8:17": [
+    "src/util/numbers.ts#part@8:25",
+    "src/util/numbers.ts#whole@8:39"
+   ],
+   "src/util/numbers.ts#share@12:17": [
+    "src/util/numbers.ts#shapes@12:23",
+    "src/util/numbers.ts#one@12:49"
+   ],
+   "src/report/format.ts": [
+    "src/report/format.ts#round2@2:10",
+    "src/report/format.ts#formatArea@4:17"
+   ],
+   "src/report/format.ts#formatArea@4:17": [
+    "src/report/format.ts#area@4:28"
+   ],
+   "src/report/summary.ts": [
+    "src/report/summary.ts#build@2:10",
+    "src/report/summary.ts#Geometry@3:10",
+    "src/report/summary.ts#formatArea@4:10",
+    "src/report/summary.ts#percent@5:10",
+    "src/report/summary.ts#summarize@7:23"
+   ],
+   "src/report/summary.ts#summarize@7:23": [
+    "src/report/summary.ts#scene@8:9",
+    "src/report/summary.ts#text@9:9",
+    "src/report/summary.ts#far@10:9"
+   ],
+   "src/report/charts/bars.ts": [
+    "src/report/charts/bars.ts#Circle@2:8",
+    "src/report/charts/bars.ts#total@2:18",
+    "src/report/charts/bars.ts#formatArea@3:10",
+    "src/report/charts/bars.ts#summarize@4:10",
+    "src/report/charts/bars.ts#share@5:10",
+    "src/report/charts/bars.ts#bars@7:17",
+    "src/report/charts/bars.ts#report@13:23"
+   ],
+   "src/report/charts/bars.ts#bars@7:17": [
+    "src/report/charts/bars.ts#sizes@7:22",
+    "src/report/charts/bars.ts#circles@8:9",
+    "src/report/charts/bars.ts#size@8:30",
+    "src/report/charts/bars.ts#whole@9:9",
+    "src/report/charts/bars.ts#circle@10:23"
+   ]
+  },
+  "entries": {
+   "": [
+    "src",
+    "README.md"
+   ],
+   "src": [
+    "src/report",
+    "src/util",
+    "src/app.ts",
+    "src/shapes.ts"
+   ],
+   "src/report": [
+    "src/report/charts",
+    "src/report/format.ts",
+    "src/report/summary.ts"
+   ],
+   "src/report/charts": [
+    "src/report/charts/bars.ts"
+   ],
+   "src/util": [
+    "src/util/numbers.ts"
+   ]
+  },
+  "folderOf": {
+   "src/report": "src",
+   "src/report/charts": "src/report",
+   "src/util": "src",
+   "src/app.ts": "src",
+   "src/report/charts/bars.ts": "src/report/charts",
+   "src/report/format.ts": "src/report",
+   "src/report/summary.ts": "src/report",
+   "src/shapes.ts": "src",
+   "src/util/numbers.ts": "src/util"
+  },
+  "ancestors": {
+   "src/shapes.ts#Shape@2:18": [
+    "src/shapes.ts"
+   ],
+   "src/shapes.ts#area@2:26": [
+    "src/shapes.ts",
+    "src/shapes.ts#Shape@2:18"
+   ],
+   "src/shapes.ts#name@2:51": [
+    "src/shapes.ts",
+    "src/shapes.ts#Shape@2:18"
+   ],
+   "src/shapes.ts#Point@3:13": [
+    "src/shapes.ts"
+   ],
+   "src/shapes.ts#x@3:23": [
+    "src/shapes.ts",
+    "src/shapes.ts#Point@3:13"
+   ],
+   "src/shapes.ts#y@3:34": [
+    "src/shapes.ts",
+    "src/shapes.ts#Point@3:13"
+   ],
+   "src/shapes.ts#Color@4:13": [
+    "src/shapes.ts"
+   ],
+   "src/shapes.ts#Red@4:21": [
+    "src/shapes.ts",
+    "src/shapes.ts#Color@4:13"
+   ],
+   "src/shapes.ts#Green@4:34": [
+    "src/shapes.ts",
+    "src/shapes.ts#Color@4:13"
+   ],
+   "src/shapes.ts#Flag@5:19": [
+    "src/shapes.ts"
+   ],
+   "src/shapes.ts#On@5:26": [
+    "src/shapes.ts",
+    "src/shapes.ts#Flag@5:19"
+   ],
+   "src/shapes.ts#Off@5:34": [
+    "src/shapes.ts",
+    "src/shapes.ts#Flag@5:19"
+   ],
+   "src/shapes.ts#UNIT@7:14": [
+    "src/shapes.ts"
+   ],
+   "src/shapes.ts#created@8:5": [
+    "src/shapes.ts"
+   ],
+   "src/shapes.ts#log@10:10": [
+    "src/shapes.ts"
+   ],
+   "src/shapes.ts#target@10:14": [
+    "src/shapes.ts",
+    "src/shapes.ts#log@10:10"
+   ],
+   "src/shapes.ts#key@10:31": [
+    "src/shapes.ts",
+    "src/shapes.ts#log@10:10"
+   ],
+   "src/shapes.ts#Base@12:23": [
+    "src/shapes.ts"
+   ],
+   "src/shapes.ts#count@13:10": [
+    "src/shapes.ts",
+    "src/shapes.ts#Base@12:23"
+   ],
+   "src/shapes.ts#id@14:22": [
+    "src/shapes.ts",
+    "src/shapes.ts#Base@12:23"
+   ],
+   "src/shapes.ts##tag@15:3": [
+    "src/shapes.ts",
+    "src/shapes.ts#Base@12:23"
+   ],
+   "src/shapes.ts#name@16:21": [
+    "src/shapes.ts",
+    "src/shapes.ts#Base@12:23"
+   ],
+   "src/shapes.ts#constructor@17:3": [
+    "src/shapes.ts",
+    "src/shapes.ts#Base@12:23"
+   ],
+   "src/shapes.ts#color@17:22": [
+    "src/shapes.ts",
+    "src/shapes.ts#Base@12:23"
+   ],
+   "src/shapes.ts#scale@17:56": [
+    "src/shapes.ts",
+    "src/shapes.ts#Base@12:23"
+   ],
+   "src/shapes.ts#area@21:12": [
+    "src/shapes.ts",
+    "src/shapes.ts#Base@12:23"
+   ],
+   "src/shapes.ts#label@22:7": [
+    "src/shapes.ts",
+    "src/shapes.ts#Base@12:23"
+   ],
+   "src/shapes.ts#value@23:13": [
+    "src/shapes.ts",
+    "src/shapes.ts#Base@12:23",
+    "src/shapes.ts#label@22:7"
+   ],
+   "src/shapes.ts#describe@24:8": [
+    "src/shapes.ts",
+    "src/shapes.ts#Base@12:23"
+   ],
+   "src/shapes.ts#Circle@27:14": [
+    "src/shapes.ts"
+   ],
+   "src/shapes.ts#name@28:12": [
+    "src/shapes.ts",
+    "src/shapes.ts#Circle@27:14"
+   ],
+   "src/shapes.ts#constructor@29:3": [
+    "src/shapes.ts",
+    "src/shapes.ts#Circle@27:14"
+   ],
+   "src/shapes.ts#radius@29:23": [
+    "src/shapes.ts",
+    "src/shapes.ts#Circle@27:14"
+   ],
+   "src/shapes.ts#color@29:39": [
+    "src/shapes.ts",
+    "src/shapes.ts#Circle@27:14",
+    "src/shapes.ts#constructor@29:3"
+   ],
+   "src/shapes.ts#area@30:3": [
+    "src/shapes.ts",
+    "src/shapes.ts#Circle@27:14"
+   ],
+   "src/shapes.ts#unit@31:10": [
+    "src/shapes.ts",
+    "src/shapes.ts#Circle@27:14"
+   ],
+   "src/shapes.ts#Rect@34:14": [
+    "src/shapes.ts"
+   ],
+   "src/shapes.ts#name@35:12": [
+    "src/shapes.ts",
+    "src/shapes.ts#Rect@34:14"
+   ],
+   "src/shapes.ts#constructor@36:3": [
+    "src/shapes.ts",
+    "src/shapes.ts#Rect@34:14"
+   ],
+   "src/shapes.ts#corner@36:22": [
+    "src/shapes.ts",
+    "src/shapes.ts#Rect@34:14"
+   ],
+   "src/shapes.ts#w@36:41": [
+    "src/shapes.ts",
+    "src/shapes.ts#Rect@34:14"
+   ],
+   "src/shapes.ts#h@36:60": [
+    "src/shapes.ts",
+    "src/shapes.ts#Rect@34:14"
+   ],
+   "src/shapes.ts#area@37:3": [
+    "src/shapes.ts",
+    "src/shapes.ts#Rect@34:14"
+   ],
+   "src/shapes.ts#move@38:3": [
+    "src/shapes.ts",
+    "src/shapes.ts#Rect@34:14"
+   ],
+   "src/shapes.ts#by@38:8": [
+    "src/shapes.ts",
+    "src/shapes.ts#Rect@34:14",
+    "src/shapes.ts#move@38:3"
+   ],
+   "src/shapes.ts#x@39:13": [
+    "src/shapes.ts",
+    "src/shapes.ts#Rect@34:14",
+    "src/shapes.ts#move@38:3"
+   ],
+   "src/shapes.ts#y@39:20": [
+    "src/shapes.ts",
+    "src/shapes.ts#Rect@34:14",
+    "src/shapes.ts#move@38:3"
+   ],
+   "src/shapes.ts#total@44:17": [
+    "src/shapes.ts"
+   ],
+   "src/shapes.ts#shapes@46:23": [
+    "src/shapes.ts",
+    "src/shapes.ts#total@44:17"
+   ],
+   "src/shapes.ts#round@46:49": [
+    "src/shapes.ts",
+    "src/shapes.ts#total@44:17"
+   ],
+   "src/shapes.ts#sum@47:9": [
+    "src/shapes.ts",
+    "src/shapes.ts#total@44:17"
+   ],
+   "src/shapes.ts#acc@47:30": [
+    "src/shapes.ts",
+    "src/shapes.ts#total@44:17"
+   ],
+   "src/shapes.ts#s@47:35": [
+    "src/shapes.ts",
+    "src/shapes.ts#total@44:17"
+   ],
+   "src/shapes.ts#Geometry@51:18": [
+    "src/shapes.ts"
+   ],
+   "src/shapes.ts#ORIGIN@52:16": [
+    "src/shapes.ts",
+    "src/shapes.ts#Geometry@51:18"
+   ],
+   "src/shapes.ts#distance@53:19": [
+    "src/shapes.ts",
+    "src/shapes.ts#Geometry@51:18"
+   ],
+   "src/shapes.ts#a@53:28": [
+    "src/shapes.ts",
+    "src/shapes.ts#Geometry@51:18",
+    "src/shapes.ts#distance@53:19"
+   ],
+   "src/shapes.ts#b@53:38": [
+    "src/shapes.ts",
+    "src/shapes.ts#Geometry@51:18",
+    "src/shapes.ts#distance@53:19"
+   ],
+   "src/shapes.ts#registry@56:14": [
+    "src/shapes.ts"
+   ],
+   "src/shapes.ts#Anonymous@57:14": [
+    "src/shapes.ts"
+   ],
+   "src/shapes.ts#name@57:56": [
+    "src/shapes.ts",
+    "src/shapes.ts#Anonymous@57:14"
+   ],
+   "src/shapes.ts#area@57:71": [
+    "src/shapes.ts",
+    "src/shapes.ts#Anonymous@57:14"
+   ],
+   "src/shapes.ts#config@58:14": [
+    "src/shapes.ts"
+   ],
+   "src/app.ts#Circle@1:8": [
+    "src/app.ts"
+   ],
+   "src/app.ts#Rect@1:18": [
+    "src/app.ts"
+   ],
+   "src/app.ts#total@1:24": [
+    "src/app.ts"
+   ],
+   "src/app.ts#Color@1:31": [
+    "src/app.ts"
+   ],
+   "src/app.ts#Geometry@1:38": [
+    "src/app.ts"
+   ],
+   "src/app.ts#UNIT@1:48": [
+    "src/app.ts"
+   ],
+   "src/app.ts#Shape@1:59": [
+    "src/app.ts"
+   ],
+   "src/app.ts#all@2:13": [
+    "src/app.ts"
+   ],
+   "src/app.ts#Scene@4:7": [
+    "src/app.ts"
+   ],
+   "src/app.ts#items@5:11": [
+    "src/app.ts",
+    "src/app.ts#Scene@4:7"
+   ],
+   "src/app.ts#add@6:3": [
+    "src/app.ts",
+    "src/app.ts#Scene@4:7"
+   ],
+   "src/app.ts#shape@6:7": [
+    "src/app.ts",
+    "src/app.ts#Scene@4:7",
+    "src/app.ts#add@6:3"
+   ],
+   "src/app.ts#render@7:9": [
+    "src/app.ts",
+    "src/app.ts#Scene@4:7"
+   ],
+   "src/app.ts#s@9:30": [
+    "src/app.ts",
+    "src/app.ts#Scene@4:7",
+    "src/app.ts#render@7:9"
+   ],
+   "src/app.ts#i@9:33": [
+    "src/app.ts",
+    "src/app.ts#Scene@4:7",
+    "src/app.ts#render@7:9"
+   ],
+   "src/app.ts#err@10:14": [
+    "src/app.ts",
+    "src/app.ts#Scene@4:7",
+    "src/app.ts#render@7:9"
+   ],
+   "src/app.ts#build@18:17": [
+    "src/app.ts"
+   ],
+   "src/app.ts#scene@19:9": [
+    "src/app.ts",
+    "src/app.ts#build@18:17"
+   ],
+   "src/app.ts#c@20:9": [
+    "src/app.ts",
+    "src/app.ts#build@18:17"
+   ],
+   "src/app.ts#r@21:9": [
+    "src/app.ts",
+    "src/app.ts#build@18:17"
+   ],
+   "src/app.ts#d@23:9": [
+    "src/app.ts",
+    "src/app.ts#build@18:17"
+   ],
+   "src/app.ts#sum@24:9": [
+    "src/app.ts",
+    "src/app.ts#build@18:17"
+   ],
+   "src/app.ts#index@25:15": [
+    "src/app.ts",
+    "src/app.ts#build@18:17"
+   ],
+   "src/app.ts#shape@25:22": [
+    "src/app.ts",
+    "src/app.ts#build@18:17"
+   ],
+   "src/util/numbers.ts#total@2:10": [
+    "src/util/numbers.ts"
+   ],
+   "src/util/numbers.ts#Shape@2:22": [
+    "src/util/numbers.ts"
+   ],
+   "src/util/numbers.ts#round2@4:17": [
+    "src/util/numbers.ts"
+   ],
+   "src/util/numbers.ts#value@4:24": [
+    "src/util/numbers.ts",
+    "src/util/numbers.ts#round2@4:17"
+   ],
+   "src/util/numbers.ts#percent@8:17": [
+    "src/util/numbers.ts"
+   ],
+   "src/util/numbers.ts#part@8:25": [
+    "src/util/numbers.ts",
+    "src/util/numbers.ts#percent@8:17"
+   ],
+   "src/util/numbers.ts#whole@8:39": [
+    "src/util/numbers.ts",
+    "src/util/numbers.ts#percent@8:17"
+   ],
+   "src/util/numbers.ts#share@12:17": [
+    "src/util/numbers.ts"
+   ],
+   "src/util/numbers.ts#shapes@12:23": [
+    "src/util/numbers.ts",
+    "src/util/numbers.ts#share@12:17"
+   ],
+   "src/util/numbers.ts#one@12:49": [
+    "src/util/numbers.ts",
+    "src/util/numbers.ts#share@12:17"
+   ],
+   "src/report/format.ts#round2@2:10": [
+    "src/report/format.ts"
+   ],
+   "src/report/format.ts#formatArea@4:17": [
+    "src/report/format.ts"
+   ],
+   "src/report/format.ts#area@4:28": [
+    "src/report/format.ts",
+    "src/report/format.ts#formatArea@4:17"
+   ],
+   "src/report/summary.ts#build@2:10": [
+    "src/report/summary.ts"
+   ],
+   "src/report/summary.ts#Geometry@3:10": [
+    "src/report/summary.ts"
+   ],
+   "src/report/summary.ts#formatArea@4:10": [
+    "src/report/summary.ts"
+   ],
+   "src/report/summary.ts#percent@5:10": [
+    "src/report/summary.ts"
+   ],
+   "src/report/summary.ts#summarize@7:23": [
+    "src/report/summary.ts"
+   ],
+   "src/report/summary.ts#scene@8:9": [
+    "src/report/summary.ts",
+    "src/report/summary.ts#summarize@7:23"
+   ],
+   "src/report/summary.ts#text@9:9": [
+    "src/report/summary.ts",
+    "src/report/summary.ts#summarize@7:23"
+   ],
+   "src/report/summary.ts#far@10:9": [
+    "src/report/summary.ts",
+    "src/report/summary.ts#summarize@7:23"
+   ],
+   "src/report/charts/bars.ts#Circle@2:8": [
+    "src/report/charts/bars.ts"
+   ],
+   "src/report/charts/bars.ts#total@2:18": [
+    "src/report/charts/bars.ts"
+   ],
+   "src/report/charts/bars.ts#formatArea@3:10": [
+    "src/report/charts/bars.ts"
+   ],
+   "src/report/charts/bars.ts#summarize@4:10": [
+    "src/report/charts/bars.ts"
+   ],
+   "src/report/charts/bars.ts#share@5:10": [
+    "src/report/charts/bars.ts"
+   ],
+   "src/report/charts/bars.ts#bars@7:17": [
+    "src/report/charts/bars.ts"
+   ],
+   "src/report/charts/bars.ts#sizes@7:22": [
+    "src/report/charts/bars.ts",
+    "src/report/charts/bars.ts#bars@7:17"
+   ],
+   "src/report/charts/bars.ts#circles@8:9": [
+    "src/report/charts/bars.ts",
+    "src/report/charts/bars.ts#bars@7:17"
+   ],
+   "src/report/charts/bars.ts#size@8:30": [
+    "src/report/charts/bars.ts",
+    "src/report/charts/bars.ts#bars@7:17"
+   ],
+   "src/report/charts/bars.ts#whole@9:9": [
+    "src/report/charts/bars.ts",
+    "src/report/charts/bars.ts#bars@7:17"
+   ],
+   "src/report/charts/bars.ts#circle@10:23": [
+    "src/report/charts/bars.ts",
+    "src/report/charts/bars.ts#bars@7:17"
+   ],
+   "src/report/charts/bars.ts#report@13:23": [
+    "src/report/charts/bars.ts"
+   ],
+   "README.md": [],
+   "src/app.ts": [],
+   "src/report/charts/bars.ts": [],
+   "src/report/format.ts": [],
+   "src/report/summary.ts": [],
+   "src/shapes.ts": [],
+   "src/util/numbers.ts": [],
+   "src": [],
+   "src/report": [],
+   "src/report/charts": [],
+   "src/util": []
+  },
+  "relationsFrom": {
+   "src/shapes.ts#log@10:10": [
+    "src/shapes.ts 10:57 read src/shapes.ts#target@10:14",
+    "src/shapes.ts 10:70 read src/shapes.ts#key@10:31"
+   ],
+   "src/shapes.ts#Base@12:23": [
+    "src/shapes.ts 12:39 implements src/shapes.ts#Shape@2:18",
+    "src/shapes.ts 24:4 call src/shapes.ts#log@10:10"
+   ],
+   "src/shapes.ts#constructor@17:3": [
+    "src/shapes.ts 17:29 type src/shapes.ts#Color@4:13",
+    "src/shapes.ts 17:37 read src/shapes.ts#Color@4:13",
+    "src/shapes.ts 17:43 read src/shapes.ts#Red@4:21",
+    "src/shapes.ts 17:64 read src/shapes.ts#UNIT@7:14",
+    "src/shapes.ts 18:10 write src/shapes.ts#id@14:22",
+    "src/shapes.ts 18:17 read src/shapes.ts#Base@12:23",
+    "src/shapes.ts 18:22 write src/shapes.ts#count@13:10",
+    "src/shapes.ts 19:5 write src/shapes.ts#created@8:5"
+   ],
+   "src/shapes.ts#label@22:7": [
+    "src/shapes.ts 22:40 read src/shapes.ts#name@16:21",
+    "src/shapes.ts 22:53 read src/shapes.ts#id@14:22",
+    "src/shapes.ts 22:64 read src/shapes.ts##tag@15:3",
+    "src/shapes.ts 23:35 write src/shapes.ts##tag@15:3",
+    "src/shapes.ts 23:42 read src/shapes.ts#value@23:13"
+   ],
+   "src/shapes.ts#describe@24:8": [
+    "src/shapes.ts 24:44 read src/shapes.ts#label@22:7",
+    "src/shapes.ts 24:59 call src/shapes.ts#area@21:12",
+    "src/shapes.ts 24:73 read src/shapes.ts#scale@17:56"
+   ],
+   "src/shapes.ts#Circle@27:14": [
+    "src/shapes.ts 27:29 extends src/shapes.ts#Base@12:23"
+   ],
+   "src/shapes.ts#constructor@29:3": [
+    "src/shapes.ts 29:47 type src/shapes.ts#Color@4:13",
+    "src/shapes.ts 29:56 call src/shapes.ts#constructor@17:3",
+    "src/shapes.ts 29:62 read src/shapes.ts#color@29:39"
+   ],
+   "src/shapes.ts#area@30:3": [
+    "src/shapes.ts 30:42 read src/shapes.ts#radius@29:23",
+    "src/shapes.ts 30:27 read null",
+    "src/shapes.ts 30:32 read null"
+   ],
+   "src/shapes.ts#unit@31:10": [
+    "src/shapes.ts 31:18 type src/shapes.ts#Circle@27:14",
+    "src/shapes.ts 31:38 new src/shapes.ts#Circle@27:14",
+    "src/shapes.ts 31:45 read src/shapes.ts#UNIT@7:14"
+   ],
+   "src/shapes.ts#Rect@34:14": [
+    "src/shapes.ts 34:29 type src/shapes.ts#Point@3:13",
+    "src/shapes.ts 34:37 type src/shapes.ts#Point@3:13",
+    "src/shapes.ts 34:52 extends src/shapes.ts#Base@12:23"
+   ],
+   "src/shapes.ts#constructor@36:3": [
+    "src/shapes.ts 36:73 call src/shapes.ts#constructor@17:3",
+    "src/shapes.ts 36:79 read src/shapes.ts#Color@4:13",
+    "src/shapes.ts 36:85 read src/shapes.ts#Green@4:34"
+   ],
+   "src/shapes.ts#area@37:3": [
+    "src/shapes.ts 37:32 read src/shapes.ts#w@36:41",
+    "src/shapes.ts 37:41 read src/shapes.ts#h@36:60"
+   ],
+   "src/shapes.ts#move@38:3": [
+    "src/shapes.ts 38:20 type src/shapes.ts#Point@3:13",
+    "src/shapes.ts 38:29 type src/shapes.ts#Rect@34:14",
+    "src/shapes.ts 39:13 read src/shapes.ts#x@3:23",
+    "src/shapes.ts 39:20 read src/shapes.ts#y@3:34",
+    "src/shapes.ts 39:30 read src/shapes.ts#by@38:8",
+    "src/shapes.ts 40:16 new src/shapes.ts#Rect@34:14",
+    "src/shapes.ts 40:31 read src/shapes.ts#corner@36:22",
+    "src/shapes.ts 40:47 read src/shapes.ts#corner@36:22",
+    "src/shapes.ts 40:54 read src/shapes.ts#x@3:23",
+    "src/shapes.ts 40:58 read src/shapes.ts#x@39:13",
+    "src/shapes.ts 40:69 read src/shapes.ts#corner@36:22",
+    "src/shapes.ts 40:76 read src/shapes.ts#y@3:34",
+    "src/shapes.ts 40:80 read src/shapes.ts#y@39:20",
+    "src/shapes.ts 40:90 read src/shapes.ts#w@36:41",
+    "src/shapes.ts 40:98 read src/shapes.ts#h@36:60",
+    "src/shapes.ts 38:12 type null"
+   ],
+   "src/shapes.ts#total@44:17": [
+    "src/shapes.ts 44:40 type src/shapes.ts#Shape@2:18",
+    "src/shapes.ts 45:40 type src/shapes.ts#Shape@2:18",
+    "src/shapes.ts 46:40 type src/shapes.ts#Shape@2:18",
+    "src/shapes.ts 47:15 read src/shapes.ts#shapes@46:23",
+    "src/shapes.ts 47:41 read src/shapes.ts#acc@47:30",
+    "src/shapes.ts 47:47 read src/shapes.ts#s@47:35",
+    "src/shapes.ts 47:49 call src/shapes.ts#area@2:26",
+    "src/shapes.ts 48:10 read src/shapes.ts#round@46:49",
+    "src/shapes.ts 48:29 read src/shapes.ts#sum@47:9",
+    "src/shapes.ts 48:36 read src/shapes.ts#sum@47:9",
+    "src/shapes.ts 47:22 call null",
+    "src/shapes.ts 48:18 read null",
+    "src/shapes.ts 48:23 call null"
+   ],
+   "src/shapes.ts#ORIGIN@52:16": [
+    "src/shapes.ts 52:24 type src/shapes.ts#Point@3:13"
+   ],
+   "src/shapes.ts#distance@53:19": [
+    "src/shapes.ts 53:31 type src/shapes.ts#Point@3:13",
+    "src/shapes.ts 53:41 type src/shapes.ts#Point@3:13",
+    "src/shapes.ts 53:49 read src/shapes.ts#ORIGIN@52:16",
+    "src/shapes.ts 53:85 read src/shapes.ts#a@53:28",
+    "src/shapes.ts 53:87 read src/shapes.ts#x@3:23",
+    "src/shapes.ts 53:91 read src/shapes.ts#b@53:38",
+    "src/shapes.ts 53:93 read src/shapes.ts#x@3:23",
+    "src/shapes.ts 53:96 read src/shapes.ts#a@53:28",
+    "src/shapes.ts 53:98 read src/shapes.ts#y@3:34",
+    "src/shapes.ts 53:102 read src/shapes.ts#b@53:38",
+    "src/shapes.ts 53:104 read src/shapes.ts#y@3:34",
+    "src/shapes.ts 53:74 read null",
+    "src/shapes.ts 53:79 call null"
+   ],
+   "src/shapes.ts#registry@56:14": [
+    "src/shapes.ts 56:47 type src/shapes.ts#Shape@2:18",
+    "src/shapes.ts 56:70 read src/shapes.ts#Circle@27:14",
+    "src/shapes.ts 56:77 call src/shapes.ts#unit@31:10",
+    "src/shapes.ts 56:29 new null"
+   ],
+   "src/shapes.ts#Anonymous@57:14": [
+    "src/shapes.ts 57:40 extends src/shapes.ts#Base@12:23"
+   ],
+   "src/app.ts#Scene@4:7": [
+    "src/app.ts 5:18 type src/shapes.ts#Shape@2:18"
+   ],
+   "src/app.ts#add@6:3": [
+    "src/app.ts 6:14 type src/shapes.ts#Shape@2:18",
+    "src/app.ts 6:34 read src/app.ts#items@5:11",
+    "src/app.ts 6:45 read src/app.ts#shape@6:7",
+    "src/app.ts 6:40 call null"
+   ],
+   "src/app.ts#render@7:9": [
+    "src/app.ts 9:19 read src/app.ts#items@5:11",
+    "src/app.ts 9:42 read src/app.ts#i@9:33",
+    "src/app.ts 9:48 read src/app.ts#s@9:30",
+    "src/app.ts 9:50 call src/shapes.ts#area@2:26",
+    "src/app.ts 11:21 read src/app.ts#err@10:14",
+    "src/app.ts 7:19 type null",
+    "src/app.ts 9:25 call null",
+    "src/app.ts 9:60 call null",
+    "src/app.ts 11:14 call null"
+   ],
+   "src/app.ts#build@18:17": [
+    "src/app.ts 18:26 type src/app.ts#Scene@4:7",
+    "src/app.ts 19:21 new src/app.ts#Scene@4:7",
+    "src/app.ts 20:17 new src/shapes.ts#Circle@27:14",
+    "src/app.ts 20:27 read src/shapes.ts#Color@4:13",
+    "src/app.ts 20:33 read src/shapes.ts#Green@4:34",
+    "src/app.ts 21:17 new src/shapes.ts#Rect@34:14",
+    "src/app.ts 21:44 call src/shapes.ts#move@38:3",
+    "src/app.ts 21:54 read src/shapes.ts#UNIT@7:14",
+    "src/app.ts 22:3 read src/app.ts#scene@19:9",
+    "src/app.ts 22:9 call src/app.ts#add@6:3",
+    "src/app.ts 22:13 read src/app.ts#c@20:9",
+    "src/app.ts 22:16 call src/app.ts#add@6:3",
+    "src/app.ts 22:20 read src/app.ts#r@21:9",
+    "src/app.ts 22:23 call src/app.ts#add@6:3",
+    "src/app.ts 22:27 read src/shapes.ts",
+    "src/app.ts 22:31 read src/shapes.ts#Circle@27:14",
+    "src/app.ts 22:38 call src/shapes.ts#unit@31:10",
+    "src/app.ts 23:13 read src/shapes.ts#Geometry@51:18",
+    "src/app.ts 23:22 call src/shapes.ts#distance@53:19",
+    "src/app.ts 24:15 call src/shapes.ts#total@44:17",
+    "src/app.ts 24:22 read src/app.ts#c@20:9",
+    "src/app.ts 24:25 read src/app.ts#r@21:9",
+    "src/app.ts 25:33 read src/app.ts#c@20:9",
+    "src/app.ts 25:36 read src/app.ts#r@21:9",
+    "src/app.ts 25:56 read src/app.ts#shape@25:22",
+    "src/app.ts 25:62 call src/shapes.ts#area@30:3",
+    "src/app.ts 25:62 call src/shapes.ts#area@37:3",
+    "src/app.ts 25:71 read src/app.ts#sum@24:9",
+    "src/app.ts 25:77 read src/app.ts#d@23:9",
+    "src/app.ts 25:92 read src/app.ts#index@25:15",
+    "src/app.ts 26:10 read src/app.ts#scene@19:9",
+    "src/app.ts 25:39 call null",
+    "src/app.ts 25:80 read null",
+    "src/app.ts 25:88 call null"
+   ],
+   "src/util/numbers.ts#round2@4:17": [
+    "src/util/numbers.ts 5:21 read src/util/numbers.ts#value@4:24",
+    "src/util/numbers.ts 5:10 read null",
+    "src/util/numbers.ts 5:15 call null"
+   ],
+   "src/util/numbers.ts#percent@8:17": [
+    "src/util/numbers.ts 9:10 read src/util/numbers.ts#whole@8:39",
+    "src/util/numbers.ts 9:28 call src/util/numbers.ts#round2@4:17",
+    "src/util/numbers.ts 9:36 read src/util/numbers.ts#part@8:25",
+    "src/util/numbers.ts 9:43 read src/util/numbers.ts#whole@8:39"
+   ],
+   "src/util/numbers.ts#share@12:17": [
+    "src/util/numbers.ts 12:40 type src/shapes.ts#Shape@2:18",
+    "src/util/numbers.ts 12:54 type src/shapes.ts#Shape@2:18",
+    "src/util/numbers.ts 13:10 call src/util/numbers.ts#percent@8:17",
+    "src/util/numbers.ts 13:18 read src/util/numbers.ts#one@12:49",
+    "src/util/numbers.ts 13:22 call src/shapes.ts#area@2:26",
+    "src/util/numbers.ts 13:30 call src/shapes.ts#total@44:17",
+    "src/util/numbers.ts 13:36 read src/util/numbers.ts#shapes@12:23"
+   ],
+   "src/report/format.ts#formatArea@4:17": [
+    "src/report/format.ts 5:13 call src/util/numbers.ts#round2@4:17",
+    "src/report/format.ts 5:20 read src/report/format.ts#area@4:28"
+   ],
+   "src/report/summary.ts#summarize@7:23": [
+    "src/report/summary.ts 8:17 call src/app.ts#build@18:17",
+    "src/report/summary.ts 9:22 read src/report/summary.ts#scene@8:9",
+    "src/report/summary.ts 9:28 call src/app.ts#render@7:9",
+    "src/report/summary.ts 10:15 read src/shapes.ts#Geometry@51:18",
+    "src/report/summary.ts 10:24 call src/shapes.ts#distance@53:19",
+    "src/report/summary.ts 11:13 call src/report/format.ts#formatArea@4:17",
+    "src/report/summary.ts 11:24 read src/report/summary.ts#far@10:9",
+    "src/report/summary.ts 11:32 call src/util/numbers.ts#percent@8:17",
+    "src/report/summary.ts 11:51 read src/report/summary.ts#text@9:9",
+    "src/report/summary.ts 7:36 type null"
+   ],
+   "src/report/charts/bars.ts#bars@7:17": [
+    "src/report/charts/bars.ts 8:19 read src/report/charts/bars.ts#sizes@7:22",
+    "src/report/charts/bars.ts 8:43 new src/shapes.ts#Circle@27:14",
+    "src/report/charts/bars.ts 8:50 read src/report/charts/bars.ts#size@8:30",
+    "src/report/charts/bars.ts 9:17 call src/shapes.ts#total@44:17",
+    "src/report/charts/bars.ts 9:23 read src/report/charts/bars.ts#circles@8:9",
+    "src/report/charts/bars.ts 10:10 read src/report/charts/bars.ts#circles@8:9",
+    "src/report/charts/bars.ts 10:37 call src/report/format.ts#formatArea@4:17",
+    "src/report/charts/bars.ts 10:48 read src/report/charts/bars.ts#circle@10:23",
+    "src/report/charts/bars.ts 10:55 call src/shapes.ts#area@30:3",
+    "src/report/charts/bars.ts 10:69 call src/report/format.ts#formatArea@4:17",
+    "src/report/charts/bars.ts 10:80 read src/report/charts/bars.ts#whole@9:9",
+    "src/report/charts/bars.ts 10:91 call src/util/numbers.ts#share@12:17",
+    "src/report/charts/bars.ts 10:97 read src/report/charts/bars.ts#circles@8:9",
+    "src/report/charts/bars.ts 10:106 read src/report/charts/bars.ts#circle@10:23",
+    "src/report/charts/bars.ts 8:25 call null",
+    "src/report/charts/bars.ts 10:18 call null"
+   ],
+   "src/report/charts/bars.ts#report@13:23": [
+    "src/report/charts/bars.ts 14:19 call src/report/summary.ts#summarize@7:23",
+    "src/report/charts/bars.ts 14:35 call src/report/charts/bars.ts#bars@7:17",
+    "src/report/charts/bars.ts 13:33 type null",
+    "src/report/charts/bars.ts 14:48 call null"
+   ],
+   "src/app.ts#Circle@1:8": [
+    "link src/app.ts#Circle@1:8 src/shapes.ts#Circle@27:14"
+   ],
+   "src/app.ts#Rect@1:18": [
+    "link src/app.ts#Rect@1:18 src/shapes.ts#Rect@34:14"
+   ],
+   "src/app.ts#total@1:24": [
+    "link src/app.ts#total@1:24 src/shapes.ts#total@44:17"
+   ],
+   "src/app.ts#Color@1:31": [
+    "link src/app.ts#Color@1:31 src/shapes.ts#Color@4:13"
+   ],
+   "src/app.ts#Geometry@1:38": [
+    "link src/app.ts#Geometry@1:38 src/shapes.ts#Geometry@51:18"
+   ],
+   "src/app.ts#UNIT@1:48": [
+    "link src/app.ts#UNIT@1:48 src/shapes.ts#UNIT@7:14"
+   ],
+   "src/app.ts#Shape@1:59": [
+    "link src/app.ts#Shape@1:59 src/shapes.ts#Shape@2:18"
+   ],
+   "src/app.ts#all@2:13": [
+    "link src/app.ts#all@2:13 src/shapes.ts"
+   ],
+   "src/util/numbers.ts#total@2:10": [
+    "link src/util/numbers.ts#total@2:10 src/shapes.ts#total@44:17"
+   ],
+   "src/util/numbers.ts#Shape@2:22": [
+    "link src/util/numbers.ts#Shape@2:22 src/shapes.ts#Shape@2:18"
+   ],
+   "src/report/format.ts#round2@2:10": [
+    "link src/report/format.ts#round2@2:10 src/util/numbers.ts#round2@4:17"
+   ],
+   "src/report/summary.ts#build@2:10": [
+    "link src/report/summary.ts#build@2:10 src/app.ts#build@18:17"
+   ],
+   "src/report/summary.ts#Geometry@3:10": [
+    "link src/report/summary.ts#Geometry@3:10 src/shapes.ts#Geometry@51:18"
+   ],
+   "src/report/summary.ts#formatArea@4:10": [
+    "link src/report/summary.ts#formatArea@4:10 src/report/format.ts#formatArea@4:17"
+   ],
+   "src/report/summary.ts#percent@5:10": [
+    "link src/report/summary.ts#percent@5:10 src/util/numbers.ts#percent@8:17"
+   ],
+   "src/report/charts/bars.ts#Circle@2:8": [
+    "link src/report/charts/bars.ts#Circle@2:8 src/shapes.ts#Circle@27:14"
+   ],
+   "src/report/charts/bars.ts#total@2:18": [
+    "link src/report/charts/bars.ts#total@2:18 src/shapes.ts#total@44:17"
+   ],
+   "src/report/charts/bars.ts#formatArea@3:10": [
+    "link src/report/charts/bars.ts#formatArea@3:10 src/report/format.ts#formatArea@4:17"
+   ],
+   "src/report/charts/bars.ts#summarize@4:10": [
+    "link src/report/charts/bars.ts#summarize@4:10 src/report/summary.ts#summarize@7:23"
+   ],
+   "src/report/charts/bars.ts#share@5:10": [
+    "link src/report/charts/bars.ts#share@5:10 src/util/numbers.ts#share@12:17"
+   ],
+   "src/shapes.ts#config@58:14": [
+    "src/shapes.ts 58:73 type null"
+   ],
+   "src/shapes.ts": [
+    "src/shapes.ts 59:1 re-export null"
+   ]
+  },
+  "relationsTo": {
+   "src/shapes.ts#target@10:14": [
+    "src/shapes.ts 10:57 read src/shapes.ts#target@10:14"
+   ],
+   "src/shapes.ts#key@10:31": [
+    "src/shapes.ts 10:70 read src/shapes.ts#key@10:31"
+   ],
+   "src/shapes.ts#Shape@2:18": [
+    "src/shapes.ts 12:39 implements src/shapes.ts#Shape@2:18",
+    "src/shapes.ts 44:40 type src/shapes.ts#Shape@2:18",
+    "src/shapes.ts 45:40 type src/shapes.ts#Shape@2:18",
+    "src/shapes.ts 46:40 type src/shapes.ts#Shape@2:18",
+    "src/shapes.ts 56:47 type src/shapes.ts#Shape@2:18",
+    "src/app.ts 5:18 type src/shapes.ts#Shape@2:18",
+    "src/app.ts 6:14 type src/shapes.ts#Shape@2:18",
+    "src/util/numbers.ts 12:40 type src/shapes.ts#Shape@2:18",
+    "src/util/numbers.ts 12:54 type src/shapes.ts#Shape@2:18",
+    "link src/app.ts#Shape@1:59 src/shapes.ts#Shape@2:18",
+    "link src/util/numbers.ts#Shape@2:22 src/shapes.ts#Shape@2:18"
+   ],
+   "src/shapes.ts#Color@4:13": [
+    "src/shapes.ts 17:29 type src/shapes.ts#Color@4:13",
+    "src/shapes.ts 17:37 read src/shapes.ts#Color@4:13",
+    "src/shapes.ts 29:47 type src/shapes.ts#Color@4:13",
+    "src/shapes.ts 36:79 read src/shapes.ts#Color@4:13",
+    "src/app.ts 20:27 read src/shapes.ts#Color@4:13",
+    "link src/app.ts#Color@1:31 src/shapes.ts#Color@4:13"
+   ],
+   "src/shapes.ts#Red@4:21": [
+    "src/shapes.ts 17:43 read src/shapes.ts#Red@4:21"
+   ],
+   "src/shapes.ts#UNIT@7:14": [
+    "src/shapes.ts 17:64 read src/shapes.ts#UNIT@7:14",
+    "src/shapes.ts 31:45 read src/shapes.ts#UNIT@7:14",
+    "src/app.ts 21:54 read src/shapes.ts#UNIT@7:14",
+    "link src/app.ts#UNIT@1:48 src/shapes.ts#UNIT@7:14"
+   ],
+   "src/shapes.ts#id@14:22": [
+    "src/shapes.ts 18:10 write src/shapes.ts#id@14:22",
+    "src/shapes.ts 22:53 read src/shapes.ts#id@14:22"
+   ],
+   "src/shapes.ts#Base@12:23": [
+    "src/shapes.ts 18:17 read src/shapes.ts#Base@12:23",
+    "src/shapes.ts 27:29 extends src/shapes.ts#Base@12:23",
+    "src/shapes.ts 34:52 extends src/shapes.ts#Base@12:23",
+    "src/shapes.ts 57:40 extends src/shapes.ts#Base@12:23"
+   ],
+   "src/shapes.ts#count@13:10": [
+    "src/shapes.ts 18:22 write src/shapes.ts#count@13:10"
+   ],
+   "src/shapes.ts#created@8:5": [
+    "src/shapes.ts 19:5 write src/shapes.ts#created@8:5"
+   ],
+   "src/shapes.ts#name@16:21": [
+    "src/shapes.ts 22:40 read src/shapes.ts#name@16:21"
+   ],
+   "src/shapes.ts##tag@15:3": [
+    "src/shapes.ts 22:64 read src/shapes.ts##tag@15:3",
+    "src/shapes.ts 23:35 write src/shapes.ts##tag@15:3"
+   ],
+   "src/shapes.ts#value@23:13": [
+    "src/shapes.ts 23:42 read src/shapes.ts#value@23:13"
+   ],
+   "src/shapes.ts#log@10:10": [
+    "src/shapes.ts 24:4 call src/shapes.ts#log@10:10"
+   ],
+   "src/shapes.ts#label@22:7": [
+    "src/shapes.ts 24:44 read src/shapes.ts#label@22:7"
+   ],
+   "src/shapes.ts#area@21:12": [
+    "src/shapes.ts 24:59 call src/shapes.ts#area@21:12"
+   ],
+   "src/shapes.ts#scale@17:56": [
+    "src/shapes.ts 24:73 read src/shapes.ts#scale@17:56"
+   ],
+   "src/shapes.ts#constructor@17:3": [
+    "src/shapes.ts 29:56 call src/shapes.ts#constructor@17:3",
+    "src/shapes.ts 36:73 call src/shapes.ts#constructor@17:3"
+   ],
+   "src/shapes.ts#color@29:39": [
+    "src/shapes.ts 29:62 read src/shapes.ts#color@29:39"
+   ],
+   "src/shapes.ts#radius@29:23": [
+    "src/shapes.ts 30:42 read src/shapes.ts#radius@29:23"
+   ],
+   "src/shapes.ts#Circle@27:14": [
+    "src/shapes.ts 31:18 type src/shapes.ts#Circle@27:14",
+    "src/shapes.ts 31:38 new src/shapes.ts#Circle@27:14",
+    "src/shapes.ts 56:70 read src/shapes.ts#Circle@27:14",
+    "src/app.ts 20:17 new src/shapes.ts#Circle@27:14",
+    "src/app.ts 22:31 read src/shapes.ts#Circle@27:14",
+    "src/report/charts/bars.ts 8:43 new src/shapes.ts#Circle@27:14",
+    "link src/app.ts#Circle@1:8 src/shapes.ts#Circle@27:14",
+    "link src/report/charts/bars.ts#Circle@2:8 src/shapes.ts#Circle@27:14"
+   ],
+   "src/shapes.ts#Point@3:13": [
+    "src/shapes.ts 34:29 type src/shapes.ts#Point@3:13",
+    "src/shapes.ts 34:37 type src/shapes.ts#Point@3:13",
+    "src/shapes.ts 38:20 type src/shapes.ts#Point@3:13",
+    "src/shapes.ts 52:24 type src/shapes.ts#Point@3:13",
+    "src/shapes.ts 53:31 type src/shapes.ts#Point@3:13",
+    "src/shapes.ts 53:41 type src/shapes.ts#Point@3:13"
+   ],
+   "src/shapes.ts#Green@4:34": [
+    "src/shapes.ts 36:85 read src/shapes.ts#Green@4:34",
+    "src/app.ts 20:33 read src/shapes.ts#Green@4:34"
+   ],
+   "src/shapes.ts#w@36:41": [
+    "src/shapes.ts 37:32 read src/shapes.ts#w@36:41",
+    "src/shapes.ts 40:90 read src/shapes.ts#w@36:41"
+   ],
+   "src/shapes.ts#h@36:60": [
+    "src/shapes.ts 37:41 read src/shapes.ts#h@36:60",
+    "src/shapes.ts 40:98 read src/shapes.ts#h@36:60"
+   ],
+   "src/shapes.ts#Rect@34:14": [
+    "src/shapes.ts 38:29 type src/shapes.ts#Rect@34:14",
+    "src/shapes.ts 40:16 new src/shapes.ts#Rect@34:14",
+    "src/app.ts 21:17 new src/shapes.ts#Rect@34:14",
+    "link src/app.ts#Rect@1:18 src/shapes.ts#Rect@34:14"
+   ],
+   "src/shapes.ts#x@3:23": [
+    "src/shapes.ts 39:13 read src/shapes.ts#x@3:23",
+    "src/shapes.ts 40:54 read src/shapes.ts#x@3:23",
+    "src/shapes.ts 53:87 read src/shapes.ts#x@3:23",
+    "src/shapes.ts 53:93 read src/shapes.ts#x@3:23"
+   ],
+   "src/shapes.ts#y@3:34": [
+    "src/shapes.ts 39:20 read src/shapes.ts#y@3:34",
+    "src/shapes.ts 40:76 read src/shapes.ts#y@3:34",
+    "src/shapes.ts 53:98 read src/shapes.ts#y@3:34",
+    "src/shapes.ts 53:104 read src/shapes.ts#y@3:34"
+   ],
+   "src/shapes.ts#by@38:8": [
+    "src/shapes.ts 39:30 read src/shapes.ts#by@38:8"
+   ],
+   "src/shapes.ts#corner@36:22": [
+    "src/shapes.ts 40:31 read src/shapes.ts#corner@36:22",
+    "src/shapes.ts 40:47 read src/shapes.ts#corner@36:22",
+    "src/shapes.ts 40:69 read src/shapes.ts#corner@36:22"
+   ],
+   "src/shapes.ts#x@39:13": [
+    "src/shapes.ts 40:58 read src/shapes.ts#x@39:13"
+   ],
+   "src/shapes.ts#y@39:20": [
+    "src/shapes.ts 40:80 read src/shapes.ts#y@39:20"
+   ],
+   "src/shapes.ts#shapes@46:23": [
+    "src/shapes.ts 47:15 read src/shapes.ts#shapes@46:23"
+   ],
+   "src/shapes.ts#acc@47:30": [
+    "src/shapes.ts 47:41 read src/shapes.ts#acc@47:30"
+   ],
+   "src/shapes.ts#s@47:35": [
+    "src/shapes.ts 47:47 read src/shapes.ts#s@47:35"
+   ],
+   "src/shapes.ts#area@2:26": [
+    "src/shapes.ts 47:49 call src/shapes.ts#area@2:26",
+    "src/app.ts 9:50 call src/shapes.ts#area@2:26",
+    "src/util/numbers.ts 13:22 call src/shapes.ts#area@2:26"
+   ],
+   "src/shapes.ts#round@46:49": [
+    "src/shapes.ts 48:10 read src/shapes.ts#round@46:49"
+   ],
+   "src/shapes.ts#sum@47:9": [
+    "src/shapes.ts 48:29 read src/shapes.ts#sum@47:9",
+    "src/shapes.ts 48:36 read src/shapes.ts#sum@47:9"
+   ],
+   "src/shapes.ts#ORIGIN@52:16": [
+    "src/shapes.ts 53:49 read src/shapes.ts#ORIGIN@52:16"
+   ],
+   "src/shapes.ts#a@53:28": [
+    "src/shapes.ts 53:85 read src/shapes.ts#a@53:28",
+    "src/shapes.ts 53:96 read src/shapes.ts#a@53:28"
+   ],
+   "src/shapes.ts#b@53:38": [
+    "src/shapes.ts 53:91 read src/shapes.ts#b@53:38",
+    "src/shapes.ts 53:102 read src/shapes.ts#b@53:38"
+   ],
+   "src/shapes.ts#unit@31:10": [
+    "src/shapes.ts 56:77 call src/shapes.ts#unit@31:10",
+    "src/app.ts 22:38 call src/shapes.ts#unit@31:10"
+   ],
+   "src/app.ts#items@5:11": [
+    "src/app.ts 6:34 read src/app.ts#items@5:11",
+    "src/app.ts 9:19 read src/app.ts#items@5:11"
+   ],
+   "src/app.ts#shape@6:7": [
+    "src/app.ts 6:45 read src/app.ts#shape@6:7"
+   ],
+   "src/app.ts#i@9:33": [
+    "src/app.ts 9:42 read src/app.ts#i@9:33"
+   ],
+   "src/app.ts#s@9:30": [
+    "src/app.ts 9:48 read src/app.ts#s@9:30"
+   ],
+   "src/app.ts#err@10:14": [
+    "src/app.ts 11:21 read src/app.ts#err@10:14"
+   ],
+   "src/app.ts#Scene@4:7": [
+    "src/app.ts 18:26 type src/app.ts#Scene@4:7",
+    "src/app.ts 19:21 new src/app.ts#Scene@4:7"
+   ],
+   "src/shapes.ts#move@38:3": [
+    "src/app.ts 21:44 call src/shapes.ts#move@38:3"
+   ],
+   "src/app.ts#scene@19:9": [
+    "src/app.ts 22:3 read src/app.ts#scene@19:9",
+    "src/app.ts 26:10 read src/app.ts#scene@19:9"
+   ],
+   "src/app.ts#add@6:3": [
+    "src/app.ts 22:9 call src/app.ts#add@6:3",
+    "src/app.ts 22:16 call src/app.ts#add@6:3",
+    "src/app.ts 22:23 call src/app.ts#add@6:3"
+   ],
+   "src/app.ts#c@20:9": [
+    "src/app.ts 22:13 read src/app.ts#c@20:9",
+    "src/app.ts 24:22 read src/app.ts#c@20:9",
+    "src/app.ts 25:33 read src/app.ts#c@20:9"
+   ],
+   "src/app.ts#r@21:9": [
+    "src/app.ts 22:20 read src/app.ts#r@21:9",
+    "src/app.ts 24:25 read src/app.ts#r@21:9",
+    "src/app.ts 25:36 read src/app.ts#r@21:9"
+   ],
+   "src/shapes.ts": [
+    "src/app.ts 22:27 read src/shapes.ts",
+    "link src/app.ts#all@2:13 src/shapes.ts"
+   ],
+   "src/shapes.ts#Geometry@51:18": [
+    "src/app.ts 23:13 read src/shapes.ts#Geometry@51:18",
+    "src/report/summary.ts 10:15 read src/shapes.ts#Geometry@51:18",
+    "link src/app.ts#Geometry@1:38 src/shapes.ts#Geometry@51:18",
+    "link src/report/summary.ts#Geometry@3:10 src/shapes.ts#Geometry@51:18"
+   ],
+   "src/shapes.ts#distance@53:19": [
+    "src/app.ts 23:22 call src/shapes.ts#distance@53:19",
+    "src/report/summary.ts 10:24 call src/shapes.ts#distance@53:19"
+   ],
+   "src/shapes.ts#total@44:17": [
+    "src/app.ts 24:15 call src/shapes.ts#total@44:17",
+    "src/util/numbers.ts 13:30 call src/shapes.ts#total@44:17",
+    "src/report/charts/bars.ts 9:17 call src/shapes.ts#total@44:17",
+    "link src/app.ts#total@1:24 src/shapes.ts#total@44:17",
+    "link src/util/numbers.ts#total@2:10 src/shapes.ts#total@44:17",
+    "link src/report/charts/bars.ts#total@2:18 src/shapes.ts#total@44:17"
+   ],
+   "src/app.ts#shape@25:22": [
+    "src/app.ts 25:56 read src/app.ts#shape@25:22"
+   ],
+   "src/shapes.ts#area@30:3": [
+    "src/app.ts 25:62 call src/shapes.ts#area@30:3",
+    "src/report/charts/bars.ts 10:55 call src/shapes.ts#area@30:3"
+   ],
+   "src/shapes.ts#area@37:3": [
+    "src/app.ts 25:62 call src/shapes.ts#area@37:3"
+   ],
+   "src/app.ts#sum@24:9": [
+    "src/app.ts 25:71 read src/app.ts#sum@24:9"
+   ],
+   "src/app.ts#d@23:9": [
+    "src/app.ts 25:77 read src/app.ts#d@23:9"
+   ],
+   "src/app.ts#index@25:15": [
+    "src/app.ts 25:92 read src/app.ts#index@25:15"
+   ],
+   "src/util/numbers.ts#value@4:24": [
+    "src/util/numbers.ts 5:21 read src/util/numbers.ts#value@4:24"
+   ],
+   "src/util/numbers.ts#whole@8:39": [
+    "src/util/numbers.ts 9:10 read src/util/numbers.ts#whole@8:39",
+    "src/util/numbers.ts 9:43 read src/util/numbers.ts#whole@8:39"
+   ],
+   "src/util/numbers.ts#round2@4:17": [
+    "src/util/numbers.ts 9:28 call src/util/numbers.ts#round2@4:17",
+    "src/report/format.ts 5:13 call src/util/numbers.ts#round2@4:17",
+    "link src/report/format.ts#round2@2:10 src/util/numbers.ts#round2@4:17"
+   ],
+   "src/util/numbers.ts#part@8:25": [
+    "src/util/numbers.ts 9:36 read src/util/numbers.ts#part@8:25"
+   ],
+   "src/util/numbers.ts#percent@8:17": [
+    "src/util/numbers.ts 13:10 call src/util/numbers.ts#percent@8:17",
+    "src/report/summary.ts 11:32 call src/util/numbers.ts#percent@8:17",
+    "link src/report/summary.ts#percent@5:10 src/util/numbers.ts#percent@8:17"
+   ],
+   "src/util/numbers.ts#one@12:49": [
+    "src/util/numbers.ts 13:18 read src/util/numbers.ts#one@12:49"
+   ],
+   "src/util/numbers.ts#shapes@12:23": [
+    "src/util/numbers.ts 13:36 read src/util/numbers.ts#shapes@12:23"
+   ],
+   "src/report/format.ts#area@4:28": [
+    "src/report/format.ts 5:20 read src/report/format.ts#area@4:28"
+   ],
+   "src/app.ts#build@18:17": [
+    "src/report/summary.ts 8:17 call src/app.ts#build@18:17",
+    "link src/report/summary.ts#build@2:10 src/app.ts#build@18:17"
+   ],
+   "src/report/summary.ts#scene@8:9": [
+    "src/report/summary.ts 9:22 read src/report/summary.ts#scene@8:9"
+   ],
+   "src/app.ts#render@7:9": [
+    "src/report/summary.ts 9:28 call src/app.ts#render@7:9"
+   ],
+   "src/report/format.ts#formatArea@4:17": [
+    "src/report/summary.ts 11:13 call src/report/format.ts#formatArea@4:17",
+    "src/report/charts/bars.ts 10:37 call src/report/format.ts#formatArea@4:17",
+    "src/report/charts/bars.ts 10:69 call src/report/format.ts#formatArea@4:17",
+    "link src/report/summary.ts#formatArea@4:10 src/report/format.ts#formatArea@4:17",
+    "link src/report/charts/bars.ts#formatArea@3:10 src/report/format.ts#formatArea@4:17"
+   ],
+   "src/report/summary.ts#far@10:9": [
+    "src/report/summary.ts 11:24 read src/report/summary.ts#far@10:9"
+   ],
+   "src/report/summary.ts#text@9:9": [
+    "src/report/summary.ts 11:51 read src/report/summary.ts#text@9:9"
+   ],
+   "src/report/charts/bars.ts#sizes@7:22": [
+    "src/report/charts/bars.ts 8:19 read src/report/charts/bars.ts#sizes@7:22"
+   ],
+   "src/report/charts/bars.ts#size@8:30": [
+    "src/report/charts/bars.ts 8:50 read src/report/charts/bars.ts#size@8:30"
+   ],
+   "src/report/charts/bars.ts#circles@8:9": [
+    "src/report/charts/bars.ts 9:23 read src/report/charts/bars.ts#circles@8:9",
+    "src/report/charts/bars.ts 10:10 read src/report/charts/bars.ts#circles@8:9",
+    "src/report/charts/bars.ts 10:97 read src/report/charts/bars.ts#circles@8:9"
+   ],
+   "src/report/charts/bars.ts#circle@10:23": [
+    "src/report/charts/bars.ts 10:48 read src/report/charts/bars.ts#circle@10:23",
+    "src/report/charts/bars.ts 10:106 read src/report/charts/bars.ts#circle@10:23"
+   ],
+   "src/report/charts/bars.ts#whole@9:9": [
+    "src/report/charts/bars.ts 10:80 read src/report/charts/bars.ts#whole@9:9"
+   ],
+   "src/util/numbers.ts#share@12:17": [
+    "src/report/charts/bars.ts 10:91 call src/util/numbers.ts#share@12:17",
+    "link src/report/charts/bars.ts#share@5:10 src/util/numbers.ts#share@12:17"
+   ],
+   "src/report/summary.ts#summarize@7:23": [
+    "src/report/charts/bars.ts 14:19 call src/report/summary.ts#summarize@7:23",
+    "link src/report/charts/bars.ts#summarize@4:10 src/report/summary.ts#summarize@7:23"
+   ],
+   "src/report/charts/bars.ts#bars@7:17": [
+    "src/report/charts/bars.ts 14:35 call src/report/charts/bars.ts#bars@7:17"
+   ]
+  }
+ },
+ "views": {
+  "": {
+   "render": {
+    "README.md": "node",
+    "src/app.ts": "node",
+    "src/report/charts/bars.ts": "node",
+    "src/report/format.ts": "node",
+    "src/report/summary.ts": "node",
+    "src/shapes.ts": "node",
+    "src/util/numbers.ts": "node",
+    "src": "node",
+    "src/report": "node",
+    "src/report/charts": "node",
+    "src/util": "node"
+   },
+   "unconnected": [
+    "README.md",
+    "src",
+    "src/report",
+    "src/report/charts",
+    "src/util"
+   ],
+   "path": [],
+   "reachable": true,
+   "inside": [
+    "src/app.ts",
+    "src/report/charts/bars.ts",
+    "src/report/format.ts",
+    "src/report/summary.ts",
+    "src/shapes.ts",
+    "src/util/numbers.ts"
+   ],
+   "edgeCount": 11,
+   "edges": [
+    [
+     "src/app.ts",
+     "src/shapes.ts"
+    ],
+    [
+     "src/report/charts/bars.ts",
+     "src/report/format.ts"
+    ],
+    [
+     "src/report/charts/bars.ts",
+     "src/report/summary.ts"
+    ],
+    [
+     "src/report/charts/bars.ts",
+     "src/shapes.ts"
+    ],
+    [
+     "src/report/charts/bars.ts",
+     "src/util/numbers.ts"
+    ],
+    [
+     "src/report/format.ts",
+     "src/util/numbers.ts"
+    ],
+    [
+     "src/report/summary.ts",
+     "src/app.ts"
+    ],
+    [
+     "src/report/summary.ts",
+     "src/report/format.ts"
+    ],
+    [
+     "src/report/summary.ts",
+     "src/shapes.ts"
+    ],
+    [
+     "src/report/summary.ts",
+     "src/util/numbers.ts"
+    ],
+    [
+     "src/util/numbers.ts",
+     "src/shapes.ts"
+    ]
+   ]
+  },
+  "src/shapes.ts": {
+   "render": {
+    "src/shapes.ts": "title",
+    "src/shapes.ts#Shape@2:18": "node",
+    "src/shapes.ts#Point@3:13": "node",
+    "src/shapes.ts#Color@4:13": "node",
+    "src/shapes.ts#Flag@5:19": "node",
+    "src/shapes.ts#UNIT@7:14": "node",
+    "src/shapes.ts#created@8:5": "node",
+    "src/shapes.ts#log@10:10": "node",
+    "src/shapes.ts#Base@12:23": "node",
+    "src/shapes.ts#Circle@27:14": "node",
+    "src/shapes.ts#Rect@34:14": "node",
+    "src/shapes.ts#total@44:17": "node",
+    "src/shapes.ts#Geometry@51:18": "node",
+    "src/shapes.ts#registry@56:14": "node",
+    "src/shapes.ts#Anonymous@57:14": "node",
+    "src/shapes.ts#config@58:14": "node",
+    "src/shapes.ts#area@2:26": "member",
+    "src/shapes.ts#name@2:51": "member",
+    "src/shapes.ts#x@3:23": "member",
+    "src/shapes.ts#y@3:34": "member",
+    "src/shapes.ts#Green@4:34": "member",
+    "src/shapes.ts#Red@4:21": "member",
+    "src/shapes.ts#Off@5:34": "member",
+    "src/shapes.ts#On@5:26": "member",
+    "src/shapes.ts#key@10:31": "member",
+    "src/shapes.ts#target@10:14": "member",
+    "src/shapes.ts#acc@47:30": "member",
+    "src/shapes.ts#round@46:49": "member",
+    "src/shapes.ts#s@47:35": "member",
+    "src/shapes.ts#shapes@46:23": "member",
+    "src/shapes.ts#sum@47:9": "member",
+    "src/shapes.ts#area@57:71": "member",
+    "src/shapes.ts#name@57:56": "member",
+    "src/app.ts": "stub",
+    "src/report/charts/bars.ts": "stub",
+    "src/report/summary.ts": "stub",
+    "src/util/numbers.ts": "stub"
+   },
+   "memberOf": {
+    "src/shapes.ts#area@2:26": "src/shapes.ts#Shape@2:18",
+    "src/shapes.ts#name@2:51": "src/shapes.ts#Shape@2:18",
+    "src/shapes.ts#x@3:23": "src/shapes.ts#Point@3:13",
+    "src/shapes.ts#y@3:34": "src/shapes.ts#Point@3:13",
+    "src/shapes.ts#Green@4:34": "src/shapes.ts#Color@4:13",
+    "src/shapes.ts#Red@4:21": "src/shapes.ts#Color@4:13",
+    "src/shapes.ts#Off@5:34": "src/shapes.ts#Flag@5:19",
+    "src/shapes.ts#On@5:26": "src/shapes.ts#Flag@5:19",
+    "src/shapes.ts#key@10:31": "src/shapes.ts#log@10:10",
+    "src/shapes.ts#target@10:14": "src/shapes.ts#log@10:10",
+    "src/shapes.ts#acc@47:30": "src/shapes.ts#total@44:17",
+    "src/shapes.ts#round@46:49": "src/shapes.ts#total@44:17",
+    "src/shapes.ts#s@47:35": "src/shapes.ts#total@44:17",
+    "src/shapes.ts#shapes@46:23": "src/shapes.ts#total@44:17",
+    "src/shapes.ts#sum@47:9": "src/shapes.ts#total@44:17",
+    "src/shapes.ts#area@57:71": "src/shapes.ts#Anonymous@57:14",
+    "src/shapes.ts#name@57:56": "src/shapes.ts#Anonymous@57:14"
+   },
+   "memberRows": {
+    "src/shapes.ts#Shape@2:18": [
+     "src/shapes.ts#area@2:26",
+     "src/shapes.ts#name@2:51"
+    ],
+    "src/shapes.ts#Point@3:13": [
+     "src/shapes.ts#x@3:23",
+     "src/shapes.ts#y@3:34"
+    ],
+    "src/shapes.ts#Color@4:13": [
+     "src/shapes.ts#Green@4:34",
+     "src/shapes.ts#Red@4:21"
+    ],
+    "src/shapes.ts#Flag@5:19": [
+     "src/shapes.ts#Off@5:34",
+     "src/shapes.ts#On@5:26"
+    ],
+    "src/shapes.ts#log@10:10": [
+     "src/shapes.ts#key@10:31",
+     "src/shapes.ts#target@10:14"
+    ],
+    "src/shapes.ts#total@44:17": [
+     "src/shapes.ts#acc@47:30",
+     "src/shapes.ts#round@46:49",
+     "src/shapes.ts#s@47:35",
+     "src/shapes.ts#shapes@46:23",
+     "src/shapes.ts#sum@47:9"
+    ],
+    "src/shapes.ts#Anonymous@57:14": [
+     "src/shapes.ts#area@57:71",
+     "src/shapes.ts#name@57:56"
+    ]
+   },
+   "path": [
+    ""
+   ],
+   "reachable": true,
+   "inside": [
+    "src/shapes.ts#Anonymous@57:14",
+    "src/shapes.ts#Base@12:23",
+    "src/shapes.ts#Circle@27:14",
+    "src/shapes.ts#Color@4:13",
+    "src/shapes.ts#Flag@5:19",
+    "src/shapes.ts#Geometry@51:18",
+    "src/shapes.ts#Point@3:13",
+    "src/shapes.ts#Rect@34:14",
+    "src/shapes.ts#Shape@2:18",
+    "src/shapes.ts#log@10:10",
+    "src/shapes.ts#total@44:17"
+   ]
+  },
+  "src/shapes.ts#Circle@27:14": {
+   "render": {
+    "src/shapes.ts#Circle@27:14": "title",
+    "src/shapes.ts#name@28:12": "node",
+    "src/shapes.ts#constructor@29:3": "node",
+    "src/shapes.ts#radius@29:23": "node",
+    "src/shapes.ts#area@30:3": "node",
+    "src/shapes.ts#unit@31:10": "node",
+    "src/shapes.ts#color@29:39": "member",
+    "src/app.ts": "stub",
+    "src/report/charts/bars.ts": "stub",
+    "src/shapes.ts#Base@12:23": "stub",
+    "src/shapes.ts#Color@4:13": "stub",
+    "src/shapes.ts#UNIT@7:14": "stub",
+    "src/shapes.ts#registry@56:14": "stub"
+   },
+   "memberOf": {
+    "src/shapes.ts#color@29:39": "src/shapes.ts#constructor@29:3"
+   },
+   "memberRows": {
+    "src/shapes.ts#constructor@29:3": [
+     "src/shapes.ts#color@29:39"
+    ]
+   },
+   "path": [
+    "",
+    "src/shapes.ts"
+   ],
+   "reachable": true,
+   "inside": [
+    "src/shapes.ts#constructor@29:3"
+   ],
+   "edges": [
+    [
+     "src/shapes.ts#Circle@27:14",
+     "src/shapes.ts#Base@12:23",
+     "extends",
+     [
+      "src/shapes.ts 27:29 extends src/shapes.ts#Base@12:23"
+     ]
+    ],
+    [
+     "src/shapes.ts#constructor@29:3",
+     "src/shapes.ts#Color@4:13",
+     "type",
+     [
+      "src/shapes.ts 29:47 type src/shapes.ts#Color@4:13"
+     ]
+    ],
+    [
+     "src/shapes.ts#constructor@29:3",
+     "src/shapes.ts#Base@12:23",
+     "call",
+     [
+      "src/shapes.ts 29:56 call src/shapes.ts#constructor@17:3"
+     ]
+    ],
+    [
+     "src/shapes.ts#area@30:3",
+     "src/shapes.ts#radius@29:23",
+     "read",
+     [
+      "src/shapes.ts 30:42 read src/shapes.ts#radius@29:23"
+     ]
+    ],
+    [
+     "src/shapes.ts#unit@31:10",
+     "src/shapes.ts#Circle@27:14",
+     "mixed",
+     [
+      "src/shapes.ts 31:18 type src/shapes.ts#Circle@27:14",
+      "src/shapes.ts 31:38 new src/shapes.ts#Circle@27:14"
+     ]
+    ],
+    [
+     "src/shapes.ts#unit@31:10",
+     "src/shapes.ts#UNIT@7:14",
+     "read",
+     [
+      "src/shapes.ts 31:45 read src/shapes.ts#UNIT@7:14"
+     ]
+    ],
+    [
+     "src/shapes.ts#registry@56:14",
+     "src/shapes.ts#Circle@27:14",
+     "read",
+     [
+      "src/shapes.ts 56:70 read src/shapes.ts#Circle@27:14"
+     ]
+    ],
+    [
+     "src/shapes.ts#registry@56:14",
+     "src/shapes.ts#unit@31:10",
+     "call",
+     [
+      "src/shapes.ts 56:77 call src/shapes.ts#unit@31:10"
+     ]
+    ],
+    [
+     "src/app.ts",
+     "src/shapes.ts#Circle@27:14",
+     "mixed",
+     [
+      "src/app.ts 20:17 new src/shapes.ts#Circle@27:14",
+      "src/app.ts 22:31 read src/shapes.ts#Circle@27:14",
+      "link src/app.ts#Circle@1:8 src/shapes.ts#Circle@27:14"
+     ]
+    ],
+    [
+     "src/app.ts",
+     "src/shapes.ts#unit@31:10",
+     "call",
+     [
+      "src/app.ts 22:38 call src/shapes.ts#unit@31:10"
+     ]
+    ],
+    [
+     "src/app.ts",
+     "src/shapes.ts#area@30:3",
+     "call",
+     [
+      "src/app.ts 25:62 call src/shapes.ts#area@30:3"
+     ]
+    ],
+    [
+     "src/report/charts/bars.ts",
+     "src/shapes.ts#Circle@27:14",
+     "mixed",
+     [
+      "src/report/charts/bars.ts 8:43 new src/shapes.ts#Circle@27:14",
+      "link src/report/charts/bars.ts#Circle@2:8 src/shapes.ts#Circle@27:14"
+     ]
+    ],
+    [
+     "src/report/charts/bars.ts",
+     "src/shapes.ts#area@30:3",
+     "call",
+     [
+      "src/report/charts/bars.ts 10:55 call src/shapes.ts#area@30:3"
+     ]
+    ]
+   ],
+   "edgeCount": 13,
+   "relationCount": 17,
+   "notDrawn": [
+    "src/shapes.ts 29:62 read src/shapes.ts#color@29:39"
+   ],
+   "builtinGroups": [
+    {
+     "type": "Math",
+     "members": [
+      {
+       "name": "PI",
+       "relations": [
+        "src/shapes.ts 30:32 read null"
+       ]
+      }
+     ]
+    }
+   ],
+   "relationEdge": {
+    "src/shapes.ts 27:29 extends src/shapes.ts#Base@12:23": "src/shapes.ts#Circle@27:14->src/shapes.ts#Base@12:23",
+    "src/shapes.ts 29:47 type src/shapes.ts#Color@4:13": "src/shapes.ts#constructor@29:3->src/shapes.ts#Color@4:13",
+    "src/shapes.ts 29:56 call src/shapes.ts#constructor@17:3": "src/shapes.ts#constructor@29:3->src/shapes.ts#Base@12:23",
+    "src/shapes.ts 30:42 read src/shapes.ts#radius@29:23": "src/shapes.ts#area@30:3->src/shapes.ts#radius@29:23",
+    "src/shapes.ts 31:18 type src/shapes.ts#Circle@27:14": "src/shapes.ts#unit@31:10->src/shapes.ts#Circle@27:14",
+    "src/shapes.ts 31:38 new src/shapes.ts#Circle@27:14": "src/shapes.ts#unit@31:10->src/shapes.ts#Circle@27:14",
+    "src/shapes.ts 31:45 read src/shapes.ts#UNIT@7:14": "src/shapes.ts#unit@31:10->src/shapes.ts#UNIT@7:14",
+    "src/shapes.ts 56:70 read src/shapes.ts#Circle@27:14": "src/shapes.ts#registry@56:14->src/shapes.ts#Circle@27:14",
+    "src/shapes.ts 56:77 call src/shapes.ts#unit@31:10": "src/shapes.ts#registry@56:14->src/shapes.ts#unit@31:10",
+    "src/app.ts 20:17 new src/shapes.ts#Circle@27:14": "src/app.ts->src/shapes.ts#Circle@27:14",
+    "src/app.ts 22:31 read src/shapes.ts#Circle@27:14": "src/app.ts->src/shapes.ts#Circle@27:14",
+    "link src/app.ts#Circle@1:8 src/shapes.ts#Circle@27:14": "src/app.ts->src/shapes.ts#Circle@27:14",
+    "src/app.ts 22:38 call src/shapes.ts#unit@31:10": "src/app.ts->src/shapes.ts#unit@31:10",
+    "src/app.ts 25:62 call src/shapes.ts#area@30:3": "src/app.ts->src/shapes.ts#area@30:3",
+    "src/report/charts/bars.ts 8:43 new src/shapes.ts#Circle@27:14": "src/report/charts/bars.ts->src/shapes.ts#Circle@27:14",
+    "link src/report/charts/bars.ts#Circle@2:8 src/shapes.ts#Circle@27:14": "src/report/charts/bars.ts->src/shapes.ts#Circle@27:14",
+    "src/report/charts/bars.ts 10:55 call src/shapes.ts#area@30:3": "src/report/charts/bars.ts->src/shapes.ts#area@30:3"
+   }
+  },
+  "src/shapes.ts#total@44:17": {
+   "render": {
+    "src/shapes.ts#total@44:17": "title",
+    "src/shapes.ts#shapes@46:23": "node",
+    "src/shapes.ts#round@46:49": "node",
+    "src/shapes.ts#sum@47:9": "node",
+    "src/shapes.ts#acc@47:30": "node",
+    "src/shapes.ts#s@47:35": "node",
+    "src/shapes.ts#Shape@2:18": "stub",
+    "src/app.ts": "stub",
+    "src/util/numbers.ts": "stub",
+    "src/report/charts/bars.ts": "stub"
+   },
+   "memberOf": {},
+   "memberRows": {},
+   "path": [
+    "",
+    "src/shapes.ts"
+   ],
+   "reachable": true,
+   "inside": [],
+   "edges": [
+    [
+     "src/shapes.ts#total@44:17",
+     "src/shapes.ts#Shape@2:18",
+     "mixed",
+     [
+      "src/shapes.ts 44:40 type src/shapes.ts#Shape@2:18",
+      "src/shapes.ts 45:40 type src/shapes.ts#Shape@2:18",
+      "src/shapes.ts 46:40 type src/shapes.ts#Shape@2:18",
+      "src/shapes.ts 47:49 call src/shapes.ts#area@2:26"
+     ]
+    ],
+    [
+     "src/shapes.ts#total@44:17",
+     "src/shapes.ts#shapes@46:23",
+     "read",
+     [
+      "src/shapes.ts 47:15 read src/shapes.ts#shapes@46:23"
+     ]
+    ],
+    [
+     "src/shapes.ts#total@44:17",
+     "src/shapes.ts#acc@47:30",
+     "read",
+     [
+      "src/shapes.ts 47:41 read src/shapes.ts#acc@47:30"
+     ]
+    ],
+    [
+     "src/shapes.ts#total@44:17",
+     "src/shapes.ts#s@47:35",
+     "read",
+     [
+      "src/shapes.ts 47:47 read src/shapes.ts#s@47:35"
+     ]
+    ],
+    [
+     "src/shapes.ts#total@44:17",
+     "src/shapes.ts#round@46:49",
+     "read",
+     [
+      "src/shapes.ts 48:10 read src/shapes.ts#round@46:49"
+     ]
+    ],
+    [
+     "src/shapes.ts#total@44:17",
+     "src/shapes.ts#sum@47:9",
+     "read",
+     [
+      "src/shapes.ts 48:29 read src/shapes.ts#sum@47:9",
+      "src/shapes.ts 48:36 read src/shapes.ts#sum@47:9"
+     ]
+    ],
+    [
+     "src/app.ts",
+     "src/shapes.ts#total@44:17",
+     "mixed",
+     [
+      "src/app.ts 24:15 call src/shapes.ts#total@44:17",
+      "link src/app.ts#total@1:24 src/shapes.ts#total@44:17"
+     ]
+    ],
+    [
+     "src/util/numbers.ts",
+     "src/shapes.ts#total@44:17",
+     "mixed",
+     [
+      "src/util/numbers.ts 13:30 call src/shapes.ts#total@44:17",
+      "link src/util/numbers.ts#total@2:10 src/shapes.ts#total@44:17"
+     ]
+    ],
+    [
+     "src/report/charts/bars.ts",
+     "src/shapes.ts#total@44:17",
+     "mixed",
+     [
+      "src/report/charts/bars.ts 9:17 call src/shapes.ts#total@44:17",
+      "link src/report/charts/bars.ts#total@2:18 src/shapes.ts#total@44:17"
+     ]
+    ]
+   ],
+   "edgeCount": 9,
+   "relationCount": 16,
+   "builtinGroups": [
+    {
+     "type": "Math",
+     "members": [
+      {
+       "name": "round",
+       "relations": [
+        "src/shapes.ts 48:23 call null"
+       ]
+      }
+     ]
+    },
+    {
+     "type": "ReadonlyArray",
+     "members": [
+      {
+       "name": "reduce",
+       "relations": [
+        "src/shapes.ts 47:22 call null"
+       ]
+      }
+     ]
+    }
+   ],
+   "relationEdge": {
+    "src/shapes.ts 44:40 type src/shapes.ts#Shape@2:18": "src/shapes.ts#total@44:17->src/shapes.ts#Shape@2:18",
+    "src/shapes.ts 45:40 type src/shapes.ts#Shape@2:18": "src/shapes.ts#total@44:17->src/shapes.ts#Shape@2:18",
+    "src/shapes.ts 46:40 type src/shapes.ts#Shape@2:18": "src/shapes.ts#total@44:17->src/shapes.ts#Shape@2:18",
+    "src/shapes.ts 47:49 call src/shapes.ts#area@2:26": "src/shapes.ts#total@44:17->src/shapes.ts#Shape@2:18",
+    "src/shapes.ts 47:15 read src/shapes.ts#shapes@46:23": "src/shapes.ts#total@44:17->src/shapes.ts#shapes@46:23",
+    "src/shapes.ts 47:41 read src/shapes.ts#acc@47:30": "src/shapes.ts#total@44:17->src/shapes.ts#acc@47:30",
+    "src/shapes.ts 47:47 read src/shapes.ts#s@47:35": "src/shapes.ts#total@44:17->src/shapes.ts#s@47:35",
+    "src/shapes.ts 48:10 read src/shapes.ts#round@46:49": "src/shapes.ts#total@44:17->src/shapes.ts#round@46:49",
+    "src/shapes.ts 48:29 read src/shapes.ts#sum@47:9": "src/shapes.ts#total@44:17->src/shapes.ts#sum@47:9",
+    "src/shapes.ts 48:36 read src/shapes.ts#sum@47:9": "src/shapes.ts#total@44:17->src/shapes.ts#sum@47:9",
+    "src/app.ts 24:15 call src/shapes.ts#total@44:17": "src/app.ts->src/shapes.ts#total@44:17",
+    "link src/app.ts#total@1:24 src/shapes.ts#total@44:17": "src/app.ts->src/shapes.ts#total@44:17",
+    "src/util/numbers.ts 13:30 call src/shapes.ts#total@44:17": "src/util/numbers.ts->src/shapes.ts#total@44:17",
+    "link src/util/numbers.ts#total@2:10 src/shapes.ts#total@44:17": "src/util/numbers.ts->src/shapes.ts#total@44:17",
+    "src/report/charts/bars.ts 9:17 call src/shapes.ts#total@44:17": "src/report/charts/bars.ts->src/shapes.ts#total@44:17",
+    "link src/report/charts/bars.ts#total@2:18 src/shapes.ts#total@44:17": "src/report/charts/bars.ts->src/shapes.ts#total@44:17"
+   }
+  }
+ },
+ "display": {
+  "src/shapes.ts": {
+   "name": "shapes.ts",
+   "title": "file shapes.ts",
+   "notes": [],
+   "label": "shapes.ts · .ts"
+  },
+  "README.md": {
+   "name": "README.md",
+   "title": "file README.md",
+   "notes": [],
+   "label": "README.md · .md"
+  },
+  "src": {
+   "name": "src",
+   "title": "folder src",
+   "notes": [],
+   "label": "src/ · 6 files"
+  },
+  "src/report": {
+   "name": "report",
+   "title": "folder report",
+   "notes": [],
+   "label": "report/ · 3 files"
+  },
+  "src/report/charts": {
+   "name": "charts",
+   "title": "folder charts",
+   "notes": [],
+   "label": "charts/ · 1 file"
+  },
+  "src/shapes.ts#Circle@27:14": {
+   "name": "Circle",
+   "title": "class Circle",
+   "notes": [
+    "exported",
+    "default"
+   ]
+  },
+  "src/shapes.ts#Base@12:23": {
+   "name": "Base",
+   "title": "class Base",
+   "notes": [
+    "exported",
+    "abstract"
+   ]
+  },
+  "src/shapes.ts#total@44:17": {
+   "name": "total()",
+   "title": "ƒ total()",
+   "notes": [
+    "exported",
+    "3 declarations"
+   ]
+  },
+  "src/shapes.ts#Anonymous@57:14": {
+   "name": "Anonymous",
+   "title": "variable Anonymous",
+   "notes": [
+    "exported",
+    "const"
+   ]
+  },
+  "src/shapes.ts#constructor@29:3": {
+   "name": "constructor()",
+   "title": "ƒ constructor()",
+   "notes": []
+  },
+  "src/shapes.ts#radius@29:23": {
+   "name": "radius",
+   "title": "property radius",
+   "notes": [
+    "private",
+    "declared in constructor"
+   ]
+  },
+  "src/shapes.ts#unit@31:10": {
+   "name": "unit()",
+   "title": "ƒ unit()",
+   "notes": [
+    "static"
+   ]
+  },
+  "src/shapes.ts#name@28:12": {
+   "name": "name",
+   "title": "property name",
+   "notes": [
+    "readonly"
+   ]
+  },
+  "src/shapes.ts#sum@47:9": {
+   "name": "sum",
+   "title": "variable sum",
+   "notes": [
+    "const"
+   ]
+  }
+ },
+ "dropped": [],
+ "inventoryFiles": [
+  "test-source-mvp2",
+  "  Files",
+  "    src",
+  "      src/report",
+  "        src/report/charts",
+  "          src/report/charts/bars.ts",
+  "            src/report/charts/bars.ts#Circle@2:8",
+  "            src/report/charts/bars.ts#total@2:18",
+  "            src/report/charts/bars.ts#formatArea@3:10",
+  "            src/report/charts/bars.ts#summarize@4:10",
+  "            src/report/charts/bars.ts#share@5:10",
+  "            src/report/charts/bars.ts#bars@7:17",
+  "              src/report/charts/bars.ts#sizes@7:22",
+  "              src/report/charts/bars.ts#circles@8:9",
+  "              src/report/charts/bars.ts#size@8:30",
+  "              src/report/charts/bars.ts#whole@9:9",
+  "              src/report/charts/bars.ts#circle@10:23",
+  "            src/report/charts/bars.ts#report@13:23",
+  "        src/report/format.ts",
+  "          src/report/format.ts#round2@2:10",
+  "          src/report/format.ts#formatArea@4:17",
+  "            src/report/format.ts#area@4:28",
+  "        src/report/summary.ts",
+  "          src/report/summary.ts#build@2:10",
+  "          src/report/summary.ts#Geometry@3:10",
+  "          src/report/summary.ts#formatArea@4:10",
+  "          src/report/summary.ts#percent@5:10",
+  "          src/report/summary.ts#summarize@7:23",
+  "            src/report/summary.ts#scene@8:9",
+  "            src/report/summary.ts#text@9:9",
+  "            src/report/summary.ts#far@10:9",
+  "      src/util",
+  "        src/util/numbers.ts",
+  "          src/util/numbers.ts#total@2:10",
+  "          src/util/numbers.ts#Shape@2:22",
+  "          src/util/numbers.ts#round2@4:17",
+  "            src/util/numbers.ts#value@4:24",
+  "          src/util/numbers.ts#percent@8:17",
+  "            src/util/numbers.ts#part@8:25",
+  "            src/util/numbers.ts#whole@8:39",
+  "          src/util/numbers.ts#share@12:17",
+  "            src/util/numbers.ts#shapes@12:23",
+  "            src/util/numbers.ts#one@12:49",
+  "      src/app.ts",
+  "        src/app.ts#Circle@1:8",
+  "        src/app.ts#Rect@1:18",
+  "        src/app.ts#total@1:24",
+  "        src/app.ts#Color@1:31",
+  "        src/app.ts#Geometry@1:38",
+  "        src/app.ts#UNIT@1:48",
+  "        src/app.ts#Shape@1:59",
+  "        src/app.ts#all@2:13",
+  "        src/app.ts#Scene@4:7",
+  "          src/app.ts#items@5:11",
+  "          src/app.ts#add@6:3",
+  "            src/app.ts#shape@6:7",
+  "          src/app.ts#render@7:9",
+  "            src/app.ts#s@9:30",
+  "            src/app.ts#i@9:33",
+  "            src/app.ts#err@10:14",
+  "        src/app.ts#build@18:17",
+  "          src/app.ts#scene@19:9",
+  "          src/app.ts#c@20:9",
+  "          src/app.ts#r@21:9",
+  "          src/app.ts#d@23:9",
+  "          src/app.ts#sum@24:9",
+  "          src/app.ts#index@25:15",
+  "          src/app.ts#shape@25:22",
+  "      src/shapes.ts",
+  "        src/shapes.ts#Shape@2:18",
+  "          src/shapes.ts#area@2:26",
+  "          src/shapes.ts#name@2:51",
+  "        src/shapes.ts#Point@3:13",
+  "          src/shapes.ts#x@3:23",
+  "          src/shapes.ts#y@3:34",
+  "        src/shapes.ts#Color@4:13",
+  "          src/shapes.ts#Red@4:21",
+  "          src/shapes.ts#Green@4:34",
+  "        src/shapes.ts#Flag@5:19",
+  "          src/shapes.ts#On@5:26",
+  "          src/shapes.ts#Off@5:34",
+  "        src/shapes.ts#UNIT@7:14",
+  "        src/shapes.ts#created@8:5",
+  "        src/shapes.ts#log@10:10",
+  "          src/shapes.ts#target@10:14",
+  "          src/shapes.ts#key@10:31",
+  "        src/shapes.ts#Base@12:23",
+  "          src/shapes.ts#count@13:10",
+  "          src/shapes.ts#id@14:22",
+  "          src/shapes.ts##tag@15:3",
+  "          src/shapes.ts#name@16:21",
+  "          src/shapes.ts#constructor@17:3",
+  "          src/shapes.ts#color@17:22",
+  "          src/shapes.ts#scale@17:56",
+  "          src/shapes.ts#area@21:12",
+  "          src/shapes.ts#label@22:7",
+  "            src/shapes.ts#value@23:13",
+  "          src/shapes.ts#describe@24:8",
+  "        src/shapes.ts#Circle@27:14",
+  "          src/shapes.ts#name@28:12",
+  "          src/shapes.ts#constructor@29:3",
+  "            src/shapes.ts#color@29:39",
+  "          src/shapes.ts#radius@29:23",
+  "          src/shapes.ts#area@30:3",
+  "          src/shapes.ts#unit@31:10",
+  "        src/shapes.ts#Rect@34:14",
+  "          src/shapes.ts#name@35:12",
+  "          src/shapes.ts#constructor@36:3",
+  "          src/shapes.ts#corner@36:22",
+  "          src/shapes.ts#w@36:41",
+  "          src/shapes.ts#h@36:60",
+  "          src/shapes.ts#area@37:3",
+  "          src/shapes.ts#move@38:3",
+  "            src/shapes.ts#by@38:8",
+  "            src/shapes.ts#x@39:13",
+  "            src/shapes.ts#y@39:20",
+  "        src/shapes.ts#total@44:17",
+  "          src/shapes.ts#shapes@46:23",
+  "          src/shapes.ts#round@46:49",
+  "          src/shapes.ts#sum@47:9",
+  "          src/shapes.ts#acc@47:30",
+  "          src/shapes.ts#s@47:35",
+  "        src/shapes.ts#Geometry@51:18",
+  "          src/shapes.ts#ORIGIN@52:16",
+  "          src/shapes.ts#distance@53:19",
+  "            src/shapes.ts#a@53:28",
+  "            src/shapes.ts#b@53:38",
+  "        src/shapes.ts#registry@56:14",
+  "        src/shapes.ts#Anonymous@57:14",
+  "          src/shapes.ts#name@57:56",
+  "          src/shapes.ts#area@57:71",
+  "        src/shapes.ts#config@58:14",
+  "    README.md"
+ ]
+}

@@ -47,7 +47,17 @@ The Viewer as built for the MVP: a local backend and one page in the browser.
 
 ## The graph model, format 2
 
-- **VIEW-50** **[Decided]** As in the MVP 2 schema, section 10: every listed entry is a node at the top level, with its status and, for a file, its type (`UI-47`, `UI-48`); a node's container may be another symbol, so levels go to any depth; built-ins are listed under each view's `builtins`, apart from `unresolved`; a record's other keys are kept as `attrs` and shown in Details (`VIEW-15`); source lines are served only for files a tool read as text (`security.md`, section 7). A stored graph of format 1 is unusable and rebuilt by the next run.
+- **VIEW-50** **[Decided]** As in the MVP 2 schema, section 10: every listed entry is a node at the top level, with its status and, for a file, its type (`UI-47`, `UI-48`); a node's container may be another symbol, so levels go to any depth; built-ins are listed under each view's `builtins`, apart from `unresolved`; a record's other keys are kept as `attrs` and shown in Details (`VIEW-15`); source lines are served only for files a tool read as text (`security.md`, section 7). A stored graph of format 1 is unusable and rebuilt by the next run. **Format 3**, decided and not built yet, adds the file index, each view's visibility, paths, views inside and reachability, the records the Viewer drops, and what the page works out today (`55_viewer_backend.md`, `BE-110` to `BE-115`); a stored graph of format 2 is then unusable until its source is run again.
+
+## The page's model layer
+
+- **VIEW-51** **[Decided]** **One model layer in the page, which every part reads, and through which every move goes** (`51_viewer_inventory.md`, `INV-9`, `INV-10`, `INV-13`, `INV-33`, decided by the user, 2026-11-10). *Built (`FND-116`); the hidden set is empty until the Inventory's choices are built (`INV-33`).* The page holds the model the backend sent (`VIEW-04`) in one place, the **model layer**, with the page's shared state beside it:
+  - **The shared state:** the current view, and the set of nodes hidden by a choice (`INV-33`). Nothing else is shared: each part keeps its own selection (`INV-13`), and the display switches, [Kinds] (`UI-83`) and [Edges] (`UI-85`), are drawing choices of the Graph, outside it.
+  - **Every move goes through it:** a double-click in the Graph, a breadcrumb item (`UI-82`), [Show in graph] (`INV-15`), a tick in the Inventory (`INV-33`). No part sets the current view itself.
+  - **One snapshot per change:** on a change, the layer selects, from what the backend stated (`BE-110` to `BE-114`), what is sent to render in the current view with the hidden nodes taken out, the view's path and views one level inside, which views are reachable, and each item's visibility state (`INV-9`). It selects; it works out nothing the backend states, and redoes no lifting (`INV-18`).
+  - **Three readers, in lockstep:** the Graph, the breadcrumb and the Inventory read that snapshot, so they can't disagree (`INV-10`). The Inventory's tree is built once per model; a change only updates its marks (`INV-12`).
+  - **A new model** (a run, another source) replaces the layer's model; the current view is kept if it still exists, else the top view; the hidden set is kept on a new run of the same source and reset on another source, as the Inventory's open rows are (`INV-40`).
+  - **What the layer may do that is not deriving:** look things up in what the model states (by ID, a view's lists, the index), and take out what is hidden. A relation is hidden when one of its ends, or a container of one of its ends (from the ancestors, `BE-112`), is hidden; the count of hidden relations in an edge's hover box comes from that (`INV-18`, `UI-86`).
 
 ## Levels on the page
 

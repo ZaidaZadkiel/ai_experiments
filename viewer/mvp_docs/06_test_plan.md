@@ -34,9 +34,17 @@ From `zaansouvi-mvp/`; all pass (`FND-98`, `FND-99`, `FND-104`, `FND-110`). **Al
 | `node tests/ts-program/check.mjs` | `ts-program` against the hand-written `expected-mvp2/`: nodes, edges, links, built-ins, unresolved, and each node's facts, exact |
 | `node tests/ts-program/check-definitions.mjs` | every edge's target against TypeScript's "go to definition" (156 of 156; a namespace import and a union's second target accepted as known differences, each still checked) |
 | `node tests/runner/run-tests.mjs` | `TEST-01` to `TEST-05` and `R1` to `R11` below: 28 checks on a copy |
-| `node tests/viewer/check-server.mjs` | the backend on `test-source-mvp2`: security, reads, the activity log, runs, bad data across restarts: 37 checks |
+| `node tests/viewer/check-server.mjs` | the backend on `test-source-mvp2`: security, reads, the activity log, runs, bad data across restarts: 73 checks, format 3 included |
 | `node tests/viewer/check-model.mjs` | MVP 1's model check (`TEST-09`), still passing on its saved cache |
 | `tests/viewer/browse/mvp2.json` | the page on `test-source-mvp2` and on a source with every status |
+| `tests/viewer/browse/kind-frames.json` | the kind frames on `test-source-mvp2` (`UI-83`): frames, order, loose nodes, no overlap, stubs outside, not selectable, a frame dragged with its nodes, the switch, the Legend |
+| `tests/viewer/browse/crumbs.json` | the breadcrumb: the views above, folders as plain text, the dropdown of the views one level inside, through it and back (`UI-82`) |
+| `tests/viewer/browse/inventory.json` | the Inventory, read-only: the Files rows in the expected order, the marks following the view, the search and its jumps, the content area, the Views and Model sections (`UI-87`) |
+| `tests/viewer/browse/drawer.json` | the drawer's handle: the tabs fit, a drag drawn over the Graph and applied on release with nothing moved, the limits, double-click, collapse and reopen, the width kept across a reload (`UI-88`) |
+| `tests/viewer/browse/inventory-hiding.json` | the Inventory acting on the Graph: hiding a node, its contents, a kind, the view shown; "(N hidden)" on an edge; [show all]; [Show in graph] for a node, a member, a relation and a view, the tab kept; disabled when out of reach (`INV-33`, `INV-15`) |
+| `tests/viewer/browse/edges-switch.json` | [Edges] full or thin with nothing moved; the selection's edges kept full; held across views (`UI-85`) |
+| `tests/viewer/browse/hover-tips.json` | a node's box on hover, an edge's only when selected; flipped near the edge; hidden by a pan, a zoom or a drag, back on the next move (`UI-86`) |
+| `tests/viewer/browse/middle-pan.json` | the middle button pans only, from a node, a frame or the background: nothing moved, nothing selected; the left button unchanged (`UI-84`) |
 | `tests/viewer/browse/b7.sh` | `B7` through the page: a syntax error gives a no-go with its reason; the last good graph stays shown |
 
 ### Runner checks
@@ -73,7 +81,7 @@ From `zaansouvi-mvp/`; all pass (`FND-98`, `FND-99`, `FND-104`, `FND-110`). **Al
 ### Viewer checks
 
 - **TEST-09** `tests/viewer/check-model.mjs`: the graph model built from `expected/runner-cache.json` matches `expected/graph-views.json` view by view (nodes, stubs, the "this" node, edges with their counts and kinds, unresolved counts); two builds give the same bytes; six damaged caches give the expected invalid or extra items (`BE-91`, `BE-92`).
-- **TEST-10** `tests/viewer/check-server.mjs`: the backend on a temporary copy of the MVP, whose data it makes itself by running the copied Runner on a copy of `test-source-mvp2` (`ts-program` alone, `RUN-33`): the token, `Host` and `Origin` checks, the 64 KiB limit, sources, the graph (format 2, 32 views, nothing invalid or extra; the top view's 1 unresolved use and 25 built-ins; every listed entry a node) and its storing, reads limited to listed files a tool read and to `data/` (a range with `end`, a listed file no tool read, a symbolic link out included), the activity log (deleted while running, unknown events, Clear), a run and a refused second run, and bad data across restarts (partly invalid, failed, an entry in another format, a damaged `sources.json`, cleared Runner data). 37 checks (`BE-92` to `BE-94`). The 32-check version on MVP 1's data is `tests/viewer/check-server-stage1.mjs`.
+- **TEST-10** `tests/viewer/check-server.mjs`: the backend on a temporary copy of the MVP, whose data it makes itself by running the copied Runner on a copy of `test-source-mvp2` (`ts-program` alone, `RUN-33`): the token, `Host` and `Origin` checks, the 64 KiB limit, sources, the graph (format 2, 32 views, nothing invalid or extra; the top view's 1 unresolved use and 25 built-ins; every listed entry a node) and its storing, reads limited to listed files a tool read and to `data/` (a range with `end`, a listed file no tool read, a symbolic link out included), the activity log (deleted while running, unknown events, Clear), a run and a refused second run, and bad data across restarts (partly invalid, failed, an entry in another format, a damaged `sources.json`, cleared Runner data). 73 checks, format 3 included (`BE-92` to `BE-94`). The 32-check version on MVP 1's data is `tests/viewer/check-server-stage1.mjs`.
 - **The page** stays a human review (P3, `BE-95`; `97_second_implementation.md`, `M2Q-8`).
 
 ## Broken inputs

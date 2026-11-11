@@ -1,0 +1,128 @@
+[
+ [
+  "go",
+  "x"
+ ],
+ [
+  "wait",
+  "window.zaansouvi && window.zaansouvi.ready()",
+  20
+ ],
+ [
+  "sleep",
+  1
+ ],
+ [
+  "js",
+  "return fetch('/api/sources',{credentials:'same-origin'}).then(r=>r.json()).then(j=>{const s=j.sources.find(x=>x.sourceRoot.endsWith('/test-source-mvp2')); return fetch('/api/sources/current',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({source:s.sourceKey})}).then(r=>r.status)})"
+ ],
+ [
+  "go",
+  "x"
+ ],
+ [
+  "wait",
+  "window.zaansouvi && window.zaansouvi.ready() && document.querySelector('#cy canvas')",
+  20
+ ],
+ [
+  "sleep",
+  1
+ ],
+ [
+  "js",
+  "const box=document.getElementById('crumbs'); const txt=()=>[...box.childNodes].map(n=>n.nodeType===3? n.textContent.trim() : (n.classList&&n.classList.contains('crumb-more')? n.querySelector('.crumb-open').textContent : (n.tagName==='BUTTON'? '['+n.textContent+']' : n.textContent))).filter(Boolean).join(' '); const menu=()=>{const m=box.querySelector('.crumb-menu'); return m? {open:!m.hidden, items:[...m.querySelectorAll('button')].map(b=>b.textContent)} : null};return {view:'top', crumbs: txt(), menu: menu()}"
+ ],
+ [
+  "js",
+  "document.querySelector('#crumbs .crumb-open').click(); return 1"
+ ],
+ [
+  "js",
+  "const box=document.getElementById('crumbs'); const txt=()=>[...box.childNodes].map(n=>n.nodeType===3? n.textContent.trim() : (n.classList&&n.classList.contains('crumb-more')? n.querySelector('.crumb-open').textContent : (n.tagName==='BUTTON'? '['+n.textContent+']' : n.textContent))).filter(Boolean).join(' '); const menu=()=>{const m=box.querySelector('.crumb-menu'); return m? {open:!m.hidden, items:[...m.querySelectorAll('button')].map(b=>b.textContent)} : null};const m=box.querySelector('.crumb-menu'); const r=m.getBoundingClientRect(); return {opened: menu(), visibleOnTop: document.elementFromPoint(r.left+10, r.top+10)?.closest('.crumb-menu')===m}"
+ ],
+ [
+  "shot",
+  "crumbs-top-open.png"
+ ],
+ [
+  "js",
+  "[...document.querySelectorAll('#crumbs .crumb-menu button')].find(b=>b.textContent==='shapes.ts').click(); return 1"
+ ],
+ [
+  "sleep",
+  1.2
+ ],
+ [
+  "js",
+  "const box=document.getElementById('crumbs'); const txt=()=>[...box.childNodes].map(n=>n.nodeType===3? n.textContent.trim() : (n.classList&&n.classList.contains('crumb-more')? n.querySelector('.crumb-open').textContent : (n.tagName==='BUTTON'? '['+n.textContent+']' : n.textContent))).filter(Boolean).join(' '); const menu=()=>{const m=box.querySelector('.crumb-menu'); return m? {open:!m.hidden, items:[...m.querySelectorAll('button')].map(b=>b.textContent)} : null};return {view: window.zaansouvi.state.view, crumbs: txt(), menu: menu()}"
+ ],
+ [
+  "js",
+  "document.querySelector('#crumbs .crumb-open').click(); document.dispatchEvent(new MouseEvent('mousedown',{bubbles:true})); return 1"
+ ],
+ [
+  "js",
+  "const box=document.getElementById('crumbs'); const txt=()=>[...box.childNodes].map(n=>n.nodeType===3? n.textContent.trim() : (n.classList&&n.classList.contains('crumb-more')? n.querySelector('.crumb-open').textContent : (n.tagName==='BUTTON'? '['+n.textContent+']' : n.textContent))).filter(Boolean).join(' '); const menu=()=>{const m=box.querySelector('.crumb-menu'); return m? {open:!m.hidden, items:[...m.querySelectorAll('button')].map(b=>b.textContent)} : null};return {afterOutsideClick: menu().open}"
+ ],
+ [
+  "js",
+  "document.querySelector('#crumbs .crumb-open').click(); document.querySelector('#crumbs .crumb-more').dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',bubbles:true})); return 1"
+ ],
+ [
+  "js",
+  "const box=document.getElementById('crumbs'); const txt=()=>[...box.childNodes].map(n=>n.nodeType===3? n.textContent.trim() : (n.classList&&n.classList.contains('crumb-more')? n.querySelector('.crumb-open').textContent : (n.tagName==='BUTTON'? '['+n.textContent+']' : n.textContent))).filter(Boolean).join(' '); const menu=()=>{const m=box.querySelector('.crumb-menu'); return m? {open:!m.hidden, items:[...m.querySelectorAll('button')].map(b=>b.textContent)} : null};return {afterEscape: menu().open}"
+ ],
+ [
+  "js",
+  "document.querySelector('#crumbs .crumb-open').click(); [...document.querySelectorAll('#crumbs .crumb-menu button')].find(b=>b.textContent==='Circle').click(); return 1"
+ ],
+ [
+  "sleep",
+  1.2
+ ],
+ [
+  "js",
+  "const box=document.getElementById('crumbs'); const txt=()=>[...box.childNodes].map(n=>n.nodeType===3? n.textContent.trim() : (n.classList&&n.classList.contains('crumb-more')? n.querySelector('.crumb-open').textContent : (n.tagName==='BUTTON'? '['+n.textContent+']' : n.textContent))).filter(Boolean).join(' '); const menu=()=>{const m=box.querySelector('.crumb-menu'); return m? {open:!m.hidden, items:[...m.querySelectorAll('button')].map(b=>b.textContent)} : null};return {view: window.zaansouvi.state.view, crumbs: txt(), menu: menu()}"
+ ],
+ [
+  "shot",
+  "crumbs-circle.png"
+ ],
+ [
+  "js",
+  "[...document.querySelectorAll('#crumbs button')].find(b=>b.textContent==='shapes.ts').click(); return 1"
+ ],
+ [
+  "sleep",
+  1.2
+ ],
+ [
+  "js",
+  "const box=document.getElementById('crumbs'); const txt=()=>[...box.childNodes].map(n=>n.nodeType===3? n.textContent.trim() : (n.classList&&n.classList.contains('crumb-more')? n.querySelector('.crumb-open').textContent : (n.tagName==='BUTTON'? '['+n.textContent+']' : n.textContent))).filter(Boolean).join(' '); const menu=()=>{const m=box.querySelector('.crumb-menu'); return m? {open:!m.hidden, items:[...m.querySelectorAll('button')].map(b=>b.textContent)} : null};return {backTo: window.zaansouvi.state.view, crumbs: txt()}"
+ ],
+ [
+  "js",
+  "window.zaansouvi.enter('src/report/charts/bars.ts'); return 1"
+ ],
+ [
+  "sleep",
+  1.2
+ ],
+ [
+  "js",
+  "const box=document.getElementById('crumbs'); const txt=()=>[...box.childNodes].map(n=>n.nodeType===3? n.textContent.trim() : (n.classList&&n.classList.contains('crumb-more')? n.querySelector('.crumb-open').textContent : (n.tagName==='BUTTON'? '['+n.textContent+']' : n.textContent))).filter(Boolean).join(' '); const menu=()=>{const m=box.querySelector('.crumb-menu'); return m? {open:!m.hidden, items:[...m.querySelectorAll('button')].map(b=>b.textContent)} : null};return {view:'bars.ts', crumbs: txt(), folderSpans: [...box.querySelectorAll('.crumb-folder')].map(s=>s.textContent+' '+s.tagName)}"
+ ],
+ [
+  "js",
+  "window.zaansouvi.enter('src/report/charts/bars.ts#bars@7:17'); return 1"
+ ],
+ [
+  "sleep",
+  1.2
+ ],
+ [
+  "js",
+  "const box=document.getElementById('crumbs'); const txt=()=>[...box.childNodes].map(n=>n.nodeType===3? n.textContent.trim() : (n.classList&&n.classList.contains('crumb-more')? n.querySelector('.crumb-open').textContent : (n.tagName==='BUTTON'? '['+n.textContent+']' : n.textContent))).filter(Boolean).join(' '); const menu=()=>{const m=box.querySelector('.crumb-menu'); return m? {open:!m.hidden, items:[...m.querySelectorAll('button')].map(b=>b.textContent)} : null};return {view:'bars()', crumbs: txt(), menu: menu()}"
+ ]
+]

@@ -6,7 +6,8 @@
 
 import type { CacheDataGroup, Location, RunnerCache } from "../../../shared/types.ts";
 
-export const MODEL_FORMAT_VERSION = 2; // 2 (MVP 2): entries as nodes with attributes, builtins apart, every other key kept (schema MVP 2, section 10)
+export const MODEL_FORMAT_VERSION = 3; // 3: the index, each view's visibility, paths and reachability, the dropped records,
+// what the page worked out (BE-110 to BE-115; proposed_schema/26-11-10 213900 ...). 2 (MVP 2): entries as nodes with attributes, builtins apart.
 
 export type ModelNode = {
   id: string;
@@ -19,7 +20,11 @@ export type ModelNode = {
   location?: Location;
   /** MVP 2: a listed entry's status and type (RUN-35, UI-47b, UI-48); a record's other keys (VIEW-15, shown in Details). */
   attrs?: Record<string, unknown>;
+  /** Format 3 (BE-114): how the page shows it: as drawn on its node, as a frame's title, the frame's notes, a listed entry's
+   *  status icons and label. */
+  display?: NodeDisplay;
 };
+export type NodeDisplay = { name: string; title: string; notes: string[]; icons?: string[]; label?: string };
 
 export type ModelRelation = {
   id: string;
@@ -44,9 +49,26 @@ export type ModelView = {
   edges: ModelEdge[];
   unresolved: string[]; // relation IDs whose `to` is null and whose `from` lands on a shown node
   builtins: string[]; // MVP 2: the same, for uses of built-ins (reason "built-in"), kept apart (TPG-D5)
+  // Format 3 (BE-111, BE-112, BE-114)
+  render: Record<string, "node" | "member" | "stub" | "title">; // how each item is sent to render here
+  memberOf: Record<string, string>; // a member written into which node's label (FND-69)
+  relationEdge: Record<string, string>; // the edge each relation is drawn as part of, here
+  path: string[]; // the views above this one, from the top view down
+  inside: string[]; // the views one level inside, in the order of the view's nodes
+  reachable: boolean; // reachable from the top view, with nothing hidden
+  unconnected?: string[]; // the top view only: the entries in the "Not connected" frame (UI-47)
+  memberRows: Record<string, string[]>; // the nodes whose members are written into their label, in the order drawn
+  builtinGroups: { type: string; members: { name: string; relations: string[] }[] }[]; // by library type (FND-100)
 };
 
 export type Invalid = { dataName: string; tool: string; recordId: string; problem: string };
+/** Format 3 (BE-113): a record the Viewer did not take into the model, as read. */
+export type Dropped = { dataName: string; tool: string; why: "invalid" | "unknown group"; problem: string; record: unknown };
+/** Format 3 (BE-110): the model's lookups, built once per model. */
+export type ModelIndex = {
+  fileOf: Record<string, string>; children: Record<string, string[]>; entries: Record<string, string[]>; folderOf: Record<string, string>;
+  ancestors: Record<string, string[]>; relationsFrom: Record<string, string[]>; relationsTo: Record<string, string[]>;
+};
 export type Extra = { dataName: string; tool: string; what: string; detail: string };
 
 export type GraphModel = {
@@ -60,6 +82,8 @@ export type GraphModel = {
   relations: ModelRelation[];
   levels: Record<string, ModelView>; // "" is the top view
   checks: { invalid: Invalid[]; extra: Extra[] };
+  index: ModelIndex; // format 3 (BE-110)
+  dropped: Dropped[]; // format 3 (BE-113)
 };
 
 // ---------------------------------------------------------------------------
@@ -114,14 +138,22 @@ export function buildModel(cache: RunnerCache, sourceKey: string, viewerVersion:
   }
 
   // Extra: groups of a kind the Viewer doesn't know (VIEW-15). A record's other keys are kept and shown, not extra.
-  const bad = (dataName: string, tool: string, recordId: string, problem: string) => invalid.push({ dataName, tool, recordId, problem });
+  const dropped: Dropped[] = []; // BE-113: every record left out, as read
+  const bad = (dataName: string, tool: string, recordId: string, problem: string, record?: unknown) => {
+    invalid.push({ dataName, tool, recordId, problem });
+    dropped.push({ dataName, tool, why: "invalid", problem, record: record ?? null });
+  };
+  const rawNode = new Map<string, unknown>(); // a node's record as read, for a node removed later (step 3)
   const recId = (rec: unknown, i: number, idKey: string) => (isObject(rec) && typeof rec[idKey] === "string" ? (rec[idKey] as string) : `#${i}`);
 
   // 1. Nodes (BE-51)
   const ownerOf = new Map<string, string>(); // scope ID -> owner ID, checked later
   for (const [dataName, g] of groups) {
     if (!["nodes", "relations", "containment"].includes(g.represents)) {
-      for (const o of g.outputs) extra.push({ dataName, tool: o.tool, what: "represents", detail: `"${String(g.represents)}" isn't known to the Viewer; not shown` });
+      for (const o of g.outputs) {
+        extra.push({ dataName, tool: o.tool, what: "represents", detail: `"${String(g.represents)}" isn't known to the Viewer; not shown` });
+        for (const rec of o.records) dropped.push({ dataName, tool: o.tool, why: "unknown group", problem: `represents "${String(g.represents)}"`, record: rec });
+      }
       continue;
     }
     if (g.represents !== "nodes") continue;
@@ -129,13 +161,13 @@ export function buildModel(cache: RunnerCache, sourceKey: string, viewerVersion:
     for (const o of g.outputs) {
       o.records.forEach((rec, i) => {
         const rid = recId(rec, i, idK);
-        if (!isObject(rec)) return bad(dataName, o.tool, rid, "the record isn't an object");
-        if (typeof rec[idK] !== "string" || rec[idK] === "") return bad(dataName, o.tool, rid, `it lacks its ID ("${idK}")`);
-        if (typeof rec[parentK] !== "string") return bad(dataName, o.tool, rid, `it lacks its container ("${parentK}")`);
-        if (rec[locK] !== undefined && !isLocation(rec[locK])) return bad(dataName, o.tool, rid, `its location ("${locK}") is malformed`);
-        if (ownerK && typeof rec[ownerK] !== "string") return bad(dataName, o.tool, rid, `it lacks its owner ("${ownerK}")`);
+        if (!isObject(rec)) return bad(dataName, o.tool, rid, "the record isn't an object", rec);
+        if (typeof rec[idK] !== "string" || rec[idK] === "") return bad(dataName, o.tool, rid, `it lacks its ID ("${idK}")`, rec);
+        if (typeof rec[parentK] !== "string") return bad(dataName, o.tool, rid, `it lacks its container ("${parentK}")`, rec);
+        if (rec[locK] !== undefined && !isLocation(rec[locK])) return bad(dataName, o.tool, rid, `its location ("${locK}") is malformed`, rec);
+        if (ownerK && typeof rec[ownerK] !== "string") return bad(dataName, o.tool, rid, `it lacks its owner ("${ownerK}")`, rec);
         const id = rec[idK] as string;
-        if (nodes.has(id)) return bad(dataName, o.tool, id, "another node has the same ID");
+        if (nodes.has(id)) return bad(dataName, o.tool, id, "another node has the same ID", rec);
         const n: ModelNode = {
           id, kind: typeof rec[kindK] === "string" ? (rec[kindK] as string) : "unknown", dataName, tool: o.tool,
           label: typeof rec[labelK] === "string" ? (rec[labelK] as string) : id, container: rec[parentK] as string,
@@ -148,6 +180,7 @@ export function buildModel(cache: RunnerCache, sourceKey: string, viewerVersion:
           ownerOf.set(id, n.owner);
         }
         nodes.set(id, n);
+        rawNode.set(id, rec);
       });
     }
   }
@@ -159,11 +192,11 @@ export function buildModel(cache: RunnerCache, sourceKey: string, viewerVersion:
     for (const o of g.outputs) {
       o.records.forEach((rec, i) => {
         const rid = recId(rec, i, childK);
-        if (!isObject(rec)) return bad(dataName, o.tool, rid, "the record isn't an object");
+        if (!isObject(rec)) return bad(dataName, o.tool, rid, "the record isn't an object", rec);
         const child = rec[childK], parent = rec[parentK];
-        if (typeof child !== "string" || !nodes.has(child)) return bad(dataName, o.tool, rid, "the child isn't a known node");
-        if (typeof parent !== "string" || !nodes.has(parent)) return bad(dataName, o.tool, rid, "the container isn't a known node");
-        if (child === parent) return bad(dataName, o.tool, rid, "the child would contain itself");
+        if (typeof child !== "string" || !nodes.has(child)) return bad(dataName, o.tool, rid, "the child isn't a known node", rec);
+        if (typeof parent !== "string" || !nodes.has(parent)) return bad(dataName, o.tool, rid, "the container isn't a known node", rec);
+        if (child === parent) return bad(dataName, o.tool, rid, "the child would contain itself", rec);
         nodes.get(child)!.container = parent;
       });
     }
@@ -184,7 +217,7 @@ export function buildModel(cache: RunnerCache, sourceKey: string, viewerVersion:
         }
       }
       if (problem) {
-        bad(n.dataName, n.tool ?? "", n.id, problem);
+        bad(n.dataName, n.tool ?? "", n.id, problem, rawNode.get(n.id) ?? n);
         nodes.delete(n.id);
         changed = true;
       }
@@ -196,8 +229,8 @@ export function buildModel(cache: RunnerCache, sourceKey: string, viewerVersion:
   for (const [scope, owner] of [...ownerOf.entries()].sort(([a], [b]) => cmp(a, b))) {
     const s = nodes.get(scope);
     if (!s) continue;
-    if (!nodes.has(owner)) { bad(s.dataName, s.tool ?? "", scope, "its owner isn't a known node"); continue; }
-    if (scopeOfOwner.has(owner)) { bad(s.dataName, s.tool ?? "", scope, "another scope has the same owner"); continue; }
+    if (!nodes.has(owner)) { bad(s.dataName, s.tool ?? "", scope, "its owner isn't a known node", rawNode.get(scope) ?? s); continue; }
+    if (scopeOfOwner.has(owner)) { bad(s.dataName, s.tool ?? "", scope, "another scope has the same owner", rawNode.get(scope) ?? s); continue; }
     scopeOfOwner.set(owner, scope);
   }
 
@@ -210,13 +243,13 @@ export function buildModel(cache: RunnerCache, sourceKey: string, viewerVersion:
     for (const o of g.outputs) {
       o.records.forEach((rec, i) => {
         const rid = recId(rec, i, idK);
-        if (!isObject(rec)) return bad(dataName, o.tool, rid, "the record isn't an object");
-        if (typeof rec[idK] !== "string" || rec[idK] === "") return bad(dataName, o.tool, rid, `it lacks its ID ("${idK}")`);
-        if (relIds.has(rid) || nodes.has(rid)) return bad(dataName, o.tool, rid, "another record has the same ID");
-        if (typeof rec[fromK] !== "string" || !nodes.has(rec[fromK] as string)) return bad(dataName, o.tool, rid, "its source isn't a known node");
+        if (!isObject(rec)) return bad(dataName, o.tool, rid, "the record isn't an object", rec);
+        if (typeof rec[idK] !== "string" || rec[idK] === "") return bad(dataName, o.tool, rid, `it lacks its ID ("${idK}")`, rec);
+        if (relIds.has(rid) || nodes.has(rid)) return bad(dataName, o.tool, rid, "another record has the same ID", rec);
+        if (typeof rec[fromK] !== "string" || !nodes.has(rec[fromK] as string)) return bad(dataName, o.tool, rid, "its source isn't a known node", rec);
         const to = rec[toK];
-        if (!(to === null || (typeof to === "string" && nodes.has(to)))) return bad(dataName, o.tool, rid, "its target is neither a known node nor null");
-        if (rec[locK] !== undefined && !isLocation(rec[locK])) return bad(dataName, o.tool, rid, `its location ("${locK}") is malformed`);
+        if (!(to === null || (typeof to === "string" && nodes.has(to)))) return bad(dataName, o.tool, rid, "its target is neither a known node nor null", rec);
+        if (rec[locK] !== undefined && !isLocation(rec[locK])) return bad(dataName, o.tool, rid, `its location ("${locK}") is malformed`, rec);
         relIds.add(rid);
         const kind = typeof rec[kindK] === "string" ? (rec[kindK] as string) : "unknown";
         if (kind === "declaration") return; // not drawn: containment shows where a symbol is declared (UI-34)
@@ -241,6 +274,7 @@ export function buildModel(cache: RunnerCache, sourceKey: string, viewerVersion:
   };
   const lift = (id: string) => scopeOfOwner.get(id) ?? id; // owners at both ends (VIEW-13, UI-34)
 
+  const relById = new Map(relations.map((r) => [r.id, r]));
   const levels: Record<string, ModelView> = {};
   const enterable = [null, ...[...nodes.keys()].filter((id) => (children.get(id) ?? []).length > 0).sort(cmp)];
   for (const C of enterable) {
@@ -280,14 +314,79 @@ export function buildModel(cache: RunnerCache, sourceKey: string, viewerVersion:
         if (p.at === C) thisUsed = true;
       }
     }
+    const viewNodes = (children.get(C) ?? []).slice().sort(cmp);
+    const viewEdges = [...edges.values()].sort((x, y) => cmp(x.id, y.id)).map(({ kinds, ...e }) => ({ ...e, kind: kinds.size === 1 ? e.kind : "mixed", members: e.members.sort(cmp) }));
+    // Format 3 (BE-111): how each item is sent to render. In an entered view, a node whose members all have no members of
+    // their own gets them written into its label (FND-69, FND-102), in the order drawn: by ID.
+    const render: ModelView["render"] = {};
+    const memberOf: Record<string, string> = {};
+    const memberRows: Record<string, string[]> = {};
+    if (C !== null) render[C] = "title";
+    for (const id of viewNodes) {
+      render[id] = "node";
+      const kids = (children.get(id) ?? []).slice().sort(cmp);
+      if (C !== null && kids.length > 0 && kids.every((k) => (children.get(k) ?? []).length === 0)) {
+        memberRows[id] = kids;
+        for (const k of kids) { render[k] = "member"; memberOf[k] = id; }
+      }
+    }
+    for (const id of stubs) render[id] = "stub";
+    const relationEdge: Record<string, string> = {};
+    for (const e of viewEdges) for (const m of e.members) relationEdge[m] = e.id;
+    const sortedBuiltins = builtins.sort(cmp);
+    const linked = new Set(viewEdges.flatMap((e) => [e.from, e.to]));
     levels[C ?? ""] = {
-      nodes: (children.get(C) ?? []).slice().sort(cmp),
+      nodes: viewNodes,
       stubs: [...stubs].sort(cmp),
       thisNode: C !== null && thisUsed ? C : null,
-      edges: [...edges.values()].sort((x, y) => cmp(x.id, y.id)).map(({ kinds, ...e }) => ({ ...e, kind: kinds.size === 1 ? e.kind : "mixed", members: e.members.sort(cmp) })),
+      edges: viewEdges,
       unresolved: unresolved.sort(cmp),
-      builtins: builtins.sort(cmp),
+      builtins: sortedBuiltins,
+      render, memberOf, relationEdge,
+      // BE-112: the views above, from the top view down; the views one level inside
+      path: C === null ? [] : ["", ...chain(C).slice(1).reverse()],
+      inside: viewNodes.filter((id) => (children.get(id) ?? []).length > 0),
+      reachable: false, // set below, once every view is known
+      ...(C === null ? { unconnected: viewNodes.filter((id) => !linked.has(id)) } : {}),
+      memberRows,
+      builtinGroups: builtinGroupsOf(sortedBuiltins.map((id) => relById.get(id)!), (id) => nodes.get(id)?.label),
     };
+  }
+
+  // BE-112: reachable from the top view: a view whose node is drawn as a node in a reachable view.
+  levels[""].reachable = true;
+  for (const queue = [""]; queue.length; ) {
+    const v = levels[queue.shift()!];
+    for (const id of v.inside) if (levels[id] && !levels[id].reachable) { levels[id].reachable = true; queue.push(id); }
+  }
+
+  // BE-114: what the page worked out, stated once per node.
+  for (const n of nodes.values()) n.display = displayOf(n);
+
+  // BE-110: the index.
+  const index: ModelIndex = { fileOf: {}, children: {}, entries: {}, folderOf: {}, ancestors: {}, relationsFrom: {}, relationsTo: {} };
+  const pos = (id: string) => nodes.get(id)?.location?.start;
+  const bySource = (a: string, b: string) => { const p = pos(a), q = pos(b); return p && q ? p.line - q.line || p.column - q.column || cmp(a, b) : cmp(a, b); };
+  const folders = new Set(entries.filter((f) => f.kind === "folder").map((f) => f.id));
+  for (const n of nodes.values()) {
+    const ch = chain(n.id);
+    index.ancestors[n.id] = ch.slice(1).reverse();
+    const top = nodes.get(ch[ch.length - 1]);
+    if (top?.kind === "file") index.fileOf[n.id] = top.id;
+    const kids = children.get(n.id);
+    if (kids?.length) index.children[n.id] = kids.slice().sort(bySource);
+  }
+  for (const f of entries) {
+    const dir = f.id.includes("/") ? f.id.slice(0, f.id.lastIndexOf("/")) : "";
+    const folder = folders.has(dir) ? dir : "";
+    (index.entries[folder] ??= []).push(f.id);
+    if (folder) index.folderOf[f.id] = folder;
+  }
+  const leaf = (id: string) => id.slice(id.lastIndexOf("/") + 1);
+  for (const list of Object.values(index.entries)) list.sort((a, b) => Number(!folders.has(a)) - Number(!folders.has(b)) || cmp(leaf(a), leaf(b)));
+  for (const r of [...relations].sort((x, y) => cmp(x.id, y.id))) {
+    (index.relationsFrom[r.from] ??= []).push(r.id);
+    if (r.to !== null) (index.relationsTo[r.to] ??= []).push(r.id);
   }
 
   const fileOrder = new Map(entries.map((f, i) => [f.id, i]));
@@ -298,5 +397,69 @@ export function buildModel(cache: RunnerCache, sourceKey: string, viewerVersion:
     run: { runId: cache.run.runId, finished: cache.run.finished, outcome: cache.run.outcome },
     files, nodes: orderedNodes, relations: relations.sort((x, y) => cmp(x.id, y.id)), levels,
     checks: { invalid, extra },
+    index, dropped,
   };
+}
+
+// ---------------------------------------------------------------------------
+// What the page worked out, now stated in the model (BE-114): the same rules as the page had (ui/src/main.ts, before
+// format 3), so the Graph doesn't change.
+// ---------------------------------------------------------------------------
+
+const FUNCS = ["function", "method", "constructor"];
+/** As drawn on its node (displayName): a scope's name, a listed entry's own name, a function's with "()". */
+function displayName(n: ModelNode): string {
+  if (n.owner !== undefined) return n.owner === n.container ? `${(n.container ?? "").split("/").pop()} · file scope` : `ƒ ${n.label}`;
+  if (n.container === null) return n.label;
+  return FUNCS.includes(n.kind) ? `${n.label}()` : n.label;
+}
+const plural = (k: number, word: string) => `${k} ${word}${k === 1 ? "" : "s"}`;
+const sizeText = (bytes: number) => (bytes < 1024 ? `${bytes} B` : bytes < 1048576 ? `${(bytes / 1024).toFixed(1)} KB` : `${(bytes / 1048576).toFixed(1)} MB`);
+function displayOf(n: ModelNode): NodeDisplay {
+  const a = n.attrs ?? {};
+  const name = displayName(n);
+  // As a frame's title (titleOf, UI-36): the kind, or ƒ for a function, "type" for a type alias; a scope's name as it is.
+  const mark = [...FUNCS, "accessor"].includes(n.kind) ? "ƒ" : n.kind === "typeAlias" ? "type" : n.kind;
+  const title = n.owner !== undefined ? name : `${mark} ${name}`;
+  // The frame's notes (frameNotes, UI-37, FND-109, FND-110), in source order.
+  const notes: string[] = [];
+  if (a.exported === true) notes.push("exported");
+  if (a.defaultExport === true) notes.push("default");
+  if (typeof a.declaredWith === "string") notes.push(a.declaredWith);
+  if (Array.isArray(a.modifiers)) notes.push(...a.modifiers.filter((m): m is string => typeof m === "string"));
+  if (Array.isArray(a.declarations) && a.declarations.length > 1) notes.push(`${a.declarations.length} declarations`);
+  if (typeof a.declaredIn === "string") notes.push(`declared in ${a.declaredIn}`);
+  const d: NodeDisplay = { name, title, notes };
+  if (n.container === null) {
+    // A listed entry's status icons, in their fixed order (UI-48), and its label (entryLabel, UI-47b).
+    const link = a.link as { outside?: boolean; target?: string } | undefined;
+    const icons = [a.hidden === true && "hidden", link?.outside === false && "linkInside", link?.outside === true && "linkOutside",
+      a.readOnly === true && "readOnly", typeof a.unreadable === "string" && "unreadable"].filter((x): x is string => !!x);
+    if (icons.length) d.icons = icons;
+    d.label = n.kind === "file" ? `${n.label} · ${typeof a.type === "string" ? a.type : "unknown"}`
+      : n.kind === "folder" ? `${n.label}/ · ${typeof a.fileCount === "number" ? plural(a.fileCount, "file") : typeof a.totalBytes === "number" ? sizeText(a.totalBytes) : "?"}${a.skipped ? " · not listed file by file" : ""}`
+      : n.kind === "link" ? `${n.label} → ${String(link?.target ?? "?")}`
+      : `${n.label} · ${n.kind}`;
+  }
+  return d;
+}
+
+/** A view's built-ins grouped by library type (builtinGroups, FND-100): the part of the name before the first dot; a line
+ *  named like its type is left out when the type has other members (the receivers of those members). */
+function builtinGroupsOf(rels: ModelRelation[], labelOf: (id: string) => string | undefined): ModelView["builtinGroups"] {
+  const groups = new Map<string, Map<string, string[]>>();
+  for (const r of rels) {
+    const full = typeof r.attrs?.builtin === "string" ? r.attrs.builtin : r.label ?? labelOf(r.from) ?? r.id;
+    const dot = full.indexOf(".");
+    const type = dot > 0 ? full.slice(0, dot) : full;
+    const member = dot > 0 ? full.slice(dot + 1) : full;
+    const g = groups.get(type) ?? new Map<string, string[]>();
+    g.set(member, [...(g.get(member) ?? []), r.id]);
+    groups.set(type, g);
+  }
+  const byName = (a: string, b: string) => a.localeCompare(b, "en", { sensitivity: "base" }) || cmp(a, b);
+  return [...groups].sort(([a], [b]) => byName(a, b)).map(([type, members]) => {
+    if (members.size > 1) members.delete(type);
+    return { type, members: [...members].sort(([a], [b]) => byName(a, b)).map(([name, ids]) => ({ name, relations: ids.sort(cmp) })) };
+  });
 }

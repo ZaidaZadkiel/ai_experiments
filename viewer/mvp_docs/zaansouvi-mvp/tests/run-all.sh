@@ -41,7 +41,7 @@ if [ $BROWSER -eq 1 ]; then
     browse "$n" "$B/$n.json"
   done
   # The steps that open test-source-mvp2 themselves.
-  for n in builtins folders frame-notes frame-notes-run frame-title members range-text subfolders mvp2; do
+  for n in builtins crumbs drawer edges-switch folders frame-notes frame-notes-run frame-title hover-tips inventory inventory-hiding kind-frames members middle-pan range-text subfolders mvp2; do
     browse "$n" "$B/$n.json"
   done
   check browse-b7 timeout 300 bash "$B/b7.sh"

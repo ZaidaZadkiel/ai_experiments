@@ -13,14 +13,24 @@ const cytoscape = (globalThis as unknown as { cytoscape: typeof cytoscapeType })
 
 type Pos = { line: number; column: number };
 type Loc = { file: string; start: Pos; end: Pos };
-type MNode = { id: string; kind: string; dataName: string; label: string; container: string | null; tool?: string; owner?: string; location?: Loc; attrs?: Record<string, unknown> };
+type MDisplay = { name: string; title: string; notes: string[]; icons?: string[]; label?: string };
+type MNode = { id: string; kind: string; dataName: string; label: string; container: string | null; tool?: string; owner?: string; location?: Loc; attrs?: Record<string, unknown>; display?: MDisplay };
 type MRel = { id: string; from: string; to: string | null; kind: string; dataName: string; tool: string; location?: Loc; reason?: string; label?: string; attrs?: Record<string, unknown> };
 type MEdge = { id: string; from: string; to: string; kind: string; count: number; members: string[] };
-type MView = { nodes: string[]; stubs: string[]; thisNode: string | null; edges: MEdge[]; unresolved: string[]; builtins?: string[] };
+type MView = {
+  nodes: string[]; stubs: string[]; thisNode: string | null; edges: MEdge[]; unresolved: string[]; builtins?: string[];
+  // format 3 (55_viewer_backend.md, BE-111, BE-112, BE-114)
+  render: Record<string, "node" | "member" | "stub" | "title">; memberOf: Record<string, string>; relationEdge: Record<string, string>;
+  path: string[]; inside: string[]; reachable: boolean; unconnected?: string[]; memberRows: Record<string, string[]>;
+  builtinGroups: { type: string; members: { name: string; relations: string[] }[] }[];
+};
+type MIndex = { fileOf: Record<string, string>; children: Record<string, string[]>; entries: Record<string, string[]>; folderOf: Record<string, string>;
+  ancestors: Record<string, string[]>; relationsFrom: Record<string, string[]>; relationsTo: Record<string, string[]> };
 type Model = {
   formatVersion: number; sourceKey: string; sourceRoot: string; run: { runId: string; finished: string; outcome: string };
   files: string[]; nodes: MNode[]; relations: MRel[]; levels: Record<string, MView>;
   checks: { invalid: { dataName: string; tool: string; recordId: string; problem: string }[]; extra: { dataName: string; tool: string; what: string; detail: string }[] };
+  index: MIndex; dropped: { dataName: string; tool: string; why: string; problem: string; record: unknown }[]; // format 3 (BE-110, BE-113)
 };
 type Answer = { status: string; reason?: string; model?: Model; lastGood?: { runId: string; finished: string } };
 type Source = { sourceKey: string; sourceRoot: string; name: string; runId?: string; finished?: string };
@@ -71,81 +81,58 @@ const state = {
   running: false,
   runKind: "" as "" | "run" | "dry-run", // the kind of the run in progress or last started, from run_state
   probScope: "view" as "view" | "all", // the unresolved relations Problems lists (UI-57); kept across views
+  kindFrames: true, // the kind frames' switch (UI-83): on by default, for the page only
+  edgesFull: true, // the edges' switch (UI-85): full by default; off draws them thin, faint, with no count; for the page only
   liveEvents: [] as Record<string, unknown>[],
 };
 let cy: Core | undefined;
 const model = () => state.answer?.model;
-const node = (id: string) => model()?.nodes.find((n) => n.id === id);
-const rel = (id: string) => model()?.relations.find((r) => r.id === id);
-const fileOf = (id: string): string => { let n = node(id); while (n && n.container) n = node(n.container); return n?.id ?? id; };
+// Lookups by ID, built once per model, so nothing is searched node by node (FND-111 found the linear searches).
+let looked: { model?: Model; nodes: Map<string, MNode>; rels: Map<string, MRel> } = { nodes: new Map(), rels: new Map() };
+const look = () => {
+  const m = model();
+  if (looked.model !== m) looked = { model: m, nodes: new Map((m?.nodes ?? []).map((n) => [n.id, n])), rels: new Map((m?.relations ?? []).map((r) => [r.id, r])) };
+  return looked;
+};
+const node = (id: string) => look().nodes.get(id);
+const rel = (id: string) => look().rels.get(id);
+// What the model states (55_viewer_backend.md, BE-110, BE-114, format 3): the page reads it and works none of it out.
+const ix = () => model()?.index;
+/** A node's file (BE-110); a listed entry that is not a file is its own. */
+const fileOf = (id: string): string => ix()?.fileOf[id] ?? id;
 // A relation's name for lists (UI-35, UI-57): its own, else its source node's (an unresolved import is named by the
 // import symbol it starts from), else its ID. Generic: no data name or tool is named (VIEW-14).
 const relName = (r: MRel) => r.label ?? node(r.from)?.label ?? r.id;
-const childrenOf = (id: string) => model()?.nodes.filter((n) => n.container === id) ?? [];
-
-/** The frame's title (UI-36, UI-37, FND-105): the entered container with its kind, "ƒ percent()",
- *  "class Base", "file shapes.ts"; a scope's display name already says what it is. */
-function titleOf(id: string): string {
-  const n = node(id);
-  if (!n) return id;
-  if (n.owner !== undefined) return displayName(id);
-  const mark = ["function", "method", "constructor", "accessor"].includes(n.kind) ? "ƒ" : n.kind === "typeAlias" ? "type" : n.kind;
-  return `${mark} ${displayName(id)}`;
-}
-
-/** The facts written in a frame's top left corner (FND-109), one per line, in source order: exported (the export
- *  keyword comes first), default, how a variable is declared (const, let, var; FND-110), the modifiers as written, then
- *  the number of declarations when merged, and where a parameter property is declared. Every short fact a symbol record carries; nothing for a record with none. */
-function frameNotes(id: string): string[] {
-  const a = node(id)?.attrs ?? {};
-  const notes: string[] = [];
-  if (a.exported === true) notes.push("exported");
-  if (a.defaultExport === true) notes.push("default"); // FND-110: export default, after export as written
-  if (typeof a.declaredWith === "string") notes.push(a.declaredWith); // FND-110: const, let, var
-  if (Array.isArray(a.modifiers)) notes.push(...a.modifiers.filter((m): m is string => typeof m === "string"));
-  if (Array.isArray(a.declarations) && a.declarations.length > 1) notes.push(`${a.declarations.length} declarations`);
-  if (typeof a.declaredIn === "string") notes.push(`declared in ${a.declaredIn}`);
-  return notes;
-}
-
-function displayName(id: string): string {
-  const n = node(id);
-  if (!n) return id;
-  // Generic (VIEW-14): a node with an owner is a scope (TOOL-33), a node with no container is a file.
-  if (n.owner !== undefined) return n.owner === n.container ? `${(n.container ?? "").split("/").pop()} · file scope` : `ƒ ${n.label}`;
-  if (n.container === null) return n.label;
-  return ["function", "method", "constructor"].includes(n.kind) ? `${n.label}()` : n.label;
-}
+/** A container's members, in source order (BE-110). */
+const childrenOf = (id: string) => (ix()?.children[id] ?? []).map((k) => node(k)).filter((n): n is MNode => !!n);
+/** As drawn on its node (BE-114): "area()", "shapes.ts", "main.ts · file scope". */
+const displayName = (id: string): string => node(id)?.display?.name ?? id;
+/** As a frame's title (UI-36, BE-114): "ƒ percent()", "class Base", "file shapes.ts". */
+const titleOf = (id: string): string => node(id)?.display?.title ?? id;
+/** The frame's notes (FND-109, FND-110, BE-114), one per line, in source order. */
+const frameNotes = (id: string): string[] => node(id)?.display?.notes ?? [];
+/** The first import relation starting at a node (an import symbol's link), from the index (BE-110). */
+const importOf = (id: string) => (ix()?.relationsFrom[id] ?? []).map((r) => rel(r)).find((r) => r?.kind === "import" && r.to);
 
 // ---------------------------------------------------------------------------
 // MVP 2: entries' status icons (UI-48) and the "Not connected" frame (UI-47)
 // ---------------------------------------------------------------------------
 
-/** The status icons of a listed entry, in a fixed order: basic shapes, each status its own color (UI-48a). */
-const ICONS: { test: (a: Record<string, unknown>) => boolean; svg: string; title: string }[] = [
-  { test: (a) => a.hidden === true, title: "hidden", svg: '<circle cx="5" cy="5" r="4" fill="#8a8f98"/>' },
-  { test: (a) => !!a.link && (a.link as { outside?: boolean }).outside === false, title: "link inside the source", svg: '<path d="M5 0L10 5L5 10L0 5Z" fill="#2563eb"/>' },
-  { test: (a) => !!a.link && (a.link as { outside?: boolean }).outside === true, title: "link outside the source", svg: '<path d="M5 0L10 5L5 10L0 5Z" fill="#ea7a17"/>' },
-  { test: (a) => a.readOnly === true, title: "read-only", svg: '<rect x="1" y="1" width="8" height="8" fill="#9333ea"/>' },
-  { test: (a) => typeof a.unreadable === "string", title: "unreadable", svg: '<path d="M5 0L10 10H0Z" fill="#dc2626"/>' },
+/** The status icons of a listed entry, in a fixed order: basic shapes, each status its own color (UI-48a). Which ones a
+ *  node has is stated by the model, by name (BE-114); the page only draws them. */
+const ICONS: { name: string; svg: string; title: string }[] = [
+  { name: "hidden", title: "hidden", svg: '<circle cx="5" cy="5" r="4" fill="#8a8f98"/>' },
+  { name: "linkInside", title: "link inside the source", svg: '<path d="M5 0L10 5L5 10L0 5Z" fill="#2563eb"/>' },
+  { name: "linkOutside", title: "link outside the source", svg: '<path d="M5 0L10 5L5 10L0 5Z" fill="#ea7a17"/>' },
+  { name: "readOnly", title: "read-only", svg: '<rect x="1" y="1" width="8" height="8" fill="#9333ea"/>' },
+  { name: "unreadable", title: "unreadable", svg: '<path d="M5 0L10 10H0Z" fill="#dc2626"/>' },
 ];
 const iconUrl = (svg: string) => "data:image/svg+xml;utf8," + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 10 10">${svg}</svg>`);
-const iconsOf = (n: MNode) => ICONS.filter((i) => n.attrs && i.test(n.attrs));
-const sizeText = (bytes: number) => (bytes < 1024 ? `${bytes} B` : bytes < 1048576 ? `${(bytes / 1024).toFixed(1)} KB` : `${(bytes / 1048576).toFixed(1)} MB`);
-/** A listed entry's label in the "Not connected" frame: "name · type" for a file, its file count or size for a folder. */
-function entryLabel(n: MNode): string {
-  const a = n.attrs ?? {};
-  if (n.kind === "file") return `${n.label} · ${typeof a.type === "string" ? a.type : "unknown"}`;
-  if (n.kind === "folder") return `${n.label}/ · ${typeof a.fileCount === "number" ? plural(a.fileCount, "file") : typeof a.totalBytes === "number" ? sizeText(a.totalBytes) : "?"}${a.skipped ? " · not listed file by file" : ""}`;
-  if (n.kind === "link") return `${n.label} → ${String((a.link as { target?: string } | undefined)?.target ?? "?")}`;
-  return `${n.label} · ${n.kind}`;
-}
-/** In the top view: the listed entries no edge reaches, which go in the "Not connected" frame (UI-47). */
-function unconnectedOf(view: MView): string[] {
-  if (state.view !== "") return [];
-  const linked = new Set(view.edges.flatMap((e) => [e.from, e.to]));
-  return view.nodes.filter((id) => !linked.has(id));
-}
+const iconsOf = (n: MNode) => ICONS.filter((i) => n.display?.icons?.includes(i.name));
+/** A listed entry's label in the "Not connected" frame (UI-47b, BE-114): "name · type", a folder's file count or size. */
+const entryLabel = (n: MNode): string => n.display?.label ?? n.label;
+/** In the top view: the listed entries no edge reaches, which go in the "Not connected" frame (UI-47, BE-114). */
+const unconnectedOf = (view: MView): string[] => view.unconnected ?? [];
 
 // ---------------------------------------------------------------------------
 // Identity colors (UI-42): one per file, from its ID
@@ -163,6 +150,38 @@ const idColor = (fileId: string): string => css(`--id${idSlot(fileId)}`);
 // The graph (UI-30 to UI-41; BE-53 does the lifting, the page only draws)
 // ---------------------------------------------------------------------------
 
+// ---------------------------------------------------------------------------
+// Kind frames (UI-83): inside an entered view's frame, the nodes of each kind with two or more nodes in a frame of their
+// own, so nodes of the same kind are kept together. Drawing only: the model is unchanged, and a frame carries no data.
+// ---------------------------------------------------------------------------
+
+/** The known kinds, in their fixed order, with their labels; any other kind follows, by its name (generic, so a kind
+ *  added in the future gets its own frame with no change here). A Map, so a kind named like an object key is safe. */
+const KIND_FRAMES = new Map<string, string>([
+  ["namespace", "Namespaces"], ["class", "Classes"], ["interface", "Interfaces"], ["typeAlias", "Type aliases"],
+  ["enum", "Enums"], ["enumMember", "Enum members"], ["constructor", "Constructors"], ["accessor", "Accessors"],
+  ["property", "Properties"], ["method", "Methods"], ["function", "Functions"], ["variable", "Variables"],
+  ["parameter", "Parameters"], ["import", "Imports"],
+]);
+const KNOWN_KINDS = [...KIND_FRAMES.keys()];
+const cmpText = (a: string, b: string) => (a < b ? -1 : a > b ? 1 : 0);
+const kindRank = (kind: string) => (KIND_FRAMES.has(kind) ? KNOWN_KINDS.indexOf(kind) : KNOWN_KINDS.length);
+const byKind = (a: string, b: string) => kindRank(a) - kindRank(b) || cmpText(a, b);
+const kindFrameId = (kind: string) => `kindframe:${kind}`;
+
+/** The kinds that get a frame in this view, with their nodes in the model's order: every kind with two or more of the
+ *  view's own nodes, unless all of them are of one kind (the view's frame already holds them). None in the top view,
+ *  or with the switch off. */
+function kindGroups(view: MView): Map<string, string[]> {
+  const groups = new Map<string, string[]>();
+  if (!state.kindFrames || state.view === "" || !node(state.view)) return groups;
+  const all = new Map<string, string[]>();
+  for (const id of view.nodes) { const k = node(id)?.kind ?? "unknown"; all.set(k, [...(all.get(k) ?? []), id]); }
+  if (all.size < 2) return groups;
+  for (const k of [...all.keys()].sort(byKind)) if (all.get(k)!.length >= 2) groups.set(k, all.get(k)!);
+  return groups;
+}
+
 function elementsFor(view: MView): ElementDefinition[] {
   const m = model()!;
   const els: ElementDefinition[] = [];
@@ -173,8 +192,10 @@ function elementsFor(view: MView): ElementDefinition[] {
     let label = cls.includes("this") ? titleOf(id) : cls.includes("free") ? entryLabel(n) : displayName(id);
     // A shown node's members are listed in its label when they are leaves (UI-30: a scope with its symbols). Drawn as
     // nested nodes they made the automatic layout overlap the scopes, so the MVP lists them instead (FND-69).
-    const kids = cls.includes("shown") && state.view !== "" ? childrenOf(id) : [];
-    if (kids.length > 0 && kids.every((k) => childrenOf(k.id).length === 0)) {
+    // The members written into its label, as the model states them for this view (BE-114).
+    const rows = cls.includes("shown") ? view.memberRows[id] : undefined;
+    const kids = (rows ?? []).map((k) => node(k)).filter((k): k is MNode => !!k);
+    if (kids.length > 0) {
       // The members in rows of about as many as there are rows (FND-102): 4 give 2 × 2, 7 give 3 rows of 3, 3 and 1,
       // so the node stays roughly square instead of one long line.
       const names = kids.map((k) => (k.kind === "import" ? `↘ ${k.label}` : displayName(k.id)));
@@ -187,7 +208,7 @@ function elementsFor(view: MView): ElementDefinition[] {
     const color = idColor(fileOf(id));
     let border = color;
     if (n.kind === "import") {
-      const imp = m.relations.find((r) => r.from === id && r.kind === "import" && r.to);
+      const imp = importOf(id);
       if (imp?.to) border = idColor(fileOf(imp.to));
     }
     // A node that a double-click enters (it has a view of its own, and isn't the one being viewed) gets a small
@@ -208,7 +229,15 @@ function elementsFor(view: MView): ElementDefinition[] {
     const parts = [plural(count("file"), "file"), ...(["folder", "link", "other"] as const).filter((k) => count(k)).map((k) => plural(count(k), k === "other" ? "other entry" : k))];
     els.push({ group: "nodes", data: { id: "frame:unconnected", real: "", label: `Not connected · ${parts.join(", ")}` }, classes: "frame free-frame" });
   }
-  for (const id of view.nodes) add(id, free.has(id) ? "shown free" : "shown", free.has(id) ? "frame:unconnected" : frame);
+  // The kind frames (UI-83), inside the view's frame: not selectable, but grabbable, so dragging one moves its nodes. Their
+  // `real` is the entered node, so a double-click on one does nothing (it is the view already shown).
+  const groups = frame ? kindGroups(view) : new Map<string, string[]>();
+  const kindOf = new Map<string, string>();
+  for (const [k, ids] of groups) {
+    els.push({ group: "nodes", data: { id: kindFrameId(k), real: state.view, label: KIND_FRAMES.get(k) ?? k, parent: frame }, classes: "kindframe", selectable: false, grabbable: true });
+    for (const id of ids) kindOf.set(id, kindFrameId(k));
+  }
+  for (const id of view.nodes) add(id, free.has(id) ? "shown free" : "shown", free.has(id) ? "frame:unconnected" : (kindOf.get(id) ?? frame));
   for (const id of view.stubs) add(id, "stub");
   // The notes' spacer (FND-110): a hidden, unclickable child that makes the frame grow upward by the notes' height, so
   // the notes in the corner never reach the title's row; placed by applyFrameNotes.
@@ -233,7 +262,7 @@ function keyFiles(view: MView): string[] {
     if (!n || n.owner !== undefined) continue; // scopes are drawn in ink, not in their file's color (BE-109's role rule)
     used.add(fileOf(id));
     if (n.kind === "import") {
-      const imp = m.relations.find((r) => r.from === id && r.kind === "import" && r.to);
+      const imp = importOf(id);
       if (imp?.to) used.add(fileOf(imp.to));
     }
   }
@@ -297,6 +326,11 @@ function graphStyle(): StylesheetJson {
       "background-image": underline(ink), "background-width": "100%", "background-height": "2px", "background-position-y": "100%",
       "background-clip": "none", "background-image-containment": "over" } },
     { selector: "node.member", style: { "font-size": 12, height: 24 } },
+    // A kind frame (UI-83): only an outline keeping the nodes of one kind together, its kind in the plural in the top left
+    // corner (applyKindLabels); not selectable (set on the element), and no overlay when tapped or dragged.
+    { selector: "node.kindframe", style: { shape: "round-rectangle", "background-opacity": 0, "border-width": 1, "border-style": "solid", "border-color": muted,
+      label: "data(label)", "text-valign": "top", "text-halign": "center", "font-size": 11, "font-style": "italic", "font-weight": "normal", color: muted,
+      padding: `${KIND_PAD}px`, "overlay-opacity": 0 } },
     // The "can be entered" mark (UI-45): a small triangle pointing down, in the ink color, in the bottom right corner.
     // An SVG image (the page's security policy allows data: images); not clipped, so it shows on round shapes too.
     { selector: "node.enterable", style: { "background-image": enterMark(ink), "background-width": "10px", "background-height": "7px",
@@ -312,6 +346,9 @@ function graphStyle(): StylesheetJson {
     // edge selected itself keeps the full selection color, so the two are told apart (FND-71, UI-38).
     { selector: "edge.touch", style: { "line-color": selSoft, "target-arrow-color": selSoft, "z-index": 9 } },
     { selector: "edge:selected", style: { "line-color": sel, "target-arrow-color": sel, "z-index": 10 } },
+    // Thin edges (UI-85): set by applyEdgeMode on every edge that is neither selected nor one of the selection's, so those
+    // keep their own weight, color and count. Arrowheads scaled up, so the direction still shows on a thin line.
+    { selector: "edge.thin", style: { width: 1, opacity: 0.35, label: "", "arrow-scale": 1.6 } },
   ] as unknown as StylesheetJson;
 }
 
@@ -337,7 +374,9 @@ function placeStubs(inside: NodeCollection) {
   // Measure the stubs as a layout would: a node whose size is its label is measured by the layout that places it, and
   // Cytoscape caches "takes up no space" for a node never measured, so without this the stubs were never drawn.
   stubs.forEach((s) => void s.layoutDimensions({ nodeDimensionsIncludeLabels: true }));
-  const bb = inside.boundingBox({}); // the frame's own box can lag behind its children's new places
+  // The frame's own box can lag behind its children's new places, and so can a kind frame's (UI-83): measured block by block.
+  const blocks = blocksBox(inside), low = Math.max(...inside.toArray().map((b) => blockBox(b as NodeSingular).y2));
+  const bb = { x1: blocks.x1, x2: blocks.x2, y1: blocks.y1, y2: low, w: blocks.x2 - blocks.x1, h: low - blocks.y1 };
   const cx = (bb.x1 + bb.x2) / 2, cyy = (bb.y1 + bb.y2) / 2;
   const rx = bb.w / 2 + 190, ry = bb.h / 2 + 130; // the frame's padding and label, then room for the stub
   const wanted = stubs.map((s, i) => {
@@ -352,7 +391,194 @@ function placeStubs(inside: NodeCollection) {
   }).sort((p, q) => p.a - q.a || (p.s.id() < q.s.id() ? -1 : 1));
   const gap = Math.min((2 * Math.PI) / wanted.length, 0.7);
   for (let i = 1; i < wanted.length; i++) wanted[i].a = Math.max(wanted[i].a, wanted[i - 1].a + gap);
-  for (const { s, a } of wanted) s.position({ x: cx + rx * Math.cos(a), y: cyy + ry * Math.sin(a) });
+  // On a large frame, the ellipse passes inside the frame's corners: a stub placed there is pushed out along its own
+  // direction until it clears the frame (its padding of 28px, the stub's own half size, and a margin).
+  const clear = (s: NodeSingular, x: number, y: number) =>
+    x + s.outerWidth() / 2 < bb.x1 - 40 || x - s.outerWidth() / 2 > bb.x2 + 40 || y + s.outerHeight() / 2 < bb.y1 - 40 || y - s.outerHeight() / 2 > bb.y2 + 40;
+  for (const { s, a } of wanted) {
+    let k = 1;
+    while (!clear(s, cx + k * rx * Math.cos(a), cyy + k * ry * Math.sin(a)) && k < 3) k += 0.05;
+    s.position({ x: cx + k * rx * Math.cos(a), y: cyy + k * ry * Math.sin(a) });
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Hover boxes (UI-86): a node's own text in a small box near the pointer, whenever the pointer is on it; an edge's, only
+// while the edge is selected. Read from the model only, set as text (VIEW-40). They select nothing and change nothing.
+// ---------------------------------------------------------------------------
+
+const TIP_CAP = 12; // lines of members or relations before "and N more"
+const FRAMES = ".frame, .kindframe, .notes-spacer"; // outlines, not nodes: no box
+
+/** A node's box: its kind and name; the path of its containers; its file and line, or its path for a listed entry; its
+ *  short facts, as the frame's notes give them; and the members its label lists (FND-69, FND-102), capped. */
+function nodeTip(id: string, ele: NodeSingular): string[][] {
+  const n = node(id);
+  if (!n) return [[id]];
+  const head = n.container === null ? `${n.kind} ${n.label}` : titleOf(id);
+  const path = (ix()?.ancestors[id] ?? []).map(displayName); // its containers, from the top down (BE-112)
+  const lines: string[][] = [[head]];
+  const facts: string[] = [];
+  if (path.length) facts.push(`in ${path.join(" › ")}`);
+  facts.push(n.location ? locText(n.location) : n.container === null ? n.id : "no location");
+  const notes = frameNotes(id);
+  if (notes.length) facts.push(notes.join(" · "));
+  lines.push(facts);
+  if (ele.hasClass("has-members")) {
+    const kids = (snapshot()?.memberRows[id] ?? []).map((k) => node(k)).filter((k): k is MNode => !!k)
+      .map((k) => (k.kind === "import" ? `↘ ${k.label}` : `${displayName(k.id)} · ${k.kind}`));
+    lines.push([...kids.slice(0, TIP_CAP), ...(kids.length > TIP_CAP ? [`and ${kids.length - TIP_CAP} more`] : [])]);
+  }
+  return lines;
+}
+
+/** An edge's box: its kind, its two ends as drawn, how many relations it stands for, and those relations, capped. */
+function edgeTip(id: string): string[][] {
+  const e = snapshot()?.edges.find((x) => x.id === id);
+  if (!e) return [[id]];
+  const rels = e.members.map((m) => rel(m)).filter((r): r is MRel => !!r);
+  // How many of them start or end in something hidden by a choice (INV-18); the edge's label stays unchanged.
+  const hidden = rels.filter((r) => isHidden(r.from) || (r.to !== null && isHidden(r.to))).length;
+  const rows = rels.map((r) => `${relName(r)} · ${r.kind} · ${r.location ? `${r.location.file} ${r.location.start.line}` : "no location"}`);
+  return [
+    [`${e.kind} · ${drawnLabel(e.from)} → ${drawnLabel(e.to)}`],
+    [plural(e.count, "relation") + (hidden ? ` (${hidden} hidden)` : "")],
+    [...rows.slice(0, TIP_CAP), ...(rows.length > TIP_CAP ? [`and ${rows.length - TIP_CAP} more`] : [])],
+  ];
+}
+
+let tipOn: string | undefined; // the element whose box is shown
+function hideTip() { tipOn = undefined; const t = document.getElementById("hovertip"); if (t) t.hidden = true; }
+function showTip(eleId: string, groups: string[][], x: number, y: number) {
+  const t = $("hovertip");
+  t.replaceChildren(...groups.filter((g) => g.length).map((g, i) => el("div", { cls: i === 0 ? "tip-head" : "tip-part" }, ...g.flatMap((line, j) => (j ? [el("br"), line] : [line])))));
+  t.hidden = false;
+  tipOn = eleId;
+  placeTip(x, y);
+}
+/** Near the pointer, below and to the right, flipped to the other side near the graph's right or bottom edge. */
+function placeTip(clientX: number, clientY: number) {
+  const t = $("hovertip"), box = $("graphbox").getBoundingClientRect();
+  let x = clientX - box.left + 14, y = clientY - box.top + 16;
+  if (x + t.offsetWidth > box.width - 4) x = Math.max(4, clientX - box.left - 14 - t.offsetWidth);
+  if (y + t.offsetHeight > box.height - 4) y = Math.max(4, clientY - box.top - 16 - t.offsetHeight);
+  t.style.left = `${x}px`;
+  t.style.top = `${y}px`;
+}
+
+function hoverTips(c: Core) {
+  let hovered: { ele: NodeSingular | EdgeSingular; x: number; y: number } | undefined;
+  let moving = false; // a node or a frame being dragged: no box until the pointer comes onto a node again
+  const point = (ev: { originalEvent?: Event }) => {
+    const m = ev.originalEvent as MouseEvent | undefined;
+    return m && typeof m.clientX === "number" ? { x: m.clientX, y: m.clientY } : undefined;
+  };
+  const show = () => {
+    if (!hovered || moving) return hideTip();
+    const ele = hovered.ele, real = ele.data("real") as string;
+    if (ele.isNode()) showTip(ele.id(), nodeTip(real, ele as NodeSingular), hovered.x, hovered.y);
+    else if (ele.selected()) showTip(ele.id(), edgeTip(real), hovered.x, hovered.y);
+    else hideTip();
+  };
+  c.on("mouseover", "node, edge", (ev) => {
+    const ele = ev.target as NodeSingular | EdgeSingular, p = point(ev);
+    if (!p || (ele.isNode() && ele.is(FRAMES))) return;
+    hovered = { ele, ...p };
+    show();
+  });
+  c.on("mouseout", "node, edge", (ev) => { if (hovered?.ele === ev.target) { hovered = undefined; hideTip(); } });
+  c.on("mousemove", (ev) => {
+    const p = point(ev);
+    if (!p || !hovered) return;
+    hovered.x = p.x; hovered.y = p.y;
+    if (tipOn) placeTip(p.x, p.y);
+    // Hidden by a pan or a zoom while the pointer stayed on the element (no new mouseover then): back on the next move
+    // with no button pressed, so it never flickers during a pan.
+    else if (!moving && ((ev.originalEvent as MouseEvent | undefined)?.buttons ?? 0) === 0) show();
+  });
+  // An edge shows its box once selected while the pointer is on it, and loses it when unselected.
+  c.on("select unselect", "edge", (ev) => { if (hovered?.ele === ev.target) show(); });
+  c.on("grab", "node", () => { moving = true; hideTip(); });
+  c.on("free", "node", () => { moving = false; });
+  c.on("pan zoom", () => hideTip());
+  $("cy").addEventListener("mouseleave", () => { hovered = undefined; hideTip(); });
+}
+
+/** The edges' switch (UI-85): full, every edge as styled; thin, every edge thin, faint and without its count, except a
+ *  selected edge and the edges of a selected node. Classes only: nothing is laid out again, so nothing moves. */
+function applyEdgeMode() {
+  if (!cy) return;
+  cy.edges().removeClass("thin");
+  if (!state.edgesFull) cy.edges().not(".touch").not(":selected").addClass("thin");
+}
+
+/** Nodes on a compact grid of about as many columns as rows (4 give 2 × 2, 9 give 3 × 3; FND-102), in the model's order. */
+function squareGrid(nodes: NodeCollection, order: Map<string, number>) {
+  nodes.layout({ name: "grid", cols: Math.ceil(Math.sqrt(nodes.length)), avoidOverlap: true, avoidOverlapPadding: 40, condense: true,
+    boundingBox: { x1: 0, y1: 0, w: 1, h: 1 }, sort: (p: NodeSingular, q: NodeSingular) => (order.get(p.id()) ?? 0) - (order.get(q.id()) ?? 0) } as never).run();
+}
+
+const KIND_PAD = 24; // a kind frame's padding (its style), which holds its label in the top band
+/** A block's box: a node's own, or a kind frame's from its nodes and padding, since a compound node's box can lag behind
+ *  its children's new places until it is drawn. */
+function blockBox(ele: NodeSingular): { x1: number; y1: number; x2: number; y2: number; w: number; h: number } {
+  if (!ele.hasClass("kindframe")) return ele.boundingBox({});
+  const b = ele.children().boundingBox({});
+  return { x1: b.x1 - KIND_PAD, y1: b.y1 - KIND_PAD, x2: b.x2 + KIND_PAD, y2: b.y2 + KIND_PAD, w: b.w + 2 * KIND_PAD, h: b.h + 2 * KIND_PAD };
+}
+function blocksBox(blocks: NodeCollection) {
+  const bs = blocks.toArray().map((b) => blockBox(b as NodeSingular));
+  return { x1: Math.min(...bs.map((b) => b.x1)), x2: Math.max(...bs.map((b) => b.x2)), y1: Math.min(...bs.map((b) => b.y1)) };
+}
+
+/** The kind frames' layout (UI-83): each frame's nodes on a square grid in the model's order. The frames, in the kinds'
+ *  order, on a grid of their own, left to right, wrapping into rows so it stays roughly square; the loose nodes (the only
+ *  one of their kind) along the top, above the frames, in the kinds' order, wrapping when wider than the frames. The same
+ *  model gives the same places (UI-32). */
+function layoutKindFrames(blocks: NodeCollection, order: Map<string, number>) {
+  const GAP = 50;
+  const frames = blocks.filter(".kindframe");
+  frames.forEach((f) => squareGrid(f.children(), order));
+  const kindOfBlock = (b: NodeSingular) => (b.hasClass("kindframe") ? b.id().slice("kindframe:".length) : node(b.id())?.kind ?? "unknown");
+  const firstOf = (b: NodeSingular) => (b.hasClass("kindframe") ? Math.min(...b.children().map((c) => order.get(c.id()) ?? 0)) : order.get(b.id()) ?? 0);
+  const sorted = (c: NodeCollection) => (c.toArray() as NodeSingular[]).sort((p, q) => byKind(kindOfBlock(p), kindOfBlock(q)) || firstOf(p) - firstOf(q));
+  const moveTo = (b: NodeSingular, x: number, y: number) => {
+    const box = blockBox(b);
+    (b.hasClass("kindframe") ? b.children() : b).shift({ x: x - box.x1, y: y - box.y1 });
+    return box;
+  };
+  // Rows of blocks from (0, top): a new row after `cols` blocks, or, with `width`, when the next block would pass it.
+  const rows = (list: NodeSingular[], top: number, cols: number, width?: number) => {
+    let x = 0, y = top, rowH = 0, inRow = 0, right = 0;
+    for (const b of list) {
+      const w = blockBox(b).w;
+      if (inRow > 0 && (inRow === cols || (width !== undefined && x + w > width))) { x = 0; y += rowH + GAP; rowH = 0; inRow = 0; }
+      const box = moveTo(b, x, y);
+      x += box.w + GAP; right = Math.max(right, x - GAP); rowH = Math.max(rowH, box.h); inRow++;
+    }
+    return { bottom: inRow ? y + rowH : top, right };
+  };
+  const framed = sorted(frames), loose = sorted(blocks.not(frames));
+  // The frames first, at 0, to learn their width; then the loose nodes above them, and the frames moved down below.
+  const grid = rows(framed, 0, Math.ceil(Math.sqrt(framed.length)));
+  const band = rows(loose, 0, Infinity, Math.max(grid.right, 1));
+  if (loose.length) frames.forEach((f) => void f.children().shift({ x: 0, y: band.bottom + GAP }));
+}
+
+/** A kind frame's label in its top left corner, inside it, like the frame's notes (applyFrameNotes): the label is anchored
+ *  at the top and moved by the frame's and the label's measured sizes. Rerun when a node inside is dragged, since the
+ *  frame's width follows its nodes. */
+function applyKindLabels() {
+  cy!.nodes(".kindframe").forEach((f) => {
+    const lb = f.boundingBox({ includeNodes: false, includeEdges: false, includeLabels: true, includeOverlays: false } as never);
+    f.style({ "text-margin-x": -f.outerWidth() / 2 + lb.w / 2 + 10, "text-margin-y": lb.h + 5 } as never);
+  });
+}
+let kindLabelsQueued = false;
+function queueKindLabels() {
+  if (kindLabelsQueued) return;
+  kindLabelsQueued = true;
+  requestAnimationFrame(() => { kindLabelsQueued = false; if (cy) applyKindLabels(); });
 }
 
 // The current zoom as a percentage (UI-46): 100% draws text at its own font size.
@@ -437,7 +663,7 @@ function applyIcons() {
 
 function drawGraph() {
   const m = model();
-  const view = m?.levels[state.view];
+  const view = snapshot();
   if (!m || !view) return;
   const els = elementsFor(view);
   if (!cy) {
@@ -446,26 +672,49 @@ function drawGraph() {
     // clears it. The page follows it (syncSelection), so several selected items all show in Details (FND-71).
     cy.on("select", "node, edge", (ev) => {
       const t = ev.target as NodeSingular | EdgeSingular;
+      // A selection a redraw restores is not a click: no activity entry, and the drawer keeps its tab. Cytoscape may report
+      // it after the redraw has finished, so the redraw names what it restores and each report is matched to it, whenever
+      // it comes (a hide in the Inventory switched the drawer to Details, found by the user).
+      if (restoredIds.delete(t.id())) { queueSync(false); return; }
       if (!restoring) report("node_selected", { nodeId: t.data("real") }); // one entry per item, no new key (FND-71)
       queueSync(true);
     });
     cy.on("unselect", "node, edge", () => queueSync(false));
+    hoverTips(cy);
     cy.on("zoom", zoomReadout);
     cy.on("dbltap", "node", (ev) => enter((ev.target as NodeSingular).data("real")));
+    // A kind frame's width follows its nodes, so its label is placed again when one of them is dragged (UI-83).
+    cy.on("position", "node", (ev) => { if ((ev.target as NodeSingular).parent(".kindframe").length) queueKindLabels(); });
   }
+  hideTip();
   cy.elements().remove();
   cy.add(els);
   // Redrawing the same view (a new run, a change of color scheme) keeps what is still there selected, without
   // logging it again.
   restoring = true;
-  for (const x of state.selected) cy.getElementById(x.type === "edge" ? `e:${x.id}` : x.id).select();
+  restoredIds.clear();
+  for (const x of state.selected) {
+    const ele = cy.getElementById(x.type === "edge" ? `e:${x.id}` : x.id);
+    if (ele.nonempty()) { restoredIds.add(ele.id()); ele.select(); }
+  }
   restoring = false;
+  const kept = keepLayout;
   seedPositions(view);
   cy.style(graphStyle());
   const cose = { name: "cose", animate: false, randomize: false, nodeRepulsion: () => 90000, idealEdgeLength: () => 140, componentSpacing: 120, padding: 40, nestingFactor: 0.9 };
   const freeFrame = cy.nodes(".free-frame");
   const frame = cy.nodes(".frame").not(".free-frame");
-  if (freeFrame.length > 0) {
+  if (kept) {
+    // A hide (INV-33): every node that stays goes back to where it was; no layout, no fit. Frames size themselves to
+    // what is left; a node whose place wasn't kept (none on a hide) stays where it was seeded.
+    // Each node is measured first, as a layout would: Cytoscape takes a node never measured to take no space and doesn't
+    // draw it (the stubs vanished on a hide until this, found by the user).
+    cy.nodes().filter((n) => !n.isParent()).forEach((n) => {
+      void n.layoutDimensions({ nodeDimensionsIncludeLabels: true });
+      const p = kept.get(n.id());
+      if (p) n.position(p);
+    });
+  } else if (freeFrame.length > 0) {
     // The top view with a "Not connected" frame (UI-47): the connected files laid out as usual, the free nodes on a grid
     // inside the frame, ordered by ID, the frame placed to the right of the connected ones.
     const inside = freeFrame.children();
@@ -486,10 +735,10 @@ function drawGraph() {
     const title = inside.filter(".this");
     const rest = inside.not(title).not(".notes-spacer");
     const order = new Map(view.nodes.map((id, i) => [id, i]));
-    if (rest.length) rest.layout({ name: "grid", cols: Math.ceil(Math.sqrt(rest.length)), avoidOverlap: true, avoidOverlapPadding: 40, condense: true,
-      boundingBox: { x1: 0, y1: 0, w: 1, h: 1 }, sort: (p: NodeSingular, q: NodeSingular) => (order.get(p.id()) ?? 0) - (order.get(q.id()) ?? 0) } as never).run();
+    if (rest.filter(".kindframe").length) layoutKindFrames(rest, order); // UI-83
+    else if (rest.length) squareGrid(rest, order);
     if (title.length) {
-      const bb = rest.length ? rest.boundingBox({}) : { x1: 0, x2: 0, y1: 0 };
+      const bb = rest.length ? blocksBox(rest) : { x1: 0, x2: 0, y1: 0 };
       title.position({ x: (bb.x1 + bb.x2) / 2, y: bb.y1 - 50 - title.outerHeight() / 2 });
     }
     placeStubs(inside);
@@ -500,7 +749,13 @@ function drawGraph() {
   applyIcons();
   applyPoints();
   applyFrameNotes();
-  cy.fit(undefined, 40);
+  applyKindLabels();
+  applyEdgeMode();
+  $<HTMLButtonElement>("edgesw").setAttribute("aria-pressed", String(state.edgesFull));
+  const sw = $<HTMLButtonElement>("kindsw");
+  sw.disabled = state.view === "";
+  sw.setAttribute("aria-pressed", String(state.kindFrames));
+  if (!kept) cy.fit(undefined, 40);
   zoomReadout();
   drawKey(view);
   $("unres").textContent = unresolvedLine(view);
@@ -510,33 +765,139 @@ function drawGraph() {
 // Moving between levels (UI-31): double-click goes in, the breadcrumb goes back
 // ---------------------------------------------------------------------------
 
-function enter(id: string) {
+// ---------------------------------------------------------------------------
+// The page's model layer (05_viewer.md, VIEW-51): the shared state is the current view (state.view) and the nodes hidden
+// by a choice (layer.hidden, INV-33). Every move goes through go(); every reader (the Graph, the breadcrumb, the hover
+// boxes, and the Inventory to come) reads one snapshot of the current view. It selects from what the backend stated and
+// takes out what is hidden; it redoes no lifting (INV-18).
+// ---------------------------------------------------------------------------
+
+const layer = { hidden: new Set<string>(), hiddenKinds: new Set<string>(), version: 0 };
+/** Hidden by a choice: the node, or one of its containers (BE-112's ancestors). */
+const isHidden = (id: string): boolean => {
+  if (layer.hidden.size === 0 && layer.hiddenKinds.size === 0) return false;
+  const ixx = ix();
+  const up = [id, ...(ixx?.ancestors[id] ?? [])];
+  // A listed entry's folders count as its containers here, so hiding a folder hides the files in it (INV-33).
+  const entry = (ixx?.ancestors[id] ?? [])[0] ?? id;
+  for (let f = ixx?.folderOf[entry]; f; f = ixx?.folderOf[f]) up.push(f);
+  return up.some((a) => layer.hidden.has(a) || layer.hiddenKinds.has(node(a)?.kind ?? ""));
+};
+/** A change of what is hidden (INV-33): at once, in lockstep; if the view shown becomes hidden, the nearest view above it
+ *  that is still shown is shown instead. */
+function hiddenChanged() {
+  const viewBefore = state.view, before = snapshot();
+  layer.version++;
+  if (state.view !== "" && isHidden(state.view)) {
+    const up = [...(model()?.levels[state.view]?.path ?? [])].reverse().find((v) => v === "" || !isHidden(v)) ?? "";
+    state.view = up; state.selected = [];
+  }
+  // A hide keeps the layout: nothing in the view moves and the zoom stays; the layout runs again only when the view shown
+  // gets a node back (a show), or when it changed (the view shown was hidden).
+  const after = snapshot(), had = new Set([...(before?.nodes ?? []), ...(before?.stubs ?? [])]);
+  const gained = [...(after?.nodes ?? []), ...(after?.stubs ?? [])].some((id) => !had.has(id));
+  if (cy && state.view === viewBefore && !gained) keepLayout = new Map(cy.nodes().map((n) => [n.id(), { ...n.position() }]));
+  render();
+  keepLayout = undefined;
+  if ($("pane-inventory").classList.contains("on")) invContent(); // the selected row's visibility and its [Show in graph]
+}
+let snap: { key: string; model?: Model; view?: MView } = { key: "" };
+/** Positions to keep on the next draw (a hide, INV-33): node ID -> position. */
+let keepLayout: Map<string, { x: number; y: number }> | undefined;
+/** The current view as the backend stated it, with the hidden nodes and their edges taken out; made once per change. */
+function snapshot(): MView | undefined {
+  const m = model();
+  const key = `${state.view}\u0000${layer.version}`;
+  if (snap.model === m && snap.key === key) return snap.view;
+  const v = m?.levels[state.view];
+  let out = v;
+  if (v && (layer.hidden.size > 0 || layer.hiddenKinds.size > 0)) { // nodes or kinds hidden (INV-33)
+    const keep = (id: string) => !isHidden(id);
+    const edges = v.edges.filter((e) => keep(e.from) && keep(e.to));
+    const pick = <T,>(o: Record<string, T>, ok: (k: string, val: T) => boolean) => Object.fromEntries(Object.entries(o).filter(([k, val]) => ok(k, val)));
+    out = {
+      ...v,
+      nodes: v.nodes.filter(keep), stubs: v.stubs.filter(keep), edges,
+      render: pick(v.render, (k) => keep(k)), memberOf: pick(v.memberOf, (k) => keep(k)),
+      relationEdge: pick(v.relationEdge, (_k, e) => edges.some((x) => x.id === e)),
+      memberRows: Object.fromEntries(Object.entries(v.memberRows).filter(([k]) => keep(k)).map(([k, rows]) => [k, rows.filter(keep)])),
+      inside: v.inside.filter(keep), unconnected: v.unconnected?.filter(keep),
+    };
+  }
+  snap = { key, model: m, view: out };
+  return out;
+}
+/** Every move goes through here (VIEW-51): a double-click in the Graph, a breadcrumb item, [Show in graph]. */
+function go(id: string, event: "level_entered" | "level_left") {
   const m = model();
   if (!m?.levels[id] || id === state.view) return;
   state.view = id;
   state.selected = [];
-  report("level_entered", { nodeId: id });
+  report(event, { nodeId: id });
   render();
 }
+function enter(id: string) { go(id, "level_entered"); }
+/** Another source: the view and the hidden set start over (INV-40); a new run of the same source keeps both. */
+function resetLayer() {
+  state.view = ""; layer.hidden.clear(); layer.hiddenKinds.clear(); layer.version++;
+  inv.open = new Set(["root"]); inv.sel = undefined; inv.query = ""; inv.forModel = undefined; // another source: the Inventory starts over (INV-40)
+  ($("inv-q") as HTMLInputElement).value = "";
+}
+/** The breadcrumb (UI-82): the views above the current one, each a button, from the model's path (BE-112); a file's
+ *  folders as plain text before it, since folders are not views (M2Q-1); and on the last item a dropdown of the views
+ *  one level inside. Every click goes through the model layer (go). */
 function crumbs() {
   const box = $("crumbs");
   box.replaceChildren();
-  const s = state.source;
-  if (!s || !model()) return;
-  const chain: string[] = [];
-  for (let c: string | null = state.view || null; c; c = node(c)?.container ?? null) chain.unshift(c);
-  const top = el("button", { text: s.name });
-  top.onclick = () => { if (state.view !== "") { state.view = ""; state.selected = []; report("level_left", { nodeId: "" }); render(); } };
-  box.append(chain.length === 0 ? el("span", { cls: "here", text: s.name }) : top);
+  const s = state.source, v = snapshot();
+  if (!s || !model() || !v) return;
+  const sep = () => box.append(" › ");
+  const item = (id: string, text: string, here: boolean) => {
+    if (here) return el("span", { cls: "here", text });
+    const b = el("button", { text });
+    b.onclick = () => go(id, "level_left");
+    return b;
+  };
+  const chain = state.view === "" ? [""] : [...v.path, state.view];
   chain.forEach((id, i) => {
-    box.append(" › ");
-    if (i === chain.length - 1) box.append(el("span", { cls: "here", text: displayName(id) }));
+    const here = i === chain.length - 1;
+    if (i > 0) sep();
+    if (id === "") box.append(item("", s.name, here));
     else {
-      const b = el("button", { text: displayName(id) });
-      b.onclick = () => { state.view = id; state.selected = []; report("level_left", { nodeId: id }); render(); };
-      box.append(b);
+      if (node(id)?.container === null) { // a listed entry: the folders it sits in, as plain text
+        const folders: string[] = [];
+        for (let f = ix()?.folderOf[id]; f; f = ix()?.folderOf[f]) folders.unshift(f);
+        for (const f of folders) { box.append(el("span", { cls: "crumb-folder", text: displayName(f) })); sep(); }
+      }
+      box.append(item(id, displayName(id), here));
     }
+    if (here && v.inside.length) box.append(crumbMenu(v.inside));
   });
+}
+/** The dropdown of the views one level inside (UI-82): every one, in the view's order, scrolling past 20. */
+function crumbMenu(inside: string[]): HTMLElement {
+  const wrap = el("span", { cls: "crumb-more" });
+  const open = el("button", { cls: "crumb-open", text: `(${plural(inside.length, "scope")}) ▾`, title: `${plural(inside.length, "view")} one level inside: open the list` });
+  open.setAttribute("aria-haspopup", "true");
+  open.setAttribute("aria-expanded", "false");
+  const menu = el("div", { cls: "crumb-menu" });
+  menu.hidden = true;
+  for (const id of inside) {
+    const b = el("button", { text: displayName(id), title: titleOf(id) });
+    b.onclick = () => { close(); go(id, "level_entered"); };
+    menu.append(b);
+  }
+  const close = () => { menu.hidden = true; open.setAttribute("aria-expanded", "false"); document.removeEventListener("mousedown", outside, true); };
+  const outside = (e: Event) => { if (!wrap.contains(e.target as Node)) close(); };
+  open.onclick = () => {
+    if (!menu.hidden) return close();
+    menu.hidden = false;
+    open.setAttribute("aria-expanded", "true");
+    document.addEventListener("mousedown", outside, true);
+  };
+  wrap.addEventListener("keydown", (e) => { if ((e as KeyboardEvent).key === "Escape") close(); });
+  wrap.append(open, menu);
+  return wrap;
 }
 
 // ---------------------------------------------------------------------------
@@ -546,6 +907,7 @@ function crumbs() {
 function tab(name: string) {
   document.querySelectorAll<HTMLElement>(".tab").forEach((t) => t.classList.toggle("on", t.dataset.tab === name));
   document.querySelectorAll<HTMLElement>(".pane").forEach((p) => p.classList.toggle("on", p.id === `pane-${name}`));
+  if (name === "inventory") { drawInventory(); invContent(); }
 }
 
 function kv(pairs: [string, string | Node][]) {
@@ -595,6 +957,7 @@ async function sourceLines(loc: Loc | undefined, target: HTMLElement) {
 
 // The page's selection follows Cytoscape's, read once after a click's select and unselect events have all fired.
 let syncQueued = false, syncShowsDetails = false, restoring = false;
+const restoredIds = new Set<string>(); // the elements a redraw re-selects, until Cytoscape reports each (drawGraph)
 function queueSync(added: boolean) {
   syncShowsDetails ||= added;
   if (syncQueued) return;
@@ -612,9 +975,14 @@ function syncSelection(showDetails: boolean) {
   // Highlight the edges of every selected node; the rest go back to their own color.
   cy.edges().removeClass("touch");
   now.nodes().connectedEdges().addClass("touch");
+  applyEdgeMode();
   details();
-  if (showDetails) tab("details");
+  // A selection made by [Show in graph] keeps the drawer's tab: the guard is used up by the first report of a selection,
+  // whenever Cytoscape sends it, not after a fixed time (on a larger graph it came later than any fixed wait).
+  if (showDetails) { if (stayInTab) { stayInTab = false; clearTimeout(stayTimer); } else tab("details"); }
 }
+let stayInTab = false; // a selection made by [Show in graph] keeps the drawer's tab (INV-15)
+let stayTimer: ReturnType<typeof setTimeout> | undefined;
 
 // Select from code (the page check scripts, BE-95): replaces the selection, or adds to it, as a click or a
 // shift-click would. With no type, clears it.
@@ -630,7 +998,7 @@ function details() {
   pane.replaceChildren();
   const m = model();
   if (!m) { pane.append(el("p", { cls: "muted", text: "Nothing to show yet." })); return; }
-  const view = m.levels[state.view];
+  const view = snapshot()!;
   const sel = state.selected;
   if (sel.length === 0) {
     const relCount = view.edges.reduce((s, e) => s + e.count, 0);
@@ -765,34 +1133,19 @@ function groupedItems(entries: ItemEntry[], describe: (group: ItemEntry[]) => st
   return ul;
 }
 
-// Built-ins grouped by the library type that declares them (FND-100): the part of the name before the first dot,
-// as TypeScript names it ("Array.map" under Array; "ReadonlyArray" and "Console" kept apart, as TypeScript keeps them).
-// One box per type, "N members · N uses"; one line per member, "member — places", sorted by member, then place.
-function builtinGroups(rels: MRel[]): HTMLUListElement {
-  const groups = new Map<string, Map<string, MRel[]>>();
-  for (const r of rels) {
-    const full = typeof r.attrs?.builtin === "string" ? r.attrs.builtin : relName(r);
-    const dot = full.indexOf(".");
-    const type = dot > 0 ? full.slice(0, dot) : full;
-    const member = dot > 0 ? full.slice(dot + 1) : full; // a top-level built-in is its own member
-    const g = groups.get(type) ?? new Map<string, MRel[]>();
-    g.set(member, [...(g.get(member) ?? []), r]);
-    groups.set(type, g);
-  }
-  const byName = (a: string, b: string) => a.localeCompare(b, "en", { sensitivity: "base" }) || (a < b ? -1 : a > b ? 1 : 0);
+// Built-ins grouped by the library type that declares them (FND-100), as the model states the groups (BE-114): one box per
+// type, "N members · N uses"; one line per member, "member — places", sorted by place. The page only lays them out.
+function builtinBoxes(groups: MView["builtinGroups"]): HTMLUListElement {
   const place = (r: MRel) => `${r.location?.file ?? "?"} ${r.location?.start.line ?? "?"}:${r.location?.start.column ?? "?"}`;
   const byPlace = (x: MRel, y: MRel) => (place(x) < place(y) ? -1 : place(x) > place(y) ? 1 : 0);
   const ul = el("ul", { cls: "rows" });
-  for (const [type, members] of [...groups].sort(([a], [b]) => byName(a, b))) {
-    // A line named like its box ("Math" under Math) adds nothing when the type has other members: those uses are the
-    // receivers of its members (Math.PI, Math.round). It is left out then, and not counted; a type used only by its own
-    // name (Map, Promise) keeps its line, the only one giving its places (FND-100).
-    if (members.size > 1) members.delete(type);
-    const uses = [...members.values()].reduce((n, l) => n + l.length, 0);
-    const dataNames = [...new Set([...members.values()].flat().map((r) => r.dataName))].join(", ");
+  for (const g of groups) {
+    const members = g.members.map((m) => ({ name: m.name, rels: m.relations.map((id) => rel(id)).filter((r): r is MRel => !!r).sort(byPlace) }));
+    const uses = members.reduce((n, m) => n + m.rels.length, 0);
+    const dataNames = [...new Set(members.flatMap((m) => m.rels.map((r) => r.dataName)))].join(", ");
     ul.append(itemBox({
-      name: type, what: `${plural(members.size, "member")} · ${plural(uses, "use")}`, type: dataNames,
-      places: [...members].sort(([a], [b]) => byName(a, b)).map(([m, l]) => `${m} — ${l.sort(byPlace).map(place).join(", ")}`),
+      name: g.type, what: `${plural(members.length, "member")} · ${plural(uses, "use")}`, type: dataNames,
+      places: members.map((m) => `${m.name} — ${m.rels.map(place).join(", ")}`),
     }));
   }
   return ul;
@@ -811,7 +1164,7 @@ function containsList(id: string, pane: HTMLElement, alone: boolean) {
 }
 
 function edgeDetails(id: string, pane: HTMLElement, alone: boolean) {
-  const e = model()!.levels[state.view].edges.find((x) => x.id === id);
+  const e = snapshot()!.edges.find((x) => x.id === id);
   if (!e) return;
   pane.append(el(alone ? "h3" : "h4", { text: `Edge · ${plural(e.count, "relation")}` }), kv([["From", drawnLabel(e.from)], ["To", drawnLabel(e.to)], ["Kind", e.kind]]), el(alone ? "h3" : "h4", { text: "Stands for" }));
   const ul = el("ul", { cls: "rows" });
@@ -1005,11 +1358,11 @@ function problemsPane() {
     pane.append(ul);
   }
   // Built-ins (TPG-D5): uses of names TypeScript's library declares, listed apart and not counted as unresolved.
-  const bIds = new Set(inView ? m.levels[state.view]?.builtins ?? [] : m.relations.filter((r) => r.reason === "built-in").map((r) => r.id));
-  const builtins = m.relations.filter((r) => bIds.has(r.id));
+  // The top view holds every built-in use (each one's start lands on its file), so its groups are the whole run's.
+  const groups = (inView ? m.levels[state.view] : m.levels[""])?.builtinGroups ?? [];
   pane.append(el("h3", { text: `Built-ins · ${inView ? "this view" : "all"}` }));
-  if (builtins.length === 0) pane.append(el("p", { cls: "muted", text: inView ? "None in this view." : "None." }));
-  else pane.append(builtinGroups(builtins));
+  if (groups.length === 0) pane.append(el("p", { cls: "muted", text: inView ? "None in this view." : "None." }));
+  else pane.append(builtinBoxes(groups));
   const toggle = el("div", { cls: "probscope" });
   for (const [which, text] of [["view", "This view"], ["all", "All"]] as const) {
     const b = el("button", { text, title: which === "view" ? "Unresolved relations of the view being shown" : "Unresolved relations of the whole run" });
@@ -1068,6 +1421,7 @@ function render() {
     drawGraph();
   }
   details();
+  drawInventory(); // its marks follow the view (INV-12); it never opens, closes or scrolls by itself
   problemsPane();
   toolsPane();
   statusBar();
@@ -1143,7 +1497,7 @@ async function openSource(key: string) {
   const r = await api("POST", "/api/sources/current", { source: key });
   if (r.status !== 204) return;
   state.source = state.sources.find((s) => s.sourceKey === key);
-  state.view = "";
+  resetLayer();
   state.selected = [];
   state.which = "auto";
   state.liveEvents = [];
@@ -1223,12 +1577,613 @@ function connect() {
 }
 
 // ---------------------------------------------------------------------------
+// The Inventory (51_viewer_inventory.md; first pass, read-only: hiding and [Show in graph] come next). A tree of what the
+// model holds, built once per model and lazily (INV-39): a row's children are made when it is first opened. It keeps its
+// own selection (INV-13, INV-36), open rows and search; its marks read the model layer's snapshot (INV-10, INV-12).
+// ---------------------------------------------------------------------------
+
+type InvRow = { key: string; text: string; marks?: string; kind: "root" | "section" | "folder" | "entry" | "symbol" | "view" | "group" | "edge" | "json"; ref?: string; view?: string; value?: unknown; muted?: boolean };
+const inv = {
+  open: new Set<string>(["root"]), sel: undefined as string | undefined, focus: undefined as string | undefined, visible: [] as string[], query: "", regex: false, matches: [] as string[], at: -1,
+  rows: new Map<string, InvRow>(), kids: new Map<string, string[]>(), parent: new Map<string, string>(), forModel: undefined as Model | undefined,
+};
+/** Keys the Graph draws from a node's attrs (BE-114's facts, the status icons, a listed entry's label); every other key a
+ *  tool wrote is unused (INV-7). Known by name here until the model states it. */
+const DRAWN_KEYS = new Set(["exported", "defaultExport", "declaredWith", "modifiers", "declarations", "declaredIn", "type", "hidden", "link", "readOnly", "unreadable", "fileCount", "totalBytes", "skipped"]);
+const unusedKeys = (n: MNode) => Object.keys(n.attrs ?? {}).filter((k) => !DRAWN_KEYS.has(k)).filter((k) => !(k === "declarations" && Array.isArray(n.attrs?.declarations) && n.attrs.declarations.length < 2));
+
+const KIND_WORD = (n: MNode) => (["function", "method", "constructor", "accessor"].includes(n.kind) ? "ƒ" : n.kind === "typeAlias" ? "type" : n.kind);
+/** The Inventory's model: reset when the model changes; kept open rows, selection and search when it is the same source (INV-40). */
+function invModel() {
+  const m = model();
+  if (inv.forModel === m) return;
+  inv.forModel = m;
+  inv.rows.clear(); inv.kids.clear(); inv.parent.clear();
+  if (!m) return;
+  addRow({ key: "root", text: state.source?.name ?? "source", kind: "root" });
+  for (const [key, text] of [["sec:files", "Files"], ["sec:views", "Views · computed by the Viewer"], ["sec:model", "Model"]]) { addRow({ key, text, kind: "section" }); }
+  inv.kids.set("root", ["sec:files", "sec:views", "sec:model"]);
+  for (const k of ["sec:files", "sec:views", "sec:model"]) inv.parent.set(k, "root");
+  if (inv.sel && !findable(inv.sel)) inv.sel = undefined;
+  for (const k of [...inv.open]) if (!findable(k)) inv.open.delete(k);
+  runSearch();
+}
+const addRow = (r: InvRow) => { inv.rows.set(r.key, r); return r.key; };
+/** A row's children, made the first time they are asked for (INV-39). */
+function invKids(key: string): string[] {
+  const done = inv.kids.get(key);
+  if (done) return done;
+  const m = model(); const ixx = ix();
+  const out: string[] = [];
+  const row = inv.rows.get(key);
+  if (!m || !ixx || !row) return out;
+  const nodeRow = (id: string) => {
+    const n = node(id);
+    const k = `f:${id}`;
+    if (!n) return addRow({ key: k, text: id, kind: "symbol", ref: id });
+    const kind = n.container === null ? (n.kind === "folder" ? "folder" : "entry") : "symbol";
+    const text = n.container === null ? (n.kind === "folder" ? `${n.label}/` : n.label) : `${KIND_WORD(n)} ${n.label}`;
+    return addRow({ key: k, text, kind, ref: id });
+  };
+  if (key === "sec:files") for (const e of ixx.entries[""] ?? []) out.push(nodeRow(e));
+  else if (row.kind === "folder") for (const e of ixx.entries[row.ref!] ?? []) out.push(nodeRow(e));
+  else if (row.kind === "entry" || row.kind === "symbol") for (const c of ixx.children[row.ref!] ?? []) out.push(nodeRow(c));
+  else if (key === "sec:views") out.push(addRow({ key: "v:", text: "top view", kind: "view", view: "" }));
+  else if (row.kind === "view") {
+    const v = m.levels[row.view!];
+    for (const [g, n] of [["nodes", v.nodes.length], ["stubs", v.stubs.length], ["edges", v.edges.length]] as const) {
+      if (n) out.push(addRow({ key: `vg:${row.view}:${g}`, text: `${g} · ${n}`, kind: "group", view: row.view, ref: g }));
+    }
+    const under = Object.entries(m.levels).filter(([id, x]) => id !== "" && (x.path[x.path.length - 1] ?? null) === row.view).map(([id]) => id);
+    const order = new Map(v.nodes.map((id, i) => [id, i]));
+    under.sort((a, b) => (order.get(a) ?? 1e9) - (order.get(b) ?? 1e9) || (a < b ? -1 : 1));
+    for (const id of under) out.push(addRow({ key: `v:${id}`, text: displayName(id), kind: "view", view: id }));
+  } else if (row.kind === "group") {
+    const v = m.levels[row.view!];
+    if (row.ref === "edges") for (const e of v.edges) out.push(addRow({ key: `ve:${row.view}:${e.id}`, text: `${displayName(e.from)} → ${displayName(e.to)} · ${e.count > 1 ? `${e.count} · ` : ""}${e.kind}`, kind: "edge", view: row.view, ref: e.id }));
+    else for (const id of (row.ref === "nodes" ? v.nodes : v.stubs)) out.push(addRow({ key: `vn:${row.view}:${id}`, text: `${node(id) ? KIND_WORD(node(id)!) : ""} ${displayName(id)}`.trim(), kind: "symbol", ref: id, view: row.view }));
+  } else if (key === "sec:model") {
+    const rest: Record<string, unknown> = { formatVersion: m.formatVersion, sourceKey: m.sourceKey, sourceRoot: m.sourceRoot, run: m.run, files: m.files, checks: m.checks, dropped: m.dropped };
+    for (const [k, val] of Object.entries(rest)) out.push(jsonRow(`j:${k}`, k, val, k === "dropped"));
+  } else if (row.kind === "json" && row.value && typeof row.value === "object") {
+    for (const [k, val] of Object.entries(row.value as Record<string, unknown>)) out.push(jsonRow(`${key}/${k}`, k, val, row.muted));
+  }
+  inv.kids.set(key, out);
+  for (const c of out) inv.parent.set(c, key);
+  return out;
+}
+function jsonRow(key: string, name: string, value: unknown, unused = false): string {
+  const leaf = value === null || typeof value !== "object";
+  const shown = leaf ? `${name}: ${JSON.stringify(value)}` : `${name} ${Array.isArray(value) ? `[${value.length}]` : `{${Object.keys(value as object).length}}`}`;
+  return addRow({ key, text: shown, kind: "json", value, muted: unused });
+}
+const hasKids = (key: string) => {
+  const r = inv.rows.get(key);
+  if (!r) return false;
+  if (r.kind === "root" || r.kind === "section" || r.kind === "view" || r.kind === "group") return true;
+  if (r.kind === "folder") return (ix()?.entries[r.ref!] ?? []).length > 0;
+  if (r.kind === "entry" || r.kind === "symbol") return !r.view && (ix()?.children[r.ref!] ?? []).length > 0;
+  if (r.kind === "json") return !!r.value && typeof r.value === "object" && Object.keys(r.value as object).length > 0;
+  return false;
+};
+/** Whether a key can be reached in this model (its row can be made from the root). */
+function findable(key: string): boolean {
+  if (inv.rows.has(key)) return true;
+  if (key.startsWith("f:")) return !!node(key.slice(2));
+  if (key.startsWith("v:")) return !!model()?.levels[key.slice(2)];
+  return false;
+}
+/** The chain of rows above a Files row, made as needed, so a match or a selection can be shown (INV-17). */
+function invPath(key: string): string[] {
+  if (!key.startsWith("f:")) { const out: string[] = []; for (let p = inv.parent.get(key); p; p = inv.parent.get(p)) out.unshift(p); return out; }
+  const id = key.slice(2), ixx = ix()!;
+  const up: string[] = [...(ixx.ancestors[id] ?? [])];
+  const top = up[0] ?? id;
+  const folders: string[] = [];
+  for (let f = ixx.folderOf[top]; f; f = ixx.folderOf[f]) folders.unshift(f);
+  const chain = ["root", "sec:files", ...folders.map((f) => `f:${f}`), ...up.map((a) => `f:${a}`)];
+  for (const k of chain) invKids(k); // make every row on the way
+  return chain;
+}
+
+// ---- marks (INV-32), read from the snapshot of the current view
+function invMarks(r: InvRow): string {
+  const v = snapshot();
+  if (r.kind === "view") {
+    const x = model()?.levels[r.view!];
+    return x?.reachable && (r.view === "" || !isHidden(r.view!)) ? "reachable" : "no direct path";
+  }
+  if (!r.ref || !(r.kind === "folder" || r.kind === "entry" || r.kind === "symbol")) return "";
+  const n = node(r.ref);
+  if (!n) return "";
+  const out: string[] = [];
+  if (n.display?.icons?.length) out.push(n.display.icons.map((i) => ICONS.find((x) => x.name === i)?.title ?? i).join(", "));
+  if (n.attrs?.exported === true) out.push("exp");
+  if (model()?.levels[n.id]) out.push("▸view");
+  // The visibility mark always last, so the circles line up at the right edge.
+  out.push(isHidden(n.id) ? "⊘" : v?.render[n.id] ? "●" : "○");
+  return out.join(" ");
+}
+const visibilityText = (id: string) => {
+  if (isHidden(id)) return "hidden by a choice";
+  const how = snapshot()?.render[id];
+  return how === "node" ? "rendered in this view, as a node" : how === "member" ? `rendered in this view, in ${displayName(snapshot()!.memberOf[id])}'s label` : how === "stub" ? "rendered in this view, as a stub" : how === "title" ? "rendered in this view, as the frame's title" : "not in this view";
+};
+
+// ---- drawing
+function drawInventory() {
+  const pane = $("pane-inventory");
+  if (!pane.classList.contains("on")) return;
+  invModel();
+  const tree = $("inv-tree");
+  const keep = tree.scrollTop, keepX = tree.scrollLeft;
+  tree.replaceChildren();
+  if (!model()) { tree.append(el("p", { cls: "muted", text: "No graph to examine yet." })); return; }
+  // The rows sit in one box as wide as the widest row, so every row, and the selected one's highlight, spans the whole
+  // width the tree scrolls over, not only the visible part.
+  const box = el("div", { cls: "inv-rows" });
+  tree.append(box);
+  inv.visible = [];
+  const walk = (key: string, depth: number) => {
+    const r = inv.rows.get(key);
+    if (!r) return;
+    const open = inv.open.has(key), kids = hasKids(key);
+    inv.visible.push(key);
+    const line = el("div", { cls: `inv-row${inv.sel === key ? " sel" : ""}${inv.focus === key ? " focus" : ""}${r.muted ? " unused" : ""}${inv.matches.includes(key) ? " match" : ""}` });
+    line.dataset.key = key;
+    // "You're here" in a column of its own at the tree's left edge, pinned there whatever the sideways scroll; the
+    // indentation comes after it.
+    const here = (r.kind === "view" && r.view === state.view) || (!!r.ref && !r.view && r.kind !== "view" && r.ref === state.view && state.view !== "");
+    const gutter = el("span", { cls: "inv-here", text: here ? "⌖" : "", title: here ? "You're here: the view being shown" : "" });
+    line.append(gutter);
+    const tw = el("span", { cls: `inv-twisty ${kids ? (open ? "open" : "closed") : "leaf"}`, text: kids ? (open ? "▼" : "▶") : "·" });
+    tw.style.marginLeft = `${depth * 14}px`;
+    tw.onclick = (e) => { e.stopPropagation(); if (!kids) return; open ? inv.open.delete(key) : inv.open.add(key); drawInventory(); };
+    line.append(tw);
+    // A checkbox on each node of the Files section: unticked hides it, and everything inside it, from the Graph (INV-33).
+    if (key.startsWith("f:") && r.ref) {
+      const cb = el("input", { cls: "inv-check", title: "Shown in the Graph; untick to hide it and everything inside it" }) as HTMLInputElement;
+      cb.type = "checkbox";
+      cb.checked = !layer.hidden.has(r.ref);
+      cb.disabled = !layer.hidden.has(r.ref) && isHidden(r.ref); // hidden by a container or a kind: not its own choice
+      cb.onclick = (e) => { e.stopPropagation(); cb.checked ? layer.hidden.delete(r.ref!) : layer.hidden.add(r.ref!); hiddenChanged(); };
+      line.append(cb);
+    }
+    line.append(el("span", { cls: "inv-text", text: r.text }));
+    const marks = invMarks(r) + (r.muted ? " unused" : "");
+    if (marks.trim()) line.append(el("span", { cls: "inv-marks", text: marks.trim() }));
+    line.onclick = () => { inv.sel = key; inv.focus = key; drawInventory(); invContent(); tree.focus({ preventScroll: true }); };
+    box.append(line);
+    if (open && kids) for (const c of invKids(key)) walk(c, depth + 1);
+  };
+  walk("root", 0);
+  drawShowRow();
+  tree.scrollTop = keep;
+  tree.scrollLeft = keepX;
+  drawMatchStrip();
+  ($("inv-expand") as HTMLButtonElement).disabled = !inv.sel;
+  $("inv-count").textContent = inv.query ? `${inv.matches.length} ${inv.matches.length === 1 ? "match" : "matches"}` : "";
+}
+/** The kinds' toggles (INV-33), in a fixed order, the least likely to be hidden first and the most likely last (decided by the
+ *  user, 2026-11-10); every known kind always there, so the grid never moves; a kind the source doesn't have disabled;
+ *  a kind not known here after them. The per-kind toggles are M2Q-6's filters. Files and folders have none: hiding every
+ *  file would empty the Graph. */
+const SHOW_ORDER = ["namespace", "class", "interface", "typeAlias", "enum", "function", "method", "constructor", "accessor", "property", "enumMember", "import", "parameter", "variable"];
+/** The bar at the bottom of the Inventory pane, "Show: all ▴", and its panel, opened upward over the content area like the
+ *  activity line: the toggles in a grid of equal buttons, and [show all]. */
+function drawShowRow() {
+  const pop = $("inv-show"), bar = $<HTMLButtonElement>("inv-show-open");
+  const present = new Set((model()?.nodes ?? []).filter((n) => n.container !== null).map((n) => n.kind));
+  const kinds = [...SHOW_ORDER, ...[...present].filter((k) => !SHOW_ORDER.includes(k)).sort()];
+  const grid = el("div", { cls: "inv-show-grid" });
+  for (const k of kinds) {
+    const name = KIND_FRAMES.get(k) ?? k;
+    const b = el("button", { text: name, title: present.has(k) ? `${name}: shown in the Graph when pressed; press to hide or show them` : `${name}: none in this source` }) as HTMLButtonElement;
+    b.setAttribute("aria-pressed", String(!layer.hiddenKinds.has(k)));
+    b.disabled = !present.has(k);
+    b.onclick = () => { layer.hiddenKinds.has(k) ? layer.hiddenKinds.delete(k) : layer.hiddenKinds.add(k); hiddenChanged(); };
+    grid.append(b);
+  }
+  // [Recalc] (asked by the user, 2026-11-10): the view laid out again from the start and fitted, what is hidden left out;
+  // it undoes the gaps a hide leaves (a hide keeps the layout) and any dragging; what is hidden and selected stays.
+  const recalc = el("button", { cls: "inv-recalc", text: "Recalc", title: "Lay out the view again and fit it" }) as HTMLButtonElement;
+  recalc.onclick = () => { keepLayout = undefined; drawGraph(); };
+  grid.append(recalc);
+  const all = el("button", { cls: "inv-showall", text: "show all", title: "Show every node and kind again" }) as HTMLButtonElement;
+  all.disabled = layer.hidden.size === 0 && layer.hiddenKinds.size === 0;
+  all.onclick = () => { layer.hidden.clear(); layer.hiddenKinds.clear(); hiddenChanged(); };
+  pop.replaceChildren(grid, all);
+  const kindsOff = [...layer.hiddenKinds].filter((k) => present.has(k)).length, nodesOff = layer.hidden.size;
+  const what = kindsOff || nodesOff ? [kindsOff ? plural(kindsOff, "kind") : "", nodesOff ? plural(nodesOff, "node") : ""].filter(Boolean).join(", ") + " hidden" : "all";
+  bar.textContent = `Show: ${what} ${pop.hidden ? "▴" : "▾"}`;
+  bar.setAttribute("aria-expanded", String(!pop.hidden));
+}
+function toggleShowPanel(open?: boolean) {
+  const pop = $("inv-show");
+  pop.hidden = !(open ?? pop.hidden);
+  drawShowRow();
+}
+
+// ---- [Show in graph] (INV-15): as if the person had navigated and clicked in the Graph by hand
+type GraphTarget = { view: string; select?: { type: "node" | "edge"; id: string } } | { why: string };
+/** Where a node is drawn as a node: the view shown, when it is drawn there (a node, a stub, the title, or a member in a
+ *  label, which selects the label's node); else its container's view. */
+function nodeTarget(id: string): GraphTarget {
+  if (isHidden(id)) return { why: "hidden by a choice" };
+  const here = snapshot()?.render[id];
+  if (here === "node" || here === "stub" || here === "title") return { view: state.view, select: { type: "node", id } };
+  if (here === "member") return { view: state.view, select: { type: "node", id: snapshot()!.memberOf[id] } };
+  const n = node(id), m = model();
+  if (!n || !m) return { why: "not in the model" };
+  const v = n.container ?? "";
+  const lv = m.levels[v];
+  if (!lv || (v !== "" && (!lv.reachable || isHidden(v)))) return { why: "in no view the Graph can reach" };
+  const how = lv.render[id];
+  if (how === "member") return { view: v, select: { type: "node", id: lv.memberOf[id] } };
+  return { view: v, select: { type: "node", id } };
+}
+/** Where a relation is drawn: the view shown, else the deepest view above its start where an edge stands for it. */
+function relationTarget(rid: string): GraphTarget {
+  const r = rel(rid), m = model();
+  if (!r || !m) return { why: "not in the model" };
+  if (isHidden(r.from) || (r.to !== null && isHidden(r.to))) return { why: "an end is hidden by a choice" };
+  const hereEdge = snapshot()?.relationEdge[rid];
+  if (hereEdge) return { view: state.view, select: { type: "edge", id: hereEdge } };
+  const chain = [...(ix()?.ancestors[r.from] ?? [])].reverse().concat([""]);
+  for (const v of chain) {
+    const lv = m.levels[v], e = lv?.relationEdge[rid];
+    if (e && (v === "" || (lv.reachable && !isHidden(v)))) return { view: v, select: { type: "edge", id: e } };
+  }
+  return { why: "drawn in no view the Graph can reach" };
+}
+function viewTarget(v: string): GraphTarget {
+  const lv = model()?.levels[v];
+  if (!lv) return { why: "not in the model" };
+  if (v !== "" && (!lv.reachable || isHidden(v))) return { why: isHidden(v) ? "hidden by a choice" : "no direct path" };
+  return { view: v };
+}
+function showInGraph(t: GraphTarget) {
+  if ("why" in t) return;
+  stayInTab = true; // set before anything is selected or redrawn
+  if (t.view !== state.view) go(t.view, "level_entered");
+  if (!cy) return;
+  cy.$(":selected").unselect();
+  if (t.select) cy.getElementById(t.select.type === "edge" ? `e:${t.select.id}` : t.select.id).select();
+  syncSelection(false);
+  glow(t.select ? cy.getElementById(t.select.type === "edge" ? `e:${t.select.id}` : t.select.id) : cy.nodes(".this").first());
+  // Cytoscape reports the selection later, after the redraw; the guard waits for that report (syncSelection). With
+  // nothing selected no report comes, so it lapses after 2 s, and a later click in the Graph opens Details as usual.
+  clearTimeout(stayTimer);
+  stayTimer = setTimeout(() => { stayInTab = false; }, t.select ? 2000 : 0);
+  drawInventory();
+}
+/** A short glow around what [Show in graph] lands on, fading out (about 1.2 s), so the eye finds it; it may play off
+ *  screen. A new press restarts it. Skipped when the system asks for reduced motion; the selection marks the target. */
+function glow(ele: cytoscapeType.CollectionReturnValue | cytoscapeType.NodeSingular | cytoscapeType.EdgeSingular) {
+  if (!ele || ele.empty() || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  ele.stop(true, false);
+  ele.style({ "underlay-color": css("--accent"), "underlay-opacity": 0.55, "underlay-padding": 12, "underlay-shape": "round-rectangle" } as never);
+  ele.animate({ style: { "underlay-opacity": 0 } as never }, { duration: 1200, easing: "ease-out", complete: () => { ele.removeStyle("underlay-color underlay-opacity underlay-padding underlay-shape"); } });
+}
+function showButton(t: GraphTarget, small = false): HTMLButtonElement {
+  const b = el("button", { cls: small ? "inv-show-one" : "inv-showgraph", text: small ? "show" : "Show in graph", title: "why" in t ? `Can't be shown: ${t.why}` : "Show it in the Graph, as navigating there and clicking it would" }) as HTMLButtonElement;
+  b.disabled = "why" in t;
+  b.onclick = (e) => { e.stopPropagation(); showInGraph(t); };
+  return b;
+}
+
+/** The search's overview strip (INV-43): a small square beside the tree for each match, where its row sits among the rows
+ *  shown (a match inside a closed row at its nearest shown parent), as a scrollbar would place it; the current match
+ *  darker and outlined. Only an indication: it takes no clicks and moves nothing. Empty with no search or no match. */
+function drawMatchStrip() {
+  const strip = $("inv-strip"), tree = $("inv-tree");
+  strip.replaceChildren();
+  placeStrip();
+  const box = tree.querySelector<HTMLElement>(".inv-rows");
+  if (!inv.query || !inv.matches.length || !box || box.scrollHeight === 0) return;
+  const current = inv.at >= 0 ? inv.matches[inv.at] : undefined;
+  const at = new Map<number, boolean>(); // top, in tenths of a percent -> holds the current match
+  for (const key of inv.matches) {
+    const chain = [...invPath(key), key];
+    let shown = chain[0];
+    for (let i = 0; i < chain.length - 1 && inv.open.has(chain[i]); i++) shown = chain[i + 1];
+    const row = tree.querySelector<HTMLElement>(`[data-key="${CSS.escape(shown)}"]`);
+    if (!row) continue;
+    // Its middle, measured from the top of the rows' box (not from the pane).
+    const r = row.getBoundingClientRect(), b = box.getBoundingClientRect();
+    // A share of the rows' height, or of the tree's when the rows don't fill it, as a scrollbar would place it.
+    const top = Math.round(((r.top - b.top + r.height / 2) / Math.max(b.height, tree.clientHeight)) * 1000);
+    at.set(top, (at.get(top) ?? false) || key === current);
+  }
+  // Squares closer than 2 px merge into one, so a crowded search doesn't fill the strip.
+  const px = strip.clientHeight || 1;
+  let last = -Infinity;
+  for (const [top, cur] of [...at].sort(([a], [b]) => a - b)) {
+    const y = (top / 1000) * px;
+    if (y - last < 2 && !cur) continue;
+    last = y;
+    const sq = el("span", { cls: `inv-mark${cur ? " current" : ""}` });
+    sq.style.top = `${top / 10}%`;
+    strip.append(sq);
+  }
+}
+/** The strip sits just right of the tree, as tall as it, in the pane's padding, so nothing in the layout moves. */
+function placeStrip() {
+  const strip = $("inv-strip"), tree = $("inv-tree");
+  strip.style.top = `${tree.offsetTop}px`;
+  strip.style.height = `${tree.offsetHeight}px`;
+  strip.style.left = `${tree.offsetLeft + tree.offsetWidth + 2}px`;
+}
+
+/** [expand selected] (INV-16): the selected row and everything under it; on the root row, everything. Asks first above
+ *  2,000 rows (INV-39). */
+function expandSelected() {
+  if (!inv.sel) return;
+  const all: string[] = [];
+  const grow = (k: string) => { if (!hasKids(k)) return; all.push(k); for (const c of invKids(k)) grow(c); };
+  grow(inv.sel);
+  const rows = all.reduce((n, k) => n + invKids(k).length, 0);
+  if (rows > 2000 && !confirm(`This opens ${rows} rows. Go on?`)) return;
+  for (const k of all) inv.open.add(k);
+  drawInventory();
+}
+function collapseAll() { inv.open = new Set(["root"]); drawInventory(); }
+
+// ---- search (INV-17, INV-35): nodes only, by name and ID; its own list of matches, in the tree's order
+function runSearch() {
+  inv.matches = []; inv.at = -1;
+  const q = inv.query.trim();
+  if (!q || !ix()) return;
+  let test: (s: string) => boolean;
+  try { const re = inv.regex ? new RegExp(q, "i") : null; const low = q.toLowerCase(); test = re ? (s) => re.test(s) : (s) => s.toLowerCase().includes(low); }
+  catch { test = () => false; }
+  const ixx = ix()!;
+  const visit = (id: string) => {
+    const n = node(id);
+    if (n && (test(n.label) || test(n.id))) inv.matches.push(`f:${id}`);
+    if (n?.kind === "folder") for (const e of ixx.entries[id] ?? []) visit(e);
+    else for (const c of ixx.children[id] ?? []) visit(c);
+  };
+  for (const e of ixx.entries[""] ?? []) visit(e);
+}
+/** [next] and [previous]: select the match as if clicked, open the rows above it, scroll to it, show its content. */
+function jump(step: 1 | -1) {
+  if (!inv.matches.length) return;
+  inv.at = (inv.at + step + inv.matches.length) % inv.matches.length;
+  const key = inv.matches[inv.at];
+  for (const k of invPath(key)) inv.open.add(k);
+  inv.sel = key;
+  inv.focus = key;
+  drawInventory();
+  invContent();
+  document.querySelector<HTMLElement>(`#inv-tree [data-key="${CSS.escape(key)}"]`)?.scrollIntoView({ block: "nearest" });
+}
+
+/** Keyboard navigation in the tree (INV-41, INV-42): ↑ and ↓ move the focus only; Enter shows a row's content when it has
+ *  nothing inside, else opens it; → opens, or moves to the first sub-item; ← closes, or moves to the parent, one step a
+ *  press; Esc clears the selection and goes to the search field. The keys act only while the tree has the focus. */
+function treeKey(e: KeyboardEvent) {
+  const keys = ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "Enter", "Escape"];
+  if (!keys.includes(e.key) || e.altKey || e.ctrlKey || e.metaKey) return;
+  e.preventDefault();
+  if (e.key === "Escape") {
+    inv.sel = undefined; inv.focus = undefined;
+    drawInventory(); invContent();
+    ($("inv-q") as HTMLInputElement).focus();
+    return;
+  }
+  const vis = inv.visible;
+  let f = inv.focus && vis.includes(inv.focus) ? inv.focus : (inv.sel && vis.includes(inv.sel) ? inv.sel : vis[0]);
+  if (!f) return;
+  const at = vis.indexOf(f), open = inv.open.has(f), kids = hasKids(f);
+  if (e.key === "ArrowUp") f = vis[Math.max(0, at - 1)];
+  else if (e.key === "ArrowDown") f = vis[Math.min(vis.length - 1, at + 1)];
+  else if (e.key === "ArrowRight") { if (kids && !open) inv.open.add(f); else if (kids) f = invKids(f)[0] ?? f; }
+  else if (e.key === "ArrowLeft") { if (kids && open) inv.open.delete(f); else f = inv.parent.get(f) ?? f; }
+  else if (e.key === "Enter") {
+    if (kids) { if (!open) inv.open.add(f); }
+    else { inv.sel = f; invContent(); }
+  }
+  inv.focus = f;
+  drawInventory();
+  document.querySelector<HTMLElement>(`#inv-tree [data-key="${CSS.escape(f)}"]`)?.scrollIntoView({ block: "nearest" });
+}
+
+// ---- the content area (INV-37, INV-14)
+function invContent() {
+  const box = $("inv-content");
+  box.replaceChildren();
+  const r = inv.sel ? inv.rows.get(inv.sel) : undefined;
+  if (!r) { box.append(el("p", { cls: "muted", text: "Select a row to see it here." })); return; }
+  const kv = (pairs: [string, string | Node][]) => el("dl", { cls: "inv-kv" }, ...pairs.flatMap(([k, v]) => [el("dt", { text: k }), el("dd", {}, v)]));
+  if ((r.kind === "folder" || r.kind === "entry" || r.kind === "symbol") && r.ref && node(r.ref)) {
+    const n = node(r.ref)!;
+    box.append(el("div", { cls: "inv-head", text: n.container === null ? `${n.kind} ${n.label}` : titleOf(n.id) }));
+    const copy = el("button", { cls: "inv-copy", text: "copy" });
+    copy.onclick = () => void navigator.clipboard?.writeText(n.id);
+    const unused = unusedKeys(n);
+    box.append(kv([
+      ["ID", el("span", {}, el("code", { text: n.id }), " ", copy)],
+      ["Place", n.location ? locText(n.location) : n.id],
+      ["Here", visibilityText(n.id) + (model()?.levels[n.id] ? " · has a view" : "")],
+      ...(unused.length ? [["Unused", unused.join(", ")] as [string, string]] : []),
+    ]));
+    box.append(showButton(nodeTarget(n.id)));
+    relationLists(box, n.id);
+  } else if (r.kind === "view") {
+    const v = model()!.levels[r.view!];
+    box.append(el("div", { cls: "inv-head", text: r.view === "" ? "top view" : `view of ${titleOf(r.view!)}` }));
+    box.append(kv([["Path", r.view === "" ? "—" : [...v.path.map((p) => (p === "" ? state.source?.name ?? "top" : displayName(p))), displayName(r.view!)].join(" › ")],
+      ["Holds", `${plural(v.nodes.length, "node")}, ${plural(v.stubs.length, "stub")}, ${plural(v.edges.length, "edge")}`],
+      ["Reachable", v.reachable && (r.view === "" || !isHidden(r.view!)) ? "yes" : "no direct path"], ["Here", r.view === state.view ? "you're here" : "another view"]]));
+    box.append(showButton(viewTarget(r.view!)));
+  } else if (r.kind === "edge") {
+    const e = model()!.levels[r.view!].edges.find((x) => x.id === r.ref);
+    if (e) {
+      box.append(el("div", { cls: "inv-head", text: `${e.kind} · ${displayName(e.from)} → ${displayName(e.to)}` }));
+      const ve = viewTarget(r.view!);
+      box.append(showButton("why" in ve ? ve : { view: r.view!, select: { type: "edge", id: e.id } }));
+      box.append(relList(`Stands for (${e.members.length})`, e.members, r.view!));
+    }
+  } else {
+    box.append(el("div", { cls: "inv-head", text: r.text }));
+    if (r.kind === "json") box.append(el("pre", { cls: "inv-json", text: JSON.stringify(r.value, null, 1).slice(0, 4000) }));
+    if (r.muted) box.append(el("p", { cls: "muted", text: "unused: in the model, not represented in the Graph" }));
+  }
+}
+/** Uses and Used by (INV-14): its own relations, or with its members' (INV-14, "including members"); each list collapsed
+ *  to its count, opened by a click. */
+let invWithMembers = false;
+function relationLists(box: HTMLElement, id: string) {
+  const ixx = ix()!;
+  const ids = [id, ...(invWithMembers ? descendants(id) : [])];
+  const from = ids.flatMap((x) => ixx.relationsFrom[x] ?? []), to = ids.flatMap((x) => ixx.relationsTo[x] ?? []);
+  const kids = descendants(id).length;
+  if (kids) {
+    const t = el("label", { cls: "inv-members" });
+    const cb = el("input") as HTMLInputElement; cb.type = "checkbox"; cb.checked = invWithMembers;
+    cb.onchange = () => { invWithMembers = cb.checked; invContent(); };
+    t.append(cb, ` including members (${kids})`);
+    box.append(t);
+  }
+  box.append(relList(`Uses (${from.length})`, from, state.view), relList(`Used by (${to.length})`, to, state.view));
+}
+const descendants = (id: string): string[] => (ix()?.children[id] ?? []).flatMap((c) => [c, ...descendants(c)]);
+function relList(title: string, ids: string[], viewId: string, itemOf = inv.sel?.startsWith("f:") ? inv.sel.slice(2) : ""): HTMLElement {
+  const d = el("details", { cls: "inv-rels" }) as HTMLDetailsElement;
+  d.append(el("summary", { text: title }));
+  const v = model()?.levels[viewId];
+  const rows = ids.map((x) => rel(x)).filter((r): r is MRel => !!r).map((r) => {
+    // An end in another file than the item's is named with its file ("app.ts › Circle"), so an import reads apart from its target.
+    const name = (x: string) => (fileOf(x) !== fileOf(itemOf) && fileOf(x) !== x ? `${displayName(fileOf(x))} › ${displayName(x)}` : displayName(x));
+    const other = r.to === null ? `${relName(r)} (${r.reason ?? "unresolved"})` : name(r.to);
+    const where = r.location ? `${r.location.file} ${r.location.start.line}` : "";
+    const edge = v?.relationEdge[r.id];
+    const seen = edge ? `drawn in ${displayName(edge.split("->")[0])} → ${displayName(edge.split("->")[1])}` : "not in this view";
+    return el("li", {}, `${name(r.from)} → ${other} · ${r.kind} · ${where}`, el("span", { cls: "muted", text: ` · ${seen}` }), " ", showButton(r.to === null ? { why: r.reason === "built-in" ? "a built-in is not drawn" : "unresolved, not drawn" } : relationTarget(r.id), true));
+  });
+  d.append(rows.length ? el("ul", { cls: "inv-rellist" }, ...rows) : el("p", { cls: "muted", text: "none" }));
+  return d;
+}
+
+// ---------------------------------------------------------------------------
 // Wiring
 // ---------------------------------------------------------------------------
 
 document.querySelectorAll<HTMLButtonElement>(".tab").forEach((t) => (t.onclick = () => tab(t.dataset.tab ?? "details")));
-$("collapse").onclick = () => document.querySelector("main.body")?.classList.toggle("closed");
+// The drawer's handle (UI-88): drag to set the drawer's width, between 360 px and the window less 400 px; while dragging the
+// drawer is drawn over the Graph, which is redrawn once, on release. A double-click restores 380 px; the button on the
+// handle collapses the drawer to a strip and reopens it at its width. The width is remembered in this browser.
+{
+  const body = document.querySelector<HTMLElement>("main.body")!, drawer = $("drawer"), handle = $("drawer-handle"), toggle = $<HTMLButtonElement>("drawer-toggle");
+  const DEFAULT = 380, MIN = 360, KEY = "zaansouvi.drawerWidth";
+  const clamp = (w: number) => Math.round(Math.max(MIN, Math.min(w, window.innerWidth - 400)));
+  let width = DEFAULT;
+  try { const saved = Number(localStorage.getItem(KEY)); if (saved > 0) width = saved; } catch { /* storage blocked: the default */ }
+  const redraw = () => requestAnimationFrame(() => cy?.resize());
+  const apply = () => {
+    width = clamp(width);
+    body.style.setProperty("--drawer-w", body.classList.contains("closed") ? "34px" : `${width}px`);
+    try { localStorage.setItem(KEY, String(width)); } catch { /* storage blocked: kept for this page only */ }
+  };
+  const setClosed = (closed: boolean) => {
+    body.classList.toggle("closed", closed);
+    toggle.textContent = closed ? "›" : "‹";
+    toggle.title = closed ? "Open the drawer" : "Collapse the drawer";
+    apply(); redraw();
+  };
+  apply();
+  toggle.onclick = (e) => { e.stopPropagation(); setClosed(!body.classList.contains("closed")); };
+  toggle.addEventListener("pointerdown", (e) => e.stopPropagation());
+  handle.addEventListener("dblclick", (e) => { if (e.target === toggle || body.classList.contains("closed")) return; width = DEFAULT; apply(); redraw(); });
+  handle.addEventListener("pointerdown", (e) => {
+    if (e.button !== 0 || body.classList.contains("closed")) return;
+    e.preventDefault();
+    const r = drawer.getBoundingClientRect();
+    // Drawn over the Graph while dragging: fixed at its place, its width following the pointer; the grid keeps its column.
+    Object.assign(drawer.style, { top: `${r.top}px`, height: `${r.height}px`, right: `${window.innerWidth - r.right}px`, width: `${r.width}px` });
+    drawer.classList.add("overlay");
+    handle.classList.add("dragging");
+    const right = r.right;
+    const move = (ev: PointerEvent) => { drawer.style.width = `${clamp(right - ev.clientX)}px`; };
+    const up = (ev: PointerEvent) => {
+      window.removeEventListener("pointermove", move);
+      window.removeEventListener("pointerup", up);
+      width = clamp(right - ev.clientX);
+      drawer.classList.remove("overlay");
+      handle.classList.remove("dragging");
+      for (const k of ["top", "height", "right", "width"]) drawer.style.removeProperty(k);
+      apply(); redraw();
+    };
+    // On the window, so the drag goes on when the pointer leaves the narrow handle.
+    window.addEventListener("pointermove", move);
+    window.addEventListener("pointerup", up);
+  });
+  window.addEventListener("resize", () => { apply(); });
+}
 $("fit").onclick = () => cy?.fit(undefined, 40);
+// The Inventory's controls (INV-16, INV-17)
+$("inv-expand").onclick = expandSelected;
+$("inv-collapse").onclick = collapseAll;
+$("inv-q").addEventListener("input", (e) => { inv.query = (e.target as HTMLInputElement).value; runSearch(); drawInventory(); });
+$("inv-q").addEventListener("keydown", (e) => { if ((e as KeyboardEvent).key === "Enter") jump((e as KeyboardEvent).shiftKey ? -1 : 1); });
+$("inv-regex").onclick = () => { inv.regex = !inv.regex; $("inv-regex").setAttribute("aria-pressed", String(inv.regex)); runSearch(); drawInventory(); };
+$("inv-next").onclick = () => jump(1);
+// The kinds' panel (INV-33): opened and closed by its bar; closed by a press outside it or Esc.
+$("inv-show-open").onclick = () => toggleShowPanel();
+document.addEventListener("pointerdown", (e) => { if (!$("inv-show").hidden && !$("inv-showbar").contains(e.target as Node)) toggleShowPanel(false); }, true);
+$("inv-tree").addEventListener("keydown", (e) => treeKey(e as KeyboardEvent));
+// Esc anywhere in the Inventory pane goes to the search field (INV-41): from the content area, a selected text, the copy
+// button, the relation lists, the buttons. Selected text has no focus, so the pane remembers whether the last press was
+// in it; Esc after a click elsewhere (the Graph) is left alone. In the tree, Esc also clears the selection (treeKey).
+{
+  let inPane = false;
+  document.addEventListener("pointerdown", (e) => { inPane = $("pane-inventory").contains(e.target as Node); }, true);
+  document.addEventListener("focusin", (e) => { inPane = $("pane-inventory").contains(e.target as Node); });
+  document.addEventListener("keydown", (e) => {
+    const q = $("inv-q") as HTMLInputElement, pane = $("pane-inventory");
+    if (e.key === "Escape" && !$("inv-show").hidden) toggleShowPanel(false); // Esc closes the kinds' panel too
+    if (e.key !== "Escape" || !pane.classList.contains("on") || e.target === q || e.target === $("inv-tree")) return;
+    if (!inPane && !pane.contains(document.activeElement)) return;
+    q.focus();
+  });
+}
+// The strip follows the tree's size: the drawer's handle, the window, the content area (INV-43).
+new ResizeObserver(() => drawMatchStrip()).observe($("inv-tree"));
+$("inv-prev").onclick = () => jump(-1);
+// Middle-button panning (UI-84): dragging with the middle button moves the view only. The button is caught on the graph's
+// container in the capture phase, before Cytoscape's own listeners on its canvas, so nothing is selected, unselected or
+// dragged, wherever the drag starts, on a node, an edge, a frame or the background. Its default (Firefox's autoscroll, a
+// paste on Linux) is prevented over the graph only.
+{
+  const box = $("cy");
+  let last: { x: number; y: number } | undefined;
+  const stop = (e: Event) => { e.preventDefault(); e.stopPropagation(); };
+  box.addEventListener("mousedown", (e) => {
+    if (e.button !== 1 || !cy) return;
+    stop(e);
+    last = { x: e.clientX, y: e.clientY };
+    box.classList.add("panning");
+  }, true);
+  window.addEventListener("mousemove", (e) => {
+    if (!last || !cy) return;
+    if ((e.buttons & 4) === 0) { last = undefined; box.classList.remove("panning"); return; } // released outside the page
+    stop(e);
+    cy.panBy({ x: e.clientX - last.x, y: e.clientY - last.y });
+    last = { x: e.clientX, y: e.clientY };
+  }, true);
+  window.addEventListener("mouseup", (e) => {
+    if (e.button !== 1 || !last) return;
+    stop(e);
+    last = undefined;
+    box.classList.remove("panning");
+  }, true);
+  box.addEventListener("auxclick", (e) => { if (e.button === 1) stop(e); }, true);
+}
+// The edges' switch (UI-85): full or thin, without drawing the view again, so nothing moves.
+$("edgesw").onclick = () => { state.edgesFull = !state.edgesFull; $("edgesw").setAttribute("aria-pressed", String(state.edgesFull)); applyEdgeMode(); };
+// The kind frames' switch (UI-83): on by default, for the page only; redraws the view, keeping the selection.
+$("kindsw").onclick = () => { state.kindFrames = !state.kindFrames; drawGraph(); };
 // Text (UI-46): zoom 1, where text is drawn at its own font size, keeping the centre of the graph area in place.
 $("zoomtext").onclick = () => { if (cy) cy.zoom({ level: 1, renderedPosition: { x: cy.width() / 2, y: cy.height() / 2 } }); };
 $("run").onclick = () => void startRun("run");
@@ -1248,8 +2203,8 @@ matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => { if
 
 // A hook for the page check script (tests/viewer/): the same actions a double-click, a click or a tab gives.
 // tools() redraws the Tools pane, from given data when passed (a check's made-up answer), else from the backend's.
-(globalThis as unknown as { zaansouvi: unknown }).zaansouvi = { enter, select, tab, state, ready: () => !!state.answer,
-  tools: (d?: ToolsAnswer) => { if (d) toolsData = d; toolsPane(); } };
+(globalThis as unknown as { zaansouvi: unknown }).zaansouvi = { enter, select, tab, state, ready: () => !!state.answer, go, snapshot, layer,
+  tools: (d?: ToolsAnswer) => { if (d) toolsData = d; toolsPane(); }, inv };
 
 tab("details");
 connect();

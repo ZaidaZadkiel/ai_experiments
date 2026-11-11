@@ -48,21 +48,35 @@ details.add .addform { position: absolute; z-index: 20; top: 130%; left: 0; back
 .addform label { display: block; font-size: 12.5px; color: var(--muted); margin-bottom: 4px; }
 .addform .row { display: flex; gap: 6px; } .addform input { flex: 1; }
 
-main.body { display: grid; grid-template-columns: 1fr 380px; min-height: 0; }
+main.body { display: grid; grid-template-columns: 1fr var(--drawer-w, 380px); min-height: 0; }
 main.body.closed { grid-template-columns: 1fr 34px; }
 .graphcol { display: flex; flex-direction: column; min-width: 0; min-height: 0; }
 .crumbs { padding: 6px 12px; color: var(--muted); display: flex; gap: 6px; align-items: center; flex-wrap: wrap; min-height: 32px; }
 .crumbs button { background: none; border: 0; padding: 0; color: var(--accent); }
 .crumbs .here { color: var(--ink); font-weight: 600; }
+/* The breadcrumb (UI-82): a file's folders as plain text; a dropdown of the views one level inside, 20 rows then a scroll. */
+.crumbs .crumb-folder { color: var(--muted); }
+.crumbs .crumb-more { position: relative; }
+.crumbs .crumb-open { color: var(--muted); padding: 0 4px; }
+.crumbs .crumb-menu { position: absolute; left: 0; top: 100%; margin-top: 4px; z-index: 20; min-width: 160px; max-height: calc(20 * 26px); overflow-y: auto;
+  display: flex; flex-direction: column; background: var(--panel); border: 1px solid var(--line); border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,.18); padding: 4px 0; }
+.crumbs .crumb-menu[hidden] { display: none; }
+.crumbs .crumb-menu button { text-align: left; color: var(--ink); padding: 3px 12px; line-height: 20px; white-space: nowrap; }
+.crumbs .crumb-menu button:hover { background: var(--soft); }
 .banner { margin: 0 12px 6px; padding: 6px 10px; border-radius: 6px; font-size: 13.5px; background: var(--warn-bg); color: var(--warn); }
 .banner.err { background: var(--err-bg); color: var(--err); }
 .banner button { background: none; border: 0; padding: 0 0 0 6px; color: inherit; font-weight: 600; text-decoration: underline; }
 .graph { flex: 1; position: relative; min-height: 0; margin: 0 12px 10px; border: 1px solid var(--line); border-radius: 8px;
          background: radial-gradient(circle, var(--line) 1px, transparent 1px) 0 0 / 22px 22px; }
 #cy { position: absolute; inset: 0; }
-/* The zoom controls (UI-46), a column in the bottom right corner, from the bottom up: the readout, Fit, Text. */
+/* Middle-button panning (UI-84): the hand while the view moves. */
+#cy.panning, #cy.panning canvas { cursor: grabbing !important; }
+/* The zoom controls (UI-46), a column in the bottom right corner, from the bottom up: the readout, Fit, Text, the
+   kind frames' switch (UI-83) and the edges' switch (UI-85), each pressed when on. */
 .zoombox { position: absolute; right: 8px; bottom: 8px; z-index: 5; display: flex; flex-direction: column; align-items: stretch; gap: 4px; }
 .zoombox button { font-size: 12px; padding: 2px 8px; }
+.zoombox button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+.zoombox button:disabled { opacity: .45; cursor: default; }
 .zoomread { font-size: 11px; color: var(--muted); text-align: center; font-variant-numeric: tabular-nums; }
 .running-chip { position: absolute; right: 8px; top: 8px; z-index: 5; font-size: 12px; background: var(--warn-bg); color: var(--warn); padding: 2px 8px; border-radius: 10px; }
 .unres { position: absolute; left: 10px; bottom: 4px; margin: 0; font-size: 12px; color: var(--muted); z-index: 5; pointer-events: none; }
@@ -70,12 +84,20 @@ main.body.closed { grid-template-columns: 1fr 34px; }
 .empty h2 { font-size: 16px; margin: 0 0 6px; } .empty p { margin: 4px 0; color: var(--muted); }
 .empty .addform { display: inline-block; text-align: left; border: 1px solid var(--line); border-radius: 8px; padding: 10px; width: 400px; margin-top: 8px; }
 
-aside.drawer { border-left: 1px solid var(--line); display: flex; flex-direction: column; min-height: 0; }
+aside.drawer { border-left: 1px solid var(--line); display: flex; flex-direction: column; min-height: 0; position: relative; background: var(--panel); }
+/* The drawer's handle (UI-88): a strip on its left edge, dragged to set the width; while dragging, the drawer is drawn over
+   the Graph at the new width, and the Graph is redrawn only on release. The small button on it collapses and reopens. */
+.drawer-handle { position: absolute; left: -4px; top: 0; bottom: 0; width: 8px; cursor: col-resize; z-index: 30; }
+.drawer-handle:hover, .drawer-handle.dragging { background: color-mix(in srgb, var(--accent) 25%, transparent); }
+.drawer-toggle { position: absolute; left: -6px; top: 50%; transform: translateY(-50%); width: 18px; height: 34px; padding: 0; font-size: 13px; line-height: 1;
+  border: 1px solid var(--line); border-radius: 6px; background: var(--panel); color: var(--muted); cursor: pointer; }
+aside.drawer.overlay { position: fixed; z-index: 25; box-shadow: -4px 0 12px rgba(0,0,0,.12); }
+main.body.closed .drawer-handle { cursor: default; }
+main.body.closed .drawer-handle:hover { background: none; }
 .tabs { display: flex; border-bottom: 1px solid var(--line); }
 .tab { padding: 7px 10px; background: none; border: 0; border-bottom: 2px solid transparent; border-radius: 0; color: var(--muted); }
 .tab.on { color: var(--ink); border-bottom-color: var(--accent); font-weight: 600; }
 .tab .count { display: inline-block; min-width: 18px; padding: 0 5px; margin-left: 4px; border-radius: 9px; background: var(--warn-bg); color: var(--warn); font-size: 11.5px; }
-.collapse { margin-left: auto; background: none; border: 0; color: var(--muted); }
 main.body.closed .tab, main.body.closed .pane { display: none !important; }
 .pane { padding: 10px 12px; overflow: auto; min-height: 0; flex: 1; display: none; }
 .pane.on { display: block; }
@@ -125,6 +147,12 @@ ul.rows ul.sub li { border: 0; padding: 1px 0; margin: 0; background: none; }
 .pill.ok { color: var(--ok); } .pill.err { color: var(--err); } .pill.warn { color: var(--warn); }
 a { color: var(--accent); }
 .legend-row { display: flex; align-items: center; gap: 8px; margin: 5px 0; }
+/* The Inventory's marks in the Legend, as the tree draws them (UI-87). */
+.lg-mark { flex: none; min-width: 64px; text-align: center; color: var(--muted); font-size: 12px; }
+.lg-mark.lg-closed { color: var(--accent); font-size: 11px; }
+.lg-mark.lg-unused { font-style: normal; }
+.lg-sq { display: inline-block; width: 7px; height: 5px; background: #facc15; border-radius: 1px; vertical-align: middle; }
+.lg-sq.current { background: #ca8a04; outline: 1.5px solid var(--ink); }
 .lg { display: inline-block; width: 40px; height: 20px; border: 1.5px solid var(--muted); background: var(--soft); flex: none; }
 .lg-file { border-color: var(--id2); border-width: 2px; clip-path: polygon(0 0, 78% 0, 100% 30%, 100% 100%, 0 100%); }
 .lg-folder { border: none; background: var(--muted); clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 50%, calc(100% - 10px) 100%, 0 100%); position: relative; }
@@ -134,6 +162,7 @@ a { color: var(--accent); }
 .lg-fn { border-radius: 50%; } .lg-imp { border-style: dashed; border-color: var(--id3); }
 .lg-stub { opacity: .55; border-color: var(--id1); } .lg-this { border: none; border-bottom: 2px solid var(--ink); background: none; height: 14px; }
 .lg-unknown { border-radius: 50%; width: 20px; background: var(--grey); }
+.lg-kind { background: none; border-width: 1px; border-radius: 6px; }
 .le { display: inline-block; width: 40px; height: 0; border-top: 2px solid var(--ink); flex: none; }
 .le-read { border-top-style: dotted; } .le-write { border-top-width: 4px; } .le-import { border-top: 2px dashed var(--link); }
 .le-mixed { border-top: 3px solid var(--grey); }
@@ -169,8 +198,14 @@ details.clear .confirm { position: absolute; right: 0; bottom: 130%; z-index: 40
 footer.status { border-top: 1px solid var(--line); display: flex; font-size: 12.5px; color: var(--muted); }
 footer.status > * { padding: 4px 10px; border-right: 1px solid var(--line); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 footer.status .latest { color: var(--ok); } footer.status .notlatest { color: var(--warn); } footer.status .bad { color: var(--err); }
-@media (max-width: 900px) { main.body { grid-template-columns: 1fr; } aside.drawer { border-left: 0; border-top: 1px solid var(--line); max-height: 40vh; } }
+@media (max-width: 900px) { main.body { grid-template-columns: 1fr; } aside.drawer { border-left: 0; border-top: 1px solid var(--line); max-height: 40vh; } .drawer-handle { display: none; } }
 /* The color key (UI-44): top left of the graph, under the breadcrumb; not clickable; rows fill columns, then wrap. */
+/* Hover boxes (UI-86): near the pointer, never taking the mouse, so a click, a drag or the wheel goes to the graph. */
+.hovertip { position: absolute; z-index: 6; pointer-events: none; max-width: 360px; padding: 6px 9px; font-size: 12px; line-height: 1.4;
+            background: var(--panel); color: var(--ink); border: 1px solid var(--line); border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,.18); overflow-wrap: anywhere; }
+.hovertip[hidden] { display: none; }
+.hovertip .tip-head { font-weight: 600; }
+.hovertip .tip-part { color: var(--muted); margin-top: 4px; }
 .key { position: absolute; left: 8px; top: 8px; z-index: 4; pointer-events: none; user-select: none;
   display: grid; grid-auto-flow: column; grid-template-rows: repeat(var(--rows, 12), auto); column-gap: 14px; row-gap: 1px;
   font-size: 11px; line-height: 14px; color: var(--muted); padding: 4px 6px; border-radius: 6px;
@@ -187,3 +222,63 @@ footer.status .latest { color: var(--ok); } footer.status .notlatest { color: va
 .rangecols pre.src { margin: 6px 0 10px; max-height: 360px; }
 pre.src.wrap span { white-space: pre-wrap; overflow-wrap: anywhere; padding-left: calc(8px + 2.6em); text-indent: -2.6em; }
 pre.src.wrap i { text-indent: 0; } /* the number box would inherit the negative indent and lose its text */
+
+/* The Inventory (51_viewer_inventory.md): the search on top, the buttons under it, the tree, and a small content area at
+   the bottom for the selected row (INV-3). */
+#pane-inventory.on { display: flex; flex-direction: column; gap: 6px; padding-bottom: 6px; position: relative; }
+/* The search's overview strip (INV-43): beside the tree, in the pane's right padding, taking no clicks. */
+.inv-strip { position: absolute; width: 7px; pointer-events: none; }
+.inv-mark { position: absolute; left: 0; width: 7px; height: 4px; margin-top: -2px; background: #facc15; border-radius: 1px; }
+.inv-mark.current { background: #ca8a04; outline: 1.5px solid var(--ink); height: 6px; margin-top: -3px; z-index: 1; }
+.inv-search { display: flex; gap: 4px; align-items: center; flex-wrap: nowrap; }
+.inv-search input { flex: 1; min-width: 60px; font-size: 12px; padding: 3px 6px; }
+.inv-search button, .inv-buttons button { font-size: 12px; padding: 2px 8px; }
+.inv-search button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+.inv-count { font-size: 11px; font-style: italic; white-space: nowrap; flex: none; }
+.inv-search button { flex: none; }
+.inv-buttons { display: flex; gap: 4px; }
+/* The "Show:" row (INV-33): a toggle per kind, pressed when shown; and the checkboxes on node rows. */
+/* The kinds' bar at the bottom of the pane, and its panel opened upward over the content area (like the activity line):
+   equal buttons in a grid, then [show all]. */
+.inv-showbar { position: relative; flex: none; border-top: 1px solid var(--line); padding-top: 4px; }
+.inv-show-open { font-size: 12px; padding: 2px 8px; width: 100%; text-align: left; }
+.inv-show { position: absolute; left: 0; right: 0; bottom: 100%; margin-bottom: 4px; z-index: 20; background: var(--panel); border: 1px solid var(--line);
+  border-radius: 6px; box-shadow: 0 -2px 10px rgba(0,0,0,.15); padding: 8px; display: flex; flex-direction: column; gap: 6px; font-size: 11px; }
+.inv-show[hidden] { display: none; }
+.inv-show-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; }
+.inv-show button { font-size: 11px; padding: 3px 4px; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.inv-show button:disabled { opacity: .4; }
+.inv-show .inv-recalc { font-weight: 600; }
+.inv-show button[aria-pressed="true"] { background: var(--soft); }
+.inv-show button[aria-pressed="false"] { text-decoration: line-through; color: var(--muted); }
+.inv-check { margin: 0; flex: none; width: 12px; height: 12px; }
+.inv-showgraph { margin: 4px 0; font-size: 12px; }
+.inv-show-one { font-size: 10.5px; padding: 0 5px; }
+.inv-tree { flex: 1 1 60%; min-height: 120px; overflow: auto; border: 1px solid var(--line); border-radius: 6px; font-size: 12px; padding: 2px 0; }
+.inv-rows { display: inline-block; min-width: 100%; vertical-align: top; }
+.inv-row { display: flex; gap: 6px; align-items: baseline; padding: 1px 0; cursor: default; white-space: nowrap; background: var(--panel); }
+.inv-row:hover { background: var(--soft); }
+.inv-row.sel { background: var(--sel-soft); }
+/* The keyboard's focus (INV-41, INV-42): an outline, not color alone (UI-40), shown while the tree has the focus. */
+.inv-tree:focus { outline: none; }
+.inv-tree:focus .inv-row.focus { outline: 1.5px solid var(--accent); outline-offset: -1.5px; }
+.inv-row.match .inv-text { text-decoration: underline dotted; }
+.inv-row.unused { color: var(--muted); }
+/* The open/close marker: larger than the row's text; gray when open, blue when closed, a muted dot when there is nothing inside. */
+.inv-here { position: sticky; left: 0; flex: none; width: 14px; padding-left: 3px; text-align: center; color: var(--accent); background: inherit; z-index: 1; font-size: 14px; line-height: 1; }
+.inv-twisty { width: 14px; flex: none; color: var(--muted); cursor: pointer; text-align: center; font-size: 11px; line-height: 1; }
+.inv-twisty.open { color: var(--muted); }
+.inv-twisty.closed { color: var(--accent); }
+.inv-twisty.leaf { font-size: 12px; cursor: default; }
+/* The marks stay at the visible right edge, whatever the sideways scroll, on their row's own background. */
+.inv-marks { margin-left: auto; color: var(--muted); font-size: 11px; padding: 0 6px 0 10px; position: sticky; right: 0; background: inherit; }
+.inv-content { flex: 0 1 40%; min-height: 80px; overflow: auto; border-top: 1px solid var(--line); padding-top: 6px; font-size: 12px; }
+.inv-head { font-weight: 600; margin-bottom: 4px; }
+.inv-kv { display: grid; grid-template-columns: max-content 1fr; gap: 2px 10px; margin: 0 0 6px; }
+.inv-kv dt { color: var(--muted); } .inv-kv dd { margin: 0; overflow-wrap: anywhere; }
+.inv-copy { font-size: 11px; padding: 0 6px; }
+.inv-rels summary { cursor: pointer; color: var(--muted); margin: 4px 0; }
+.inv-rellist { margin: 0 0 4px; padding-left: 16px; }
+.inv-rellist li { margin: 1px 0; overflow-wrap: anywhere; }
+.inv-members { display: block; color: var(--muted); margin: 2px 0; }
+.inv-json { font-size: 11px; margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; }

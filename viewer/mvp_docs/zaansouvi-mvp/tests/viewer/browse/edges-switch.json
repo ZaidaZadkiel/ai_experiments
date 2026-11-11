@@ -1,0 +1,128 @@
+[
+ [
+  "go",
+  "x"
+ ],
+ [
+  "wait",
+  "window.zaansouvi && window.zaansouvi.ready()",
+  20
+ ],
+ [
+  "sleep",
+  1
+ ],
+ [
+  "js",
+  "return fetch('/api/sources',{credentials:'same-origin'}).then(r=>r.json()).then(j=>{const s=j.sources.find(x=>x.sourceRoot.endsWith('/test-source-mvp2')); return fetch('/api/sources/current',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({source:s.sourceKey})}).then(r=>r.status)})"
+ ],
+ [
+  "go",
+  "x"
+ ],
+ [
+  "wait",
+  "window.zaansouvi && window.zaansouvi.ready() && document.querySelector('#cy canvas')",
+  20
+ ],
+ [
+  "sleep",
+  1
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; const pos=()=>JSON.stringify(cy.nodes().map(n=>[n.id(),Math.round(n.position('x')*100),Math.round(n.position('y')*100)])); const st=e=>({w:e.style('width'), o:e.style('opacity'), label:e.style('label'), cls:e.hasClass('thin')}); const sw=()=>document.getElementById('edgesw');window._p0=pos(); window._v0={...cy.pan(), z:cy.zoom()}; return {view:'top', column:[...document.querySelector('.zoombox').children].map(e=>e.id||e.className), pressed: sw().getAttribute('aria-pressed'), edges: cy.edges().length, counts: cy.edges().filter(e=>e.data('label')).map(e=>e.data('label'))}"
+ ],
+ [
+  "shot",
+  "edges-top-full.png"
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; const pos=()=>JSON.stringify(cy.nodes().map(n=>[n.id(),Math.round(n.position('x')*100),Math.round(n.position('y')*100)])); const st=e=>({w:e.style('width'), o:e.style('opacity'), label:e.style('label'), cls:e.hasClass('thin')}); const sw=()=>document.getElementById('edgesw');sw().click(); const e=cy.edges().filter(x=>x.data('label')).first(); return {pressed: sw().getAttribute('aria-pressed'), thin: cy.edges('.thin').length, of: cy.edges().length, sample: st(e), positionsSame: pos()===window._p0, panZoomSame: JSON.stringify({...cy.pan(), z:cy.zoom()})===JSON.stringify(window._v0)}"
+ ],
+ [
+  "shot",
+  "edges-top-thin.png"
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; const pos=()=>JSON.stringify(cy.nodes().map(n=>[n.id(),Math.round(n.position('x')*100),Math.round(n.position('y')*100)])); const st=e=>({w:e.style('width'), o:e.style('opacity'), label:e.style('label'), cls:e.hasClass('thin')}); const sw=()=>document.getElementById('edgesw');sw().click(); const e=cy.edges().filter(x=>x.data('label')).first(); return {backOn: sw().getAttribute('aria-pressed'), thin: cy.edges('.thin').length, sample: st(e), positionsSame: pos()===window._p0}"
+ ],
+ [
+  "js",
+  "window.zaansouvi.enter('src/shapes.ts'); return 1"
+ ],
+ [
+  "sleep",
+  1.2
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; const pos=()=>JSON.stringify(cy.nodes().map(n=>[n.id(),Math.round(n.position('x')*100),Math.round(n.position('y')*100)])); const st=e=>({w:e.style('width'), o:e.style('opacity'), label:e.style('label'), cls:e.hasClass('thin')}); const sw=()=>document.getElementById('edgesw');sw().click(); window.zaansouvi.select('node','src/shapes.ts#Base@12:23'); return 1"
+ ],
+ [
+  "sleep",
+  0.3
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; const pos=()=>JSON.stringify(cy.nodes().map(n=>[n.id(),Math.round(n.position('x')*100),Math.round(n.position('y')*100)])); const st=e=>({w:e.style('width'), o:e.style('opacity'), label:e.style('label'), cls:e.hasClass('thin')}); const sw=()=>document.getElementById('edgesw');const touch=cy.edges('.touch'); const other=cy.edges().not('.touch'); return {view:'shapes.ts, Base selected, thin', touched: touch.length, touchedThin: touch.filter('.thin').length, othersThin: other.filter('.thin').length+' of '+other.length, touchedSample: st(touch.filter(e=>e.data('label')).first().length? touch.filter(e=>e.data('label')).first(): touch.first()), otherSample: st(other.first())}"
+ ],
+ [
+  "shot",
+  "edges-shapes-thin-selected.png"
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; const pos=()=>JSON.stringify(cy.nodes().map(n=>[n.id(),Math.round(n.position('x')*100),Math.round(n.position('y')*100)])); const st=e=>({w:e.style('width'), o:e.style('opacity'), label:e.style('label'), cls:e.hasClass('thin')}); const sw=()=>document.getElementById('edgesw');window._p1=pos(); const w=cy.edges('.kind-write'); window.zaansouvi.select('node', w.length? w.first().source().data('real') : 'src/shapes.ts#Base@12:23'); return {writeEdges: w.length}"
+ ],
+ [
+  "sleep",
+  0.3
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; const pos=()=>JSON.stringify(cy.nodes().map(n=>[n.id(),Math.round(n.position('x')*100),Math.round(n.position('y')*100)])); const st=e=>({w:e.style('width'), o:e.style('opacity'), label:e.style('label'), cls:e.hasClass('thin')}); const sw=()=>document.getElementById('edgesw');const w=cy.edges('.kind-write'); return {writeEdgesOfSelection: w.filter('.touch').map(e=>st(e)), positionsSame: pos()===window._p1}"
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; const pos=()=>JSON.stringify(cy.nodes().map(n=>[n.id(),Math.round(n.position('x')*100),Math.round(n.position('y')*100)])); const st=e=>({w:e.style('width'), o:e.style('opacity'), label:e.style('label'), cls:e.hasClass('thin')}); const sw=()=>document.getElementById('edgesw');cy.$(':selected').unselect(); const e=cy.edges().first(); e.select(); return 1"
+ ],
+ [
+  "sleep",
+  0.3
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; const pos=()=>JSON.stringify(cy.nodes().map(n=>[n.id(),Math.round(n.position('x')*100),Math.round(n.position('y')*100)])); const st=e=>({w:e.style('width'), o:e.style('opacity'), label:e.style('label'), cls:e.hasClass('thin')}); const sw=()=>document.getElementById('edgesw');const e=cy.$('edge:selected'); return {selectedEdge: e.length, selectedEdgeThin: e.hasClass('thin'), thinNow: cy.edges('.thin').length+' of '+cy.edges().length}"
+ ],
+ [
+  "js",
+  "window.zaansouvi.enter('src/shapes.ts#Circle@27:14'); return 1"
+ ],
+ [
+  "sleep",
+  1.2
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; const pos=()=>JSON.stringify(cy.nodes().map(n=>[n.id(),Math.round(n.position('x')*100),Math.round(n.position('y')*100)])); const st=e=>({w:e.style('width'), o:e.style('opacity'), label:e.style('label'), cls:e.hasClass('thin')}); const sw=()=>document.getElementById('edgesw');return {view:'Circle, entered while thin', pressed: sw().getAttribute('aria-pressed'), thin: cy.edges('.thin').length+' of '+cy.edges().length}"
+ ],
+ [
+  "js",
+  "document.getElementById('kindsw').click(); return 1"
+ ],
+ [
+  "sleep",
+  1
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; const pos=()=>JSON.stringify(cy.nodes().map(n=>[n.id(),Math.round(n.position('x')*100),Math.round(n.position('y')*100)])); const st=e=>({w:e.style('width'), o:e.style('opacity'), label:e.style('label'), cls:e.hasClass('thin')}); const sw=()=>document.getElementById('edgesw');return {afterKindsRedraw: cy.edges('.thin').length+' of '+cy.edges().length}"
+ ],
+ [
+  "js",
+  "document.getElementById('kindsw').click(); document.getElementById('edgesw').click(); return 1"
+ ]
+]

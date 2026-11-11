@@ -1,0 +1,152 @@
+[
+ [
+  "go",
+  "x"
+ ],
+ [
+  "wait",
+  "window.zaansouvi && window.zaansouvi.ready()",
+  20
+ ],
+ [
+  "sleep",
+  1
+ ],
+ [
+  "js",
+  "return fetch('/api/sources',{credentials:'same-origin'}).then(r=>r.json()).then(j=>{const s=j.sources.find(x=>x.sourceRoot.endsWith('/test-source-mvp2')); return fetch('/api/sources/current',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({source:s.sourceKey})}).then(r=>r.status)})"
+ ],
+ [
+  "go",
+  "x"
+ ],
+ [
+  "wait",
+  "window.zaansouvi && window.zaansouvi.ready() && document.querySelector('#cy canvas')",
+  20
+ ],
+ [
+  "sleep",
+  1
+ ],
+ [
+  "js",
+  "const b=document.getElementById('kindsw'); return {topView: true, switchDisabled: b.disabled, pressed: b.getAttribute('aria-pressed'), kindFrames: document.querySelector('#cy')._cyreg.cy.nodes('.kindframe').length, column: [...document.querySelector('.zoombox').children].map(e=>e.id||e.className)}"
+ ],
+ [
+  "js",
+  "window.zaansouvi.enter('src/shapes.ts'); return 1"
+ ],
+ [
+  "sleep",
+  1.2
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; const st=window.zaansouvi.state; const m=st.answer.model; const kind=id=>(m.nodes.find(n=>n.id===id)||{}).kind; const frames=cy.nodes('.kindframe').map(f=>({label:f.data('label'), parent:f.parent().id(), selectable:f.selectable(), grabbable:f.grabbable(), kinds:[...new Set(f.children().map(c=>kind(c.id())))], members:f.children().map(c=>c.data('label').split('\\n')[0])})); const frame=cy.getElementById('frame:'+st.view); const loose=frame.children().not('.kindframe').not('.this').not('.notes-spacer').map(n=>n.data('label').split('\\n')[0]+' ['+kind(n.id())+']'); return {view: st.view, frames, loose}"
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; const frame=cy.getElementById('frame:'+window.zaansouvi.state.view); const blocks=frame.children().not('.this').not('.notes-spacer'); const bb=b=>b.boundingBox({}); const arr=blocks.toArray(); const over=[]; for(let i=0;i<arr.length;i++)for(let j=i+1;j<arr.length;j++){const a=bb(arr[i]),c=bb(arr[j]); if(a.x1<c.x2&&c.x1<a.x2&&a.y1<c.y2&&c.y1<a.y2) over.push(arr[i].id()+' / '+arr[j].id());} const inner=[]; cy.nodes('.kindframe').forEach(f=>{const ch=f.children().toArray(); for(let i=0;i<ch.length;i++)for(let j=i+1;j<ch.length;j++){const a=bb(ch[i]),c=bb(ch[j]); if(a.x1<c.x2&&c.x1<a.x2&&a.y1<c.y2&&c.y1<a.y2) inner.push(ch[i].id()+' / '+ch[j].id());}}); const title=cy.nodes('.this'); const tb=title.boundingBox({}); const top=Math.min(...arr.map(b=>bb(b).y1)); const stubsInside=cy.nodes('.stub').filter(s=>{const f=frame.boundingBox({}),p=s.position(); return p.x>f.x1&&p.x<f.x2&&p.y>f.y1&&p.y<f.y2}).length; return {order: arr.map(b=>({id:b.id(), x:Math.round(bb(b).x1), y:Math.round(bb(b).y1)})), blocksOverlapping: over, nodesOverlappingInFrames: inner, titleAboveBlocks: tb.y2 <= top, stubsInsideFrame: stubsInside}"
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; return cy.nodes('.kindframe').map(f=>{const lb=f.boundingBox({includeNodes:false,includeEdges:false,includeLabels:true,includeOverlays:false}); const fb=f.boundingBox({includeLabels:false}); const kids=f.children().boundingBox({}); return {label:f.data('label'), labelInsideTopLeft: lb.x1>=fb.x1 && lb.y1>=fb.y1 && lb.x1-fb.x1<20 && lb.y1-fb.y1<12, labelClearOfNodes: lb.y2<=kids.y1}})"
+ ],
+ [
+  "shot",
+  "kind-frames-shapes.png"
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; cy.$(':selected').unselect(); const f=cy.nodes('.kindframe').first(); f.emit('tap'); f.select(); return {frameSelected: f.selected(), selectedCount: cy.$(':selected').length, detailsItems: window.zaansouvi.state.selected.length}"
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; const f=cy.getElementById('kindframe:class'); const kids=f.children(); const before=kids.map(c=>({...c.position()})); const rb=f.renderedBoundingBox({}); const rect=cy.container().getBoundingClientRect(); const x=rect.left+rb.x1+5, y=rect.top+(rb.y1+rb.y2)/2; const under=cy.elements().filter(e=>e.isNode()&&e.visible()&&(()=>{const b=e.renderedBoundingBox({includeLabels:false});return x-rect.left>=b.x1&&x-rect.left<=b.x2&&y-rect.top>=b.y1&&y-rect.top<=b.y2})()).map(e=>e.id()); const ev=(t,el,cx,cy2)=>el.dispatchEvent(new MouseEvent(t,{bubbles:true,cancelable:true,clientX:cx,clientY:cy2,button:0,buttons:t==='mouseup'?0:1})); const tgt=document.elementFromPoint(x,y); ev('mousedown',tgt,x,y); for(let i=1;i<=10;i++) ev('mousemove',window.document,x+i*10,y); ev('mouseup',window.document,x+100,y); const after=kids.map(c=>({...c.position()})); const dx=before.map((b,i)=>Math.round(after[i].x-b.x)); return {under, target: tgt && tgt.tagName, dx, z: cy.zoom(), selectedAfterDrag: cy.$(':selected').length}"
+ ],
+ [
+  "sleep",
+  0.5
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; const f=cy.getElementById('kindframe:variable'); const c=f.children().first(); const other=f.children().last(); const b0={...c.position()}, o0={...other.position()}; const rp=c.renderedPosition(); const rect=cy.container().getBoundingClientRect(); const x=rect.left+rp.x, y=rect.top+rp.y; const ev=(t,el,cx,cy2)=>el.dispatchEvent(new MouseEvent(t,{bubbles:true,cancelable:true,clientX:cx,clientY:cy2,button:0,buttons:t==='mouseup'?0:1})); ev('mousedown',document.elementFromPoint(x,y),x,y); for(let i=1;i<=6;i++) ev('mousemove',document,x,y+i*10); ev('mouseup',document,x,y+60); return {node:c.data('label'), movedY: Math.round(c.position('y')-b0.y), otherMovedY: Math.round(other.position('y')-o0.y), stillInFrame: c.parent().id()}"
+ ],
+ [
+  "js",
+  "document.getElementById('kindsw').click(); return 1"
+ ],
+ [
+  "sleep",
+  1
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; return {afterSwitchOff: cy.nodes('.kindframe').length, pressed: document.getElementById('kindsw').getAttribute('aria-pressed'), stateOff: window.zaansouvi.state.kindFrames === false}"
+ ],
+ [
+  "shot",
+  "kind-frames-shapes-off.png"
+ ],
+ [
+  "js",
+  "document.getElementById('kindsw').click(); return 1"
+ ],
+ [
+  "sleep",
+  1
+ ],
+ [
+  "js",
+  "return {backOn: document.querySelector('#cy')._cyreg.cy.nodes('.kindframe').length}"
+ ],
+ [
+  "js",
+  "window.zaansouvi.enter('src/shapes.ts#Circle@27:14'); return 1"
+ ],
+ [
+  "sleep",
+  1.2
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; const st=window.zaansouvi.state; const m=st.answer.model; const kind=id=>(m.nodes.find(n=>n.id===id)||{}).kind; const frame=cy.getElementById('frame:'+st.view); return {view: st.view, exists: !!m.levels[st.view], frames: cy.nodes('.kindframe').map(f=>f.data('label')+': '+f.children().map(c=>c.data('label').split('\\n')[0]).join(', ')), loose: frame.children().not('.kindframe').not('.this').not('.notes-spacer').map(n=>n.data('label').split('\\n')[0]+' ['+kind(n.id())+']')}"
+ ],
+ [
+  "shot",
+  "kind-frames-circle.png"
+ ],
+ [
+  "js",
+  "const st=window.zaansouvi.state; const m=st.answer.model; const one=Object.keys(m.levels).filter(v=>v && m.levels[v].nodes.length>=2 && new Set(m.levels[v].nodes.map(id=>(m.nodes.find(n=>n.id===id)||{}).kind)).size===1); if(!one.length) return 'no view of one kind'; window.zaansouvi.enter(one[0]); return one[0]"
+ ],
+ [
+  "sleep",
+  1.2
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; return {view: window.zaansouvi.state.view, kindFramesInOneKindView: cy.nodes('.kindframe').length}"
+ ],
+ [
+  "js",
+  "window.zaansouvi.enter('src/app.ts'); return 1"
+ ],
+ [
+  "sleep",
+  1.2
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; return {view:'src/app.ts', frames: cy.nodes('.kindframe').map(f=>f.data('label')+' ('+f.children().length+')')}"
+ ],
+ [
+  "shot",
+  "kind-frames-app.png"
+ ],
+ [
+  "js",
+  "window.zaansouvi.tab('legend'); return [...document.querySelectorAll('#pane-legend .legend-row')].map(r=>r.textContent).filter(t=>/kind frame/.test(t))"
+ ]
+]

@@ -40,7 +40,7 @@ The server runs its TypeScript directly with Node's type stripping, so it may us
 
 From `zaansouvi-mvp/`:
 - `node tests/viewer/check-model.mjs`: the graph model against `expected/graph-views.json`, two builds byte-identical, six damaged caches (`BE-91`, `BE-92`). It runs on MVP 1's frozen cache in `expected/`; no model check on `test-source-mvp2` exists yet.
-- `node tests/viewer/check-server.mjs`: the backend on a temporary copy of the MVP, after a run of `ts-program` on a copy of `test-source-mvp2`: security, reads, the activity log, runs, bad data across restarts (`BE-92` to `BE-94`), 37 checks.
+- `node tests/viewer/check-server.mjs`: the backend on a temporary copy of the MVP, after a run of `ts-program` on a copy of `test-source-mvp2`: security, reads, the activity log, runs, bad data across restarts (`BE-92` to `BE-94`), 73 checks, format 3 included.
 - `npm run typecheck` in this folder.
 
 The page itself is reviewed by a person (`BE-95`, `M2Q-8`). `window.zaansouvi` exposes `enter`, `select`, `tab` and `tools` for scripted checks; `tests/viewer/browse/` drives the page in headless Firefox, printing what it holds and taking screenshots (its `README.md`). They use the real `data/`, so stop your own Viewer first.

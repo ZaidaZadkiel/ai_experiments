@@ -1,0 +1,120 @@
+[
+ [
+  "go",
+  "x"
+ ],
+ [
+  "wait",
+  "window.zaansouvi && window.zaansouvi.ready()",
+  20
+ ],
+ [
+  "sleep",
+  1
+ ],
+ [
+  "js",
+  "return fetch('/api/sources',{credentials:'same-origin'}).then(r=>r.json()).then(j=>{const s=j.sources.find(x=>x.sourceRoot.endsWith('/test-source-mvp2')); return fetch('/api/sources/current',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({source:s.sourceKey})}).then(r=>r.status)})"
+ ],
+ [
+  "go",
+  "x"
+ ],
+ [
+  "wait",
+  "window.zaansouvi && window.zaansouvi.ready() && document.querySelector('#cy canvas')",
+  20
+ ],
+ [
+  "sleep",
+  1
+ ],
+ [
+  "js",
+  "window.zaansouvi.enter('src/shapes.ts'); return 1"
+ ],
+ [
+  "sleep",
+  1.2
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; const rect=cy.container().getBoundingClientRect(); const mv=(x,y,b=0)=>{const t=document.elementFromPoint(rect.left+x,rect.top+y); t.dispatchEvent(new MouseEvent('mousemove',{bubbles:true,clientX:rect.left+x,clientY:rect.top+y,buttons:b}));}; const tip=()=>{const t=document.getElementById('hovertip'); return t.hidden? null : {text:t.innerText, box: (()=>{const a=t.getBoundingClientRect(), g=document.getElementById('graphbox').getBoundingClientRect(); return {inside: a.left>=g.left&&a.right<=g.right&&a.top>=g.top&&a.bottom<=g.bottom}})(), pointerEvents:getComputedStyle(t).pointerEvents}};const n=cy.getElementById('src/shapes.ts#Circle@27:14'); const p=n.renderedPosition(); mv(p.x-30,p.y-30); mv(p.x,p.y); return {on:'Circle', tip:tip(), selected: cy.$(':selected').length}"
+ ],
+ [
+  "shot",
+  "hover-node.png"
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; const rect=cy.container().getBoundingClientRect(); const mv=(x,y,b=0)=>{const t=document.elementFromPoint(rect.left+x,rect.top+y); t.dispatchEvent(new MouseEvent('mousemove',{bubbles:true,clientX:rect.left+x,clientY:rect.top+y,buttons:b}));}; const tip=()=>{const t=document.getElementById('hovertip'); return t.hidden? null : {text:t.innerText, box: (()=>{const a=t.getBoundingClientRect(), g=document.getElementById('graphbox').getBoundingClientRect(); return {inside: a.left>=g.left&&a.right<=g.right&&a.top>=g.top&&a.bottom<=g.bottom}})(), pointerEvents:getComputedStyle(t).pointerEvents}};mv(15, rect.height-30); return {on:'background', tip:tip()}"
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; const rect=cy.container().getBoundingClientRect(); const mv=(x,y,b=0)=>{const t=document.elementFromPoint(rect.left+x,rect.top+y); t.dispatchEvent(new MouseEvent('mousemove',{bubbles:true,clientX:rect.left+x,clientY:rect.top+y,buttons:b}));}; const tip=()=>{const t=document.getElementById('hovertip'); return t.hidden? null : {text:t.innerText, box: (()=>{const a=t.getBoundingClientRect(), g=document.getElementById('graphbox').getBoundingClientRect(); return {inside: a.left>=g.left&&a.right<=g.right&&a.top>=g.top&&a.bottom<=g.bottom}})(), pointerEvents:getComputedStyle(t).pointerEvents}};const n=cy.getElementById('src/shapes.ts#Anonymous@57:14'); const p=n.renderedPosition(); mv(p.x,p.y); return {on:'Anonymous (members in its label)', tip:tip()}"
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; const rect=cy.container().getBoundingClientRect(); const mv=(x,y,b=0)=>{const t=document.elementFromPoint(rect.left+x,rect.top+y); t.dispatchEvent(new MouseEvent('mousemove',{bubbles:true,clientX:rect.left+x,clientY:rect.top+y,buttons:b}));}; const tip=()=>{const t=document.getElementById('hovertip'); return t.hidden? null : {text:t.innerText, box: (()=>{const a=t.getBoundingClientRect(), g=document.getElementById('graphbox').getBoundingClientRect(); return {inside: a.left>=g.left&&a.right<=g.right&&a.top>=g.top&&a.bottom<=g.bottom}})(), pointerEvents:getComputedStyle(t).pointerEvents}};const f=cy.nodes('.kindframe').first(); const b=f.renderedBoundingBox({}); mv(b.x1+4,(b.y1+b.y2)/2); return {on:'kind frame border', tip:tip()}"
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; const rect=cy.container().getBoundingClientRect(); const mv=(x,y,b=0)=>{const t=document.elementFromPoint(rect.left+x,rect.top+y); t.dispatchEvent(new MouseEvent('mousemove',{bubbles:true,clientX:rect.left+x,clientY:rect.top+y,buttons:b}));}; const tip=()=>{const t=document.getElementById('hovertip'); return t.hidden? null : {text:t.innerText, box: (()=>{const a=t.getBoundingClientRect(), g=document.getElementById('graphbox').getBoundingClientRect(); return {inside: a.left>=g.left&&a.right<=g.right&&a.top>=g.top&&a.bottom<=g.bottom}})(), pointerEvents:getComputedStyle(t).pointerEvents}};const e=cy.edges().filter(x=>x.data('label')).first(); window._edge=e.id(); const m=e.renderedMidpoint(); mv(m.x+40,m.y+40); mv(m.x,m.y); return {on:'unselected edge '+e.id(), tip:tip()}"
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; const rect=cy.container().getBoundingClientRect(); const mv=(x,y,b=0)=>{const t=document.elementFromPoint(rect.left+x,rect.top+y); t.dispatchEvent(new MouseEvent('mousemove',{bubbles:true,clientX:rect.left+x,clientY:rect.top+y,buttons:b}));}; const tip=()=>{const t=document.getElementById('hovertip'); return t.hidden? null : {text:t.innerText, box: (()=>{const a=t.getBoundingClientRect(), g=document.getElementById('graphbox').getBoundingClientRect(); return {inside: a.left>=g.left&&a.right<=g.right&&a.top>=g.top&&a.bottom<=g.bottom}})(), pointerEvents:getComputedStyle(t).pointerEvents}};cy.getElementById(window._edge).select(); return 1"
+ ],
+ [
+  "sleep",
+  0.3
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; const rect=cy.container().getBoundingClientRect(); const mv=(x,y,b=0)=>{const t=document.elementFromPoint(rect.left+x,rect.top+y); t.dispatchEvent(new MouseEvent('mousemove',{bubbles:true,clientX:rect.left+x,clientY:rect.top+y,buttons:b}));}; const tip=()=>{const t=document.getElementById('hovertip'); return t.hidden? null : {text:t.innerText, box: (()=>{const a=t.getBoundingClientRect(), g=document.getElementById('graphbox').getBoundingClientRect(); return {inside: a.left>=g.left&&a.right<=g.right&&a.top>=g.top&&a.bottom<=g.bottom}})(), pointerEvents:getComputedStyle(t).pointerEvents}};const e=cy.getElementById(window._edge); const m=e.renderedMidpoint(); mv(m.x+1,m.y); return {on:'selected edge, pointer on it', tip:tip()}"
+ ],
+ [
+  "shot",
+  "hover-edge.png"
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; const rect=cy.container().getBoundingClientRect(); const mv=(x,y,b=0)=>{const t=document.elementFromPoint(rect.left+x,rect.top+y); t.dispatchEvent(new MouseEvent('mousemove',{bubbles:true,clientX:rect.left+x,clientY:rect.top+y,buttons:b}));}; const tip=()=>{const t=document.getElementById('hovertip'); return t.hidden? null : {text:t.innerText, box: (()=>{const a=t.getBoundingClientRect(), g=document.getElementById('graphbox').getBoundingClientRect(); return {inside: a.left>=g.left&&a.right<=g.right&&a.top>=g.top&&a.bottom<=g.bottom}})(), pointerEvents:getComputedStyle(t).pointerEvents}};cy.getElementById(window._edge).unselect(); return {afterUnselect: tip()}"
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; const rect=cy.container().getBoundingClientRect(); const mv=(x,y,b=0)=>{const t=document.elementFromPoint(rect.left+x,rect.top+y); t.dispatchEvent(new MouseEvent('mousemove',{bubbles:true,clientX:rect.left+x,clientY:rect.top+y,buttons:b}));}; const tip=()=>{const t=document.getElementById('hovertip'); return t.hidden? null : {text:t.innerText, box: (()=>{const a=t.getBoundingClientRect(), g=document.getElementById('graphbox').getBoundingClientRect(); return {inside: a.left>=g.left&&a.right<=g.right&&a.top>=g.top&&a.bottom<=g.bottom}})(), pointerEvents:getComputedStyle(t).pointerEvents}};const n=cy.getElementById('src/shapes.ts#Circle@27:14'); const p=n.renderedPosition(); mv(p.x,p.y); window._shown=!!tip(); const x=rect.left+p.x, y=rect.top+p.y; const ev=(t,el,cx,cy2,b)=>el.dispatchEvent(new MouseEvent(t,{bubbles:true,cancelable:true,clientX:cx,clientY:cy2,button:1,buttons:b})); ev('mousedown',document.elementFromPoint(x,y),x,y,4); for(let i=1;i<=5;i++) ev('mousemove',document,x+i*8,y,4); ev('mouseup',document,x+40,y,0); return 1"
+ ],
+ [
+  "sleep",
+  0.3
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; const rect=cy.container().getBoundingClientRect(); const mv=(x,y,b=0)=>{const t=document.elementFromPoint(rect.left+x,rect.top+y); t.dispatchEvent(new MouseEvent('mousemove',{bubbles:true,clientX:rect.left+x,clientY:rect.top+y,buttons:b}));}; const tip=()=>{const t=document.getElementById('hovertip'); return t.hidden? null : {text:t.innerText, box: (()=>{const a=t.getBoundingClientRect(), g=document.getElementById('graphbox').getBoundingClientRect(); return {inside: a.left>=g.left&&a.right<=g.right&&a.top>=g.top&&a.bottom<=g.bottom}})(), pointerEvents:getComputedStyle(t).pointerEvents}};const afterPan=tip(); const n=cy.getElementById('src/shapes.ts#Circle@27:14'); const p=n.renderedPosition(); mv(p.x,p.y); const again=!!tip(); cy.zoom(cy.zoom()*1.1); return {shownBeforeMiddlePan: window._shown, afterMiddlePan: afterPan, shownAgainOnHover: again, afterZoom: tip()}"
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; const rect=cy.container().getBoundingClientRect(); const mv=(x,y,b=0)=>{const t=document.elementFromPoint(rect.left+x,rect.top+y); t.dispatchEvent(new MouseEvent('mousemove',{bubbles:true,clientX:rect.left+x,clientY:rect.top+y,buttons:b}));}; const tip=()=>{const t=document.getElementById('hovertip'); return t.hidden? null : {text:t.innerText, box: (()=>{const a=t.getBoundingClientRect(), g=document.getElementById('graphbox').getBoundingClientRect(); return {inside: a.left>=g.left&&a.right<=g.right&&a.top>=g.top&&a.bottom<=g.bottom}})(), pointerEvents:getComputedStyle(t).pointerEvents}};const n=cy.nodes('.stub').first(); const p=n.renderedPosition(); mv(p.x,p.y); return {on:'stub '+n.data('label'), tip:tip()}"
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; const rect=cy.container().getBoundingClientRect(); const mv=(x,y,b=0)=>{const t=document.elementFromPoint(rect.left+x,rect.top+y); t.dispatchEvent(new MouseEvent('mousemove',{bubbles:true,clientX:rect.left+x,clientY:rect.top+y,buttons:b}));}; const tip=()=>{const t=document.getElementById('hovertip'); return t.hidden? null : {text:t.innerText, box: (()=>{const a=t.getBoundingClientRect(), g=document.getElementById('graphbox').getBoundingClientRect(); return {inside: a.left>=g.left&&a.right<=g.right&&a.top>=g.top&&a.bottom<=g.bottom}})(), pointerEvents:getComputedStyle(t).pointerEvents}};const n=cy.getElementById('src/shapes.ts#Circle@27:14'); const p=n.renderedPosition(); mv(p.x,p.y); const t=document.getElementById('hovertip'); const before=!t.hidden; n.emit('grab'); const during=!t.hidden; n.emit('free'); return {beforeGrab: before, duringGrab: during}"
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; const rect=cy.container().getBoundingClientRect(); const mv=(x,y,b=0)=>{const t=document.elementFromPoint(rect.left+x,rect.top+y); t.dispatchEvent(new MouseEvent('mousemove',{bubbles:true,clientX:rect.left+x,clientY:rect.top+y,buttons:b}));}; const tip=()=>{const t=document.getElementById('hovertip'); return t.hidden? null : {text:t.innerText, box: (()=>{const a=t.getBoundingClientRect(), g=document.getElementById('graphbox').getBoundingClientRect(); return {inside: a.left>=g.left&&a.right<=g.right&&a.top>=g.top&&a.bottom<=g.bottom}})(), pointerEvents:getComputedStyle(t).pointerEvents}};const n=cy.nodes().not('.frame, .kindframe, .notes-spacer, .this').max(x=>x.renderedPosition('x')).ele; const p=n.renderedPosition(); mv(p.x,p.y); const t=document.getElementById('hovertip').getBoundingClientRect(); return {rightmost:n.data('label').split('\\n')[0], pointerX: Math.round(rect.left+p.x), tipLeft: Math.round(t.left), tipRight: Math.round(t.right), graphRight: Math.round(document.getElementById('graphbox').getBoundingClientRect().right), tip:tip()}"
+ ],
+ [
+  "js",
+  "window.zaansouvi.enter(''); return 1"
+ ],
+ [
+  "sleep",
+  1.2
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; const rect=cy.container().getBoundingClientRect(); const mv=(x,y,b=0)=>{const t=document.elementFromPoint(rect.left+x,rect.top+y); t.dispatchEvent(new MouseEvent('mousemove',{bubbles:true,clientX:rect.left+x,clientY:rect.top+y,buttons:b}));}; const tip=()=>{const t=document.getElementById('hovertip'); return t.hidden? null : {text:t.innerText, box: (()=>{const a=t.getBoundingClientRect(), g=document.getElementById('graphbox').getBoundingClientRect(); return {inside: a.left>=g.left&&a.right<=g.right&&a.top>=g.top&&a.bottom<=g.bottom}})(), pointerEvents:getComputedStyle(t).pointerEvents}};const n=cy.getElementById('src/shapes.ts'); const p=n.renderedPosition(); mv(p.x,p.y); return {on:'top view, file shapes.ts', tip:tip()}"
+ ]
+]

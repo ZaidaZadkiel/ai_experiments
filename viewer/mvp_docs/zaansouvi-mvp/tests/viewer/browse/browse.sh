@@ -9,13 +9,25 @@ STEPS="$(realpath "$1")" || exit 2
 WORK="$(mktemp -d)"
 OUT="$(realpath "${2:-$WORK}")"
 PROFILE="$WORK/ffprofile"
+# Firefox's own temporary files, the tmp-*.xpi it writes on every start among them, go into the work folder, not /tmp, so
+# they are removed with it (405 of them, 1.7 GB, had built up in /tmp, 2026-11-10).
+FFTMP="$WORK/fftmp"
 PORT=4399
 
 # Stop by process ID: a pattern given to pkill -f would also match this shell's own command line.
 stop_ff() { for p in $(pgrep -f -- "--profile $PROFILE"); do kill "$p" 2>/dev/null; done; }
 stop_viewer() { for p in $(pgrep -f -- "server.ts --port $PORT"); do kill "$p" 2>/dev/null; done; }
+# Every exit cleans up, a failed or interrupted run included: Firefox and the Viewer stopped, and the work folder, which
+# holds the Viewer's output with its token, removed, keeping only screenshots taken there.
+cleanup() {
+  stop_ff; stop_viewer
+  rm -rf "$PROFILE" "$FFTMP" "$WORK/view.out" "$WORK/steps.json"
+  if [ "$OUT" = "$WORK" ]; then rmdir "$WORK" 2>/dev/null; else rm -rf "$WORK"; fi # kept only if it holds screenshots
+}
+trap cleanup EXIT
+trap 'exit 130' INT TERM
 stop_viewer
-mkdir -p "$PROFILE" "$OUT"
+mkdir -p "$PROFILE" "$FFTMP" "$OUT"
 
 cd "$VIEWER" || exit 1
 ./zaansouvi-view --port "$PORT" > "$WORK/view.out" 2>&1 &
@@ -28,12 +40,8 @@ python3 -I -c 'import json,sys; s=json.load(open(sys.argv[1])); [st.__setitem__(
   "$STEPS" "$URL" "$WORK/steps.json"
 
 # A fresh profile every time: a profile left locked by an earlier Firefox makes Marionette unreachable.
-firefox --headless --marionette --profile "$PROFILE" --no-remote >/dev/null 2>&1 &
+TMPDIR="$FFTMP" firefox --headless --marionette --profile "$PROFILE" --no-remote >/dev/null 2>&1 &
 cd "$OUT" && python3 -I "$HERE/drive.py" "$WORK/steps.json"
 status=$?
-stop_ff; stop_viewer
-# The work folder holds the Viewer's output, token included: remove it, keeping only screenshots taken there.
-rm -rf "$PROFILE" "$WORK/view.out" "$WORK/steps.json"
-[ "$OUT" = "$WORK" ] || rm -rf "$WORK"
 echo "screenshots, if any: $OUT"
 exit $status

@@ -94,7 +94,7 @@ try {
   check("ZaAnSouVi's own data folder is refused", (await req("POST", "/api/sources", { sourceRoot: path.join(MVP, "data") })).status === 400);
   const g1 = await req("GET", `/api/graph?source=${key}`);
   const m1 = g1.json?.model;
-  check("graph: latest, format 2, 32 views, nothing invalid or extra", g1.json?.status === "latest" && m1.formatVersion === 2 && Object.keys(m1.levels).length === 32 &&
+  check("graph: latest, format 3, 32 views, nothing invalid or extra", g1.json?.status === "latest" && m1.formatVersion === 3 && Object.keys(m1.levels).length === 32 &&
     m1.checks.invalid.length === 0 && m1.checks.extra.length === 0, g1.text.slice(0, 200));
   check("the top view: 1 unresolved use, 25 built-ins apart", m1?.levels[""].unresolved.length === 1 && m1?.levels[""].builtins.length === 25,
     `${m1?.levels[""].unresolved.length} unresolved, built-ins ${JSON.stringify(m1?.levels[""].builtins.map((b) => b.name ?? b))}; views ${JSON.stringify(Object.keys(m1?.levels ?? {}))}`);
@@ -159,6 +159,7 @@ try {
   const g4 = await req("GET", `/api/graph?source=${key}`);
   check("a failed run: the last good graph, with the reason", g4.json?.status === "last-good" && /failed/.test(g4.json.reason ?? ""));
   // an entry in another format, while the Runner's cache is for another source
+  format3(m1);
   const e = JSON.parse(fs.readFileSync(entryFile, "utf8"));
   e.formatVersion = 0;
   fs.writeFileSync(entryFile, JSON.stringify(e));
@@ -167,7 +168,7 @@ try {
   const g5 = await req("GET", `/api/graph?source=${key}`);
   check("an entry in another format: unusable, with the reason", g5.json?.status === "unusable" && /format 0/.test(g5.json.reason ?? ""), g5.text.slice(0, 160));
   fs.writeFileSync(path.join(MVP, "data/viewer/sources.json"), "{ damaged");
-  e.formatVersion = 2;
+  e.formatVersion = 3;
   fs.writeFileSync(entryFile, JSON.stringify(e));
   await stop(); await start();
   const s = await req("GET", "/api/sources");
@@ -184,3 +185,67 @@ try {
 for (const p of problems) console.log(`  - ${p}`);
 console.log(`\npassed: ${passed}, failed: ${problems.length}`);
 process.exitCode = problems.length ? 1 : 0;
+
+// ---- format 3 (BE-110 to BE-115) against the expected model written by hand, expected-mvp2/expected-model3.json.
+// Relations are compared by key, as the expectation names them: "<at> <kind> <to>" for a use, "link <from> <to>".
+function format3(m) {
+  console.log("Format 3 against expected-mvp2/expected-model3.json");
+  const x = JSON.parse(fs.readFileSync(path.join(ROOT, "expected-mvp2/expected-model3.json"), "utf8"));
+  const rels = new Map(m.relations.map((r) => [r.id, r]));
+  const key = (id) => {
+    const r = rels.get(id);
+    if (!r) return `?${id}`;
+    if (r.dataName === "code.link") return `link ${r.from} ${r.to}`;
+    const l = r.location;
+    return `${l.file} ${l.start.line}:${l.start.column} ${r.kind} ${r.to}`;
+  };
+  const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+  const sortedKeys = (o) => Object.fromEntries(Object.entries(o).sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0)));
+  const diff = (a, b) => {  // the first few keys that differ between two maps
+    const ks = [...new Set([...Object.keys(a), ...Object.keys(b)])].filter((k) => !same(a[k], b[k]));
+    return ks.slice(0, 4).map((k) => `${k}: model ${JSON.stringify(a[k])} / expected ${JSON.stringify(b[k])}`).join("; ") + (ks.length > 4 ? ` (+${ks.length - 4})` : "");
+  };
+  const ix = m.index, xi = x.index;
+  for (const part of ["fileOf", "children", "entries", "folderOf", "ancestors"]) {
+    check(`index.${part}`, same(sortedKeys(ix[part]), sortedKeys(xi[part])), diff(ix[part], xi[part]));
+  }
+  for (const part of ["relationsFrom", "relationsTo"]) {
+    const mk = Object.fromEntries(Object.entries(ix[part]).map(([n, ids]) => [n, ids.map(key).sort()]));
+    const xk = Object.fromEntries(Object.entries(xi[part]).filter(([, ks]) => part === "relationsFrom" || true).map(([n, ks]) => [n, [...ks].sort()]));
+    check(`index.${part}, by key`, same(sortedKeys(mk), sortedKeys(xk)), diff(mk, xk));
+  }
+  for (const [v, xv] of Object.entries(x.views)) {
+    const mv = m.levels[v];
+    const name = v === "" ? "the top view" : v;
+    if (!mv) { check(`${name}: a view`, false); continue; }
+    check(`${name}: render`, same(sortedKeys(mv.render), sortedKeys(xv.render)), diff(mv.render, xv.render));
+    check(`${name}: path, inside, reachable`, same(mv.path, xv.path) && same(mv.inside, xv.inside) && mv.reachable === xv.reachable,
+      `path ${JSON.stringify(mv.path)}, inside ${JSON.stringify(mv.inside)}, reachable ${mv.reachable}`);
+    if (xv.memberOf) check(`${name}: memberOf and memberRows`, same(sortedKeys(mv.memberOf), sortedKeys(xv.memberOf)) && same(sortedKeys(mv.memberRows), sortedKeys(xv.memberRows)),
+      `${diff(mv.memberOf, xv.memberOf)} ${diff(mv.memberRows, xv.memberRows)}`);
+    if (xv.unconnected) check(`${name}: unconnected`, same(mv.unconnected, xv.unconnected), JSON.stringify(mv.unconnected));
+    if (xv.edgeCount !== undefined) check(`${name}: ${xv.edgeCount} edges`, mv.edges.length === xv.edgeCount, `${mv.edges.length}`);
+    if (xv.relationCount !== undefined) check(`${name}: ${xv.relationCount} relations drawn`, Object.keys(mv.relationEdge).length === xv.relationCount, `${Object.keys(mv.relationEdge).length}`);
+    if (xv.relationEdge) {
+      const mk = Object.fromEntries(Object.entries(mv.relationEdge).map(([r, e]) => [key(r), e]));
+      check(`${name}: relationEdge, by key`, same(sortedKeys(mk), sortedKeys(xv.relationEdge)), diff(mk, xv.relationEdge));
+      const kinds = Object.fromEntries(mv.edges.map((e) => [e.id, e.kind])), xk = Object.fromEntries(xv.edges.map((e) => [`${e[0]}->${e[1]}`, e[2]]));
+      check(`${name}: edge kinds`, same(sortedKeys(kinds), sortedKeys(xk)), diff(kinds, xk));
+    }
+    if (xv.notDrawn) check(`${name}: not drawn here`, xv.notDrawn.every((k) => !Object.keys(mv.relationEdge).map(key).includes(k)));
+    if (xv.builtinGroups) {
+      const g = mv.builtinGroups.map((t) => ({ type: t.type, members: t.members.map((mm) => ({ name: mm.name, relations: mm.relations.map(key) })) }));
+      check(`${name}: builtinGroups`, same(g, xv.builtinGroups), JSON.stringify(g));
+    }
+  }
+  const nodes = new Map(m.nodes.map((n) => [n.id, n]));
+  const disp = Object.fromEntries(Object.keys(x.display).map((id) => [id, nodes.get(id)?.display]));
+  check(`display of ${Object.keys(x.display).length} nodes`, same(sortedKeys(disp), sortedKeys(x.display)), diff(disp, x.display));
+  check("dropped: none", same(m.dropped, x.dropped), JSON.stringify(m.dropped).slice(0, 200));
+  // Over every view, not only the four written by hand.
+  const views = Object.entries(m.levels);
+  check(`every view: relationEdge agrees with its edges' members (${views.length} views)`, views.every(([, v]) =>
+    same(sortedKeys(v.relationEdge), sortedKeys(Object.fromEntries(v.edges.flatMap((e) => e.members.map((r) => [r, e.id])))))));
+  check("every view reachable", views.every(([, v]) => v.reachable), views.filter(([, v]) => !v.reachable).map(([k]) => k).join(", "));
+  check("every view's path and inside name views", views.every(([, v]) => v.path.every((p) => m.levels[p]) && v.inside.every((i) => m.levels[i])));
+}

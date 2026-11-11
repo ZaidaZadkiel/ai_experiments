@@ -59,7 +59,11 @@ It has gone through two stages. Each one is described here on its own: what it a
 - **Running without `ts-config` is a known risk**: a source whose `tsconfig.json` changes how modules resolve may give a wrong graph (`FND-95`, `TPG-D4a`).
 - **A Viewer left running hid a server change.** Every headless check passed while the user's open Viewer showed wrong text (`FND-107`). The page now checks the server's answer.
 
-**Where it stands.** Phases 0, 2, 4, 5, 7 and 8 are done; `ts-config` (phase 3) is deferred and M3 (phase 6) isn't needed (`97`, section 5). The human review (P3) is in progress. Nineteen questions, `M2Q-1` to `M2Q-19`, are waiting for answers (`97`, section 6).
+**Where it stands.** Phases 0, 2, 4, 5, 7 and 8 are done; `ts-config` (phase 3) is deferred and M3 (phase 6) isn't needed (`97`, section 5). The human review (P3) is in progress. Twenty-four questions, `M2Q-2` to `M2Q-29` except `M2Q-21`, `M2Q-23`, `M2Q-24` and `M2Q-26`, are waiting for answers; the Inventory is built (`51_viewer_inventory.md`); the next session starts from the list in `97`, section 5 (`97`, section 6).
+
+**The scope has expanded** (decided by the user, 2026-11-10; `MVP_scope.md`, section 1.2). The tools are settled well enough; what MVP 2 showed insufficient is the data's representation: **the graph alone is not enough for a good-enough understanding** of the examined code. The next point is what examining a codebase actually requires (`M2Q-22`), with a tree of folders, files and symbols as the first candidate (`M2Q-21`).
+
+**Built for the expanded scope** (2026-11-10): **the Inventory**, a drawer tab for examining the model by hand, with its own search, keyboard, hiding of nodes and kinds, and [Show in graph] (`51_viewer_inventory.md`, `UI-87`); the graph model's **format 3**, in which the backend states what the page used to work out (`BE-110` to `BE-115`); the page's **model layer**, which the Graph, the breadcrumb and the Inventory read in lockstep (`VIEW-51`); and in the Graph, **kind frames**, **[Edges]**, **middle-button panning**, **hover boxes**, a **breadcrumb** with the views inside, and a **resizable drawer** (`UI-82` to `UI-88`). Every check passes, 34 (`97`, section 3); the user's review of the Inventory is next. Using it, the user found that manipulating the graph helps understanding, and the next question is how to show more of what the program is trying to do (`FND-124`, `M2Q-22`).
 
 ## The MVP's claims so far
 
@@ -75,10 +79,11 @@ It has gone through two stages. Each one is described here on its own: what it a
 
 The near options, each linked to what it needs (everything open is in `20_mvp2.md`, section 10):
 1. **Finish MVP 2.** Do the human review (P3), then write the findings note (`DEL-07`), which answers `MVP-5` and `MVP-8`.
-2. **Answer the open questions** in `97`, section 6, starting with `M2Q-1` to `M2Q-7`: files inside their folders, a range per declaration, a variable's range, `ro`/`rw` markers and default values, link shapes, crowded views, and type parameters.
+2. **Answer the open questions** in `97`, section 6, starting with `M2Q-2` to `M2Q-7`: a range per declaration, a variable's range, `ro`/`rw` markers and default values, link shapes, crowded views, and type parameters.
 3. **Decide `TPG-D8`**: let `ts-program` read the packages' type declarations, so real Node code resolves.
-4. **Take on readability of large graphs** (`VW-39`, deferred). This is where MVP 2 points the product's hardest open problem.
-5. **Test P4 formally** (`MVP_scope.md`, 10.1), and the other post-MVP checks in 10.3.
+4. **Work out what examining a codebase requires** (`M2Q-22`), and how each need is best represented, starting with a tree view (`M2Q-21`).
+5. **Take on readability of large graphs** (`VW-39`, deferred). This is where MVP 2 points the product's hardest open problem.
+6. **Test P4 formally** (`MVP_scope.md`, 10.1), and the other post-MVP checks in 10.3.
 
 ## How to read this folder
 

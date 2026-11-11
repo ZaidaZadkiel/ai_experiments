@@ -1,0 +1,158 @@
+[
+ [
+  "go",
+  "x"
+ ],
+ [
+  "wait",
+  "window.zaansouvi && window.zaansouvi.ready()",
+  20
+ ],
+ [
+  "sleep",
+  1
+ ],
+ [
+  "js",
+  "return fetch('/api/sources',{credentials:'same-origin'}).then(r=>r.json()).then(j=>{const s=j.sources.find(x=>x.sourceRoot.endsWith('/test-source-mvp2')); return fetch('/api/sources/current',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({source:s.sourceKey})}).then(r=>r.status)})"
+ ],
+ [
+  "go",
+  "x"
+ ],
+ [
+  "wait",
+  "window.zaansouvi && window.zaansouvi.ready() && document.querySelector('#cy canvas')",
+  20
+ ],
+ [
+  "sleep",
+  1
+ ],
+ [
+  "js",
+  "try{localStorage.removeItem('zaansouvi.drawerWidth')}catch(e){} return 1"
+ ],
+ [
+  "go",
+  "x"
+ ],
+ [
+  "wait",
+  "window.zaansouvi && window.zaansouvi.ready() && document.querySelector('#cy canvas')",
+  20
+ ],
+ [
+  "sleep",
+  1
+ ],
+ [
+  "js",
+  "const d=document.getElementById('drawer'), h=document.getElementById('drawer-handle'), t=document.getElementById('drawer-toggle'), cy=document.querySelector('#cy')._cyreg.cy; const pos=()=>JSON.stringify(cy.nodes().map(n=>[n.id(),Math.round(n.position('x')),Math.round(n.position('y'))])); const tabs=document.querySelector('.tabs'); const pe=(type,el,x,y)=>el.dispatchEvent(new PointerEvent(type,{bubbles:true,cancelable:true,clientX:x,clientY:y,button:0,buttons:type==='pointerup'?0:1,pointerId:1,isPrimary:true}));return {width: Math.round(d.getBoundingClientRect().width), tabsFit: tabs.scrollWidth<=tabs.clientWidth, tabs: [...tabs.querySelectorAll('.tab')].map(x=>x.textContent), oldButton: !!document.getElementById('collapse'), toggle: t.textContent, canvas: Math.round(cy.width())}"
+ ],
+ [
+  "js",
+  "const d=document.getElementById('drawer'), h=document.getElementById('drawer-handle'), t=document.getElementById('drawer-toggle'), cy=document.querySelector('#cy')._cyreg.cy; const pos=()=>JSON.stringify(cy.nodes().map(n=>[n.id(),Math.round(n.position('x')),Math.round(n.position('y'))])); const tabs=document.querySelector('.tabs'); const pe=(type,el,x,y)=>el.dispatchEvent(new PointerEvent(type,{bubbles:true,cancelable:true,clientX:x,clientY:y,button:0,buttons:type==='pointerup'?0:1,pointerId:1,isPrimary:true}));window._p=pos(); window._cw=cy.width(); const r=h.getBoundingClientRect(); const x=r.left+4, y=r.top+100; pe('pointerdown',h,x,y); pe('pointermove',window,x-60,y); pe('pointermove',window,x-120,y); window._during={overlay: d.classList.contains('overlay'), drawerW: Math.round(d.getBoundingClientRect().width), canvasUnchanged: cy.width()===window._cw, columnUnchanged: getComputedStyle(document.querySelector('main.body')).getPropertyValue('--drawer-w').trim()}; pe('pointerup',window,x-120,y); return 1"
+ ],
+ [
+  "sleep",
+  0.5
+ ],
+ [
+  "js",
+  "const d=document.getElementById('drawer'), h=document.getElementById('drawer-handle'), t=document.getElementById('drawer-toggle'), cy=document.querySelector('#cy')._cyreg.cy; const pos=()=>JSON.stringify(cy.nodes().map(n=>[n.id(),Math.round(n.position('x')),Math.round(n.position('y'))])); const tabs=document.querySelector('.tabs'); const pe=(type,el,x,y)=>el.dispatchEvent(new PointerEvent(type,{bubbles:true,cancelable:true,clientX:x,clientY:y,button:0,buttons:type==='pointerup'?0:1,pointerId:1,isPrimary:true}));return {during: window._during, after: {drawerW: Math.round(d.getBoundingClientRect().width), overlay: d.classList.contains('overlay'), canvas: Math.round(cy.width()), canvasShrank: cy.width() < window._cw, nodesKept: pos()===window._p, saved: localStorage.getItem('zaansouvi.drawerWidth')}}"
+ ],
+ [
+  "shot",
+  "drawer-wide.png"
+ ],
+ [
+  "js",
+  "const d=document.getElementById('drawer'), h=document.getElementById('drawer-handle'), t=document.getElementById('drawer-toggle'), cy=document.querySelector('#cy')._cyreg.cy; const pos=()=>JSON.stringify(cy.nodes().map(n=>[n.id(),Math.round(n.position('x')),Math.round(n.position('y'))])); const tabs=document.querySelector('.tabs'); const pe=(type,el,x,y)=>el.dispatchEvent(new PointerEvent(type,{bubbles:true,cancelable:true,clientX:x,clientY:y,button:0,buttons:type==='pointerup'?0:1,pointerId:1,isPrimary:true}));const r=h.getBoundingClientRect(); const x=r.left+4, y=r.top+100; pe('pointerdown',h,x,y); pe('pointermove',window,x+2000,y); pe('pointerup',window,x+2000,y); return 1"
+ ],
+ [
+  "sleep",
+  0.4
+ ],
+ [
+  "js",
+  "const d=document.getElementById('drawer'), h=document.getElementById('drawer-handle'), t=document.getElementById('drawer-toggle'), cy=document.querySelector('#cy')._cyreg.cy; const pos=()=>JSON.stringify(cy.nodes().map(n=>[n.id(),Math.round(n.position('x')),Math.round(n.position('y'))])); const tabs=document.querySelector('.tabs'); const pe=(type,el,x,y)=>el.dispatchEvent(new PointerEvent(type,{bubbles:true,cancelable:true,clientX:x,clientY:y,button:0,buttons:type==='pointerup'?0:1,pointerId:1,isPrimary:true}));const small=Math.round(d.getBoundingClientRect().width); const r=h.getBoundingClientRect(); const x=r.left+4, y=r.top+100; pe('pointerdown',h,x,y); pe('pointermove',window,-2000,y); pe('pointerup',window,-2000,y); return {smallest: small, tabsFitAtSmallest: window._fit}"
+ ],
+ [
+  "sleep",
+  0.4
+ ],
+ [
+  "js",
+  "const d=document.getElementById('drawer'), h=document.getElementById('drawer-handle'), t=document.getElementById('drawer-toggle'), cy=document.querySelector('#cy')._cyreg.cy; const pos=()=>JSON.stringify(cy.nodes().map(n=>[n.id(),Math.round(n.position('x')),Math.round(n.position('y'))])); const tabs=document.querySelector('.tabs'); const pe=(type,el,x,y)=>el.dispatchEvent(new PointerEvent(type,{bubbles:true,cancelable:true,clientX:x,clientY:y,button:0,buttons:type==='pointerup'?0:1,pointerId:1,isPrimary:true}));return {largest: Math.round(d.getBoundingClientRect().width), windowLess400: window.innerWidth-400}"
+ ],
+ [
+  "js",
+  "const d=document.getElementById('drawer'), h=document.getElementById('drawer-handle'), t=document.getElementById('drawer-toggle'), cy=document.querySelector('#cy')._cyreg.cy; const pos=()=>JSON.stringify(cy.nodes().map(n=>[n.id(),Math.round(n.position('x')),Math.round(n.position('y'))])); const tabs=document.querySelector('.tabs'); const pe=(type,el,x,y)=>el.dispatchEvent(new PointerEvent(type,{bubbles:true,cancelable:true,clientX:x,clientY:y,button:0,buttons:type==='pointerup'?0:1,pointerId:1,isPrimary:true}));h.dispatchEvent(new MouseEvent('dblclick',{bubbles:true})); return 1"
+ ],
+ [
+  "sleep",
+  0.4
+ ],
+ [
+  "js",
+  "const d=document.getElementById('drawer'), h=document.getElementById('drawer-handle'), t=document.getElementById('drawer-toggle'), cy=document.querySelector('#cy')._cyreg.cy; const pos=()=>JSON.stringify(cy.nodes().map(n=>[n.id(),Math.round(n.position('x')),Math.round(n.position('y'))])); const tabs=document.querySelector('.tabs'); const pe=(type,el,x,y)=>el.dispatchEvent(new PointerEvent(type,{bubbles:true,cancelable:true,clientX:x,clientY:y,button:0,buttons:type==='pointerup'?0:1,pointerId:1,isPrimary:true}));return {afterDoubleClick: Math.round(d.getBoundingClientRect().width)}"
+ ],
+ [
+  "js",
+  "const d=document.getElementById('drawer'), h=document.getElementById('drawer-handle'), t=document.getElementById('drawer-toggle'), cy=document.querySelector('#cy')._cyreg.cy; const pos=()=>JSON.stringify(cy.nodes().map(n=>[n.id(),Math.round(n.position('x')),Math.round(n.position('y'))])); const tabs=document.querySelector('.tabs'); const pe=(type,el,x,y)=>el.dispatchEvent(new PointerEvent(type,{bubbles:true,cancelable:true,clientX:x,clientY:y,button:0,buttons:type==='pointerup'?0:1,pointerId:1,isPrimary:true}));window._cw=cy.width(); t.click(); return 1"
+ ],
+ [
+  "sleep",
+  0.5
+ ],
+ [
+  "js",
+  "const d=document.getElementById('drawer'), h=document.getElementById('drawer-handle'), t=document.getElementById('drawer-toggle'), cy=document.querySelector('#cy')._cyreg.cy; const pos=()=>JSON.stringify(cy.nodes().map(n=>[n.id(),Math.round(n.position('x')),Math.round(n.position('y'))])); const tabs=document.querySelector('.tabs'); const pe=(type,el,x,y)=>el.dispatchEvent(new PointerEvent(type,{bubbles:true,cancelable:true,clientX:x,clientY:y,button:0,buttons:type==='pointerup'?0:1,pointerId:1,isPrimary:true}));return {collapsed: {drawerW: Math.round(d.getBoundingClientRect().width), toggle: t.textContent, tabsHidden: getComputedStyle(tabs.querySelector('.tab')).display==='none', canvasGrew: cy.width()>window._cw}}"
+ ],
+ [
+  "shot",
+  "drawer-collapsed.png"
+ ],
+ [
+  "js",
+  "const d=document.getElementById('drawer'), h=document.getElementById('drawer-handle'), t=document.getElementById('drawer-toggle'), cy=document.querySelector('#cy')._cyreg.cy; const pos=()=>JSON.stringify(cy.nodes().map(n=>[n.id(),Math.round(n.position('x')),Math.round(n.position('y'))])); const tabs=document.querySelector('.tabs'); const pe=(type,el,x,y)=>el.dispatchEvent(new PointerEvent(type,{bubbles:true,cancelable:true,clientX:x,clientY:y,button:0,buttons:type==='pointerup'?0:1,pointerId:1,isPrimary:true}));const r=h.getBoundingClientRect(); pe('pointerdown',h,r.left+4,r.top+100); pe('pointermove',window,r.left-200,r.top+100); pe('pointerup',window,r.left-200,r.top+100); return {dragWhileClosedIgnored: Math.round(d.getBoundingClientRect().width)}"
+ ],
+ [
+  "js",
+  "const d=document.getElementById('drawer'), h=document.getElementById('drawer-handle'), t=document.getElementById('drawer-toggle'), cy=document.querySelector('#cy')._cyreg.cy; const pos=()=>JSON.stringify(cy.nodes().map(n=>[n.id(),Math.round(n.position('x')),Math.round(n.position('y'))])); const tabs=document.querySelector('.tabs'); const pe=(type,el,x,y)=>el.dispatchEvent(new PointerEvent(type,{bubbles:true,cancelable:true,clientX:x,clientY:y,button:0,buttons:type==='pointerup'?0:1,pointerId:1,isPrimary:true}));t.click(); return 1"
+ ],
+ [
+  "sleep",
+  0.5
+ ],
+ [
+  "js",
+  "const d=document.getElementById('drawer'), h=document.getElementById('drawer-handle'), t=document.getElementById('drawer-toggle'), cy=document.querySelector('#cy')._cyreg.cy; const pos=()=>JSON.stringify(cy.nodes().map(n=>[n.id(),Math.round(n.position('x')),Math.round(n.position('y'))])); const tabs=document.querySelector('.tabs'); const pe=(type,el,x,y)=>el.dispatchEvent(new PointerEvent(type,{bubbles:true,cancelable:true,clientX:x,clientY:y,button:0,buttons:type==='pointerup'?0:1,pointerId:1,isPrimary:true}));return {reopened: Math.round(d.getBoundingClientRect().width), toggle: t.textContent}"
+ ],
+ [
+  "js",
+  "const d=document.getElementById('drawer'), h=document.getElementById('drawer-handle'), t=document.getElementById('drawer-toggle'), cy=document.querySelector('#cy')._cyreg.cy; const pos=()=>JSON.stringify(cy.nodes().map(n=>[n.id(),Math.round(n.position('x')),Math.round(n.position('y'))])); const tabs=document.querySelector('.tabs'); const pe=(type,el,x,y)=>el.dispatchEvent(new PointerEvent(type,{bubbles:true,cancelable:true,clientX:x,clientY:y,button:0,buttons:type==='pointerup'?0:1,pointerId:1,isPrimary:true}));const r=h.getBoundingClientRect(); const x=r.left+4, y=r.top+100; pe('pointerdown',h,x,y); pe('pointermove',window,x-80,y); pe('pointerup',window,x-80,y); return 1"
+ ],
+ [
+  "go",
+  "x"
+ ],
+ [
+  "wait",
+  "window.zaansouvi && window.zaansouvi.ready() && document.querySelector('#cy canvas')",
+  20
+ ],
+ [
+  "sleep",
+  1
+ ],
+ [
+  "js",
+  "const d=document.getElementById('drawer'), h=document.getElementById('drawer-handle'), t=document.getElementById('drawer-toggle'), cy=document.querySelector('#cy')._cyreg.cy; const pos=()=>JSON.stringify(cy.nodes().map(n=>[n.id(),Math.round(n.position('x')),Math.round(n.position('y'))])); const tabs=document.querySelector('.tabs'); const pe=(type,el,x,y)=>el.dispatchEvent(new PointerEvent(type,{bubbles:true,cancelable:true,clientX:x,clientY:y,button:0,buttons:type==='pointerup'?0:1,pointerId:1,isPrimary:true}));return {afterReload: Math.round(d.getBoundingClientRect().width), saved: localStorage.getItem('zaansouvi.drawerWidth')}"
+ ],
+ [
+  "js",
+  "try{localStorage.removeItem('zaansouvi.drawerWidth')}catch(e){} return 1"
+ ]
+]

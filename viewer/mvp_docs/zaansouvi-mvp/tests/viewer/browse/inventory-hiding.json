@@ -1,0 +1,645 @@
+[
+ [
+  "go",
+  "x"
+ ],
+ [
+  "wait",
+  "window.zaansouvi && window.zaansouvi.ready()",
+  20
+ ],
+ [
+  "sleep",
+  1
+ ],
+ [
+  "js",
+  "return fetch('/api/sources',{credentials:'same-origin'}).then(r=>r.json()).then(j=>{const s=j.sources.find(x=>x.sourceRoot.endsWith('/test-source-mvp2')); return fetch('/api/sources/current',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({source:s.sourceKey})}).then(r=>r.status)})"
+ ],
+ [
+  "go",
+  "x"
+ ],
+ [
+  "wait",
+  "window.zaansouvi && window.zaansouvi.ready() && document.querySelector('#cy canvas')",
+  20
+ ],
+ [
+  "sleep",
+  1
+ ],
+ [
+  "js",
+  "window.zaansouvi.tab('inventory'); return 1"
+ ],
+ [
+  "sleep",
+  0.4
+ ],
+ [
+  "js",
+  "const Z=window.zaansouvi, I=Z.inv, cy=document.querySelector('#cy')._cyreg.cy; const row=(k)=>document.querySelector('#inv-tree [data-key=\"'+CSS.escape(k)+'\"]'); const open=(k)=>{ if(!I.open.has(k)) row(k).querySelector('.inv-twisty').click(); }; const mark=(k)=>row(k)?.querySelector('.inv-marks')?.textContent; const graph=()=>({view:Z.state.view, nodes:cy.nodes().not('.frame, .kindframe, .notes-spacer').map(n=>n.id()).length, sel:cy.$(':selected').map(e=>e.id()), tab:document.querySelector('.tab.on')?.dataset.tab}); const crumbs=()=>document.getElementById('crumbs').textContent;return {show: [...document.querySelectorAll('#inv-show button')].map(b=>b.textContent+(b.getAttribute('aria-pressed')==='false'?' (off)':'')), showAllDisabled: document.querySelector('.inv-showall').disabled}"
+ ],
+ [
+  "js",
+  "window.zaansouvi.enter('src/shapes.ts'); return 1"
+ ],
+ [
+  "sleep",
+  1.2
+ ],
+ [
+  "js",
+  "const Z=window.zaansouvi, I=Z.inv, cy=document.querySelector('#cy')._cyreg.cy; const row=(k)=>document.querySelector('#inv-tree [data-key=\"'+CSS.escape(k)+'\"]'); const open=(k)=>{ if(!I.open.has(k)) row(k).querySelector('.inv-twisty').click(); }; const mark=(k)=>row(k)?.querySelector('.inv-marks')?.textContent; const graph=()=>({view:Z.state.view, nodes:cy.nodes().not('.frame, .kindframe, .notes-spacer').map(n=>n.id()).length, sel:cy.$(':selected').map(e=>e.id()), tab:document.querySelector('.tab.on')?.dataset.tab}); const crumbs=()=>document.getElementById('crumbs').textContent;open('sec:files'); open('f:src'); open('f:src/shapes.ts'); open('f:src/shapes.ts#Circle@27:14'); window._before=graph(); window._crumb=crumbs(); row('f:src/shapes.ts#Circle@27:14').querySelector('.inv-check').click(); return 1"
+ ],
+ [
+  "sleep",
+  1
+ ],
+ [
+  "js",
+  "const Z=window.zaansouvi, I=Z.inv, cy=document.querySelector('#cy')._cyreg.cy; const row=(k)=>document.querySelector('#inv-tree [data-key=\"'+CSS.escape(k)+'\"]'); const open=(k)=>{ if(!I.open.has(k)) row(k).querySelector('.inv-twisty').click(); }; const mark=(k)=>row(k)?.querySelector('.inv-marks')?.textContent; const graph=()=>({view:Z.state.view, nodes:cy.nodes().not('.frame, .kindframe, .notes-spacer').map(n=>n.id()).length, sel:cy.$(':selected').map(e=>e.id()), tab:document.querySelector('.tab.on')?.dataset.tab}); const crumbs=()=>document.getElementById('crumbs').textContent;open('sec:views'); open('v:'); open('v:src/shapes.ts'); return {before: window._before.nodes, after: graph(), circleInGraph: cy.getElementById('src/shapes.ts#Circle@27:14').length, circle: mark('f:src/shapes.ts#Circle@27:14'), member: mark('f:src/shapes.ts#radius@29:23'), memberBoxDisabled: row('f:src/shapes.ts#radius@29:23').querySelector('.inv-check').disabled, viewCircle: mark('v:src/shapes.ts#Circle@27:14'), crumbsBefore: window._crumb, crumbsAfter: crumbs()}"
+ ],
+ [
+  "js",
+  "window.zaansouvi.enter(''); return 1"
+ ],
+ [
+  "sleep",
+  1.2
+ ],
+ [
+  "js",
+  "const Z=window.zaansouvi, I=Z.inv, cy=document.querySelector('#cy')._cyreg.cy; const row=(k)=>document.querySelector('#inv-tree [data-key=\"'+CSS.escape(k)+'\"]'); const open=(k)=>{ if(!I.open.has(k)) row(k).querySelector('.inv-twisty').click(); }; const mark=(k)=>row(k)?.querySelector('.inv-marks')?.textContent; const graph=()=>({view:Z.state.view, nodes:cy.nodes().not('.frame, .kindframe, .notes-spacer').map(n=>n.id()).length, sel:cy.$(':selected').map(e=>e.id()), tab:document.querySelector('.tab.on')?.dataset.tab}); const crumbs=()=>document.getElementById('crumbs').textContent;const e=cy.getElementById('e:src/app.ts->src/shapes.ts'); e.select(); const rect=cy.container().getBoundingClientRect(); const m=e.renderedMidpoint(); const at=(x,y)=>{const t=document.elementFromPoint(rect.left+x,rect.top+y); t.dispatchEvent(new MouseEvent('mousemove',{bubbles:true,clientX:rect.left+x,clientY:rect.top+y,buttons:0}));}; at(m.x+30,m.y+30); at(m.x,m.y); const tip=document.getElementById('hovertip'); return {edgeLabel: e.data('label'), tip: tip.hidden? null : tip.innerText.split('\\n').slice(0,2)}"
+ ],
+ [
+  "js",
+  "document.querySelector('#cy')._cyreg.cy.$(':selected').unselect(); return 1"
+ ],
+ [
+  "sleep",
+  0.6
+ ],
+ [
+  "js",
+  "const Z=window.zaansouvi, I=Z.inv, cy=document.querySelector('#cy')._cyreg.cy; const row=(k)=>document.querySelector('#inv-tree [data-key=\"'+CSS.escape(k)+'\"]'); const open=(k)=>{ if(!I.open.has(k)) row(k).querySelector('.inv-twisty').click(); }; const mark=(k)=>row(k)?.querySelector('.inv-marks')?.textContent; const graph=()=>({view:Z.state.view, nodes:cy.nodes().not('.frame, .kindframe, .notes-spacer').map(n=>n.id()).length, sel:cy.$(':selected').map(e=>e.id()), tab:document.querySelector('.tab.on')?.dataset.tab}); const crumbs=()=>document.getElementById('crumbs').textContent;Z.tab('inventory'); document.querySelector('.inv-showall').click(); return 1"
+ ],
+ [
+  "sleep",
+  1
+ ],
+ [
+  "js",
+  "const Z=window.zaansouvi, I=Z.inv, cy=document.querySelector('#cy')._cyreg.cy; const row=(k)=>document.querySelector('#inv-tree [data-key=\"'+CSS.escape(k)+'\"]'); const open=(k)=>{ if(!I.open.has(k)) row(k).querySelector('.inv-twisty').click(); }; const mark=(k)=>row(k)?.querySelector('.inv-marks')?.textContent; const graph=()=>({view:Z.state.view, nodes:cy.nodes().not('.frame, .kindframe, .notes-spacer').map(n=>n.id()).length, sel:cy.$(':selected').map(e=>e.id()), tab:document.querySelector('.tab.on')?.dataset.tab}); const crumbs=()=>document.getElementById('crumbs').textContent;return {afterShowAll: graph().view, circleBack: mark('f:src/shapes.ts#Circle@27:14'), hiddenNodes: Z.layer.hidden.size}"
+ ],
+ [
+  "js",
+  "window.zaansouvi.enter('src/shapes.ts#total@44:17'); return 1"
+ ],
+ [
+  "sleep",
+  1.2
+ ],
+ [
+  "js",
+  "const Z=window.zaansouvi, I=Z.inv, cy=document.querySelector('#cy')._cyreg.cy; const row=(k)=>document.querySelector('#inv-tree [data-key=\"'+CSS.escape(k)+'\"]'); const open=(k)=>{ if(!I.open.has(k)) row(k).querySelector('.inv-twisty').click(); }; const mark=(k)=>row(k)?.querySelector('.inv-marks')?.textContent; const graph=()=>({view:Z.state.view, nodes:cy.nodes().not('.frame, .kindframe, .notes-spacer').map(n=>n.id()).length, sel:cy.$(':selected').map(e=>e.id()), tab:document.querySelector('.tab.on')?.dataset.tab}); const crumbs=()=>document.getElementById('crumbs').textContent;window._t=graph().nodes; [...document.querySelectorAll('#inv-show button')].find(b=>b.textContent==='Parameters').click(); return 1"
+ ],
+ [
+  "sleep",
+  1
+ ],
+ [
+  "js",
+  "const Z=window.zaansouvi, I=Z.inv, cy=document.querySelector('#cy')._cyreg.cy; const row=(k)=>document.querySelector('#inv-tree [data-key=\"'+CSS.escape(k)+'\"]'); const open=(k)=>{ if(!I.open.has(k)) row(k).querySelector('.inv-twisty').click(); }; const mark=(k)=>row(k)?.querySelector('.inv-marks')?.textContent; const graph=()=>({view:Z.state.view, nodes:cy.nodes().not('.frame, .kindframe, .notes-spacer').map(n=>n.id()).length, sel:cy.$(':selected').map(e=>e.id()), tab:document.querySelector('.tab.on')?.dataset.tab}); const crumbs=()=>document.getElementById('crumbs').textContent;return {totalViewNodesBefore: window._t, after: graph().nodes, paramsOff: [...document.querySelectorAll('#inv-show button')].find(b=>b.textContent==='Parameters').getAttribute('aria-pressed'), shapesParam: mark('f:src/shapes.ts#shapes@46:23') ?? 'row not open'}"
+ ],
+ [
+  "js",
+  "const Z=window.zaansouvi, I=Z.inv, cy=document.querySelector('#cy')._cyreg.cy; const row=(k)=>document.querySelector('#inv-tree [data-key=\"'+CSS.escape(k)+'\"]'); const open=(k)=>{ if(!I.open.has(k)) row(k).querySelector('.inv-twisty').click(); }; const mark=(k)=>row(k)?.querySelector('.inv-marks')?.textContent; const graph=()=>({view:Z.state.view, nodes:cy.nodes().not('.frame, .kindframe, .notes-spacer').map(n=>n.id()).length, sel:cy.$(':selected').map(e=>e.id()), tab:document.querySelector('.tab.on')?.dataset.tab}); const crumbs=()=>document.getElementById('crumbs').textContent;document.querySelector('.inv-showall').click(); return 1"
+ ],
+ [
+  "sleep",
+  1
+ ],
+ [
+  "js",
+  "window.zaansouvi.enter('src/shapes.ts#Circle@27:14'); return 1"
+ ],
+ [
+  "sleep",
+  1.2
+ ],
+ [
+  "js",
+  "const Z=window.zaansouvi, I=Z.inv, cy=document.querySelector('#cy')._cyreg.cy; const row=(k)=>document.querySelector('#inv-tree [data-key=\"'+CSS.escape(k)+'\"]'); const open=(k)=>{ if(!I.open.has(k)) row(k).querySelector('.inv-twisty').click(); }; const mark=(k)=>row(k)?.querySelector('.inv-marks')?.textContent; const graph=()=>({view:Z.state.view, nodes:cy.nodes().not('.frame, .kindframe, .notes-spacer').map(n=>n.id()).length, sel:cy.$(':selected').map(e=>e.id()), tab:document.querySelector('.tab.on')?.dataset.tab}); const crumbs=()=>document.getElementById('crumbs').textContent;row('f:src/shapes.ts#Circle@27:14').querySelector('.inv-check').click(); return 1"
+ ],
+ [
+  "sleep",
+  1
+ ],
+ [
+  "js",
+  "const Z=window.zaansouvi, I=Z.inv, cy=document.querySelector('#cy')._cyreg.cy; const row=(k)=>document.querySelector('#inv-tree [data-key=\"'+CSS.escape(k)+'\"]'); const open=(k)=>{ if(!I.open.has(k)) row(k).querySelector('.inv-twisty').click(); }; const mark=(k)=>row(k)?.querySelector('.inv-marks')?.textContent; const graph=()=>({view:Z.state.view, nodes:cy.nodes().not('.frame, .kindframe, .notes-spacer').map(n=>n.id()).length, sel:cy.$(':selected').map(e=>e.id()), tab:document.querySelector('.tab.on')?.dataset.tab}); const crumbs=()=>document.getElementById('crumbs').textContent;return {hidingTheCurrentView_movedTo: graph().view}"
+ ],
+ [
+  "js",
+  "const Z=window.zaansouvi, I=Z.inv, cy=document.querySelector('#cy')._cyreg.cy; const row=(k)=>document.querySelector('#inv-tree [data-key=\"'+CSS.escape(k)+'\"]'); const open=(k)=>{ if(!I.open.has(k)) row(k).querySelector('.inv-twisty').click(); }; const mark=(k)=>row(k)?.querySelector('.inv-marks')?.textContent; const graph=()=>({view:Z.state.view, nodes:cy.nodes().not('.frame, .kindframe, .notes-spacer').map(n=>n.id()).length, sel:cy.$(':selected').map(e=>e.id()), tab:document.querySelector('.tab.on')?.dataset.tab}); const crumbs=()=>document.getElementById('crumbs').textContent;document.querySelector('.inv-showall').click(); return 1"
+ ],
+ [
+  "sleep",
+  1
+ ],
+ [
+  "js",
+  "window.zaansouvi.enter(''); return 1"
+ ],
+ [
+  "sleep",
+  1.2
+ ],
+ [
+  "js",
+  "const Z=window.zaansouvi, I=Z.inv, cy=document.querySelector('#cy')._cyreg.cy; const row=(k)=>document.querySelector('#inv-tree [data-key=\"'+CSS.escape(k)+'\"]'); const open=(k)=>{ if(!I.open.has(k)) row(k).querySelector('.inv-twisty').click(); }; const mark=(k)=>row(k)?.querySelector('.inv-marks')?.textContent; const graph=()=>({view:Z.state.view, nodes:cy.nodes().not('.frame, .kindframe, .notes-spacer').map(n=>n.id()).length, sel:cy.$(':selected').map(e=>e.id()), tab:document.querySelector('.tab.on')?.dataset.tab}); const crumbs=()=>document.getElementById('crumbs').textContent;row('f:src/shapes.ts#radius@29:23').click(); document.querySelector('#inv-content .inv-showgraph').click(); return 1"
+ ],
+ [
+  "sleep",
+  1.2
+ ],
+ [
+  "js",
+  "const Z=window.zaansouvi, I=Z.inv, cy=document.querySelector('#cy')._cyreg.cy; const row=(k)=>document.querySelector('#inv-tree [data-key=\"'+CSS.escape(k)+'\"]'); const open=(k)=>{ if(!I.open.has(k)) row(k).querySelector('.inv-twisty').click(); }; const mark=(k)=>row(k)?.querySelector('.inv-marks')?.textContent; const graph=()=>({view:Z.state.view, nodes:cy.nodes().not('.frame, .kindframe, .notes-spacer').map(n=>n.id()).length, sel:cy.$(':selected').map(e=>e.id()), tab:document.querySelector('.tab.on')?.dataset.tab}); const crumbs=()=>document.getElementById('crumbs').textContent;return {showRadius: graph()}"
+ ],
+ [
+  "js",
+  "const Z=window.zaansouvi, q=document.getElementById('inv-q'); q.value='^src/shapes.ts#color@29:39$'; if(!Z.inv.regex) document.getElementById('inv-regex').click(); q.dispatchEvent(new Event('input')); document.getElementById('inv-next').click(); document.querySelector('#inv-content .inv-showgraph').click(); document.getElementById('inv-regex').click(); q.value=''; q.dispatchEvent(new Event('input')); return 1"
+ ],
+ [
+  "sleep",
+  1
+ ],
+ [
+  "js",
+  "const Z=window.zaansouvi, I=Z.inv, cy=document.querySelector('#cy')._cyreg.cy; const row=(k)=>document.querySelector('#inv-tree [data-key=\"'+CSS.escape(k)+'\"]'); const open=(k)=>{ if(!I.open.has(k)) row(k).querySelector('.inv-twisty').click(); }; const mark=(k)=>row(k)?.querySelector('.inv-marks')?.textContent; const graph=()=>({view:Z.state.view, nodes:cy.nodes().not('.frame, .kindframe, .notes-spacer').map(n=>n.id()).length, sel:cy.$(':selected').map(e=>e.id()), tab:document.querySelector('.tab.on')?.dataset.tab}); const crumbs=()=>document.getElementById('crumbs').textContent;return {showMemberColor_selects: graph().sel, view: Z.state.view}"
+ ],
+ [
+  "js",
+  "const Z=window.zaansouvi, I=Z.inv, cy=document.querySelector('#cy')._cyreg.cy; const row=(k)=>document.querySelector('#inv-tree [data-key=\"'+CSS.escape(k)+'\"]'); const open=(k)=>{ if(!I.open.has(k)) row(k).querySelector('.inv-twisty').click(); }; const mark=(k)=>row(k)?.querySelector('.inv-marks')?.textContent; const graph=()=>({view:Z.state.view, nodes:cy.nodes().not('.frame, .kindframe, .notes-spacer').map(n=>n.id()).length, sel:cy.$(':selected').map(e=>e.id()), tab:document.querySelector('.tab.on')?.dataset.tab}); const crumbs=()=>document.getElementById('crumbs').textContent;row('f:src/shapes.ts#Circle@27:14').click(); const c=document.getElementById('inv-content'); const d=[...c.querySelectorAll('details')][1]; d.open=true; d.querySelector('.inv-show-one').click(); return 1"
+ ],
+ [
+  "sleep",
+  1
+ ],
+ [
+  "js",
+  "const Z=window.zaansouvi, I=Z.inv, cy=document.querySelector('#cy')._cyreg.cy; const row=(k)=>document.querySelector('#inv-tree [data-key=\"'+CSS.escape(k)+'\"]'); const open=(k)=>{ if(!I.open.has(k)) row(k).querySelector('.inv-twisty').click(); }; const mark=(k)=>row(k)?.querySelector('.inv-marks')?.textContent; const graph=()=>({view:Z.state.view, nodes:cy.nodes().not('.frame, .kindframe, .notes-spacer').map(n=>n.id()).length, sel:cy.$(':selected').map(e=>e.id()), tab:document.querySelector('.tab.on')?.dataset.tab}); const crumbs=()=>document.getElementById('crumbs').textContent;return {showRelation: graph()}"
+ ],
+ [
+  "js",
+  "const Z=window.zaansouvi, I=Z.inv, cy=document.querySelector('#cy')._cyreg.cy; const row=(k)=>document.querySelector('#inv-tree [data-key=\"'+CSS.escape(k)+'\"]'); const open=(k)=>{ if(!I.open.has(k)) row(k).querySelector('.inv-twisty').click(); }; const mark=(k)=>row(k)?.querySelector('.inv-marks')?.textContent; const graph=()=>({view:Z.state.view, nodes:cy.nodes().not('.frame, .kindframe, .notes-spacer').map(n=>n.id()).length, sel:cy.$(':selected').map(e=>e.id()), tab:document.querySelector('.tab.on')?.dataset.tab}); const crumbs=()=>document.getElementById('crumbs').textContent;row('v:src/shapes.ts').click(); document.querySelector('#inv-content .inv-showgraph').click(); return 1"
+ ],
+ [
+  "sleep",
+  1.2
+ ],
+ [
+  "js",
+  "const Z=window.zaansouvi, I=Z.inv, cy=document.querySelector('#cy')._cyreg.cy; const row=(k)=>document.querySelector('#inv-tree [data-key=\"'+CSS.escape(k)+'\"]'); const open=(k)=>{ if(!I.open.has(k)) row(k).querySelector('.inv-twisty').click(); }; const mark=(k)=>row(k)?.querySelector('.inv-marks')?.textContent; const graph=()=>({view:Z.state.view, nodes:cy.nodes().not('.frame, .kindframe, .notes-spacer').map(n=>n.id()).length, sel:cy.$(':selected').map(e=>e.id()), tab:document.querySelector('.tab.on')?.dataset.tab}); const crumbs=()=>document.getElementById('crumbs').textContent;return {showView: graph()}"
+ ],
+ [
+  "js",
+  "const Z=window.zaansouvi, I=Z.inv, cy=document.querySelector('#cy')._cyreg.cy; const row=(k)=>document.querySelector('#inv-tree [data-key=\"'+CSS.escape(k)+'\"]'); const open=(k)=>{ if(!I.open.has(k)) row(k).querySelector('.inv-twisty').click(); }; const mark=(k)=>row(k)?.querySelector('.inv-marks')?.textContent; const graph=()=>({view:Z.state.view, nodes:cy.nodes().not('.frame, .kindframe, .notes-spacer').map(n=>n.id()).length, sel:cy.$(':selected').map(e=>e.id()), tab:document.querySelector('.tab.on')?.dataset.tab}); const crumbs=()=>document.getElementById('crumbs').textContent;row('f:src/shapes.ts#Circle@27:14').querySelector('.inv-check').click(); return 1"
+ ],
+ [
+  "sleep",
+  1
+ ],
+ [
+  "js",
+  "const Z=window.zaansouvi, I=Z.inv, cy=document.querySelector('#cy')._cyreg.cy; const row=(k)=>document.querySelector('#inv-tree [data-key=\"'+CSS.escape(k)+'\"]'); const open=(k)=>{ if(!I.open.has(k)) row(k).querySelector('.inv-twisty').click(); }; const mark=(k)=>row(k)?.querySelector('.inv-marks')?.textContent; const graph=()=>({view:Z.state.view, nodes:cy.nodes().not('.frame, .kindframe, .notes-spacer').map(n=>n.id()).length, sel:cy.$(':selected').map(e=>e.id()), tab:document.querySelector('.tab.on')?.dataset.tab}); const crumbs=()=>document.getElementById('crumbs').textContent;row('f:src/shapes.ts#radius@29:23').click(); const b=document.querySelector('#inv-content .inv-showgraph'); return {hiddenShowButton: b.disabled, title: b.title}"
+ ],
+ [
+  "js",
+  "const Z=window.zaansouvi, I=Z.inv, cy=document.querySelector('#cy')._cyreg.cy; const row=(k)=>document.querySelector('#inv-tree [data-key=\"'+CSS.escape(k)+'\"]'); const open=(k)=>{ if(!I.open.has(k)) row(k).querySelector('.inv-twisty').click(); }; const mark=(k)=>row(k)?.querySelector('.inv-marks')?.textContent; const graph=()=>({view:Z.state.view, nodes:cy.nodes().not('.frame, .kindframe, .notes-spacer').map(n=>n.id()).length, sel:cy.$(':selected').map(e=>e.id()), tab:document.querySelector('.tab.on')?.dataset.tab}); const crumbs=()=>document.getElementById('crumbs').textContent;document.querySelector('.inv-showall').click(); return 1"
+ ],
+ [
+  "sleep",
+  1
+ ],
+ [
+  "js",
+  "const b=document.querySelector('#inv-content .inv-showgraph'); return {afterShowAll_contentRefreshed: document.getElementById('inv-content').innerText.includes('hidden by a choice')===false, buttonEnabled: !b.disabled}"
+ ],
+ [
+  "shot",
+  "second-pass.png"
+ ],
+ [
+  "go",
+  "x"
+ ],
+ [
+  "wait",
+  "window.zaansouvi && window.zaansouvi.ready() && document.querySelector('#cy canvas')",
+  20
+ ],
+ [
+  "sleep",
+  1
+ ],
+ [
+  "js",
+  "window.zaansouvi.tab('inventory'); window.zaansouvi.enter('src/shapes.ts'); return 1"
+ ],
+ [
+  "sleep",
+  1.2
+ ],
+ [
+  "js",
+  "const Z=window.zaansouvi, cy=document.querySelector('#cy')._cyreg.cy; const row=(k)=>document.querySelector('#inv-tree [data-key=\"'+CSS.escape(k)+'\"]'); const open=(k)=>{ if(!Z.inv.open.has(k)) row(k).querySelector('.inv-twisty').click(); }; const pos=()=>Object.fromEntries(cy.nodes().filter(n=>!n.isParent()).map(n=>[n.id(),[Math.round(n.position('x')),Math.round(n.position('y'))]])); const vp=()=>JSON.stringify([Math.round(cy.zoom()*1000), Math.round(cy.pan().x), Math.round(cy.pan().y)]); const same=(a,b)=>Object.keys(b).every(id=>JSON.stringify(a[id])===JSON.stringify(b[id]));open('sec:files'); open('f:src'); open('f:src/shapes.ts'); cy.zoom(cy.zoom()*0.9); window._p=pos(); window._v=vp(); row('f:src/shapes.ts#Circle@27:14').querySelector('.inv-check').click(); return 1"
+ ],
+ [
+  "sleep",
+  0.8
+ ],
+ [
+  "js",
+  "const drawnAll=()=>document.querySelector('#cy')._cyreg.cy.nodes().filter(n=>!n.isParent() && !n.hasClass('notes-spacer')).every(n=>n.visible() && n.layoutDimensions({nodeDimensionsIncludeLabels:false}).w>1);const Z=window.zaansouvi, cy=document.querySelector('#cy')._cyreg.cy; const row=(k)=>document.querySelector('#inv-tree [data-key=\"'+CSS.escape(k)+'\"]'); const open=(k)=>{ if(!Z.inv.open.has(k)) row(k).querySelector('.inv-twisty').click(); }; const pos=()=>Object.fromEntries(cy.nodes().filter(n=>!n.isParent()).map(n=>[n.id(),[Math.round(n.position('x')),Math.round(n.position('y'))]])); const vp=()=>JSON.stringify([Math.round(cy.zoom()*1000), Math.round(cy.pan().x), Math.round(cy.pan().y)]); const same=(a,b)=>Object.keys(b).every(id=>JSON.stringify(a[id])===JSON.stringify(b[id]));const p=pos(); return {everyNodeDrawn: drawnAll(), hideCircle: {gone: !p['src/shapes.ts#Circle@27:14'], restUnmoved: same(window._p,p), viewportKept: vp()===window._v, nodes: Object.keys(p).length}}"
+ ],
+ [
+  "js",
+  "const Z=window.zaansouvi, cy=document.querySelector('#cy')._cyreg.cy; const row=(k)=>document.querySelector('#inv-tree [data-key=\"'+CSS.escape(k)+'\"]'); const open=(k)=>{ if(!Z.inv.open.has(k)) row(k).querySelector('.inv-twisty').click(); }; const pos=()=>Object.fromEntries(cy.nodes().filter(n=>!n.isParent()).map(n=>[n.id(),[Math.round(n.position('x')),Math.round(n.position('y'))]])); const vp=()=>JSON.stringify([Math.round(cy.zoom()*1000), Math.round(cy.pan().x), Math.round(cy.pan().y)]); const same=(a,b)=>Object.keys(b).every(id=>JSON.stringify(a[id])===JSON.stringify(b[id]));window._p2=pos(); window._v2=vp(); row('f:src/shapes.ts#Circle@27:14').querySelector('.inv-check').click(); return 1"
+ ],
+ [
+  "sleep",
+  0.8
+ ],
+ [
+  "js",
+  "const Z=window.zaansouvi, cy=document.querySelector('#cy')._cyreg.cy; const row=(k)=>document.querySelector('#inv-tree [data-key=\"'+CSS.escape(k)+'\"]'); const open=(k)=>{ if(!Z.inv.open.has(k)) row(k).querySelector('.inv-twisty').click(); }; const pos=()=>Object.fromEntries(cy.nodes().filter(n=>!n.isParent()).map(n=>[n.id(),[Math.round(n.position('x')),Math.round(n.position('y'))]])); const vp=()=>JSON.stringify([Math.round(cy.zoom()*1000), Math.round(cy.pan().x), Math.round(cy.pan().y)]); const same=(a,b)=>Object.keys(b).every(id=>JSON.stringify(a[id])===JSON.stringify(b[id]));const p=pos(); return {showCircle: {back: !!p['src/shapes.ts#Circle@27:14'], laidOut: vp()!==window._v2 || !same(window._p2,p)}}"
+ ],
+ [
+  "js",
+  "const Z=window.zaansouvi, cy=document.querySelector('#cy')._cyreg.cy; const row=(k)=>document.querySelector('#inv-tree [data-key=\"'+CSS.escape(k)+'\"]'); const open=(k)=>{ if(!Z.inv.open.has(k)) row(k).querySelector('.inv-twisty').click(); }; const pos=()=>Object.fromEntries(cy.nodes().filter(n=>!n.isParent()).map(n=>[n.id(),[Math.round(n.position('x')),Math.round(n.position('y'))]])); const vp=()=>JSON.stringify([Math.round(cy.zoom()*1000), Math.round(cy.pan().x), Math.round(cy.pan().y)]); const same=(a,b)=>Object.keys(b).every(id=>JSON.stringify(a[id])===JSON.stringify(b[id]));window._p3=pos(); window._v3=vp(); open('f:src/app.ts'); row('f:src/app.ts#build@18:17').querySelector('.inv-check').click(); return 1"
+ ],
+ [
+  "sleep",
+  0.8
+ ],
+ [
+  "js",
+  "const Z=window.zaansouvi, cy=document.querySelector('#cy')._cyreg.cy; const row=(k)=>document.querySelector('#inv-tree [data-key=\"'+CSS.escape(k)+'\"]'); const open=(k)=>{ if(!Z.inv.open.has(k)) row(k).querySelector('.inv-twisty').click(); }; const pos=()=>Object.fromEntries(cy.nodes().filter(n=>!n.isParent()).map(n=>[n.id(),[Math.round(n.position('x')),Math.round(n.position('y'))]])); const vp=()=>JSON.stringify([Math.round(cy.zoom()*1000), Math.round(cy.pan().x), Math.round(cy.pan().y)]); const same=(a,b)=>Object.keys(b).every(id=>JSON.stringify(a[id])===JSON.stringify(b[id]));const p=pos(); return {hideElsewhere: {unmoved: same(p,window._p3) && same(window._p3,p), viewportKept: vp()===window._v3}}"
+ ],
+ [
+  "js",
+  "const Z=window.zaansouvi, cy=document.querySelector('#cy')._cyreg.cy; const row=(k)=>document.querySelector('#inv-tree [data-key=\"'+CSS.escape(k)+'\"]'); const open=(k)=>{ if(!Z.inv.open.has(k)) row(k).querySelector('.inv-twisty').click(); }; const pos=()=>Object.fromEntries(cy.nodes().filter(n=>!n.isParent()).map(n=>[n.id(),[Math.round(n.position('x')),Math.round(n.position('y'))]])); const vp=()=>JSON.stringify([Math.round(cy.zoom()*1000), Math.round(cy.pan().x), Math.round(cy.pan().y)]); const same=(a,b)=>Object.keys(b).every(id=>JSON.stringify(a[id])===JSON.stringify(b[id]));row('f:src/app.ts#build@18:17').querySelector('.inv-check').click(); return 1"
+ ],
+ [
+  "sleep",
+  0.8
+ ],
+ [
+  "js",
+  "const Z=window.zaansouvi, cy=document.querySelector('#cy')._cyreg.cy; const row=(k)=>document.querySelector('#inv-tree [data-key=\"'+CSS.escape(k)+'\"]'); const open=(k)=>{ if(!Z.inv.open.has(k)) row(k).querySelector('.inv-twisty').click(); }; const pos=()=>Object.fromEntries(cy.nodes().filter(n=>!n.isParent()).map(n=>[n.id(),[Math.round(n.position('x')),Math.round(n.position('y'))]])); const vp=()=>JSON.stringify([Math.round(cy.zoom()*1000), Math.round(cy.pan().x), Math.round(cy.pan().y)]); const same=(a,b)=>Object.keys(b).every(id=>JSON.stringify(a[id])===JSON.stringify(b[id]));const p=pos(); return {showElsewhere_noNodeBackHere: {unmoved: same(p,window._p3), viewportKept: vp()===window._v3}}"
+ ],
+ [
+  "js",
+  "window.zaansouvi.enter('src/shapes.ts#total@44:17'); return 1"
+ ],
+ [
+  "sleep",
+  1.2
+ ],
+ [
+  "js",
+  "const Z=window.zaansouvi, cy=document.querySelector('#cy')._cyreg.cy; const row=(k)=>document.querySelector('#inv-tree [data-key=\"'+CSS.escape(k)+'\"]'); const open=(k)=>{ if(!Z.inv.open.has(k)) row(k).querySelector('.inv-twisty').click(); }; const pos=()=>Object.fromEntries(cy.nodes().filter(n=>!n.isParent()).map(n=>[n.id(),[Math.round(n.position('x')),Math.round(n.position('y'))]])); const vp=()=>JSON.stringify([Math.round(cy.zoom()*1000), Math.round(cy.pan().x), Math.round(cy.pan().y)]); const same=(a,b)=>Object.keys(b).every(id=>JSON.stringify(a[id])===JSON.stringify(b[id]));window._p4=pos(); window._v4=vp(); [...document.querySelectorAll('#inv-show button')].find(b=>b.textContent==='Parameters').click(); return 1"
+ ],
+ [
+  "sleep",
+  0.8
+ ],
+ [
+  "js",
+  "const drawnAll=()=>document.querySelector('#cy')._cyreg.cy.nodes().filter(n=>!n.isParent() && !n.hasClass('notes-spacer')).every(n=>n.visible() && n.layoutDimensions({nodeDimensionsIncludeLabels:false}).w>1);const Z=window.zaansouvi, cy=document.querySelector('#cy')._cyreg.cy; const row=(k)=>document.querySelector('#inv-tree [data-key=\"'+CSS.escape(k)+'\"]'); const open=(k)=>{ if(!Z.inv.open.has(k)) row(k).querySelector('.inv-twisty').click(); }; const pos=()=>Object.fromEntries(cy.nodes().filter(n=>!n.isParent()).map(n=>[n.id(),[Math.round(n.position('x')),Math.round(n.position('y'))]])); const vp=()=>JSON.stringify([Math.round(cy.zoom()*1000), Math.round(cy.pan().x), Math.round(cy.pan().y)]); const same=(a,b)=>Object.keys(b).every(id=>JSON.stringify(a[id])===JSON.stringify(b[id]));const p=pos(); return {everyNodeDrawn: drawnAll(), kindOff: {nodes: Object.keys(p).length, restUnmoved: same(window._p4,p), viewportKept: vp()===window._v4}}"
+ ],
+ [
+  "js",
+  "const Z=window.zaansouvi, cy=document.querySelector('#cy')._cyreg.cy; const row=(k)=>document.querySelector('#inv-tree [data-key=\"'+CSS.escape(k)+'\"]'); const open=(k)=>{ if(!Z.inv.open.has(k)) row(k).querySelector('.inv-twisty').click(); }; const pos=()=>Object.fromEntries(cy.nodes().filter(n=>!n.isParent()).map(n=>[n.id(),[Math.round(n.position('x')),Math.round(n.position('y'))]])); const vp=()=>JSON.stringify([Math.round(cy.zoom()*1000), Math.round(cy.pan().x), Math.round(cy.pan().y)]); const same=(a,b)=>Object.keys(b).every(id=>JSON.stringify(a[id])===JSON.stringify(b[id]));document.querySelector('.inv-showall').click(); return 1"
+ ],
+ [
+  "sleep",
+  0.8
+ ],
+ [
+  "js",
+  "const Z=window.zaansouvi, cy=document.querySelector('#cy')._cyreg.cy; const row=(k)=>document.querySelector('#inv-tree [data-key=\"'+CSS.escape(k)+'\"]'); const open=(k)=>{ if(!Z.inv.open.has(k)) row(k).querySelector('.inv-twisty').click(); }; const pos=()=>Object.fromEntries(cy.nodes().filter(n=>!n.isParent()).map(n=>[n.id(),[Math.round(n.position('x')),Math.round(n.position('y'))]])); const vp=()=>JSON.stringify([Math.round(cy.zoom()*1000), Math.round(cy.pan().x), Math.round(cy.pan().y)]); const same=(a,b)=>Object.keys(b).every(id=>JSON.stringify(a[id])===JSON.stringify(b[id]));open('f:src/shapes.ts#total@44:17'); row('f:src/shapes.ts#sum@47:9').click(); document.querySelector('#inv-content .inv-showgraph').click(); const e=cy.getElementById('src/shapes.ts#sum@47:9'); return {glowAtStart: Number(e.style('underlay-opacity')), color: e.style('underlay-color')}"
+ ],
+ [
+  "sleep",
+  0.5
+ ],
+ [
+  "js",
+  "const e=document.querySelector('#cy')._cyreg.cy.getElementById('src/shapes.ts#sum@47:9'); return {glowAt500ms: Number(e.style('underlay-opacity'))}"
+ ],
+ [
+  "sleep",
+  1.2
+ ],
+ [
+  "js",
+  "const e=document.querySelector('#cy')._cyreg.cy.getElementById('src/shapes.ts#sum@47:9'); return {glowAfter1700ms: Number(e.style('underlay-opacity')), selected: e.selected()}"
+ ],
+ [
+  "go",
+  "x"
+ ],
+ [
+  "wait",
+  "window.zaansouvi && window.zaansouvi.ready() && document.querySelector('#cy canvas')",
+  20
+ ],
+ [
+  "sleep",
+  1
+ ],
+ [
+  "js",
+  "window.zaansouvi.tab('inventory'); window.zaansouvi.enter('src/app.ts'); return 1"
+ ],
+ [
+  "sleep",
+  1.2
+ ],
+ [
+  "js",
+  "const Z=window.zaansouvi, cy=document.querySelector('#cy')._cyreg.cy; const ns=()=>[...document.querySelectorAll('#inv-show button')].find(b=>b.textContent==='Namespaces'); const stubs=()=>cy.nodes('.stub').map(n=>{const b=n.renderedBoundingBox({}); return n.data('label')+' w='+Math.round(b.w)+' visible='+n.visible()+' layoutW='+Math.round(n.layoutDimensions({nodeDimensionsIncludeLabels:false}).w)});return {before: stubs(), snapStubs: Z.snapshot().stubs}"
+ ],
+ [
+  "js",
+  "const Z=window.zaansouvi, cy=document.querySelector('#cy')._cyreg.cy; const ns=()=>[...document.querySelectorAll('#inv-show button')].find(b=>b.textContent==='Namespaces'); const stubs=()=>cy.nodes('.stub').map(n=>{const b=n.renderedBoundingBox({}); return n.data('label')+' w='+Math.round(b.w)+' visible='+n.visible()+' layoutW='+Math.round(n.layoutDimensions({nodeDimensionsIncludeLabels:false}).w)});ns().click(); return 1"
+ ],
+ [
+  "sleep",
+  0.8
+ ],
+ [
+  "js",
+  "const Z=window.zaansouvi, cy=document.querySelector('#cy')._cyreg.cy; const ns=()=>[...document.querySelectorAll('#inv-show button')].find(b=>b.textContent==='Namespaces'); const stubs=()=>cy.nodes('.stub').map(n=>{const b=n.renderedBoundingBox({}); return n.data('label')+' w='+Math.round(b.w)+' visible='+n.visible()+' layoutW='+Math.round(n.layoutDimensions({nodeDimensionsIncludeLabels:false}).w)});return {namespacesOff: stubs(), snapStubs: Z.snapshot().stubs}"
+ ],
+ [
+  "js",
+  "const Z=window.zaansouvi, cy=document.querySelector('#cy')._cyreg.cy; const ns=()=>[...document.querySelectorAll('#inv-show button')].find(b=>b.textContent==='Namespaces'); const stubs=()=>cy.nodes('.stub').map(n=>{const b=n.renderedBoundingBox({}); return n.data('label')+' w='+Math.round(b.w)+' visible='+n.visible()+' layoutW='+Math.round(n.layoutDimensions({nodeDimensionsIncludeLabels:false}).w)});ns().click(); return 1"
+ ],
+ [
+  "sleep",
+  0.8
+ ],
+ [
+  "js",
+  "const Z=window.zaansouvi, cy=document.querySelector('#cy')._cyreg.cy; const ns=()=>[...document.querySelectorAll('#inv-show button')].find(b=>b.textContent==='Namespaces'); const stubs=()=>cy.nodes('.stub').map(n=>{const b=n.renderedBoundingBox({}); return n.data('label')+' w='+Math.round(b.w)+' visible='+n.visible()+' layoutW='+Math.round(n.layoutDimensions({nodeDimensionsIncludeLabels:false}).w)});return {namespacesOn: stubs()}"
+ ],
+ [
+  "js",
+  "const drawnAll=()=>document.querySelector('#cy')._cyreg.cy.nodes().filter(n=>!n.isParent() && !n.hasClass('notes-spacer')).every(n=>n.visible() && n.layoutDimensions({nodeDimensionsIncludeLabels:false}).w>1);[...document.querySelectorAll('#inv-show button')].find(b=>b.textContent==='Namespaces').click(); return 1"
+ ],
+ [
+  "sleep",
+  0.8
+ ],
+ [
+  "js",
+  "const drawnAll=()=>document.querySelector('#cy')._cyreg.cy.nodes().filter(n=>!n.isParent() && !n.hasClass('notes-spacer')).every(n=>n.visible() && n.layoutDimensions({nodeDimensionsIncludeLabels:false}).w>1);return {appTs_namespacesOff_everyNodeDrawn: drawnAll()}"
+ ],
+ [
+  "js",
+  "const drawnAll=()=>document.querySelector('#cy')._cyreg.cy.nodes().filter(n=>!n.isParent() && !n.hasClass('notes-spacer')).every(n=>n.visible() && n.layoutDimensions({nodeDimensionsIncludeLabels:false}).w>1);document.querySelector('.inv-showall').click(); return 1"
+ ],
+ [
+  "sleep",
+  0.8
+ ],
+ [
+  "js",
+  "const drawnAll=()=>document.querySelector('#cy')._cyreg.cy.nodes().filter(n=>!n.isParent() && !n.hasClass('notes-spacer')).every(n=>n.visible() && n.layoutDimensions({nodeDimensionsIncludeLabels:false}).w>1);return {appTs_showAll_everyNodeDrawn: drawnAll(), stubs: document.querySelector('#cy')._cyreg.cy.nodes('.stub').length}"
+ ],
+ [
+  "go",
+  "x"
+ ],
+ [
+  "wait",
+  "window.zaansouvi && window.zaansouvi.ready() && document.querySelector('#cy canvas')",
+  20
+ ],
+ [
+  "sleep",
+  1
+ ],
+ [
+  "js",
+  "window.zaansouvi.tab('inventory'); window.zaansouvi.enter('src/shapes.ts#total@44:17'); return 1"
+ ],
+ [
+  "sleep",
+  1.2
+ ],
+ [
+  "js",
+  "const bar=document.getElementById('inv-show-open'), pop=document.getElementById('inv-show'), pane=document.getElementById('pane-inventory'); const btns=()=>[...pop.querySelectorAll('.inv-show-grid button')];const b=bar.getBoundingClientRect(), p=pane.getBoundingClientRect(), c=document.getElementById('inv-content').getBoundingClientRect(); return {bar: bar.textContent, closed: pop.hidden, barAtBottom: Math.abs(p.bottom-b.bottom)<14, barBelowContent: b.top>=c.bottom-1}"
+ ],
+ [
+  "js",
+  "const bar=document.getElementById('inv-show-open'), pop=document.getElementById('inv-show'), pane=document.getElementById('pane-inventory'); const btns=()=>[...pop.querySelectorAll('.inv-show-grid button')];bar.click(); const r=pop.getBoundingClientRect(), b=bar.getBoundingClientRect(); const ws=new Set(btns().map(x=>Math.round(x.getBoundingClientRect().width))), hs=new Set(btns().map(x=>Math.round(x.getBoundingClientRect().height))); return {open: !pop.hidden, bar: bar.textContent, opensUpward: r.bottom<=b.top+1, order: btns().map(x=>x.textContent+(x.disabled?' (none)':'')), equalWidths: ws.size===1, equalHeights: hs.size===1, columns: new Set(btns().map(x=>Math.round(x.getBoundingClientRect().left))).size}"
+ ],
+ [
+  "shot",
+  "show-panel.png"
+ ],
+ [
+  "js",
+  "const bar=document.getElementById('inv-show-open'), pop=document.getElementById('inv-show'), pane=document.getElementById('pane-inventory'); const btns=()=>[...pop.querySelectorAll('.inv-show-grid button')];btns().find(x=>x.textContent==='Parameters').click(); btns().find(x=>x.textContent==='Variables').click(); return 1"
+ ],
+ [
+  "sleep",
+  0.8
+ ],
+ [
+  "js",
+  "const bar=document.getElementById('inv-show-open'), pop=document.getElementById('inv-show'), pane=document.getElementById('pane-inventory'); const btns=()=>[...pop.querySelectorAll('.inv-show-grid button')];return {bar: bar.textContent, stillOpen: !pop.hidden, graphNodes: document.querySelector('#cy')._cyreg.cy.nodes().filter(n=>!n.isParent()).length}"
+ ],
+ [
+  "js",
+  "const bar=document.getElementById('inv-show-open'), pop=document.getElementById('inv-show'), pane=document.getElementById('pane-inventory'); const btns=()=>[...pop.querySelectorAll('.inv-show-grid button')];document.getElementById('inv-tree').dispatchEvent(new PointerEvent('pointerdown',{bubbles:true})); return {afterOutsideClick_closed: pop.hidden, bar: bar.textContent}"
+ ],
+ [
+  "js",
+  "const bar=document.getElementById('inv-show-open'), pop=document.getElementById('inv-show'), pane=document.getElementById('pane-inventory'); const btns=()=>[...pop.querySelectorAll('.inv-show-grid button')];bar.click(); document.getElementById('inv-content').dispatchEvent(new PointerEvent('pointerdown',{bubbles:true})); bar.click(); document.body.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',bubbles:true})); return {afterEsc_closed: pop.hidden}"
+ ],
+ [
+  "js",
+  "const bar=document.getElementById('inv-show-open'), pop=document.getElementById('inv-show'), pane=document.getElementById('pane-inventory'); const btns=()=>[...pop.querySelectorAll('.inv-show-grid button')];pop.querySelector('.inv-showall').click(); return 1"
+ ],
+ [
+  "sleep",
+  0.8
+ ],
+ [
+  "js",
+  "const bar=document.getElementById('inv-show-open'), pop=document.getElementById('inv-show'), pane=document.getElementById('pane-inventory'); const btns=()=>[...pop.querySelectorAll('.inv-show-grid button')];return {afterShowAll: bar.textContent}"
+ ],
+ [
+  "go",
+  "x"
+ ],
+ [
+  "wait",
+  "window.zaansouvi && window.zaansouvi.ready() && document.querySelector('#cy canvas')",
+  20
+ ],
+ [
+  "sleep",
+  1
+ ],
+ [
+  "js",
+  "window.zaansouvi.enter('src/report/charts/bars.ts'); return 1"
+ ],
+ [
+  "sleep",
+  1.2
+ ],
+ [
+  "js",
+  "const Z=window.zaansouvi, cy=document.querySelector('#cy')._cyreg.cy; const tab=()=>document.querySelector('.tab.on')?.dataset.tab; const kind=(t)=>[...document.querySelectorAll('#inv-show .inv-show-grid button')].find(b=>b.textContent===t);cy.getElementById('src/report/charts/bars.ts#Circle@2:8').select(); return 1"
+ ],
+ [
+  "sleep",
+  0.6
+ ],
+ [
+  "js",
+  "const Z=window.zaansouvi, cy=document.querySelector('#cy')._cyreg.cy; const tab=()=>document.querySelector('.tab.on')?.dataset.tab; const kind=(t)=>[...document.querySelectorAll('#inv-show .inv-show-grid button')].find(b=>b.textContent===t);return {aClickOpensDetails: tab(), selected: Z.state.selected.map(x=>x.id)}"
+ ],
+ [
+  "js",
+  "const Z=window.zaansouvi, cy=document.querySelector('#cy')._cyreg.cy; const tab=()=>document.querySelector('.tab.on')?.dataset.tab; const kind=(t)=>[...document.querySelectorAll('#inv-show .inv-show-grid button')].find(b=>b.textContent===t);Z.tab('inventory'); kind('Variables').click(); return 1"
+ ],
+ [
+  "sleep",
+  1.2
+ ],
+ [
+  "js",
+  "const Z=window.zaansouvi, cy=document.querySelector('#cy')._cyreg.cy; const tab=()=>document.querySelector('.tab.on')?.dataset.tab; const kind=(t)=>[...document.querySelectorAll('#inv-show .inv-show-grid button')].find(b=>b.textContent===t);return {afterHide: {tab: tab(), selected: Z.state.selected.map(x=>x.id), cySelected: cy.$(':selected').map(e=>e.id())}}"
+ ],
+ [
+  "js",
+  "const Z=window.zaansouvi, cy=document.querySelector('#cy')._cyreg.cy; const tab=()=>document.querySelector('.tab.on')?.dataset.tab; const kind=(t)=>[...document.querySelectorAll('#inv-show .inv-show-grid button')].find(b=>b.textContent===t);kind('Variables').click(); return 1"
+ ],
+ [
+  "sleep",
+  1.2
+ ],
+ [
+  "js",
+  "const Z=window.zaansouvi, cy=document.querySelector('#cy')._cyreg.cy; const tab=()=>document.querySelector('.tab.on')?.dataset.tab; const kind=(t)=>[...document.querySelectorAll('#inv-show .inv-show-grid button')].find(b=>b.textContent===t);return {afterShow: {tab: tab(), cySelected: cy.$(':selected').map(e=>e.id())}}"
+ ],
+ [
+  "js",
+  "const Z=window.zaansouvi, cy=document.querySelector('#cy')._cyreg.cy; const tab=()=>document.querySelector('.tab.on')?.dataset.tab; const kind=(t)=>[...document.querySelectorAll('#inv-show .inv-show-grid button')].find(b=>b.textContent===t);document.getElementById('kindsw').click(); return 1"
+ ],
+ [
+  "sleep",
+  1.2
+ ],
+ [
+  "js",
+  "const Z=window.zaansouvi, cy=document.querySelector('#cy')._cyreg.cy; const tab=()=>document.querySelector('.tab.on')?.dataset.tab; const kind=(t)=>[...document.querySelectorAll('#inv-show .inv-show-grid button')].find(b=>b.textContent===t);return {afterKindsSwitch: {tab: tab(), cySelected: cy.$(':selected').map(e=>e.id())}}"
+ ],
+ [
+  "js",
+  "const Z=window.zaansouvi, cy=document.querySelector('#cy')._cyreg.cy; const tab=()=>document.querySelector('.tab.on')?.dataset.tab; const kind=(t)=>[...document.querySelectorAll('#inv-show .inv-show-grid button')].find(b=>b.textContent===t);cy.getElementById('src/report/charts/bars.ts#total@2:18').select(); return 1"
+ ],
+ [
+  "sleep",
+  0.6
+ ],
+ [
+  "js",
+  "const Z=window.zaansouvi, cy=document.querySelector('#cy')._cyreg.cy; const tab=()=>document.querySelector('.tab.on')?.dataset.tab; const kind=(t)=>[...document.querySelectorAll('#inv-show .inv-show-grid button')].find(b=>b.textContent===t);return {aRealSelectionStillOpensDetails: tab()}"
+ ],
+ [
+  "go",
+  "x"
+ ],
+ [
+  "wait",
+  "window.zaansouvi && window.zaansouvi.ready() && document.querySelector('#cy canvas')",
+  20
+ ],
+ [
+  "sleep",
+  1
+ ],
+ [
+  "js",
+  "window.zaansouvi.tab('inventory'); window.zaansouvi.enter('src/shapes.ts'); return 1"
+ ],
+ [
+  "sleep",
+  1.2
+ ],
+ [
+  "js",
+  "const Z=window.zaansouvi, cy=document.querySelector('#cy')._cyreg.cy; const row=(k)=>document.querySelector('#inv-tree [data-key=\"'+CSS.escape(k)+'\"]'); const open=(k)=>{ if(!Z.inv.open.has(k)) row(k).querySelector('.inv-twisty').click(); }; const pos=()=>JSON.stringify(cy.nodes().filter(n=>!n.isParent()).map(n=>[n.id(),Math.round(n.position('x')),Math.round(n.position('y'))])); const tab=()=>document.querySelector('.tab.on')?.dataset.tab; const grid=()=>[...document.querySelectorAll('#inv-show .inv-show-grid button')];document.getElementById('inv-show-open').click(); const g=grid(), last=g.at(-1), r=last.getBoundingClientRect(), first=g[0].getBoundingClientRect(); const cols=[...new Set(g.map(b=>Math.round(b.getBoundingClientRect().left)))].sort((a,b)=>a-b); return {count: g.length, last: last.textContent, lastInThirdColumn: Math.round(r.left)===cols[2], sameSize: Math.round(r.width)===Math.round(first.width)}"
+ ],
+ [
+  "js",
+  "const Z=window.zaansouvi, cy=document.querySelector('#cy')._cyreg.cy; const row=(k)=>document.querySelector('#inv-tree [data-key=\"'+CSS.escape(k)+'\"]'); const open=(k)=>{ if(!Z.inv.open.has(k)) row(k).querySelector('.inv-twisty').click(); }; const pos=()=>JSON.stringify(cy.nodes().filter(n=>!n.isParent()).map(n=>[n.id(),Math.round(n.position('x')),Math.round(n.position('y'))])); const tab=()=>document.querySelector('.tab.on')?.dataset.tab; const grid=()=>[...document.querySelectorAll('#inv-show .inv-show-grid button')];open('sec:files'); open('f:src'); open('f:src/shapes.ts'); cy.getElementById('src/shapes.ts#Base@12:23').select(); return 1"
+ ],
+ [
+  "sleep",
+  0.5
+ ],
+ [
+  "js",
+  "const Z=window.zaansouvi, cy=document.querySelector('#cy')._cyreg.cy; const row=(k)=>document.querySelector('#inv-tree [data-key=\"'+CSS.escape(k)+'\"]'); const open=(k)=>{ if(!Z.inv.open.has(k)) row(k).querySelector('.inv-twisty').click(); }; const pos=()=>JSON.stringify(cy.nodes().filter(n=>!n.isParent()).map(n=>[n.id(),Math.round(n.position('x')),Math.round(n.position('y'))])); const tab=()=>document.querySelector('.tab.on')?.dataset.tab; const grid=()=>[...document.querySelectorAll('#inv-show .inv-show-grid button')];Z.tab('inventory'); document.getElementById('inv-show-open').click(); row('f:src/shapes.ts#Circle@27:14').querySelector('.inv-check').click(); return 1"
+ ],
+ [
+  "sleep",
+  0.8
+ ],
+ [
+  "js",
+  "const Z=window.zaansouvi, cy=document.querySelector('#cy')._cyreg.cy; const row=(k)=>document.querySelector('#inv-tree [data-key=\"'+CSS.escape(k)+'\"]'); const open=(k)=>{ if(!Z.inv.open.has(k)) row(k).querySelector('.inv-twisty').click(); }; const pos=()=>JSON.stringify(cy.nodes().filter(n=>!n.isParent()).map(n=>[n.id(),Math.round(n.position('x')),Math.round(n.position('y'))])); const tab=()=>document.querySelector('.tab.on')?.dataset.tab; const grid=()=>[...document.querySelectorAll('#inv-show .inv-show-grid button')];window._kept=pos(); window._z=cy.zoom(); document.getElementById('inv-show-open').click(); grid().at(-1).click(); return 1"
+ ],
+ [
+  "sleep",
+  0.8
+ ],
+ [
+  "js",
+  "const Z=window.zaansouvi, cy=document.querySelector('#cy')._cyreg.cy; const row=(k)=>document.querySelector('#inv-tree [data-key=\"'+CSS.escape(k)+'\"]'); const open=(k)=>{ if(!Z.inv.open.has(k)) row(k).querySelector('.inv-twisty').click(); }; const pos=()=>JSON.stringify(cy.nodes().filter(n=>!n.isParent()).map(n=>[n.id(),Math.round(n.position('x')),Math.round(n.position('y'))])); const tab=()=>document.querySelector('.tab.on')?.dataset.tab; const grid=()=>[...document.querySelectorAll('#inv-show .inv-show-grid button')];return {recalc: {moved: pos()!==window._kept, refitted: cy.zoom()!==window._z, circleStillHidden: Z.layer.hidden.has('src/shapes.ts#Circle@27:14'), selected: cy.$(':selected').map(e=>e.id()), tab: tab(), panelOpen: !document.getElementById('inv-show').hidden}}"
+ ],
+ [
+  "js",
+  "const Z=window.zaansouvi, cy=document.querySelector('#cy')._cyreg.cy; const row=(k)=>document.querySelector('#inv-tree [data-key=\"'+CSS.escape(k)+'\"]'); const open=(k)=>{ if(!Z.inv.open.has(k)) row(k).querySelector('.inv-twisty').click(); }; const pos=()=>JSON.stringify(cy.nodes().filter(n=>!n.isParent()).map(n=>[n.id(),Math.round(n.position('x')),Math.round(n.position('y'))])); const tab=()=>document.querySelector('.tab.on')?.dataset.tab; const grid=()=>[...document.querySelectorAll('#inv-show .inv-show-grid button')];window._p=pos(); grid().at(-1).click(); return 1"
+ ],
+ [
+  "sleep",
+  0.8
+ ],
+ [
+  "js",
+  "const Z=window.zaansouvi, cy=document.querySelector('#cy')._cyreg.cy; const row=(k)=>document.querySelector('#inv-tree [data-key=\"'+CSS.escape(k)+'\"]'); const open=(k)=>{ if(!Z.inv.open.has(k)) row(k).querySelector('.inv-twisty').click(); }; const pos=()=>JSON.stringify(cy.nodes().filter(n=>!n.isParent()).map(n=>[n.id(),Math.round(n.position('x')),Math.round(n.position('y'))])); const tab=()=>document.querySelector('.tab.on')?.dataset.tab; const grid=()=>[...document.querySelectorAll('#inv-show .inv-show-grid button')];return {recalcAgain_sameLayout: pos()===window._p}"
+ ],
+ [
+  "js",
+  "const Z=window.zaansouvi, cy=document.querySelector('#cy')._cyreg.cy; const row=(k)=>document.querySelector('#inv-tree [data-key=\"'+CSS.escape(k)+'\"]'); const open=(k)=>{ if(!Z.inv.open.has(k)) row(k).querySelector('.inv-twisty').click(); }; const pos=()=>JSON.stringify(cy.nodes().filter(n=>!n.isParent()).map(n=>[n.id(),Math.round(n.position('x')),Math.round(n.position('y'))])); const tab=()=>document.querySelector('.tab.on')?.dataset.tab; const grid=()=>[...document.querySelectorAll('#inv-show .inv-show-grid button')];document.querySelector('#inv-show .inv-showall').click(); return 1"
+ ],
+ [
+  "shot",
+  "recalc.png"
+ ]
+]

@@ -20,7 +20,7 @@ OWNER = {  # prefix: (file, title)
     'TEST': ('06_test_plan.md', 'Test plan'), 'DEL': ('07_delivery.md', 'Delivery'),
     'KIND': ('40_tools_fileKind.md', 'File kinds (deferred proposal)'),
     'TSP': ('41_typescript_program_plan.md', 'The plan for MVP 2'),
-    'TPG': ('42_tool_ts_program.md', 'The ts-program tool'), 'UI': ('50_viewer_ui.md', 'Viewer page'),
+    'TPG': ('42_tool_ts_program.md', 'The ts-program tool'), 'UI': ('50_viewer_ui.md', 'Viewer page'), 'INV': ('51_viewer_inventory.md', 'The Inventory'),
     'BE': ('55_viewer_backend.md', 'Viewer backend'), 'M2Q': ('97_second_implementation.md', 'Open questions of MVP 2'),
 }
 EXTRA = {'97_second_implementation.md'}  # also searched for IDs defined only in its decisions table

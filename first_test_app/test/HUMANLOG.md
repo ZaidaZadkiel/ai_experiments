@@ -50,3 +50,13 @@ Cleaning has been an actual effort, as expected. Since i asked ai to keep the te
 apparently, ai is so hardwired for expanding symbols that *reducing* symbols is hard for it.
 
 In ny case, the typescript implementation was relatively straightforward, it only added more stuff to check and many of the original assumptions held well enough to not need too much rework, which is a good finding.
+
+
+## claude mod
+Another interesting thing that i found, is that claude can make its own stuffs and update them as it goes along a session. 
+The plugin i made was a "open questions" side pane, which would list all the things that need settling in the docs, and list them in order of their id, which then can show the text 
+
+![The normal view](image.png)
+![Shows read files for open questions](image-1.png)
+
+Its pretty cool that it can do something useful like that. The funny part is that this plugin was necessary because of its tendency to balloon topics to unmanageable sizes.

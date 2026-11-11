@@ -1,0 +1,264 @@
+[
+ [
+  "go",
+  "x"
+ ],
+ [
+  "wait",
+  "window.zaansouvi && window.zaansouvi.ready()",
+  20
+ ],
+ [
+  "sleep",
+  1
+ ],
+ [
+  "js",
+  "return fetch('/api/sources',{credentials:'same-origin'}).then(r=>r.json()).then(j=>{const s=j.sources.find(x=>x.sourceRoot.endsWith('/test-source-mvp2')); return fetch('/api/sources/current',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({source:s.sourceKey})}).then(r=>r.status)})"
+ ],
+ [
+  "go",
+  "x"
+ ],
+ [
+  "wait",
+  "window.zaansouvi && window.zaansouvi.ready() && document.querySelector('#cy canvas')",
+  20
+ ],
+ [
+  "sleep",
+  1
+ ],
+ [
+  "js",
+  "window.zaansouvi.tab('inventory'); return 1"
+ ],
+ [
+  "sleep",
+  0.5
+ ],
+ [
+  "js",
+  "const I=window.zaansouvi.inv; const rows=()=>[...document.querySelectorAll('#inv-tree .inv-row')]; const row=(k)=>document.querySelector('#inv-tree [data-key=\"'+CSS.escape(k)+'\"]'); const marks=(k)=>row(k)?.querySelector('.inv-marks')?.textContent ?? null; const click=(k)=>row(k).click();return {first: rows().map(r=>r.textContent), expandDisabled: document.getElementById('inv-expand').disabled, content: document.getElementById('inv-content').textContent}"
+ ],
+ [
+  "js",
+  "const I=window.zaansouvi.inv; const rows=()=>[...document.querySelectorAll('#inv-tree .inv-row')]; const row=(k)=>document.querySelector('#inv-tree [data-key=\"'+CSS.escape(k)+'\"]'); const marks=(k)=>row(k)?.querySelector('.inv-marks')?.textContent ?? null; const click=(k)=>row(k).click();click('root'); document.getElementById('inv-expand').click(); const keys=rows().map(r=>r.dataset.key); const i=keys.indexOf('sec:files'), j=keys.indexOf('sec:views'); const got=keys.slice(i+1,j).map(k=>k.slice(2)); const exp=[\"src\", \"src/report\", \"src/report/charts\", \"src/report/charts/bars.ts\", \"src/report/charts/bars.ts#Circle@2:8\", \"src/report/charts/bars.ts#total@2:18\", \"src/report/charts/bars.ts#formatArea@3:10\", \"src/report/charts/bars.ts#summarize@4:10\", \"src/report/charts/bars.ts#share@5:10\", \"src/report/charts/bars.ts#bars@7:17\", \"src/report/charts/bars.ts#sizes@7:22\", \"src/report/charts/bars.ts#circles@8:9\", \"src/report/charts/bars.ts#size@8:30\", \"src/report/charts/bars.ts#whole@9:9\", \"src/report/charts/bars.ts#circle@10:23\", \"src/report/charts/bars.ts#report@13:23\", \"src/report/format.ts\", \"src/report/format.ts#round2@2:10\", \"src/report/format.ts#formatArea@4:17\", \"src/report/format.ts#area@4:28\", \"src/report/summary.ts\", \"src/report/summary.ts#build@2:10\", \"src/report/summary.ts#Geometry@3:10\", \"src/report/summary.ts#formatArea@4:10\", \"src/report/summary.ts#percent@5:10\", \"src/report/summary.ts#summarize@7:23\", \"src/report/summary.ts#scene@8:9\", \"src/report/summary.ts#text@9:9\", \"src/report/summary.ts#far@10:9\", \"src/util\", \"src/util/numbers.ts\", \"src/util/numbers.ts#total@2:10\", \"src/util/numbers.ts#Shape@2:22\", \"src/util/numbers.ts#round2@4:17\", \"src/util/numbers.ts#value@4:24\", \"src/util/numbers.ts#percent@8:17\", \"src/util/numbers.ts#part@8:25\", \"src/util/numbers.ts#whole@8:39\", \"src/util/numbers.ts#share@12:17\", \"src/util/numbers.ts#shapes@12:23\", \"src/util/numbers.ts#one@12:49\", \"src/app.ts\", \"src/app.ts#Circle@1:8\", \"src/app.ts#Rect@1:18\", \"src/app.ts#total@1:24\", \"src/app.ts#Color@1:31\", \"src/app.ts#Geometry@1:38\", \"src/app.ts#UNIT@1:48\", \"src/app.ts#Shape@1:59\", \"src/app.ts#all@2:13\", \"src/app.ts#Scene@4:7\", \"src/app.ts#items@5:11\", \"src/app.ts#add@6:3\", \"src/app.ts#shape@6:7\", \"src/app.ts#render@7:9\", \"src/app.ts#s@9:30\", \"src/app.ts#i@9:33\", \"src/app.ts#err@10:14\", \"src/app.ts#build@18:17\", \"src/app.ts#scene@19:9\", \"src/app.ts#c@20:9\", \"src/app.ts#r@21:9\", \"src/app.ts#d@23:9\", \"src/app.ts#sum@24:9\", \"src/app.ts#index@25:15\", \"src/app.ts#shape@25:22\", \"src/shapes.ts\", \"src/shapes.ts#Shape@2:18\", \"src/shapes.ts#area@2:26\", \"src/shapes.ts#name@2:51\", \"src/shapes.ts#Point@3:13\", \"src/shapes.ts#x@3:23\", \"src/shapes.ts#y@3:34\", \"src/shapes.ts#Color@4:13\", \"src/shapes.ts#Red@4:21\", \"src/shapes.ts#Green@4:34\", \"src/shapes.ts#Flag@5:19\", \"src/shapes.ts#On@5:26\", \"src/shapes.ts#Off@5:34\", \"src/shapes.ts#UNIT@7:14\", \"src/shapes.ts#created@8:5\", \"src/shapes.ts#log@10:10\", \"src/shapes.ts#target@10:14\", \"src/shapes.ts#key@10:31\", \"src/shapes.ts#Base@12:23\", \"src/shapes.ts#count@13:10\", \"src/shapes.ts#id@14:22\", \"src/shapes.ts##tag@15:3\", \"src/shapes.ts#name@16:21\", \"src/shapes.ts#constructor@17:3\", \"src/shapes.ts#color@17:22\", \"src/shapes.ts#scale@17:56\", \"src/shapes.ts#area@21:12\", \"src/shapes.ts#label@22:7\", \"src/shapes.ts#value@23:13\", \"src/shapes.ts#describe@24:8\", \"src/shapes.ts#Circle@27:14\", \"src/shapes.ts#name@28:12\", \"src/shapes.ts#constructor@29:3\", \"src/shapes.ts#color@29:39\", \"src/shapes.ts#radius@29:23\", \"src/shapes.ts#area@30:3\", \"src/shapes.ts#unit@31:10\", \"src/shapes.ts#Rect@34:14\", \"src/shapes.ts#name@35:12\", \"src/shapes.ts#constructor@36:3\", \"src/shapes.ts#corner@36:22\", \"src/shapes.ts#w@36:41\", \"src/shapes.ts#h@36:60\", \"src/shapes.ts#area@37:3\", \"src/shapes.ts#move@38:3\", \"src/shapes.ts#by@38:8\", \"src/shapes.ts#x@39:13\", \"src/shapes.ts#y@39:20\", \"src/shapes.ts#total@44:17\", \"src/shapes.ts#shapes@46:23\", \"src/shapes.ts#round@46:49\", \"src/shapes.ts#sum@47:9\", \"src/shapes.ts#acc@47:30\", \"src/shapes.ts#s@47:35\", \"src/shapes.ts#Geometry@51:18\", \"src/shapes.ts#ORIGIN@52:16\", \"src/shapes.ts#distance@53:19\", \"src/shapes.ts#a@53:28\", \"src/shapes.ts#b@53:38\", \"src/shapes.ts#registry@56:14\", \"src/shapes.ts#Anonymous@57:14\", \"src/shapes.ts#name@57:56\", \"src/shapes.ts#area@57:71\", \"src/shapes.ts#config@58:14\", \"README.md\"]; const firstDiff=got.findIndex((g,n)=>g!==exp[n]); return {rows: keys.length, filesRows: got.length, expected: exp.length, sameOrder: JSON.stringify(got)===JSON.stringify(exp), firstDiff, at: firstDiff>=0? [got[firstDiff], exp[firstDiff]] : null}"
+ ],
+ [
+  "shot",
+  "inventory-expanded.png"
+ ],
+ [
+  "js",
+  "const I=window.zaansouvi.inv; const rows=()=>[...document.querySelectorAll('#inv-tree .inv-row')]; const row=(k)=>document.querySelector('#inv-tree [data-key=\"'+CSS.escape(k)+'\"]'); const marks=(k)=>row(k)?.querySelector('.inv-marks')?.textContent ?? null; const click=(k)=>row(k).click();return {topView: {shapes: marks('f:src/shapes.ts'), README: marks('f:README.md'), src: marks('f:src'), Circle: marks('f:src/shapes.ts#Circle@27:14'), viewTop: marks('v:'), viewCircle: marks('v:src/shapes.ts#Circle@27:14')}}"
+ ],
+ [
+  "js",
+  "const I=window.zaansouvi.inv; const rows=()=>[...document.querySelectorAll('#inv-tree .inv-row')]; const row=(k)=>document.querySelector('#inv-tree [data-key=\"'+CSS.escape(k)+'\"]'); const marks=(k)=>row(k)?.querySelector('.inv-marks')?.textContent ?? null; const click=(k)=>row(k).click();window._scroll=document.getElementById('inv-tree').scrollTop=400; window._open=I.open.size; window.zaansouvi.enter('src/shapes.ts'); return 1"
+ ],
+ [
+  "sleep",
+  1
+ ],
+ [
+  "js",
+  "window.zaansouvi.enter('src/shapes.ts#Circle@27:14'); return 1"
+ ],
+ [
+  "sleep",
+  1.2
+ ],
+ [
+  "js",
+  "const I=window.zaansouvi.inv; const rows=()=>[...document.querySelectorAll('#inv-tree .inv-row')]; const row=(k)=>document.querySelector('#inv-tree [data-key=\"'+CSS.escape(k)+'\"]'); const marks=(k)=>row(k)?.querySelector('.inv-marks')?.textContent ?? null; const click=(k)=>row(k).click();return {inCircle: {Circle: marks('f:src/shapes.ts#Circle@27:14'), color: marks('f:src/shapes.ts#color@29:39'), Base: marks('f:src/shapes.ts#Base@12:23'), total: marks('f:src/shapes.ts#total@44:17'), viewCircle: marks('v:src/shapes.ts#Circle@27:14')}, openRowsKept: I.open.size===window._open, scrollKept: document.getElementById('inv-tree').scrollTop===window._scroll}"
+ ],
+ [
+  "js",
+  "const I=window.zaansouvi.inv; const rows=()=>[...document.querySelectorAll('#inv-tree .inv-row')]; const row=(k)=>document.querySelector('#inv-tree [data-key=\"'+CSS.escape(k)+'\"]'); const marks=(k)=>row(k)?.querySelector('.inv-marks')?.textContent ?? null; const click=(k)=>row(k).click();document.getElementById('inv-collapse').click(); return {afterCollapse: rows().map(r=>r.dataset.key)}"
+ ],
+ [
+  "js",
+  "const I=window.zaansouvi.inv; const rows=()=>[...document.querySelectorAll('#inv-tree .inv-row')]; const row=(k)=>document.querySelector('#inv-tree [data-key=\"'+CSS.escape(k)+'\"]'); const marks=(k)=>row(k)?.querySelector('.inv-marks')?.textContent ?? null; const click=(k)=>row(k).click();const q=document.getElementById('inv-q'); q.value='circle'; q.dispatchEvent(new Event('input')); return {count: document.getElementById('inv-count').textContent, matches: I.matches}"
+ ],
+ [
+  "js",
+  "const I=window.zaansouvi.inv; const rows=()=>[...document.querySelectorAll('#inv-tree .inv-row')]; const row=(k)=>document.querySelector('#inv-tree [data-key=\"'+CSS.escape(k)+'\"]'); const marks=(k)=>row(k)?.querySelector('.inv-marks')?.textContent ?? null; const click=(k)=>row(k).click();document.getElementById('inv-next').click(); const s=I.sel; return {selected: s, visible: !!row(s), shownAsSelected: row(s)?.classList.contains('sel'), content: document.getElementById('inv-content').innerText.split('\\n').slice(0,6), graphView: window.zaansouvi.state.view, graphSelected: window.zaansouvi.state.selected.length}"
+ ],
+ [
+  "js",
+  "const I=window.zaansouvi.inv; const rows=()=>[...document.querySelectorAll('#inv-tree .inv-row')]; const row=(k)=>document.querySelector('#inv-tree [data-key=\"'+CSS.escape(k)+'\"]'); const marks=(k)=>row(k)?.querySelector('.inv-marks')?.textContent ?? null; const click=(k)=>row(k).click();document.getElementById('inv-next').click(); document.getElementById('inv-next').click(); document.getElementById('inv-next').click(); document.getElementById('inv-next').click(); return {afterWrap: I.sel, at: I.at}"
+ ],
+ [
+  "js",
+  "const I=window.zaansouvi.inv; const rows=()=>[...document.querySelectorAll('#inv-tree .inv-row')]; const row=(k)=>document.querySelector('#inv-tree [data-key=\"'+CSS.escape(k)+'\"]'); const marks=(k)=>row(k)?.querySelector('.inv-marks')?.textContent ?? null; const click=(k)=>row(k).click();document.getElementById('inv-prev').click(); return {prev: I.sel}"
+ ],
+ [
+  "js",
+  "const I=window.zaansouvi.inv; const rows=()=>[...document.querySelectorAll('#inv-tree .inv-row')]; const row=(k)=>document.querySelector('#inv-tree [data-key=\"'+CSS.escape(k)+'\"]'); const marks=(k)=>row(k)?.querySelector('.inv-marks')?.textContent ?? null; const click=(k)=>row(k).click();const q=document.getElementById('inv-q'); q.value='^src/report/[a-z]+\\\\.ts$'; document.getElementById('inv-regex').click(); q.dispatchEvent(new Event('input')); return {regexOn: document.getElementById('inv-regex').getAttribute('aria-pressed'), matches: I.matches}"
+ ],
+ [
+  "js",
+  "const I=window.zaansouvi.inv; const rows=()=>[...document.querySelectorAll('#inv-tree .inv-row')]; const row=(k)=>document.querySelector('#inv-tree [data-key=\"'+CSS.escape(k)+'\"]'); const marks=(k)=>row(k)?.querySelector('.inv-marks')?.textContent ?? null; const click=(k)=>row(k).click();const q=document.getElementById('inv-q'); q.value=''; document.getElementById('inv-regex').click(); q.dispatchEvent(new Event('input')); for(const k of ['sec:files','f:src','f:src/shapes.ts']) { if(!I.open.has(k)) row(k).querySelector('.inv-twisty').click(); } click('f:src/shapes.ts#Circle@27:14'); const c=document.getElementById('inv-content'); return {content: c.innerText.split('\\n').slice(0,6), lists: [...c.querySelectorAll('details summary')].map(s=>s.textContent), members: c.querySelector('.inv-members')?.textContent}"
+ ],
+ [
+  "js",
+  "const I=window.zaansouvi.inv; const rows=()=>[...document.querySelectorAll('#inv-tree .inv-row')]; const row=(k)=>document.querySelector('#inv-tree [data-key=\"'+CSS.escape(k)+'\"]'); const marks=(k)=>row(k)?.querySelector('.inv-marks')?.textContent ?? null; const click=(k)=>row(k).click();const c=document.getElementById('inv-content'); c.querySelectorAll('details').forEach(d=>d.open=true); return {usedBy: [...c.querySelectorAll('details')][1].innerText.split('\\n').slice(0,5)}"
+ ],
+ [
+  "shot",
+  "inventory-circle.png"
+ ],
+ [
+  "js",
+  "const I=window.zaansouvi.inv; const rows=()=>[...document.querySelectorAll('#inv-tree .inv-row')]; const row=(k)=>document.querySelector('#inv-tree [data-key=\"'+CSS.escape(k)+'\"]'); const marks=(k)=>row(k)?.querySelector('.inv-marks')?.textContent ?? null; const click=(k)=>row(k).click();const cb=document.querySelector('#inv-content .inv-members input'); cb.click(); const c=document.getElementById('inv-content'); return {withMembers: [...c.querySelectorAll('details summary')].map(s=>s.textContent)}"
+ ],
+ [
+  "js",
+  "const I=window.zaansouvi.inv; const rows=()=>[...document.querySelectorAll('#inv-tree .inv-row')]; const row=(k)=>document.querySelector('#inv-tree [data-key=\"'+CSS.escape(k)+'\"]'); const marks=(k)=>row(k)?.querySelector('.inv-marks')?.textContent ?? null; const click=(k)=>row(k).click();row('sec:views').querySelector('.inv-twisty').click(); row('v:').querySelector('.inv-twisty').click(); click('v:'); return {topViewContent: document.getElementById('inv-content').innerText.split('\\n'), viewRows: rows().filter(r=>r.dataset.key.startsWith('v')).slice(0,8).map(r=>r.textContent)}"
+ ],
+ [
+  "js",
+  "const I=window.zaansouvi.inv; const rows=()=>[...document.querySelectorAll('#inv-tree .inv-row')]; const row=(k)=>document.querySelector('#inv-tree [data-key=\"'+CSS.escape(k)+'\"]'); const marks=(k)=>row(k)?.querySelector('.inv-marks')?.textContent ?? null; const click=(k)=>row(k).click();row('sec:model').querySelector('.inv-twisty').click(); return {modelRows: rows().filter(r=>r.dataset.key.startsWith('j:')).map(r=>r.textContent), droppedMuted: row('j:dropped')?.classList.contains('unused')}"
+ ],
+ [
+  "js",
+  "return {graphUnchanged: {view: window.zaansouvi.state.view, selected: window.zaansouvi.state.selected.length}}"
+ ],
+ [
+  "js",
+  "window.zaansouvi.tab('inventory'); window.zaansouvi.inv.open=new Set(['root']); window.zaansouvi.inv.sel=undefined; return 1"
+ ],
+ [
+  "js",
+  "const strip=document.getElementById('inv-strip'), t=document.getElementById('inv-tree'); const sq=()=>[...strip.querySelectorAll('.inv-mark')].map(s=>({top:s.style.top, cur:s.classList.contains('current')})); const geo=()=>{const a=t.getBoundingClientRect(), b=strip.getBoundingClientRect(), p=document.getElementById('pane-inventory').getBoundingClientRect(); return {treeW:Math.round(a.width), stripLeftOfTreeRight: Math.round(b.left-a.right), insidePane: b.right<=p.right, sameHeight: Math.round(a.height)===Math.round(b.height)}}; const q=document.getElementById('inv-q');window._w=t.getBoundingClientRect().width; return {noSearch: sq().length, geo: geo()}"
+ ],
+ [
+  "js",
+  "const strip=document.getElementById('inv-strip'), t=document.getElementById('inv-tree'); const sq=()=>[...strip.querySelectorAll('.inv-mark')].map(s=>({top:s.style.top, cur:s.classList.contains('current')})); const geo=()=>{const a=t.getBoundingClientRect(), b=strip.getBoundingClientRect(), p=document.getElementById('pane-inventory').getBoundingClientRect(); return {treeW:Math.round(a.width), stripLeftOfTreeRight: Math.round(b.left-a.right), insidePane: b.right<=p.right, sameHeight: Math.round(a.height)===Math.round(b.height)}}; const q=document.getElementById('inv-q');q.value='circle'; q.dispatchEvent(new Event('input')); return {closedTree: sq(), treeWidthSame: t.getBoundingClientRect().width===window._w}"
+ ],
+ [
+  "js",
+  "const strip=document.getElementById('inv-strip'), t=document.getElementById('inv-tree'); const sq=()=>[...strip.querySelectorAll('.inv-mark')].map(s=>({top:s.style.top, cur:s.classList.contains('current')})); const geo=()=>{const a=t.getBoundingClientRect(), b=strip.getBoundingClientRect(), p=document.getElementById('pane-inventory').getBoundingClientRect(); return {treeW:Math.round(a.width), stripLeftOfTreeRight: Math.round(b.left-a.right), insidePane: b.right<=p.right, sameHeight: Math.round(a.height)===Math.round(b.height)}}; const q=document.getElementById('inv-q');const row=(k)=>document.querySelector('#inv-tree [data-key=\"'+CSS.escape(k)+'\"]'); row('root').click(); document.getElementById('inv-expand').click(); return {expanded: sq(), geo: geo()}"
+ ],
+ [
+  "js",
+  "const strip=document.getElementById('inv-strip'), t=document.getElementById('inv-tree'); const sq=()=>[...strip.querySelectorAll('.inv-mark')].map(s=>({top:s.style.top, cur:s.classList.contains('current')})); const geo=()=>{const a=t.getBoundingClientRect(), b=strip.getBoundingClientRect(), p=document.getElementById('pane-inventory').getBoundingClientRect(); return {treeW:Math.round(a.width), stripLeftOfTreeRight: Math.round(b.left-a.right), insidePane: b.right<=p.right, sameHeight: Math.round(a.height)===Math.round(b.height)}}; const q=document.getElementById('inv-q');document.getElementById('inv-next').click(); document.getElementById('inv-next').click(); return {afterTwoNext: sq(), at: window.zaansouvi.inv.at}"
+ ],
+ [
+  "shot",
+  "strip.png"
+ ],
+ [
+  "js",
+  "const strip=document.getElementById('inv-strip'), t=document.getElementById('inv-tree'); const sq=()=>[...strip.querySelectorAll('.inv-mark')].map(s=>({top:s.style.top, cur:s.classList.contains('current')})); const geo=()=>{const a=t.getBoundingClientRect(), b=strip.getBoundingClientRect(), p=document.getElementById('pane-inventory').getBoundingClientRect(); return {treeW:Math.round(a.width), stripLeftOfTreeRight: Math.round(b.left-a.right), insidePane: b.right<=p.right, sameHeight: Math.round(a.height)===Math.round(b.height)}}; const q=document.getElementById('inv-q');q.value='e'; q.dispatchEvent(new Event('input')); return {manyMatches: window.zaansouvi.inv.matches.length, squares: sq().length}"
+ ],
+ [
+  "js",
+  "const strip=document.getElementById('inv-strip'), t=document.getElementById('inv-tree'); const sq=()=>[...strip.querySelectorAll('.inv-mark')].map(s=>({top:s.style.top, cur:s.classList.contains('current')})); const geo=()=>{const a=t.getBoundingClientRect(), b=strip.getBoundingClientRect(), p=document.getElementById('pane-inventory').getBoundingClientRect(); return {treeW:Math.round(a.width), stripLeftOfTreeRight: Math.round(b.left-a.right), insidePane: b.right<=p.right, sameHeight: Math.round(a.height)===Math.round(b.height)}}; const q=document.getElementById('inv-q');q.value='zzzz'; q.dispatchEvent(new Event('input')); const none=sq().length; q.value=''; q.dispatchEvent(new Event('input')); return {noMatch: none, cleared: sq().length, treeWidthSame: t.getBoundingClientRect().width===window._w}"
+ ],
+ [
+  "js",
+  "window.zaansouvi.tab('inventory'); window.zaansouvi.inv.open=new Set(['root']); return 1"
+ ],
+ [
+  "sleep",
+  0.4
+ ],
+ [
+  "js",
+  "const I=window.zaansouvi.inv, t=document.getElementById('inv-tree'); const key=(k,shift)=>t.dispatchEvent(new KeyboardEvent('keydown',{key:k,shiftKey:!!shift,bubbles:true,cancelable:true})); const st=()=>({focus:I.focus, sel:I.sel, open:[...I.open].filter(x=>x!=='root'), content:document.getElementById('inv-content').innerText.split('\\n')[0], outlined: document.querySelector('#inv-tree .inv-row.focus')?.dataset.key ?? null});t.focus(); key('ArrowDown');return {after:'down', ...st()}"
+ ],
+ [
+  "js",
+  "const I=window.zaansouvi.inv, t=document.getElementById('inv-tree'); const key=(k,shift)=>t.dispatchEvent(new KeyboardEvent('keydown',{key:k,shiftKey:!!shift,bubbles:true,cancelable:true})); const st=()=>({focus:I.focus, sel:I.sel, open:[...I.open].filter(x=>x!=='root'), content:document.getElementById('inv-content').innerText.split('\\n')[0], outlined: document.querySelector('#inv-tree .inv-row.focus')?.dataset.key ?? null});t.focus(); key('ArrowRight');return {after:'right: opens Files', ...st()}"
+ ],
+ [
+  "js",
+  "const I=window.zaansouvi.inv, t=document.getElementById('inv-tree'); const key=(k,shift)=>t.dispatchEvent(new KeyboardEvent('keydown',{key:k,shiftKey:!!shift,bubbles:true,cancelable:true})); const st=()=>({focus:I.focus, sel:I.sel, open:[...I.open].filter(x=>x!=='root'), content:document.getElementById('inv-content').innerText.split('\\n')[0], outlined: document.querySelector('#inv-tree .inv-row.focus')?.dataset.key ?? null});t.focus(); key('ArrowRight');return {after:'right: to its first item', ...st()}"
+ ],
+ [
+  "js",
+  "const I=window.zaansouvi.inv, t=document.getElementById('inv-tree'); const key=(k,shift)=>t.dispatchEvent(new KeyboardEvent('keydown',{key:k,shiftKey:!!shift,bubbles:true,cancelable:true})); const st=()=>({focus:I.focus, sel:I.sel, open:[...I.open].filter(x=>x!=='root'), content:document.getElementById('inv-content').innerText.split('\\n')[0], outlined: document.querySelector('#inv-tree .inv-row.focus')?.dataset.key ?? null});t.focus(); key('ArrowRight');key('ArrowRight');return {after:'right right: open src/, to report/', ...st()}"
+ ],
+ [
+  "js",
+  "const I=window.zaansouvi.inv, t=document.getElementById('inv-tree'); const key=(k,shift)=>t.dispatchEvent(new KeyboardEvent('keydown',{key:k,shiftKey:!!shift,bubbles:true,cancelable:true})); const st=()=>({focus:I.focus, sel:I.sel, open:[...I.open].filter(x=>x!=='root'), content:document.getElementById('inv-content').innerText.split('\\n')[0], outlined: document.querySelector('#inv-tree .inv-row.focus')?.dataset.key ?? null});t.focus(); key('ArrowDown');key('ArrowDown');return {after:'down down', ...st()}"
+ ],
+ [
+  "js",
+  "const I=window.zaansouvi.inv, t=document.getElementById('inv-tree'); const key=(k,shift)=>t.dispatchEvent(new KeyboardEvent('keydown',{key:k,shiftKey:!!shift,bubbles:true,cancelable:true})); const st=()=>({focus:I.focus, sel:I.sel, open:[...I.open].filter(x=>x!=='root'), content:document.getElementById('inv-content').innerText.split('\\n')[0], outlined: document.querySelector('#inv-tree .inv-row.focus')?.dataset.key ?? null});t.focus(); key('Enter');return {after:'enter on a closed row: opens', ...st()}"
+ ],
+ [
+  "js",
+  "const I=window.zaansouvi.inv, t=document.getElementById('inv-tree'); const key=(k,shift)=>t.dispatchEvent(new KeyboardEvent('keydown',{key:k,shiftKey:!!shift,bubbles:true,cancelable:true})); const st=()=>({focus:I.focus, sel:I.sel, open:[...I.open].filter(x=>x!=='root'), content:document.getElementById('inv-content').innerText.split('\\n')[0], outlined: document.querySelector('#inv-tree .inv-row.focus')?.dataset.key ?? null});t.focus(); key('ArrowRight');key('Enter');return {after:'right, enter on a leaf: shows', ...st()}"
+ ],
+ [
+  "js",
+  "const I=window.zaansouvi.inv, t=document.getElementById('inv-tree'); const key=(k,shift)=>t.dispatchEvent(new KeyboardEvent('keydown',{key:k,shiftKey:!!shift,bubbles:true,cancelable:true})); const st=()=>({focus:I.focus, sel:I.sel, open:[...I.open].filter(x=>x!=='root'), content:document.getElementById('inv-content').innerText.split('\\n')[0], outlined: document.querySelector('#inv-tree .inv-row.focus')?.dataset.key ?? null});t.focus(); key('ArrowUp');return {after:'up: content unchanged', ...st()}"
+ ],
+ [
+  "js",
+  "const I=window.zaansouvi.inv, t=document.getElementById('inv-tree'); const key=(k,shift)=>t.dispatchEvent(new KeyboardEvent('keydown',{key:k,shiftKey:!!shift,bubbles:true,cancelable:true})); const st=()=>({focus:I.focus, sel:I.sel, open:[...I.open].filter(x=>x!=='root'), content:document.getElementById('inv-content').innerText.split('\\n')[0], outlined: document.querySelector('#inv-tree .inv-row.focus')?.dataset.key ?? null});t.focus(); key('ArrowLeft');return {after:'left: to the parent', ...st()}"
+ ],
+ [
+  "js",
+  "const I=window.zaansouvi.inv, t=document.getElementById('inv-tree'); const key=(k,shift)=>t.dispatchEvent(new KeyboardEvent('keydown',{key:k,shiftKey:!!shift,bubbles:true,cancelable:true})); const st=()=>({focus:I.focus, sel:I.sel, open:[...I.open].filter(x=>x!=='root'), content:document.getElementById('inv-content').innerText.split('\\n')[0], outlined: document.querySelector('#inv-tree .inv-row.focus')?.dataset.key ?? null});t.focus(); key('ArrowLeft');return {after:'left: closes it', ...st()}"
+ ],
+ [
+  "js",
+  "const I=window.zaansouvi.inv, t=document.getElementById('inv-tree'); const key=(k,shift)=>t.dispatchEvent(new KeyboardEvent('keydown',{key:k,shiftKey:!!shift,bubbles:true,cancelable:true})); const st=()=>({focus:I.focus, sel:I.sel, open:[...I.open].filter(x=>x!=='root'), content:document.getElementById('inv-content').innerText.split('\\n')[0], outlined: document.querySelector('#inv-tree .inv-row.focus')?.dataset.key ?? null});t.focus(); key('Enter');return {after:'enter on a closed parent: opens again', ...st()}"
+ ],
+ [
+  "js",
+  "const I=window.zaansouvi.inv, t=document.getElementById('inv-tree'); const key=(k,shift)=>t.dispatchEvent(new KeyboardEvent('keydown',{key:k,shiftKey:!!shift,bubbles:true,cancelable:true})); const st=()=>({focus:I.focus, sel:I.sel, open:[...I.open].filter(x=>x!=='root'), content:document.getElementById('inv-content').innerText.split('\\n')[0], outlined: document.querySelector('#inv-tree .inv-row.focus')?.dataset.key ?? null});t.focus(); key('Enter');return {after:'enter on an open row: nothing', ...st()}"
+ ],
+ [
+  "js",
+  "const I=window.zaansouvi.inv, t=document.getElementById('inv-tree'); const key=(k,shift)=>t.dispatchEvent(new KeyboardEvent('keydown',{key:k,shiftKey:!!shift,bubbles:true,cancelable:true})); const st=()=>({focus:I.focus, sel:I.sel, open:[...I.open].filter(x=>x!=='root'), content:document.getElementById('inv-content').innerText.split('\\n')[0], outlined: document.querySelector('#inv-tree .inv-row.focus')?.dataset.key ?? null});t.focus(); key('Escape'); return {after:'escape', ...st(), searchFocused: document.activeElement===document.getElementById('inv-q')}"
+ ],
+ [
+  "js",
+  "const q=document.getElementById('inv-q'); q.value='circle'; q.dispatchEvent(new Event('input')); q.dispatchEvent(new KeyboardEvent('keydown',{key:'Enter',bubbles:true})); return {searchEnter: window.zaansouvi.inv.sel, at: window.zaansouvi.inv.at, focusFollows: window.zaansouvi.inv.focus===window.zaansouvi.inv.sel}"
+ ],
+ [
+  "js",
+  "return {graphView: window.zaansouvi.state.view, graphSelected: window.zaansouvi.state.selected.length}"
+ ],
+ [
+  "js",
+  "window.zaansouvi.tab('inventory'); const row=(k)=>document.querySelector('#inv-tree [data-key=\"'+CSS.escape(k)+'\"]'); for (const k of ['sec:files','f:src']) if (!window.zaansouvi.inv.open.has(k)) row(k).querySelector('.inv-twisty').click(); row('f:src/shapes.ts').click(); return 1"
+ ],
+ [
+  "sleep",
+  0.3
+ ],
+ [
+  "js",
+  "const q=document.getElementById('inv-q'); const esc=(el)=>el.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',bubbles:true,cancelable:true})); const down=(el)=>el.dispatchEvent(new PointerEvent('pointerdown',{bubbles:true}));q.blur(); const c=document.getElementById('inv-content'); down(c); const r=document.createRange(); r.selectNodeContents(c.querySelector('dd')); getSelection().removeAllRanges(); getSelection().addRange(r); esc(document.body); return {fromSelectedText: document.activeElement===q, selectionKept: window.zaansouvi.inv.sel}"
+ ],
+ [
+  "js",
+  "const q=document.getElementById('inv-q'); const esc=(el)=>el.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',bubbles:true,cancelable:true})); const down=(el)=>el.dispatchEvent(new PointerEvent('pointerdown',{bubbles:true}));q.blur(); const b=document.querySelector('#inv-content .inv-copy'); b.focus(); down(b); esc(b); return {fromCopyButton: document.activeElement===q}"
+ ],
+ [
+  "js",
+  "const q=document.getElementById('inv-q'); const esc=(el)=>el.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',bubbles:true,cancelable:true})); const down=(el)=>el.dispatchEvent(new PointerEvent('pointerdown',{bubbles:true}));q.blur(); const s=document.querySelector('#inv-content details summary'); down(s); esc(document.body); return {fromRelationList: document.activeElement===q}"
+ ],
+ [
+  "js",
+  "const q=document.getElementById('inv-q'); const esc=(el)=>el.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',bubbles:true,cancelable:true})); const down=(el)=>el.dispatchEvent(new PointerEvent('pointerdown',{bubbles:true}));q.blur(); const b=document.getElementById('inv-collapse'); b.focus(); down(b); esc(b); return {fromCollapseButton: document.activeElement===q}"
+ ],
+ [
+  "js",
+  "const q=document.getElementById('inv-q'); const esc=(el)=>el.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',bubbles:true,cancelable:true})); const down=(el)=>el.dispatchEvent(new PointerEvent('pointerdown',{bubbles:true}));q.blur(); down(document.getElementById('cy')); esc(document.body); return {afterClickOnGraph_notSentToSearch: document.activeElement!==q}"
+ ],
+ [
+  "js",
+  "const q=document.getElementById('inv-q'); const esc=(el)=>el.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',bubbles:true,cancelable:true})); const down=(el)=>el.dispatchEvent(new PointerEvent('pointerdown',{bubbles:true}));q.value='abc'; q.focus(); esc(q); return {inSearchField_valueKept: q.value, stillFocused: document.activeElement===q}"
+ ],
+ [
+  "js",
+  "window.zaansouvi.tab('details'); return [...document.querySelectorAll('.tabs .tab')].map(t=>t.textContent)"
+ ]
+]

@@ -1,0 +1,72 @@
+[
+ [
+  "go",
+  "x"
+ ],
+ [
+  "wait",
+  "window.zaansouvi && window.zaansouvi.ready()",
+  20
+ ],
+ [
+  "sleep",
+  1
+ ],
+ [
+  "js",
+  "return fetch('/api/sources',{credentials:'same-origin'}).then(r=>r.json()).then(j=>{const s=j.sources.find(x=>x.sourceRoot.endsWith('/test-source-mvp2')); return fetch('/api/sources/current',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({source:s.sourceKey})}).then(r=>r.status)})"
+ ],
+ [
+  "go",
+  "x"
+ ],
+ [
+  "wait",
+  "window.zaansouvi && window.zaansouvi.ready() && document.querySelector('#cy canvas')",
+  20
+ ],
+ [
+  "sleep",
+  1
+ ],
+ [
+  "js",
+  "window.zaansouvi.enter('src/shapes.ts'); return 1"
+ ],
+ [
+  "sleep",
+  1.2
+ ],
+ [
+  "js",
+  "window.zaansouvi.select('node','src/shapes.ts#Base@12:23'); return 1"
+ ],
+ [
+  "sleep",
+  0.3
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; const rect=cy.container().getBoundingClientRect(); const ev=(t,el,x,y,button,buttons)=>el.dispatchEvent(new MouseEvent(t,{bubbles:true,cancelable:true,clientX:x,clientY:y,button,buttons})); const drag=(x,y,dx,dy,button)=>{const b=button===1?4:1; const tgt=document.elementFromPoint(x,y); const down=ev('mousedown',tgt,x,y,button,b); for(let i=1;i<=10;i++) ev('mousemove',document,x+dx*i/10,y+dy*i/10,button,b); ev('mouseup',document,x+dx,y+dy,button,0); ev('auxclick',tgt,x+dx,y+dy,button,0); return down;}; const snap=()=>({pan:{...cy.pan()}, zoom:cy.zoom(), pos:Object.fromEntries(cy.nodes().not(':parent').map(n=>[n.id(),{...n.position()}])), sel:cy.$(':selected').map(e=>e.id())}); const diff=(a,b)=>({panDx:Math.round(b.pan.x-a.pan.x), panDy:Math.round(b.pan.y-a.pan.y), zoomSame:a.zoom===b.zoom, nodesMoved:Object.keys(a.pos).filter(id=>Math.abs(a.pos[id].x-b.pos[id].x)>0.01||Math.abs(a.pos[id].y-b.pos[id].y)>0.01), selBefore:a.sel, selAfter:b.sel});const n=cy.getElementById('src/shapes.ts#Circle@27:14'); const rp=n.renderedPosition(); const a=snap(); const notCancelled=drag(rect.left+rp.x, rect.top+rp.y, 100, 50, 1); const b=snap(); return {start:'on node Circle, middle button', defaultPrevented: !notCancelled, ...diff(a,b)}"
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; const rect=cy.container().getBoundingClientRect(); const ev=(t,el,x,y,button,buttons)=>el.dispatchEvent(new MouseEvent(t,{bubbles:true,cancelable:true,clientX:x,clientY:y,button,buttons})); const drag=(x,y,dx,dy,button)=>{const b=button===1?4:1; const tgt=document.elementFromPoint(x,y); const down=ev('mousedown',tgt,x,y,button,b); for(let i=1;i<=10;i++) ev('mousemove',document,x+dx*i/10,y+dy*i/10,button,b); ev('mouseup',document,x+dx,y+dy,button,0); ev('auxclick',tgt,x+dx,y+dy,button,0); return down;}; const snap=()=>({pan:{...cy.pan()}, zoom:cy.zoom(), pos:Object.fromEntries(cy.nodes().not(':parent').map(n=>[n.id(),{...n.position()}])), sel:cy.$(':selected').map(e=>e.id())}); const diff=(a,b)=>({panDx:Math.round(b.pan.x-a.pan.x), panDy:Math.round(b.pan.y-a.pan.y), zoomSame:a.zoom===b.zoom, nodesMoved:Object.keys(a.pos).filter(id=>Math.abs(a.pos[id].x-b.pos[id].x)>0.01||Math.abs(a.pos[id].y-b.pos[id].y)>0.01), selBefore:a.sel, selAfter:b.sel});const f=cy.getElementById('kindframe:variable'); const rb=f.renderedBoundingBox({}); const a=snap(); drag(rect.left+rb.x1+5, rect.top+(rb.y1+rb.y2)/2, -80, 30, 1); const b=snap(); return {start:'on the Variables frame, middle button', ...diff(a,b)}"
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; const rect=cy.container().getBoundingClientRect(); const ev=(t,el,x,y,button,buttons)=>el.dispatchEvent(new MouseEvent(t,{bubbles:true,cancelable:true,clientX:x,clientY:y,button,buttons})); const drag=(x,y,dx,dy,button)=>{const b=button===1?4:1; const tgt=document.elementFromPoint(x,y); const down=ev('mousedown',tgt,x,y,button,b); for(let i=1;i<=10;i++) ev('mousemove',document,x+dx*i/10,y+dy*i/10,button,b); ev('mouseup',document,x+dx,y+dy,button,0); ev('auxclick',tgt,x+dx,y+dy,button,0); return down;}; const snap=()=>({pan:{...cy.pan()}, zoom:cy.zoom(), pos:Object.fromEntries(cy.nodes().not(':parent').map(n=>[n.id(),{...n.position()}])), sel:cy.$(':selected').map(e=>e.id())}); const diff=(a,b)=>({panDx:Math.round(b.pan.x-a.pan.x), panDy:Math.round(b.pan.y-a.pan.y), zoomSame:a.zoom===b.zoom, nodesMoved:Object.keys(a.pos).filter(id=>Math.abs(a.pos[id].x-b.pos[id].x)>0.01||Math.abs(a.pos[id].y-b.pos[id].y)>0.01), selBefore:a.sel, selAfter:b.sel});const a=snap(); drag(rect.left+20, rect.top+rect.height-60, 60, -40, 1); const b=snap(); return {start:'on the background, middle button', target: document.elementFromPoint(rect.left+20, rect.top+rect.height-60).tagName, ...diff(a,b)}"
+ ],
+ [
+  "js",
+  "const cy=document.querySelector('#cy')._cyreg.cy; const rect=cy.container().getBoundingClientRect(); const ev=(t,el,x,y,button,buttons)=>el.dispatchEvent(new MouseEvent(t,{bubbles:true,cancelable:true,clientX:x,clientY:y,button,buttons})); const drag=(x,y,dx,dy,button)=>{const b=button===1?4:1; const tgt=document.elementFromPoint(x,y); const down=ev('mousedown',tgt,x,y,button,b); for(let i=1;i<=10;i++) ev('mousemove',document,x+dx*i/10,y+dy*i/10,button,b); ev('mouseup',document,x+dx,y+dy,button,0); ev('auxclick',tgt,x+dx,y+dy,button,0); return down;}; const snap=()=>({pan:{...cy.pan()}, zoom:cy.zoom(), pos:Object.fromEntries(cy.nodes().not(':parent').map(n=>[n.id(),{...n.position()}])), sel:cy.$(':selected').map(e=>e.id())}); const diff=(a,b)=>({panDx:Math.round(b.pan.x-a.pan.x), panDy:Math.round(b.pan.y-a.pan.y), zoomSame:a.zoom===b.zoom, nodesMoved:Object.keys(a.pos).filter(id=>Math.abs(a.pos[id].x-b.pos[id].x)>0.01||Math.abs(a.pos[id].y-b.pos[id].y)>0.01), selBefore:a.sel, selAfter:b.sel});const n=cy.getElementById('src/shapes.ts#Circle@27:14'); const rp=n.renderedPosition(); const a=snap(); drag(rect.left+rp.x, rect.top+rp.y, 40, 0, 0); const b=snap(); return {start:'on node Circle, left button (unchanged behavior)', ...diff(a,b)}"
+ ],
+ [
+  "js",
+  "return {panningClassLeft: document.getElementById('cy').classList.contains('panning')}"
+ ],
+ [
+  "shot",
+  "middle-pan.png"
+ ]
+]
